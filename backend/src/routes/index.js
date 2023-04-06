@@ -6,3 +6,5 @@ import user from "./user";
 
 router.use('/', main);
 router.use('/user',user);
+
+export default router;
