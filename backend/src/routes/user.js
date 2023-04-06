@@ -16,4 +16,14 @@ router.get("/logout", (req, res) => {
     res.send("Logout Get page will be rendered");
 });
 
+router.post('/signup',async (req,res)=>{
+    try{
+        await sql.signupUser(req);
+        console.log('hi');
+        res.status(200).send({success:true});
+    }catch(error){
+        console.log('false',req.body);
+        res.send({success:false});
+    }
+})
 export default router;
