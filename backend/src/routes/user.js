@@ -10,6 +10,8 @@ router.get('/',async (req,res)=>{
 })
 
 //------- 회원가입---------//
+
+//닉네임 중복 체크
 router.post('/nicknamedupcheck',async(req,res)=>{
     try{
         const [check] = await sql.namedupcheck(req);
@@ -25,7 +27,21 @@ router.post('/nicknamedupcheck',async(req,res)=>{
     }
 })
 
-
+router.post('/emaildupcheck',async(req,res)=>{
+    try{
+        const [check] = await sql.emaildupcheck(req);
+        const check_valid = check[0]["CHECK"]
+        if (check_valid === 1){
+            return res.send({success:false});
+        }
+        else{
+            return res.send({success:true});
+        }
+    }catch(error){
+        res.send("error on emaildupcheck");
+    }
+})
+//회원 가입
 router.post('/signup',async (req,res)=>{
     try{
         await sql.signupUser(req);
