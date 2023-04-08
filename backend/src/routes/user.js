@@ -9,7 +9,23 @@ router.get('/',async (req,res)=>{
     res.send(users);        
 })
 
-// 회원가입
+//------- 회원가입---------//
+router.post('/nicknamedupcheck',async(req,res)=>{
+    try{
+        const [check] = await sql.namedupcheck(req);
+        const check_valid = check[0]["CHECK"]
+        if (check_valid === 1){
+            return res.send({success:false});
+        }
+        else{
+            return res.send({success:true});
+        }
+    }catch(error){
+        res.send("error on nicknamedupcheck");
+    }
+})
+
+
 router.post('/signup',async (req,res)=>{
     try{
         await sql.signupUser(req);
