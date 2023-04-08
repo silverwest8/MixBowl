@@ -17,9 +17,7 @@ function App() {
               <Route path="recipe" element={<HomePage />} />
               <Route path="community" element={<HomePage />} />
               <Route path="cocktailbar" element={<HomePage />} />
-              <Route path="mypage" element={<HomePage />}>
-                <Route path=":type" element={<HomePage />} />
-              </Route>
+              <Route path="mypage" element={<HomePage />} />
               <Route path="login" element={<HomePage />} />
               <Route path="register" element={<HomePage />} />
             </Route>
