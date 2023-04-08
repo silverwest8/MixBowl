@@ -35,6 +35,19 @@ const sql = {
     }catch(error){
       console.log(error.message);
     }
+  },
+
+  loginUser : async(req) => {
+    const {nickname, password} = req.body;
+    try{
+      const [username]= await promisePool.query(`
+        SELECT NICKNAME FROM Mixbowl.USER WHERE '${nickname}' = NICKNAME AND '${password}' = PASSWORD ;
+      `);
+      console.log(username);
+      return username;
+    }catch(error){
+      console.log(error.message);
+    }
   }
 }
 

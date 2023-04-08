@@ -9,21 +9,29 @@ router.get('/',async (req,res)=>{
     res.send(users);        
 })
 
-router.post('/login',(req,res)=>{
-    res.send("Login Post page will be rendered");
-})
-router.get("/logout", (req, res) => {
-    res.send("Logout Get page will be rendered");
-});
-
+// 회원가입
 router.post('/signup',async (req,res)=>{
     try{
         await sql.signupUser(req);
-        console.log('hi');
         res.status(200).send({success:true});
     }catch(error){
-        console.log('false',req.body);
         res.send({success:false});
+    }
+})
+
+// 로그인
+router.post('/login', async(req,res)=>{
+    try{
+        const nickname = await sql.loginUser(req);
+        if (nickname.length === 0){
+            throw new Error();
+        }
+        res.status(200).send({
+            success:true,
+            nickname: nickname[0]["NICKNAME"]
+        });
+    }catch(error){
+        res.send({success:false})
     }
 })
 export default router;
