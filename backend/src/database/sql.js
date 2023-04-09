@@ -1,6 +1,8 @@
 import mysql from "mysql2";
 import jwt from "jsonwebtoken";
-import { SECRET_KEY } from "../config/authMiddleware";
+import dotenv from "dotenv";
+
+dotenv.config(); //JWT 키불러오기
 
 // pool 을 사용한 이유 -> Connection 계속 유지하므로 부하 적어짐. (병렬 처리 가능)
 const pool = mysql.createPool(
@@ -61,29 +63,29 @@ const sql = {
     }
   },
 
-  loginUser: async (req, res) => {
+  loginUser: async (req) => {
     const { nickname, password } = req.body;
     try {
       const [username] = await promisePool.query(`
       SELECT NICKNAME FROM Mixbowl.USER WHERE '${nickname}' = NICKNAME AND '${password}' = PASSWORD ;
       `);
-      console.log(username);
+      console.log("in sql", username);
       const token = jwt.sign(
         {
           type: "JWT",
           nickname: username,
         },
-        SECRET_KEY,
+        process.env.SECRET_KEY,
         {
           expiresIn: "15m",
           issuer: "MixBowl",
         }
       );
-      return res.status(200).json({
+      return {
         code: 200,
         message: "토큰이 발급되었습니다.",
         token: token,
-      });
+      };
     } catch (error) {
       console.log(error.message);
     }

@@ -1,5 +1,6 @@
 import express from "express";
 import sql from "../database/sql";
+import jwtcheck from "./middleware/authMiddleware";
 const router = express.Router();
 
 //---- 연동확인
@@ -51,18 +52,31 @@ router.post("/signup", async (req, res) => {
 
 // 로그인
 router.post("/login", async (req, res) => {
-  //   try {
   const returnToken = await sql.loginUser(req, res);
-  res.send(returnToken);
-  //     if (nickname.length === 0) {
-  //       throw new Error();
-  //     }
-  //     res.status(200).send({
-  //       success: true,
-  //       nickname: nickname[0]["NICKNAME"],
-  //     });
-  //   } catch (error) {
-  //     res.send({ success: false });
-  //   }
+  try {
+    const { nickname } = req.body;
+    if (nickname.length === 0) {
+      throw new Error();
+    }
+    return res.status(200).send({
+      success: true,
+      // nickname: nickname[0]["NICKNAME"],
+      returnToken,
+    });
+  } catch (error) {
+    return res.send({ success: false });
+  }
+});
+
+// JWT 토큰 체크 라우터 (디버깅용)
+router.get("/check", jwtcheck, (req, res) => {
+  const nickname = req.decoded.nickname[0].NICKNAME;
+  return res.status(200).json({
+    code: 200,
+    message: "유효한 토큰입니다.",
+    data: {
+      nickname: nickname,
+    },
+  });
 });
 export default router;
