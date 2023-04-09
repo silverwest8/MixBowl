@@ -51,17 +51,18 @@ router.post("/signup", async (req, res) => {
 
 // 로그인
 router.post("/login", async (req, res) => {
-  try {
-    const nickname = await sql.loginUser(req);
-    if (nickname.length === 0) {
-      throw new Error();
-    }
-    res.status(200).send({
-      success: true,
-      nickname: nickname[0]["NICKNAME"],
-    });
-  } catch (error) {
-    res.send({ success: false });
-  }
+  //   try {
+  const returnToken = await sql.loginUser(req, res);
+  res.send(returnToken);
+  //     if (nickname.length === 0) {
+  //       throw new Error();
+  //     }
+  //     res.status(200).send({
+  //       success: true,
+  //       nickname: nickname[0]["NICKNAME"],
+  //     });
+  //   } catch (error) {
+  //     res.send({ success: false });
+  //   }
 });
 export default router;

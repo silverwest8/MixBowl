@@ -61,7 +61,7 @@ const sql = {
     }
   },
 
-  loginUser: async (req) => {
+  loginUser: async (req, res) => {
     const { nickname, password } = req.body;
     try {
       const [username] = await promisePool.query(`
@@ -79,7 +79,7 @@ const sql = {
           issuer: "MixBowl",
         }
       );
-      return req.status(200).json({
+      return res.status(200).json({
         code: 200,
         message: "토큰이 발급되었습니다.",
         token: token,
