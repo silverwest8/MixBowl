@@ -5,6 +5,7 @@ import SearchBar from "../components/common/SearchBar";
 import Title from "../components/common/Title";
 import { ModalShowButton } from "../components/common/Modal";
 import { ToastMessageShowButton } from "../components/common/ToastMessage";
+import { ImageSliderModalShowButton } from "../components/common/ImageSliderModal";
 
 const HomePage = () => {
   return (
@@ -72,6 +73,10 @@ const HomePage = () => {
       <section>
         <h2>Modal</h2>
         <ModalShowButton />
+      </section>
+      <section>
+        <h2>Image Slider Modal</h2>
+        <ImageSliderModalShowButton />
       </section>
     </main>
   );

@@ -250,3 +250,24 @@ video {
 .MuiBackdrop-invisible {
   background-color: transparent !important;
 }
+
+/* Swiper */
+.swiper {
+  height: 100%;
+}
+
+.swiper-wrapper {
+  margin-bottom: 20px;
+}
+
+.swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-pagination {
+  position: relative;
+}

@@ -43,4 +43,15 @@ export const GlobalStyle = createGlobalStyle`
     background-color: ${theme.color.black};
     color: white;
   }
+  .swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    background-color: ${theme.color.lightGray};
+    opacity: 1;
+  }
+  .swiper-pagination-bullet-active {
+    background-color: ${theme.color.primaryGold};
+    border-radius: 8px;
+  }
+
 `;

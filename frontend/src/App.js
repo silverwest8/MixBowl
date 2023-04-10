@@ -9,6 +9,10 @@ import HomePage from "./pages/HomePage";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
 
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
