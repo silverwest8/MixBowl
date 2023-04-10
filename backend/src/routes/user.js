@@ -86,5 +86,4 @@ router.get("/check/access", checkAccess, (req, res) => {
   });
 });
 
-// JWT refresh 토큰 체크 라우터 (디버깅용)
 export default router;
