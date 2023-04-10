@@ -57,6 +57,7 @@ const InputBox = styled.div`
     color: ${({ theme }) => theme.color.primaryGold};
     text-decoration: underline;
     font-size: 0.875rem;
+    flex-shrink: 0;
   }
 `;
 
