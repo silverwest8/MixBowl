@@ -1,5 +1,6 @@
 import { cloneElement, isValidElement, useEffect, useRef } from "react";
 
+// 컴포넌트 바깥 클릭할 때 trigger 함수를 실행하는 컴포넌트
 const OnClickOutside = ({ trigger, children }) => {
   const ref = useRef(null);
   const handleClickOutside = (e) => {

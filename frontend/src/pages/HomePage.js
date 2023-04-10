@@ -1,16 +1,12 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
 import DropdownMenu from "../components/common/DropdownMenu";
 import Input from "../components/common/Input";
 import MemberBadge from "../components/common/MemberBadge";
 import SearchBar from "../components/common/SearchBar";
 import Title from "../components/common/Title";
-import { toastShowState, toastState } from "../store/toast";
-import { useModal } from "../hooks/useModal";
-import Modal from "../components/common/Modal";
+import { ModalShowButton } from "../components/common/Modal";
+import { ToastMessageShowButton } from "../components/common/ToastMessage";
+
 const HomePage = () => {
-  const setToastState = useSetRecoilState(toastState);
-  const showToast = useRecoilValue(toastShowState);
-  const { openModal, closeModal } = useModal();
   return (
     <main
       style={{
@@ -71,67 +67,13 @@ const HomePage = () => {
       </section>
       <section>
         <h2>Toast Message</h2>
-        <button
-          disabled={showToast}
-          onClick={() =>
-            setToastState({
-              show: true,
-              message: "삭제가 완료되었습니다.",
-              type: "success",
-              ms: 2000,
-            })
-          }
-        >
-          토스트 메시지 띄우기
-        </button>
+        <ToastMessageShowButton />
       </section>
       <section>
         <h2>Modal</h2>
-        <button
-          onClick={() =>
-            openModal(ModalTest1, {
-              handleClose: closeModal,
-            })
-          }
-        >
-          모달 띄우기1
-        </button>
-        <button
-          onClick={() =>
-            openModal(ModalTest2, {
-              handleClose: closeModal,
-            })
-          }
-        >
-          모달 띄우기2
-        </button>
+        <ModalShowButton />
       </section>
     </main>
-  );
-};
-
-const ModalTest1 = ({ handleClose }) => {
-  return (
-    <Modal
-      title="댓글 삭제"
-      content="정말 삭제하시겠습니까?"
-      handleClose={handleClose}
-      onCancel={handleClose}
-      onConfirm={handleClose}
-    />
-  );
-};
-
-const ModalTest2 = ({ handleClose }) => {
-  return (
-    <Modal
-      title="닉네임 수정"
-      handleClose={handleClose}
-      onCancel={handleClose}
-      onSubmit={handleClose}
-    >
-      <Input value="기존 닉네임" />
-    </Modal>
   );
 };
 

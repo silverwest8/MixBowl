@@ -1,10 +1,11 @@
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { FaRegCheckCircle, FaInfoCircle } from "react-icons/fa";
 import Fade from "@mui/material/Fade";
-import { toastState } from "../../store/toast";
+import { toastState, toastShowState } from "../../store/toast";
 import styled from "styled-components";
 import { useEffect } from "react";
 
+//   const setToastState = useSetRecoilState(toastState);
 const ToastMessage = () => {
   const [{ show, message, type, ms }, setToastState] =
     useRecoilState(toastState);
@@ -48,5 +49,26 @@ const Message = styled.p`
     transform: translateX(50%);
   }
 `;
+
+// ToastMessage 사용 예시
+export const ToastMessageShowButton = () => {
+  const setToastState = useSetRecoilState(toastState);
+  const showToast = useRecoilValue(toastShowState);
+  return (
+    <button
+      disabled={showToast}
+      onClick={() =>
+        setToastState({
+          show: true,
+          message: "삭제가 완료되었습니다.",
+          type: "success",
+          ms: 2000,
+        })
+      }
+    >
+      토스트 메시지 띄우기
+    </button>
+  );
+};
 
 export default ToastMessage;

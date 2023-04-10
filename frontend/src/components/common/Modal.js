@@ -1,4 +1,6 @@
 import Dialog from "@mui/material/Dialog";
+import Input from "./Input";
+import { useModal } from "../../hooks/useModal";
 import { FaTimes } from "react-icons/fa";
 import styled from "styled-components";
 
@@ -69,7 +71,7 @@ const ButtonWrapper = styled.div`
   & > button {
     border-radius: 8px;
     flex-grow: 1;
-    padding: 0.5rem 1.7rem;
+    padding: 0.3rem 1.75rem;
     color: inherit !important;
     font-size: 0.875rem;
     line-height: 1.75;
@@ -79,5 +81,46 @@ const ButtonWrapper = styled.div`
     }
   }
 `;
+
+// Modal 컴포넌트 사용 예시
+export const ModalShowButton = () => {
+  const { openModal, closeModal } = useModal();
+  return (
+    <button
+      onClick={() =>
+        openModal(ModalTest1, {
+          handleClose: closeModal,
+        })
+      }
+    >
+      모달 띄우기
+    </button>
+  );
+};
+
+const ModalTest1 = ({ handleClose }) => {
+  return (
+    <Modal
+      title="댓글 삭제"
+      content="정말 삭제하시겠습니까?"
+      handleClose={handleClose}
+      onCancel={handleClose}
+      onConfirm={handleClose}
+    />
+  );
+};
+
+const ModalTest2 = ({ handleClose }) => {
+  return (
+    <Modal
+      title="닉네임 수정"
+      handleClose={handleClose}
+      onCancel={handleClose}
+      onSubmit={handleClose}
+    >
+      <Input value="기존 닉네임" />
+    </Modal>
+  );
+};
 
 export default Modal;
