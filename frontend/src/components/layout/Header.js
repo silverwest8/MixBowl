@@ -52,7 +52,7 @@ const HeaderBox = styled.header`
   justify-content: center;
   max-width: 1296px;
   width: 100%;
-  height: 55px;
+  height: 3.375rem;
   margin: 0 auto;
   z-index: 100;
   background-color: ${({ theme }) => theme.color.black};
@@ -83,7 +83,7 @@ const HeaderBox = styled.header`
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      height: 55px;
+      height: 3.375rem;
       padding: 0 1rem;
     }
     .nav-button {
@@ -97,6 +97,7 @@ const NavWrapper = styled.div`
   grid-template-columns: 4fr 1fr;
   align-items: baseline;
   width: 100%;
+  height: 100%;
   background-color: inherit;
   & > div:first-child {
     display: flex;
@@ -113,7 +114,7 @@ const NavWrapper = styled.div`
 `;
 
 const Spacer = styled.div`
-  height: 55px;
+  height: 3.375rem;
 `;
 
 export default Header;
