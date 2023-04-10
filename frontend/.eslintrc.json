@@ -18,12 +18,14 @@
         "react"
     ],
     "rules": {
+        "react/prop-types": "off",
         "react/react-in-jsx-scope": "off",
         "prettier/prettier": [
             "error",
             {
                 "endOfLine": "auto"
             }
-        ]
+        ],
+        "no-unused-vars": "warn"
     }
 }
