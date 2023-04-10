@@ -1,7 +1,14 @@
 import styled from "styled-components";
 import { FaTimesCircle, FaSearch } from "react-icons/fa";
 
-const SearchBar = ({ value, name, placholder, close, onClick, onChange }) => {
+const SearchBar = ({
+  value,
+  name,
+  placholder,
+  showSearchButton,
+  onClick,
+  onChange,
+}) => {
   return (
     <SearchBarBox>
       <input
@@ -11,7 +18,7 @@ const SearchBar = ({ value, name, placholder, close, onClick, onChange }) => {
         onChange={onChange}
       />
       <button onClick={onClick}>
-        {close ? <FaTimesCircle /> : <FaSearch />}
+        {showSearchButton ? <FaSearch /> : <FaTimesCircle />}
       </button>
     </SearchBarBox>
   );
