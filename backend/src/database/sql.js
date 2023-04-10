@@ -1,7 +1,7 @@
 import mysql from "mysql2";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-
+import * as jwt_module from "../routes/jwt/jwt-util";
 dotenv.config(); //JWT 키불러오기
 
 // pool 을 사용한 이유 -> Connection 계속 유지하므로 부하 적어짐. (병렬 처리 가능)
@@ -24,6 +24,14 @@ const sql = {
       SELECT * FROM USER
     `);
     return rows;
+  },
+
+  //refresh token 조회
+  getToken: async (username) => {
+    const reToken = await promisePool.query(`
+      SELECT TOKEN FROM USER WHERE '${username}' = NICKNAME;
+    `);
+    return reToken;
   },
 
   namedupcheck: async (req) => {
@@ -70,21 +78,20 @@ const sql = {
       SELECT NICKNAME FROM Mixbowl.USER WHERE '${nickname}' = NICKNAME AND '${password}' = PASSWORD ;
       `);
       console.log("in sql", username);
-      const token = jwt.sign(
-        {
-          type: "JWT",
-          nickname: username,
-        },
-        process.env.SECRET_KEY,
-        {
-          expiresIn: "15m",
-          issuer: "MixBowl",
-        }
-      );
+      const accessToken = await jwt_module.sign(username[0]["NICKNAME"]);
+      const refreshToken = await jwt_module.refresh();
+
+      //refresh token sql 업데이트
+      await promisePool.query(`
+        UPDATE USER SET TOKEN = '${refreshToken}' WHERE NICKNAME = '${nickname}';
+      `);
       return {
         code: 200,
         message: "토큰이 발급되었습니다.",
-        token: token,
+        token: {
+          accessToken,
+          refreshToken,
+        },
       };
     } catch (error) {
       console.log(error.message);

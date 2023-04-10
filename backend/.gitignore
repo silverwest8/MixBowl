@@ -1,6 +1,6 @@
 # key
 *.pem
-config/authMiddleware.js
+.env
 # db sql정보 ignore하였습니다.
 # src/database/sql.js 
 # Logs

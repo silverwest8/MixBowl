@@ -1,6 +1,8 @@
 import express from "express";
 import sql from "../database/sql";
-import jwtcheck from "./middleware/authMiddleware";
+import checkAccess from "./middleware/checkAccessToken";
+import checkRefresh from "./middleware/checkRefreshToken";
+import { refresh_new } from "./jwt/jwt-util";
 const router = express.Router();
 
 //---- 연동확인
@@ -52,7 +54,7 @@ router.post("/signup", async (req, res) => {
 
 // 로그인
 router.post("/login", async (req, res) => {
-  const returnToken = await sql.loginUser(req, res);
+  const tokens = await sql.loginUser(req, res);
   try {
     const { nickname } = req.body;
     if (nickname.length === 0) {
@@ -61,16 +63,20 @@ router.post("/login", async (req, res) => {
     return res.status(200).send({
       success: true,
       // nickname: nickname[0]["NICKNAME"],
-      returnToken,
+      tokens,
     });
   } catch (error) {
     return res.send({ success: false });
   }
 });
 
-// JWT 토큰 체크 라우터 (디버깅용)
-router.get("/check", jwtcheck, (req, res) => {
-  const nickname = req.decoded.nickname[0].NICKNAME;
+// 토큰 재발급 라우터
+router.get("/refresh", refresh_new);
+
+// JWT access 토큰 체크 라우터 (디버깅용)
+router.get("/check/access", checkAccess, (req, res) => {
+  console.log(req.decoded);
+  const nickname = req.decoded.nickname;
   return res.status(200).json({
     code: 200,
     message: "유효한 토큰입니다.",
@@ -79,4 +85,6 @@ router.get("/check", jwtcheck, (req, res) => {
     },
   });
 });
+
+// JWT refresh 토큰 체크 라우터 (디버깅용)
 export default router;
