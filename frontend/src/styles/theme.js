@@ -53,5 +53,9 @@ export const GlobalStyle = createGlobalStyle`
     background-color: ${theme.color.primaryGold};
     border-radius: 8px;
   }
-
+  @media screen and (${theme.device.mobile}) {
+    html {
+      font-size: 12px;
+    }
+  }
 `;
