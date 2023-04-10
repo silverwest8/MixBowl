@@ -37,7 +37,6 @@ const Header = () => {
           </div>
         </HeaderBox>
       </OnClickOutside>
-
       <Spacer />
     </>
   );
@@ -50,8 +49,6 @@ const HeaderBox = styled.header`
   right: 0;
   display: flex;
   justify-content: center;
-  max-width: 1296px;
-  width: 100%;
   height: 3.375rem;
   margin: 0 auto;
   z-index: 100;
@@ -60,7 +57,9 @@ const HeaderBox = styled.header`
     display: grid;
     grid-template-columns: 1fr 5fr;
     align-items: baseline;
+    max-width: 1296px;
     width: 100%;
+    height: 100%;
   }
   .nav-button {
     display: none;
