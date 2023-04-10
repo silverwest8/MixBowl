@@ -26,9 +26,9 @@ const TitleBox = styled.div`
     left: 50%;
     width: 0;
     height: 0;
-    border-bottom: 85px solid rgba(221, 186, 0, 0.2);
-    border-left: 80px solid transparent;
-    border-right: 80px solid transparent;
+    border-bottom: 5.375rem solid rgba(221, 186, 0, 0.2);
+    border-left: 5rem solid transparent;
+    border-right: 5rem solid transparent;
     filter: blur(2px);
     transform: translateX(-50%);
   }
@@ -36,12 +36,12 @@ const TitleBox = styled.div`
     position: absolute;
     top: 1px;
     left: 50%;
-    width: 40px;
-    height: 20px;
+    width: 2.5rem;
+    height: 1.25rem;
     object-fit: contain;
     transform: translateX(-50%);
   }
-  @media screen and (${({ theme }) => theme.device.mobile}) {
+  @media screen and (max-width: 840px) {
     display: flex;
   }
 `;
