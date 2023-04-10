@@ -44,8 +44,15 @@ const NavBox = styled.nav`
   gap: 6.75rem;
   align-items: flex-end;
   padding: 0 2.25rem;
-  border-bottom: 1px solid ${({ theme }) => theme.primaryGold};
+  border-bottom: 3px solid ${({ theme }) => theme.color.primaryGold};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  @media screen and (max-width: 840px) {
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+    border-bottom: none;
+    width: 100%;
+  }
 `;
 
 const StyledLink = styled(Link)`
@@ -74,9 +81,18 @@ const StyledLink = styled(Link)`
     transform: translateX(-50%);
   }
   &.active {
-    color: ${({ theme }) => theme.primaryGold};
+    color: ${({ theme }) => theme.color.primaryGold};
     font-weight: 700;
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+  @media screen and (max-width: 840px) {
+    padding: 0.75rem 0;
+    img {
+      display: none;
+    }
+    span {
+      display: none;
+    }
   }
 `;
 

@@ -29,18 +29,22 @@ const ButtonBox = styled.div`
   display: flex;
   gap: 0.625rem;
   justify-content: flex-end;
-  width: 10%;
   flex-shrink: 0;
   & > button {
     padding: 0.3rem 0.5rem;
-    border: 2px solid ${({ theme }) => theme.primaryGold};
+    border: 2px solid ${({ theme }) => theme.color.primaryGold};
     border-radius: 12px;
     background-color: transparent;
     flex-shrink: 0;
     font-size: 0.875rem;
     &.active {
-      background-color: ${({ theme }) => theme.primaryGold};
+      background-color: ${({ theme }) => theme.color.primaryGold};
     }
+  }
+  @media screen and (max-width: 840px) {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 0;
   }
 `;
 
