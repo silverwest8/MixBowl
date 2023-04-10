@@ -12,7 +12,7 @@ const Input = ({
   messageType,
 }) => {
   return (
-    <>
+    <div>
       <InputBox>
         <input
           type={type}
@@ -36,7 +36,7 @@ const Input = ({
           {message}
         </Message>
       )}
-    </>
+    </div>
   );
 };
 
