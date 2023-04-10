@@ -1,13 +1,13 @@
 import React from "react";
-import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
 import styled from "styled-components";
 import { Navigation, Pagination } from "swiper";
-import { Swiper, useSwiper } from "swiper/react";
+import { Swiper, useSwiper, SwiperSlide } from "swiper/react";
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 
-const defaultPrevElId = "swiper_prev";
-const defaultNextElId = "swiper_next";
+const defaultPrevElId = "swiper-prev";
+const defaultNextElId = "swiper-next";
 
-const CustomSwiper = ({
+export const CustomSwiper = ({
   loop,
   initialSlide,
   slidesPerView,
@@ -25,7 +25,7 @@ const CustomSwiper = ({
       }}
       pagination={{ clickable: true }}
       modules={[Navigation, Pagination]}
-      initialSlide={initialSlide}
+      initialSlide={initialSlide || 0}
       slidesPerView={slidesPerView}
       spaceBetween={spaceBetween}
     >
@@ -34,9 +34,7 @@ const CustomSwiper = ({
   );
 };
 
-export default CustomSwiper;
-
-export const SlideNextButton = ({ nextElId }) => {
+export const SlideNextButton = ({ nextElId, children }) => {
   const swiper = useSwiper();
   const onClick = () => {
     if (swiper) {
@@ -45,12 +43,12 @@ export const SlideNextButton = ({ nextElId }) => {
   };
   return (
     <Button onClick={onClick} type="button" id={nextElId || defaultNextElId}>
-      <FaChevronCircleRight />
+      {children}
     </Button>
   );
 };
 
-export const SlidePrevButton = ({ prevElId }) => {
+export const SlidePrevButton = ({ prevElId, children }) => {
   const swiper = useSwiper();
   const onClick = () => {
     if (swiper) {
@@ -59,7 +57,7 @@ export const SlidePrevButton = ({ prevElId }) => {
   };
   return (
     <Button onClick={onClick} type="button" id={prevElId || defaultPrevElId}>
-      <FaChevronCircleLeft />
+      {children}
     </Button>
   );
 };
@@ -71,3 +69,89 @@ const Button = styled.button`
     display: none;
   }
 `;
+
+const Slider = ({ elementList, spaceBetween }) => {
+  return (
+    <SliderWrapper>
+      <SlidePrevButton>
+        <FaChevronLeft />
+      </SlidePrevButton>
+      <BlurBox className="prev-blur-box" />
+      <CustomSwiper slidesPerView="auto" spaceBetween={spaceBetween}>
+        {elementList.map((element, index) => (
+          <SwiperSlide key={index}>{element}</SwiperSlide>
+        ))}
+      </CustomSwiper>
+      <SlideNextButton>
+        <FaChevronRight />
+      </SlideNextButton>
+      <BlurBox className="next-blur-box" />
+    </SliderWrapper>
+  );
+};
+
+const BlurBox = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
+  width: 158px;
+  height: 100%;
+  background: linear-gradient(270deg, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  &.prev-blur-box {
+    left: 0;
+    background: linear-gradient(90deg, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  }
+  @media screen and (${({ theme }) => theme.device.mobile}) {
+    display: none;
+  }
+`;
+
+const SliderWrapper = styled.div`
+  position: relative;
+  & > button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    &:disabled {
+      display: none;
+    }
+  }
+  #swiper-prev:disabled ~ .prev-blur-box {
+    display: none;
+  }
+  #swiper-next:disabled ~ .next-blur-box {
+    display: none;
+  }
+  #swiper-prev {
+    left: 10px;
+  }
+  #swiper-next {
+    right: 10px;
+  }
+  .swiper-slide {
+    position: relative;
+    width: 11.25rem !important;
+    height: 11.25rem;
+  }
+  .swiper-wrapper {
+    margin-bottom: 0;
+  }
+  .swiper-pagination {
+    display: none;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+    object-fit: cover;
+  }
+  @media screen and (${({ theme }) => theme.device.mobile}) {
+    & > button {
+      display: none;
+    }
+  }
+`;
+
+export default Slider;

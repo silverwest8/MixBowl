@@ -1,17 +1,22 @@
 import { SwiperSlide } from "swiper/react";
-import CustomSwiper, { SlidePrevButton, SlideNextButton } from "./Slider";
+import { SlidePrevButton, SlideNextButton, CustomSwiper } from "./Slider";
 import styled from "styled-components";
 import { useModal } from "../../hooks/useModal";
 import Dialog from "@mui/material/Dialog";
+import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
 
-const prevElId = "image_slider_modal_back";
-const nextElId = "image_slider_modal_forward";
+const prevElId = "image-slider-modal-prev-button";
+const nextElId = "image-slider-modal-next-button";
 
 const ImageSliderModal = ({ images, alt, initialImageIndex, handleClose }) => {
   return (
     <Dialog onClose={handleClose} open={true}>
-      <SliderDiv>
-        {images.length !== 1 && <SlidePrevButton prevElId={prevElId} />}
+      <SliderWrapper>
+        {images.length !== 1 && (
+          <SlidePrevButton prevElId={prevElId}>
+            <FaChevronCircleLeft />
+          </SlidePrevButton>
+        )}
         <CustomSwiper
           loop
           initialSlide={initialImageIndex || 0}
@@ -24,13 +29,17 @@ const ImageSliderModal = ({ images, alt, initialImageIndex, handleClose }) => {
             </SwiperSlide>
           ))}
         </CustomSwiper>
-        {images.length !== 1 && <SlideNextButton nextElId={nextElId} />}
-      </SliderDiv>
+        {images.length !== 1 && (
+          <SlideNextButton nextElId={nextElId}>
+            <FaChevronCircleRight />
+          </SlideNextButton>
+        )}
+      </SliderWrapper>
     </Dialog>
   );
 };
 
-const SliderDiv = styled.div`
+const SliderWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 20px;
