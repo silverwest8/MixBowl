@@ -1,14 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import RegisterForm from "../components/register/RegisterForm";
 
 const RegisterPage = () => {
+  const ref = useRef(null);
   useEffect(() => {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty("--vh", `${vh}px`);
+    if (window.innerHeight > ref.current.scrollHeight) {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+      ref.current.style.height = "calc(calc(var(--vh, 1vh) * 100) - 4rem)";
+    } else {
+      ref.current.style.marginTop = "2rem";
+    }
   }, []);
   return (
-    <Main>
+    <Main ref={ref}>
       <h1>회원가입</h1>
       <RegisterForm />
     </Main>
@@ -22,7 +28,6 @@ const Main = styled.main`
   justify-content: center;
   max-width: 400px;
   width: 100%;
-  height: calc(calc(var(--vh, 1vh) * 100) - 4rem);
   margin: 0 auto;
   h1 {
     font-size: 1.875rem;
