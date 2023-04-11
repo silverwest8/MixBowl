@@ -19,7 +19,7 @@ const Modal = ({
         <FaTimes />
       </Button>
       <ModalWrapper>
-        <h1 className="modal-title">{title}</h1>
+        {title && <h1 className="modal-title">{title}</h1>}
         {content && <p className="modal-content">{content}</p>}
         {children}
         {(onConfirm || onSubmit) && (
@@ -46,10 +46,13 @@ const Button = styled.button`
 `;
 
 const ModalWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 3rem 2rem 2rem;
   background-color: ${({ theme }) => theme.color.darkGray};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 12px;
+  border-radius: 0.75rem;
   .modal-title {
     text-align: center;
     font-weight: bold;

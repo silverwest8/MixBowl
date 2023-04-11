@@ -33,7 +33,7 @@ const ButtonBox = styled.div`
   & > button {
     padding: 0.3rem 0.5rem;
     border: 2px solid ${({ theme }) => theme.color.primaryGold};
-    border-radius: 12px;
+    border-radius: 0.75rem;
     background-color: transparent;
     flex-shrink: 0;
     font-size: 0.875rem;

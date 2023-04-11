@@ -6,6 +6,7 @@ import { RecoilRoot } from "recoil";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "./components/layout/Layout";
 import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
 
@@ -38,7 +39,7 @@ function App() {
                   <Route path="community" element={<HomePage />} />
                   <Route path="cocktailbar" element={<HomePage />} />
                   <Route path="mypage" element={<HomePage />} />
-                  <Route path="login" element={<HomePage />} />
+                  <Route path="login" element={<LoginPage />} />
                   <Route path="register" element={<HomePage />} />
                 </Route>
               </Routes>
