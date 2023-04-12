@@ -1,7 +1,7 @@
 import express from "express";
 import sql from "../database/sql";
-import checkAccess from "./middleware/checkAccessToken";
-import checkRefresh from "./middleware/checkRefreshToken";
+import checkAccess from "../middleware/checkAccessToken";
+import checkRefresh from "../middleware/checkRefreshToken";
 import { refresh_new } from "./jwt/jwt-util";
 const router = express.Router();
 
@@ -104,8 +104,16 @@ router.put("/checkauth", async (req, res) => {
 
 
 //회원 정보 수정
-router.put("/update", async (req, res) => {
-  
+router.put("/update", checkAccess,  async (req, res) => {
+  try {
+    const newNickname = req.body.nickname;
+    console.log(newNickname);
+    console.log(req.user);
+    req.user.update({NICKNAME: newNickname})
+    return res.status(200).json({ success: true, decription: "닉네임 수정 성공" });
+  } catch (error) {
+    return res.status(400).json({ success: false, decription: "닉네임 수정 실패", error: error });
+  }
 });
 
 //조주기능사 / bartender 인증
