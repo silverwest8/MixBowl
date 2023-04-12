@@ -1,5 +1,4 @@
 import mysql from "mysql2";
-import mysqlll from "mysql";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import * as jwt_module from "../routes/jwt/jwt-util";
@@ -73,18 +72,18 @@ const sql = {
   },
 
   loginUser: async (req) => {
-    const { nickname, password } = req.body;
+    const { email, password } = req.body;
     try {
       const [username] = await promisePool.query(`
-      SELECT NICKNAME FROM Mixbowl.USER WHERE '${nickname}' = NICKNAME AND '${password}' = PASSWORD ;
+      SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
       `);
-      console.log("in sql", username);
+      // console.log("in sql", username);
       const accessToken = await jwt_module.sign(username[0]["NICKNAME"]);
       const refreshToken = await jwt_module.refresh();
 
       //refresh token sql 업데이트
       await promisePool.query(`
-        UPDATE USER SET TOKEN = '${refreshToken}' WHERE NICKNAME = '${nickname}';
+        UPDATE USER SET TOKEN = '${refreshToken}' WHERE NICKNAME = '${username}';
       `);
       return {
         code: 200,
@@ -98,6 +97,7 @@ const sql = {
       console.log(error.message);
     }
   },
+  logoutUser: async (req, res) => {},
 };
 
 export default sql;

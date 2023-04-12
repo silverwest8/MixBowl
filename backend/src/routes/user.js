@@ -56,6 +56,26 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   const tokens = await sql.loginUser(req, res);
   try {
+    const { email } = req.body;
+    //이메일 유효성 검사 함수 정의 필요
+    if (email.length === 0) {
+      throw new Error();
+    }
+    return res.status(200).send({
+      success: true,
+      // nickname: nickname[0]["NICKNAME"],
+      tokens,
+    });
+  } catch (error) {
+    return res.send({ success: false });
+  }
+});
+
+//로그아웃
+// 로그인
+router.post("/logout", async (req, res) => {
+  const tokens = await sql.loginUser(req, res);
+  try {
     const { nickname } = req.body;
     if (nickname.length === 0) {
       throw new Error();
