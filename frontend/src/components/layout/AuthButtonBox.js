@@ -4,9 +4,9 @@ import styled from "styled-components";
 import { authState } from "../../store/auth";
 
 const AuthButtonBox = () => {
-  const { isLoggined } = useRecoilValue(authState);
+  const { isLoggedin } = useRecoilValue(authState);
   const href = useHref();
-  return isLoggined ? (
+  return isLoggedin ? (
     <ButtonBox>
       <button className={href.includes("mypage") ? "active" : ""}>
         <Link to="mypage">마이페이지</Link>
