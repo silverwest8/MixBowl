@@ -23,6 +23,29 @@ const sql = {
     return rows
   },
 
+  namedupcheck : async(req)=>{
+    const {checkname} = req.body;
+    try{
+      const check = await promisePool.query(`
+        SELECT COUNT(*) AS 'CHECK' FROM USER WHERE '${checkname}' = NICKNAME;
+      `)
+      return check;
+    }catch(error){
+      console.log(error.message);
+    }
+  },
+
+  emaildupcheck : async(req)=>{
+    const {checkemail} = req.body;
+    try{
+      const check = await promisePool.query(`
+        SELECT COUNT(*) AS 'CHECK' FROM USER WHERE '${checkemail}' = EMAIL;
+      `)
+      return check;
+    }catch(error){
+      console.log(error.message);
+    }
+  },
   signupUser : async (req) =>{
     const {nickname, email, password} = req.body; //regitserInfo에는 Nickname, Email, Password 가 포함되어야 함.
     //-- 토큰 빠져 있음 -> 임의 추가 했어요. + ORM으로 바꾸어도 상관없어요
@@ -49,6 +72,7 @@ const sql = {
       console.log(error.message);
     }
   }
+
 }
 
 export default sql;

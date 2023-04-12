@@ -9,7 +9,39 @@ router.get('/',async (req,res)=>{
     res.send(users);        
 })
 
-// 회원가입
+//------- 회원가입---------//
+
+//닉네임 중복 체크
+router.post('/nicknamedupcheck',async(req,res)=>{
+    try{
+        const [check] = await sql.namedupcheck(req);
+        const check_valid = check[0]["CHECK"]
+        if (check_valid === 1){
+            return res.send({success:false});
+        }
+        else{
+            return res.send({success:true});
+        }
+    }catch(error){
+        res.send("error on nicknamedupcheck");
+    }
+})
+
+router.post('/emaildupcheck',async(req,res)=>{
+    try{
+        const [check] = await sql.emaildupcheck(req);
+        const check_valid = check[0]["CHECK"]
+        if (check_valid === 1){
+            return res.send({success:false});
+        }
+        else{
+            return res.send({success:true});
+        }
+    }catch(error){
+        res.send("error on emaildupcheck");
+    }
+})
+//회원 가입
 router.post('/signup',async (req,res)=>{
     try{
         await sql.signupUser(req);
@@ -20,6 +52,32 @@ router.post('/signup',async (req,res)=>{
 })
 
 // 로그인
+/**
+ * @swagger
+ * paths:
+ *   /user/login:
+ *     post:
+ *       tags:
+ *         - user
+ *       summary: Logs user into the system
+ *       description: ''
+ *       operationId: loginUser
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       responses:
+ *         '200':
+ *           description: successful operation
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Res'
+ *         '400':
+ *           description: Invalid username/password supplied
+ */
 router.post('/login', async(req,res)=>{
     try{
         const nickname = await sql.loginUser(req);
@@ -34,4 +92,31 @@ router.post('/login', async(req,res)=>{
         res.send({success:false})
     }
 })
+
+/**
+ * @swagger
+ * /user/logout:
+ * get:
+ *   tags:
+ *     - user
+ *   summary: Logs out current logged in user session
+ *   description: ''
+ *   operationId: logoutUser
+ *   parameters:
+ *     - in: cookie
+ *       name: token
+ *       schema:
+ *         $ref: '#/components/schemas/Cookie'
+ *         
+ *   responses:
+ *     '200':
+ *       description: successful operation
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Res'
+ *     '400':
+ *       description: Something wrong
+ */
+
 export default router;
