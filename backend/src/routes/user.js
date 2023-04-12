@@ -2,6 +2,22 @@ import express from "express";
 import sql from "../database/sql";
 const router = express.Router();
 
+/**
+ * tags:
+ * - name: pet
+ * description: Everything about your Pets
+ * externalDocs:
+ * description: Find out more
+ * url: http://swagger.io
+ * - name: store
+ * description: Access to Petstore orders
+ * externalDocs:
+ * description: Find out more about our store
+ * url: http://swagger.io
+ * - name: user
+ * description: Operations about user
+ */
+
 //---- 연동확인
 router.get('/',async (req,res)=>{
     const users = await sql.getUser()
@@ -52,6 +68,19 @@ router.post('/signup',async (req,res)=>{
 })
 
 // 로그인
+/**
+ * @swagger
+ * path:
+ *  /user/login:
+ * post:
+ *  tags:
+ *   - login
+ *  summary: Add a new pet to the store
+ *  description: Add a new pet to the store
+ *  operationId: addPet
+ *  requestBody:
+ *      description: Create a new pet in the store
+ */
 router.post('/login', async(req,res)=>{
     try{
         const nickname = await sql.loginUser(req);
