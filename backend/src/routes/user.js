@@ -3,6 +3,7 @@ import sql from "../database/sql";
 import checkAccess from "../middleware/checkAccessToken";
 import checkRefresh from "../middleware/checkRefreshToken";
 import { refresh_new } from "./jwt/jwt-util";
+import USER from "../models/USER"
 const router = express.Router();
 
 //---- 연동확인
@@ -104,24 +105,52 @@ router.put("/checkauth", async (req, res) => {
 
 
 //회원 정보 수정
-router.put("/update", checkAccess,  async (req, res) => {
+router.put("/update", checkAccess, async (req, res) => {
   try {
     const newNickname = req.body.nickname;
     console.log(newNickname);
     console.log(req.user);
     req.user.update({NICKNAME: newNickname})
-    return res.status(200).json({ success: true, decription: "닉네임 수정 성공" });
+    return res.status(200).json({ success: true, message: "닉네임 수정 성공" });
   } catch (error) {
-    return res.status(400).json({ success: false, decription: "닉네임 수정 실패", error: error });
+    return res.status(400).json({ success: false, message: "닉네임 수정 실패", error });
   }
 });
 
-//조주기능사 / bartender 인증
-router.put("/checkbartender", async (req, res) => {
+// bar owner 인증
+router.put("/checkbarowner", checkAccess, async (req, res) => {
+  try {
+    const barOwner = true;
+    if (barOwner) {
+      req.user.update({LEVEL: 4})
+    }
+    return res.status(200).json({ success: true, message: "사장님 인증 성공" });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: "사장님 인증 실패", error });
+  }
+});
+
+// bartender 인증
+router.put("/checkbartender", checkAccess, async (req, res) => {
+  try {
+    const bartender = true;
+    if (bartender) {
+      req.user.update({LEVEL: 5})
+    }
+    return res.status(200).json({ success: true, message: "바텐더 인증 성공" });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: "바텐더 인증 실패", error });
+  }
 });
 
 //회원 탈퇴
-router.delete("/delete", async (req, res) => {
+router.delete("/delete", checkAccess, async (req, res) => {
+  try {
+    req.user.destroy();
+    return res.status(200).json({ success: true, message: "회원 탈퇴 성공" });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: "회원 탈퇴 실패", error });
+  }
 });
 
 // 토큰 재발급 라우터

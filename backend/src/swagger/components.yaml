@@ -21,7 +21,7 @@ components:
         message:
           type: string
           example: 'Operation Fail'
-        err:
+        error:
           type: object
     User:
       type: object
@@ -82,6 +82,16 @@ components:
         message:
           type: string
           example: 'bartender == true => 인증 완료'
+    BarOwnerCheck:
+      type: object
+      properties:
+        success:
+          type: boolean
+        baronnwer:
+          type: boolean
+        message:
+          type: string
+          example: 'baronnwer == true => 인증 완료'
           
     Tag:
       type: object
