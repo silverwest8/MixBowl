@@ -53,6 +53,32 @@ router.post("/signup", async (req, res) => {
 });
 
 // 로그인
+/**
+ * @swagger
+ * paths:
+ *   /user/login:
+ *     post:
+ *       tags:
+ *         - user
+ *       summary: Logs user into the system
+ *       description: ''
+ *       operationId: loginUser
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       responses:
+ *         '200':
+ *           description: successful operation
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Res'
+ *         '400':
+ *           description: Invalid username/password supplied
+ */
 router.post("/login", async (req, res) => {
   try {
     const tokens = await sql.loginUser(req, res);
@@ -75,6 +101,31 @@ router.post("/login", async (req, res) => {
 });
 
 //로그아웃
+/**
+ * @swagger
+ * /user/logout:
+ * get:
+ *   tags:
+ *     - user
+ *   summary: Logs out current logged in user session
+ *   description: ''
+ *   operationId: logoutUser
+ *   parameters:
+ *     - in: cookie
+ *       name: token
+ *       schema:
+ *         $ref: '#/components/schemas/Cookie'
+ *         
+ *   responses:
+ *     '200':
+ *       description: successful operation
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Res'
+ *     '400':
+ *       description: Something wrong
+ */
 router.post("/logout", async (req, res) => {
   const tokens = await sql.loginUser(req, res);
   try {

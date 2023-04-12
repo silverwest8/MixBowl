@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start:dev": "nodemon --exec babel-node ./src/app.js",
+    "start:dev": "nodemon --watch \"./src/**/*.*\" --exec babel-node ./src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -21,6 +21,9 @@
     "@babel/node": "^7.20.7",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.21.4",
-    "babel-loader": "^9.1.2"
+    "babel-loader": "^9.1.2",
+    "nodemon": "^2.0.22",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.2"
   }
 }
