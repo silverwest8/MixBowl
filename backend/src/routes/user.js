@@ -54,8 +54,11 @@ router.post("/signup", async (req, res) => {
 
 // 로그인
 router.post("/login", async (req, res) => {
-  const tokens = await sql.loginUser(req, res);
   try {
+    const tokens = await sql.loginUser(req, res);
+    if (tokens.code !== 200) {
+      throw new Error();
+    }
     const { email } = req.body;
     //이메일 유효성 검사 함수 정의 필요
     if (email.length === 0) {
@@ -72,7 +75,6 @@ router.post("/login", async (req, res) => {
 });
 
 //로그아웃
-// 로그인
 router.post("/logout", async (req, res) => {
   const tokens = await sql.loginUser(req, res);
   try {

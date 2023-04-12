@@ -77,7 +77,10 @@ const sql = {
       const [username] = await promisePool.query(`
       SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
       `);
-      // console.log("in sql", username);
+      if (username.length === 0) {
+        console.log("hi");
+        throw new Error("Invalid Info User");
+      }
       const accessToken = await jwt_module.sign(username[0]["NICKNAME"]);
       const refreshToken = await jwt_module.refresh();
 
@@ -95,6 +98,9 @@ const sql = {
       };
     } catch (error) {
       console.log(error.message);
+      return {
+        code: 401,
+      };
     }
   },
   logoutUser: async (req, res) => {},
