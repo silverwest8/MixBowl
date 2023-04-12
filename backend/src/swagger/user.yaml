@@ -37,7 +37,7 @@ paths:
       operationId: logoutUser
       parameters:
         - in: cookie
-          name: token
+          name: refresh_token
           schema:
             $ref: '#/components/schemas/Cookie'
       responses:
@@ -215,13 +215,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-                
+
+  /user/checkbarowner:
+    put:
+      tags:
+        - user
+      summary: '사장님 확인'
+      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
+      operationId: checkBarOwner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nickname'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarOwnerCheck'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
   /user/checkbartender:
     put:
       tags:
         - user
-      summary: '바텐더 혹은 사장님 확인'
-      description: ''
+      summary: '바텐더 확인'
+      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
       operationId: checkBartender
       requestBody:
         required: true
@@ -252,7 +279,7 @@ paths:
       operationId: deleteUser
       parameters:
         - in: cookie
-          name: token
+          name: refresh_token
           schema:
             $ref: '#/components/schemas/Cookie'
       responses:
