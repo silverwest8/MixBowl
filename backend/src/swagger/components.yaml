@@ -1,0 +1,174 @@
+# components for Swagger
+
+components:
+  schemas:
+    Cookie:
+      type: string
+    Success:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 'Operation success'
+    Fail:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: 'Operation Fail'
+        error:
+          type: object
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+    Signup:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+        nickname:
+          type: string
+          example: mynickname
+        password:
+          type: string
+          example: '12345'
+    Nickname:
+      type: object
+      properties:
+        nickname:
+          type: string
+          example: mynickname
+    Email:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+    AuthNum:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 12345
+    DupCheck:
+      type: object
+      properties:
+        success:
+          type: boolean
+        duplicate:
+          type: boolean
+        message:
+          type: string
+          example: 'duplecate == true => 중복'
+    BartenderCheck:
+      type: object
+      properties:
+        success:
+          type: boolean
+        bartender:
+          type: boolean
+        message:
+          type: string
+          example: 'bartender == true => 인증 완료'
+    BarOwnerCheck:
+      type: object
+      properties:
+        success:
+          type: boolean
+        baronnwer:
+          type: boolean
+        message:
+          type: string
+          example: 'baronnwer == true => 인증 완료'
+          
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      xml:
+        name: tag
+    Pet:
+      required:
+        - name
+        - photoUrls
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: doggie
+        category:
+          $ref: '#/components/schemas/User'
+        photoUrls:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            type: string
+            xml:
+              name: photoUrl
+        tags:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Tag'
+        status:
+          type: string
+          description: pet status in the store
+          enum:
+            - available
+            - pending
+            - sold
+      xml:
+        name: pet
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+  requestBodies:
+    Pet:
+      description: Pet object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pet'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Pet'
+    UserArray:
+      description: List of user object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+  
