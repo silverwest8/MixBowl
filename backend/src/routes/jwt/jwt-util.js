@@ -85,11 +85,6 @@ export const refresh_new = async (req, res) => {
             accessToken: newAccessToken,
           });
         }
-      } else if (accessResult.message === 'invalid signature') {
-        res.status(403).send({
-          ok: false,
-          message: 'Invalid Access Token',
-        });
       } else {
         res.status(400).send({
           ok: false,
