@@ -160,4 +160,3 @@ router.get("/check/access", checkAccess, (req, res) => {
 });
 
 export default router;
->>>>>>> e6cc631ba3beec2650b73c8273d8205b0a50456a
