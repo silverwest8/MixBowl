@@ -2,22 +2,6 @@ import express from "express";
 import sql from "../database/sql";
 const router = express.Router();
 
-/**
- * tags:
- * - name: pet
- * description: Everything about your Pets
- * externalDocs:
- * description: Find out more
- * url: http://swagger.io
- * - name: store
- * description: Access to Petstore orders
- * externalDocs:
- * description: Find out more about our store
- * url: http://swagger.io
- * - name: user
- * description: Operations about user
- */
-
 //---- 연동확인
 router.get('/',async (req,res)=>{
     const users = await sql.getUser()
@@ -70,16 +54,29 @@ router.post('/signup',async (req,res)=>{
 // 로그인
 /**
  * @swagger
- * path:
- *  /user/login:
- * post:
- *  tags:
- *   - login
- *  summary: Add a new pet to the store
- *  description: Add a new pet to the store
- *  operationId: addPet
- *  requestBody:
- *      description: Create a new pet in the store
+ * paths:
+ *   /user/login:
+ *     post:
+ *       tags:
+ *         - user
+ *       summary: Logs user into the system
+ *       description: ''
+ *       operationId: loginUser
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       responses:
+ *         '200':
+ *           description: successful operation
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Res'
+ *         '400':
+ *           description: Invalid username/password supplied
  */
 router.post('/login', async(req,res)=>{
     try{
@@ -95,4 +92,31 @@ router.post('/login', async(req,res)=>{
         res.send({success:false})
     }
 })
+
+/**
+ * @swagger
+ * /user/logout:
+ * get:
+ *   tags:
+ *     - user
+ *   summary: Logs out current logged in user session
+ *   description: ''
+ *   operationId: logoutUser
+ *   parameters:
+ *     - in: cookie
+ *       name: token
+ *       schema:
+ *         $ref: '#/components/schemas/Cookie'
+ *         
+ *   responses:
+ *     '200':
+ *       description: successful operation
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Res'
+ *     '400':
+ *       description: Something wrong
+ */
+
 export default router;

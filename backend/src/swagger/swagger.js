@@ -5,18 +5,18 @@ const options = {
   swaggerDefinition: {
     openapi: "3.0.0",
     info: {
-      version: "1.0.0",
       title: "Mixbowl",
-      description:
-        "Mixbowl Node.js Swaager swagger-jsdoc 방식 RestFul API 클라이언트 UI",
+      description: "This is Mixbowl's API with swagger",
+      version: "1.0.0",
     },
     servers: [
       {
         url: "http://localhost:3000", // 요청 URL
+        description: "Development server"
       },
     ],
   },
-  apis: ['/backend/src/routes/*.js', '/backend/src/swagger/*']
+  apis: ['./src/swagger/*', './src/routes/*.js', ]
 }
 
 const specs = swaggereJsdoc(options)
