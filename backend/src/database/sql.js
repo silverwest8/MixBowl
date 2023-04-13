@@ -1,16 +1,18 @@
-import mysql from "mysql2";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import * as jwt_module from "../routes/jwt/jwt-util";
+'use strict';
+
+import mysql from 'mysql2';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import * as jwt_module from '../routes/jwt/jwt-util';
 dotenv.config(); //JWT 키불러오기
 
 // pool 을 사용한 이유 -> Connection 계속 유지하므로 부하 적어짐. (병렬 처리 가능)
 const pool = mysql.createPool(
   process.env.JAWSDB_URL ?? {
-    host: "3.34.97.140",
-    user: "mixbowl",
-    database: "Mixbowl",
-    password: "swe302841",
+    host: '3.34.97.140',
+    user: 'mixbowl',
+    database: 'Mixbowl',
+    password: 'swe302841',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
@@ -27,14 +29,14 @@ const sql = {
   },
 
   //refresh token 조회
-  getToken: async (username) => {
+  getToken: async username => {
     const reToken = await promisePool.query(`
       SELECT TOKEN FROM USER WHERE '${username}' = NICKNAME;
     `);
     return reToken;
   },
 
-  namedupcheck: async (req) => {
+  namedupcheck: async req => {
     const { checkname } = req.body;
     try {
       const check = await promisePool.query(`
@@ -46,7 +48,7 @@ const sql = {
     }
   },
 
-  emaildupcheck: async (req) => {
+  emaildupcheck: async req => {
     const { checkemail } = req.body;
     try {
       const check = await promisePool.query(`
@@ -57,7 +59,7 @@ const sql = {
       console.log(error.message);
     }
   },
-  signupUser: async (req) => {
+  signupUser: async req => {
     const { nickname, email, password } = req.body; //regitserInfo에는 Nickname, Email, Password 가 포함되어야 함.
     //-- 토큰 빠져 있음 -> 임의 추가 했어요. + ORM으로 바꾸어도 상관없어요
     console.log(nickname, email, password);
@@ -71,17 +73,17 @@ const sql = {
     }
   },
 
-  loginUser: async (req) => {
+  loginUser: async req => {
     const { email, password } = req.body;
     try {
       const [username] = await promisePool.query(`
       SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
       `);
       if (username.length === 0) {
-        console.log("hi");
-        throw new Error("Invalid Info User");
+        console.log('hi');
+        throw new Error('Invalid Info User');
       }
-      const accessToken = await jwt_module.sign(username[0]["NICKNAME"]);
+      const accessToken = await jwt_module.sign(username[0]['NICKNAME']);
       const refreshToken = await jwt_module.refresh();
 
       //refresh token sql 업데이트
@@ -90,7 +92,7 @@ const sql = {
       `);
       return {
         code: 200,
-        message: "토큰이 발급되었습니다.",
+        message: '토큰이 발급되었습니다.',
         token: {
           accessToken,
           refreshToken,
