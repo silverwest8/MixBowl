@@ -77,29 +77,29 @@ export const refresh_new = async (req, res) => {
         message: 'No Authorization for Access Token',
       });
     }
+    else {
+      const refreshResult = refreshVerify(refresh, decodeAccess.nickname);
 
-    const refreshResult = refreshVerify(refresh, decodeAccess.nickname);
-
-    if (accessResult.ok === false && accessResult.message === 'jwt expired') {
-      if (refreshResult.ok === false) {
-        res.status(401).send({
-          ok: false,
-          message: 'No Authorization, MAKE A NEW LOGIN',
-        });
+      if (accessResult.ok === false && accessResult.message === "jwt expired") {
+        if (refreshResult.ok === false) {
+          res.status(401).send({
+            ok: false,
+            message: "No Authorization, MAKE A NEW LOGIN",
+          });
+        } else {
+          //refresh token이 유효하므로, 새로운 access token 발급
+          const newAccessToken = sign(req.body.nickname);
+          res.status(200).send({
+            ok: true,
+            accessToken: newAccessToken
+          });
+        }
       } else {
-        //refresh token이 유효하므로, 새로운 access token 발급
-        const newAccessToken = sign(req.body.nickname);
-
-        res.stauts(200).send({
-          ok: true,
-          nickname: req.body.nickname,
+        res.status(400).send({
+          ok: false,
+          message: "Access Token is not expired",
         });
       }
-    } else {
-      res.status(400).send({
-        ok: false,
-        message: 'Access Token is not expired',
-      });
     }
   } else {
     res.status(400).send({
