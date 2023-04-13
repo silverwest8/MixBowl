@@ -98,10 +98,59 @@ router.put('/emaildupcheck', async (req, res) => {
 });
 
 // 이메일 인증메일 보내기
-router.post('/sendauthmail', async (req, res) => {});
+router.post('/sendauthmail', async (req, res) => {
+  //   try {
+  //   const authNum = Math.random().toString().slice(2, 7);
+  //   const code = await AUTH_CODE.findOne({ where: { EMAIL: req.body.email } });
+  //   if (!code) {
+  //     await AUTH_CODE.create({ EMAIL: req.body.email, CODE: authNum });
+  //   } else {
+  //     await AUTH_CODE.update({ CODE: authNum }, { where: { EMAIL: req.body.email } });
+  //   }
+  //   //인증번호 보내기
+  //   let emailTemplete;
+  //   let path = __dirname;
+  //   path = path.replace("/router", "/template/emailAuthTemplate.ejs");
+  //   ejs.renderFile(path, { authCode: authNum }, (err, data) => {
+  //     if (err) {
+  //       return res.json({ sucess: false, message: "인증메일 발송에 실패하였습니다.", err });
+  //     }
+  //     emailTemplete = data;
+  //   });
+  //   const mailOptions = {
+  //     from: "스무슬리 <smoosly23@gmail.com>",
+  //     to: req.body.email,
+  //     subject: "Smoosly 이메일 인증",
+  //     html: emailTemplete,
+  //   };
+  //   smtpTransport.sendMail(mailOptions, (err, responses) => {
+  //     if (err) {
+  //       return res.json({ sucess: false, message: "인증메일 발송에 실패하였습니다.", err });
+  //     }
+  //     smtpTransport.close();
+  //     return res.json({ success: true, message: "인증메일이 발송되었습니다." });
+  //   });
+  // } catch (err) {
+  //   return res.json({ success: false, message: "인증메일 발송에 실패하였습니다.", err });
+  // }
+
+  // setTimeout(async () => {
+  //   await AUTH_CODE.destroy({ where: { EMAIL: req.body.email } });
+  // }, 180000); //3분 후에는 인증 불가
+});
 
 //인증번호 확인
-router.put('/checkauth', async (req, res) => {});
+router.put('/checkauth', async (req, res) => {
+  // const check = await AUTH_CODE.findOne({ where: { EMAIL: req.body.email } });
+  // if (!check) {
+  //   return res.json({ success: false, message: "이메일 인증을 다시 시도해주세요." });
+  // }
+  // if (check.CODE === req.body.authNum) {
+  //   await AUTH_CODE.destroy({ where: { EMAIL: req.body.email } });
+  //   return res.json({ success: true, message: "이메일 인증에 성공하였습니다." });
+  // }
+  // res.json({ success: false, message: "인증번호가 틀렸습니다." });
+});
 
 //회원 정보 수정
 router.put('/update', checkAccess, async (req, res) => {
