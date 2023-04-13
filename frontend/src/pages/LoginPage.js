@@ -26,6 +26,10 @@ const Main = styled.main`
   max-width: 400px;
   width: 100%;
   height: calc(calc(var(--vh, 1vh) * 100) - 4rem);
+  & > h1 {
+    font-weight: bold;
+    font-size: 2rem;
+  }
   & > p {
     margin-bottom: 0.5rem;
     font-weight: bold;

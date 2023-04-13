@@ -2,8 +2,11 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { authState } from "../../store/auth";
+import { userAPI } from "../../api/user";
+import { setToken } from "../../utils/token";
 import Input from "../common/Input";
 import styled from "styled-components";
+import { FaInfoCircle } from "react-icons/fa";
 
 const LoginForm = () => {
   const [inputs, setInputs] = useState({
@@ -15,6 +18,7 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
+  const [failMessage, setFailMessage] = useState("");
   const navigate = useNavigate();
   const setAuthState = useSetRecoilState(authState);
   const onChange = (e) => {
@@ -42,13 +46,25 @@ const LoginForm = () => {
     }
     setMessages({
       email: "",
-      pasasword: "",
+      password: "",
     });
-    // TODO: 로그인 API 호출
-    setAuthState({
-      isLoggedin: true,
-    });
-    navigate("/");
+    try {
+      const { data } = await userAPI.login({ email, password });
+      if (data.success) {
+        setAuthState({
+          isLoggedin: true,
+        });
+        setToken({
+          accessToken: data.tokens.token.accessToken,
+          refreshToken: data.tokens.token.refreshToken,
+        });
+        navigate("/");
+      } else {
+        setFailMessage("아이디 또는 비밀번호를 확인해주세요.");
+      }
+    } catch {
+      setFailMessage("아이디 또는 비밀번호를 확인해주세요.");
+    }
   };
   return (
     <Form onSubmit={onSubmit}>
@@ -69,6 +85,12 @@ const LoginForm = () => {
         message={messages.password}
         messageType="error"
       />
+      {failMessage && (
+        <p className="fail-message">
+          <FaInfoCircle />
+          {failMessage}
+        </p>
+      )}
       <Button>로그인</Button>
       <div className="link-wrapper">
         <Link to="/login" className="find-pwd-link">
@@ -103,6 +125,13 @@ const Form = styled.form`
       width: 1px;
       background-color: ${({ theme }) => theme.color.gray};
     }
+  }
+  .fail-message {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: ${({ theme }) => theme.color.red};
   }
 `;
 
