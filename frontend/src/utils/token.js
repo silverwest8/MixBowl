@@ -10,6 +10,7 @@ export const setToken = ({ accessToken, refreshToken }) => {
     window.localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
   }
   if (refreshToken) {
+    request.defaults.headers.common.refresh = refreshToken;
     const expires = new Date();
     expires.setDate(expires.getDate() + 13);
     cookies.set(REFRESH_TOKEN_KEY, refreshToken, {
@@ -21,6 +22,7 @@ export const setToken = ({ accessToken, refreshToken }) => {
 
 export const removeTokens = () => {
   cookies.remove(REFRESH_TOKEN_KEY);
+  request.defaults.headers.common.refresh = "";
   window.localStorage.removeItem(ACCESS_TOKEN_KEY);
   request.defaults.headers.common.Authorization = "";
 };

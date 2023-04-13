@@ -12,12 +12,8 @@ class UserAPI extends API {
     });
   }
 
-  refresh(refreshToken) {
-    return request.get(this.getUri("/refresh"), {
-      headers: {
-        refresh: refreshToken,
-      },
-    });
+  refresh() {
+    return request.get(this.getUri("/refresh"));
   }
 }
 

@@ -13,8 +13,9 @@ request.interceptors.response.use(
   async (error) => {
     const { config: originalRequest, response } = error;
     if (response.status === 401 && !originalRequest.url.includes("refresh")) {
-      await getNewAccessToken();
-      return axios(originalRequest);
+      if (getNewAccessToken()) {
+        return axios(originalRequest);
+      } else throw error;
     } else throw error;
   }
 );
