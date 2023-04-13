@@ -4,6 +4,7 @@ import mysql from 'mysql2';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import * as jwt_module from '../routes/jwt/jwt-util';
+import USER from "../models/USER";
 dotenv.config(); //JWT 키불러오기
 
 // pool 을 사용한 이유 -> Connection 계속 유지하므로 부하 적어짐. (병렬 처리 가능)
@@ -76,14 +77,18 @@ const sql = {
   loginUser: async req => {
     const { email, password } = req.body;
     try {
-      const [username] = await promisePool.query(`
-      SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
-      `);
+      // const [username] = await promisePool.query(`
+      // SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
+      // `);
+      const {dataValues} = await USER.findOne({ where: { email : `${email}`,password:`${password}` } });
+      const username = dataValues["NICKNAME"];
       if (username.length === 0) {
         console.log('hi');
         throw new Error('Invalid Info User');
       }
-      const accessToken = await jwt_module.sign(username[0]['NICKNAME']);
+
+      //UNO 도 같이 포함
+      const accessToken = await jwt_module.sign(username[0]["NICKNAME"]);
       const refreshToken = await jwt_module.refresh();
 
       //refresh token sql 업데이트
