@@ -1,5 +1,6 @@
 # key
 *.pem
+.env
 # db sql정보 ignore하였습니다.
 # src/database/sql.js 
 # Logs
@@ -132,3 +133,5 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+../.DS_Store
