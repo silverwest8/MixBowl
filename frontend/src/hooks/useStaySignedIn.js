@@ -9,8 +9,6 @@ export const useStaySignedIn = () => {
   useEffect(() => {
     const { refreshToken, accessToken } = getTokens();
     if (refreshToken && accessToken) {
-      request.defaults.headers.common.Authorization = accessToken;
-      request.defaults.headers.common.refresh = refreshToken;
       if (getNewAccessToken()) {
         setAuthState({ isLoggedin: true });
       } else {

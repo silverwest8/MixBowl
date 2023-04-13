@@ -31,15 +31,24 @@ export const getAccessToken = () =>
   window.localStorage.getItem(ACCESS_TOKEN_KEY);
 export const getRefreshToken = () => cookies.get(REFRESH_TOKEN_KEY);
 
-export const getTokens = () => ({
-  accessToken: getAccessToken(),
-  refreshToken: getRefreshToken(),
-});
+export const getTokens = () => {
+  const accessToken = getAccessToken();
+  const refreshToken = getRefreshToken();
+  if (accessToken) {
+    request.defaults.headers.common.Authorization = accessToken;
+  }
+  if (refreshToken) {
+    request.defaults.headers.common.refresh = refreshToken;
+  }
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
 
 export const getNewAccessToken = async () => {
-  const refreshToken = getRefreshToken();
   try {
-    const { data } = await userAPI.refresh(refreshToken);
+    const { data } = await userAPI.refresh();
     setToken({ accessToken: data.accessToken });
     return true;
   } catch (e) {
