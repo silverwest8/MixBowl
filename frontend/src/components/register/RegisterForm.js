@@ -1,69 +1,96 @@
-import { useState } from "react";
 import Input from "../common/Input";
-import DuplicateCheckButton from "./DuplicateCheckButton";
 import styled from "styled-components";
-import CertificationButton from "./CertificationButton";
-import CodeSendButton from "./CodeSendButton";
+import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { toastState } from "../../store/toast";
+import { useEmail, useNickname, usePassword } from "../../hooks/useRegister";
+import axios from "axios";
 
 const RegisterForm = () => {
-  const [inputs, setInputs] = useState({
-    email: "",
-    code: "",
-    password: "",
-    checkPwd: "",
-    nickname: "",
-  });
-  const { email, code, password, checkPwd, nickname } = inputs;
-  const [messages, setMessages] = useState({
-    email: {
-      type: "",
-      value: "",
-    },
-    code: {
-      type: "",
-      value: "",
-    },
-    password: {
-      type: "",
-      value: "8자 이상 16자 미만, 영어 및 숫자 각각 1개 이상 포함",
-    },
-    checkPwd: {
-      type: "",
-      value: "",
-    },
-    nickname: {
-      type: "",
-      value: "",
-    },
-  });
-  const onChange = (e) => {
+  const {
+    email,
+    emailMsg,
+    code,
+    codeMsg,
+    onChangeEmail,
+    onChangeCode,
+    checkEmailValidation,
+    sendCode,
+    checkAuth,
+  } = useEmail();
+  const {
+    nickname,
+    nicknameMsg,
+    onChangeNickname,
+    checkDuplication,
+    checkNicknameValidation,
+  } = useNickname();
+  const {
+    password,
+    passwordMsg,
+    checkPwd,
+    checkPwdMsg,
+    onChangePassword,
+    onChangeCheckPwd,
+    checkPasswordValidation,
+  } = usePassword();
+  const navigate = useNavigate();
+  const setToastState = useSetRecoilState(toastState);
+
+  const onSubmit = async (e) => {
     e.preventDefault();
-    const { name, value } = e.target;
-    setInputs((state) => ({
-      ...state,
-      [name]: value,
-    }));
+    if (!checkEmailValidation()) return;
+    if (!checkPasswordValidation()) return;
+    if (!checkNicknameValidation()) return;
+    try {
+      const { data } = await axios.post("/api/user/signup", {
+        nickname,
+        email,
+        password,
+      });
+      if (data.success) {
+        navigate("/");
+        setTimeout(() => {
+          setToastState({
+            show: true,
+            message: "회원가입이 되었습니다.",
+            type: "success",
+            ms: 1000,
+          });
+        }, 1000);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
   return (
-    <Form>
+    <Form onSubmit={onSubmit}>
       <div className="inputs-wrapper">
         <Input
           name="email"
           value={email}
-          onChange={onChange}
-          Button={<CodeSendButton email={email} />}
+          onChange={onChangeEmail}
+          Button={
+            <button type="button" onClick={sendCode}>
+              인증번호 전송
+            </button>
+          }
           placeholder="이메일"
-          message={messages.email.value}
-          messageType={messages.email.type}
+          message={emailMsg.value}
+          messageType={emailMsg.type}
         />
         <Input
           name="code"
           value={code}
-          onChange={onChange}
-          Button={<CertificationButton code={code} />}
+          onChange={onChangeCode}
+          Button={
+            <button type="button" onClick={checkAuth}>
+              인증하기
+            </button>
+          }
           placeholder="인증번호"
-          message={messages.code.value}
-          messageType={messages.code.type}
+          message={codeMsg.value}
+          messageType={codeMsg.type}
         />
       </div>
       <div className="inputs-wrapper">
@@ -71,29 +98,33 @@ const RegisterForm = () => {
           name="password"
           type="password"
           value={password}
-          onChange={onChange}
+          onChange={onChangePassword}
           placeholder="비밀번호"
-          message={messages.password.value}
-          messageType={messages.password.type}
+          message={passwordMsg.value}
+          messageType={passwordMsg.type}
         />
         <Input
           name="checkPwd"
           type="password"
           value={checkPwd}
-          onChange={onChange}
+          onChange={onChangeCheckPwd}
           placeholder="비밀번호 확인"
-          message={messages.checkPwd.value}
-          messageType={messages.checkPwd.type}
+          message={checkPwdMsg.value}
+          messageType={checkPwdMsg.type}
         />
       </div>
       <Input
         name="nickname"
         value={nickname}
-        onChange={onChange}
-        Button={<DuplicateCheckButton nickname={nickname} />}
+        onChange={onChangeNickname}
+        Button={
+          <button type="button" onClick={checkDuplication}>
+            중복확인
+          </button>
+        }
         placeholder="닉네임"
-        message={messages.nickname.value}
-        messageType={messages.nickname.type}
+        message={nicknameMsg.value}
+        messageType={nicknameMsg.type}
       />
       <Button>완료</Button>
     </Form>

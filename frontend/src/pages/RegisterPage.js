@@ -10,7 +10,7 @@ const RegisterPage = () => {
       document.documentElement.style.setProperty("--vh", `${vh}px`);
       ref.current.style.height = "calc(calc(var(--vh, 1vh) * 100) - 4rem)";
     } else {
-      ref.current.style.marginTop = "2rem";
+      ref.current.style.margin = "2rem auto";
     }
   }, []);
   return (
