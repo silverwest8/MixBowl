@@ -1,16 +1,16 @@
-import { cookies, request } from "../api/instance";
-import { userAPI } from "../api/user";
+import axios from "axios";
+import { cookies } from "./cookie";
 
 const REFRESH_TOKEN_KEY = "refresh_token";
 const ACCESS_TOKEN_KEY = "access_token";
 
 export const setToken = ({ accessToken, refreshToken }) => {
   if (accessToken) {
-    request.defaults.headers.common.Authorization = accessToken;
+    axios.defaults.headers.common.Authorization = accessToken;
     window.localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
   }
   if (refreshToken) {
-    request.defaults.headers.common.refresh = refreshToken;
+    axios.defaults.headers.common.refresh = refreshToken;
     const expires = new Date();
     expires.setDate(expires.getDate() + 13);
     cookies.set(REFRESH_TOKEN_KEY, refreshToken, {
@@ -22,9 +22,9 @@ export const setToken = ({ accessToken, refreshToken }) => {
 
 export const removeTokens = () => {
   cookies.remove(REFRESH_TOKEN_KEY);
-  request.defaults.headers.common.refresh = "";
+  axios.defaults.headers.common.refresh = "";
   window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-  request.defaults.headers.common.Authorization = "";
+  axios.defaults.headers.common.Authorization = "";
 };
 
 export const getAccessToken = () =>
@@ -35,10 +35,10 @@ export const getTokens = () => {
   const accessToken = getAccessToken();
   const refreshToken = getRefreshToken();
   if (accessToken) {
-    request.defaults.headers.common.Authorization = accessToken;
+    axios.defaults.headers.common.Authorization = accessToken;
   }
   if (refreshToken) {
-    request.defaults.headers.common.refresh = refreshToken;
+    axios.defaults.headers.common.refresh = refreshToken;
   }
   return {
     accessToken,
@@ -48,7 +48,7 @@ export const getTokens = () => {
 
 export const getNewAccessToken = async () => {
   try {
-    const { data } = await userAPI.refresh();
+    const { data } = await axios.get("/api/user/refresh");
     setToken({ accessToken: data.accessToken });
     return true;
   } catch (e) {
@@ -57,3 +57,15 @@ export const getNewAccessToken = async () => {
     } else return false;
   }
 };
+
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const { config: originalRequest, response } = error;
+    if (response.status === 401 && !originalRequest.url.includes("refresh")) {
+      if (getNewAccessToken()) {
+        return axios(originalRequest);
+      } else throw error;
+    } else throw error;
+  }
+);

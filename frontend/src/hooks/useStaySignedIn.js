@@ -2,7 +2,7 @@ import { useSetRecoilState } from "recoil";
 import { useEffect } from "react";
 import { authState } from "../store/auth";
 import { getTokens, getNewAccessToken, removeTokens } from "../utils/token";
-import { request } from "../api/instance";
+import axios from "axios";
 
 export const useStaySignedIn = () => {
   const setAuthState = useSetRecoilState(authState);
@@ -16,8 +16,8 @@ export const useStaySignedIn = () => {
         setAuthState({ isLoggedin: false });
       }
     } else {
-      request.defaults.headers.common.Authorization = "";
-      request.defaults.headers.common.refresh = "";
+      axios.defaults.headers.common.Authorization = "";
+      axios.defaults.headers.common.refresh = "";
       setAuthState({ isLoggedin: false });
     }
   }, []);

@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { authState } from "../../store/auth";
-import { userAPI } from "../../api/user";
 import { setToken } from "../../utils/token";
 import Input from "../common/Input";
 import styled from "styled-components";
+import axios from "axios";
 import { FaInfoCircle } from "react-icons/fa";
 
 const LoginForm = () => {
@@ -49,7 +49,7 @@ const LoginForm = () => {
       password: "",
     });
     try {
-      const { data } = await userAPI.login({ email, password });
+      const { data } = await axios.post("/api/user/login", { email, password });
       if (data.success) {
         setAuthState({
           isLoggedin: true,
