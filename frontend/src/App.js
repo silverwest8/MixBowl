@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "./components/layout/Layout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import RecipePage from "./pages/RecipePage";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
 import { useStaySignedIn } from "./hooks/useStaySignedIn";
@@ -35,7 +36,7 @@ function App() {
             <Routes>
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
-                <Route path="recipe" element={<HomePage />} />
+                <Route path="recipe" element={<RecipePage />} />
                 <Route path="community" element={<HomePage />} />
                 <Route path="cocktailbar" element={<HomePage />} />
                 <Route path="mypage" element={<HomePage />} />
