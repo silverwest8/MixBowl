@@ -18,7 +18,7 @@ const Circle = styled.div`
   width: 0.875rem;
   height: 0.875rem;
   border-radius: 50%;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   background-color: ${({ theme, level }) =>
     level === 1
       ? theme.color.lightGray

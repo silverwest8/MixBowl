@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { FaCheckCircle, FaTimes, FaCheck } from "react-icons/fa";
+import { FaCheckCircle, FaCheck } from "react-icons/fa";
 
 const Input = ({
   type,
@@ -29,7 +29,7 @@ const Input = ({
           {messageType === "success" ? (
             <FaCheckCircle />
           ) : messageType === "error" ? (
-            <FaTimes />
+            "* "
           ) : (
             <FaCheck />
           )}
