@@ -63,10 +63,12 @@ const sql = {
     //-- 토큰 빠져 있음 -> 임의 추가 했어요. + ORM으로 바꾸어도 상관없어요
     console.log(nickname, email, password);
     try {
-      await promisePool.query(`
-        INSERT INTO Mixbowl.USER (NICKNAME, EMAIL, PASSWORD, LEVEL, TOKEN) 
-        VALUES ('${nickname}', '${email}', '${password}', 1, 'tsetestestes');
-      `);
+      await USER.create({NICKNAME:`${nickname}`,PASSWORD:`${password}`,EMAIL:`${email}`,LEVEL: 1});
+      // await promisePool.query(`
+      //   INSERT INTO Mixbowl.USER (NICKNAME, EMAIL, PASSWORD, LEVEL, TOKEN) 
+      //   VALUES ('${nickname}', '${email}', '${password}', 1, 'tsetestestes');
+      // `);
+      
     } catch (error) {
       console.log(error.message);
     }
@@ -89,6 +91,7 @@ const sql = {
       const refreshToken = await jwt_module.refresh();
 
       //refresh token sql 업데이트
+      //일단 냅둘게요 (아마 안쓸듯)
       await promisePool.query(`
         UPDATE USER SET TOKEN = '${refreshToken}' WHERE NICKNAME = '${username}';
       `);
