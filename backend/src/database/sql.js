@@ -40,10 +40,8 @@ const sql = {
   namedupcheck: async req => {
     const { checkname } = req.body;
     try {
-      const check = await promisePool.query(`
-        SELECT COUNT(*) AS 'CHECK' FROM USER WHERE '${checkname}' = NICKNAME;
-      `);
-      return check;
+      const check = await USER.findAndCountAll({where : {NICKNAME:`${checkname}`}});
+      return check["count"];
     } catch (error) {
       console.log(error.message);
     }
@@ -66,10 +64,6 @@ const sql = {
     console.log(nickname, email, password);
     try {
       await USER.create({NICKNAME:`${nickname}`,PASSWORD:`${password}`,EMAIL:`${email}`,LEVEL: 1});
-      // await promisePool.query(`
-      //   INSERT INTO Mixbowl.USER (NICKNAME, EMAIL, PASSWORD, LEVEL, TOKEN) 
-      //   VALUES ('${nickname}', '${email}', '${password}', 1, 'tsetestestes');
-      // `);
       
     } catch (error) {
       console.log(error.message);
