@@ -2,27 +2,27 @@ import { useState } from "react";
 import styled from "styled-components";
 import { FaThumbsUp, FaCommentDots } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
+import axios from "axios";
+import recipedummy from "../dummy/recipedummy.json";
 
 const RecipeCard = () => {
-  const [Recommendation, setRecommendation] = useState(10);
-  const [CommentNum, setCommentNum] = useState(10);
   return (
     <CardBox>
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((index) => (
+      {recipedummy.RecipeList.map((index) => (
         <RecipeBox key={index}>
-          <img src={images}></img>
-          <h1>Old Fashioned</h1>
+          <img src={index.image_path}></img>
+          <h1>{index.name}</h1>
           <TextBox>
             <p>
-              @닉네임 <MemberBadge level={2} />
+              @{index.uname} <MemberBadge level={index.level} />
             </p>
             <p className="ThumbsUp">
               <FaThumbsUp></FaThumbsUp>
-              {Recommendation}
+              {index.like}
             </p>
             <p className="Comment">
               <FaCommentDots></FaCommentDots>
-              {CommentNum}
+              {index.comment}
             </p>
           </TextBox>
         </RecipeBox>
@@ -30,18 +30,6 @@ const RecipeCard = () => {
     </CardBox>
   );
 };
-
-const images = [
-  "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-  "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-  "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=465&q=80",
-  "https://images.unsplash.com/photo-1570598912132-0ba1dc952b7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-  "https://images.unsplash.com/photo-1587223962930-cb7f31384c19?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-  "https://images.unsplash.com/photo-1550426735-c33c7ce414ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=371&q=80",
-  "https://images.unsplash.com/photo-1570598912132-0ba1dc952b7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-  "https://images.unsplash.com/photo-1587223962930-cb7f31384c19?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
-  "https://images.unsplash.com/photo-1550426735-c33c7ce414ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=371&q=80",
-];
 
 const TextBox = styled.div`
   display: flex;
