@@ -68,9 +68,8 @@ router.post("/signup", async (req, res) => {
 //닉네임 중복 체크
 router.put("/nicknamedupcheck", async (req, res) => {
   try {
-    const [check] = await sql.namedupcheck(req);
-    const check_valid = check[0]["CHECK"];
-    if (check_valid === 1) {
+    const count = await sql.namedupcheck(req);
+    if (count !== 0) {
       return res.send({ success: false });
     } else {
       return res.send({ success: true });
