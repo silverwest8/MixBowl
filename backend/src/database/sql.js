@@ -39,7 +39,9 @@ const sql = {
   namedupcheck: async (req) => {
     const { checkname } = req.body;
     try {
-      const check = await USER.findAndCountAll({where : {NICKNAME:`${checkname}`}});
+      const check = await USER.findAndCountAll({
+        where: { NICKNAME: `${checkname}` },
+      });
       return check["count"];
     } catch (error) {
       console.log(error.message);
@@ -49,10 +51,11 @@ const sql = {
   emaildupcheck: async (req) => {
     const { checkemail } = req.body;
     try {
-      const check = await promisePool.query(`
-        SELECT COUNT(*) AS 'CHECK' FROM USER WHERE '${checkemail}' = EMAIL;
-      `);
-      return check;
+      const check = await USER.findAndCountAll({
+        where: { EMAIL: `${checkemail}` },
+      });
+
+      return check["count"];
     } catch (error) {
       console.log(error.message);
     }
@@ -62,8 +65,12 @@ const sql = {
     //-- 토큰 빠져 있음 -> 임의 추가 했어요. + ORM으로 바꾸어도 상관없어요
     console.log(nickname, email, password);
     try {
-      await USER.create({NICKNAME:`${nickname}`,PASSWORD:`${password}`,EMAIL:`${email}`,LEVEL: 1});
-      
+      await USER.create({
+        NICKNAME: `${nickname}`,
+        PASSWORD: `${password}`,
+        EMAIL: `${email}`,
+        LEVEL: 1,
+      });
     } catch (error) {
       console.log(error.message);
     }
@@ -75,7 +82,9 @@ const sql = {
       // const [username] = await promisePool.query(`
       // SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
       // `);
-      const {dataValues} = await USER.findOne({ where: { email : `${email}`,password:`${password}` } });
+      const { dataValues } = await USER.findOne({
+        where: { email: `${email}`, password: `${password}` },
+      });
       const username = dataValues["NICKNAME"];
       if (username.length === 0) {
         console.log("hi");
