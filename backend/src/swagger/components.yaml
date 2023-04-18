@@ -9,20 +9,13 @@ components:
       properties:
         success:
           type: boolean
-        message:
-          type: string
-          example: 'Operation success'
+          example: true
     Fail:
       type: object
       properties:
         success:
           type: boolean
           example: false
-        message:
-          type: string
-          example: 'Operation Fail'
-        error:
-          type: object
     User:
       type: object
       properties:
@@ -92,7 +85,7 @@ components:
         message:
           type: string
           example: 'baronnwer == true => 인증 완료'
-          
+
     Tag:
       type: object
       properties:
@@ -171,4 +164,3 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/User'
-  

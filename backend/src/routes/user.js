@@ -1,7 +1,6 @@
 import express from "express";
 import sql from "../database/sql";
 import checkAccess from "../middleware/checkAccessToken";
-import checkRefresh from "../middleware/checkRefreshToken";
 import { refresh_new } from "./jwt/jwt-util";
 import USER from "../models/USER";
 const router = express.Router();
