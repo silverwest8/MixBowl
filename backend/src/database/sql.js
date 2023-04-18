@@ -2,6 +2,7 @@ import mysql from "mysql2";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import * as jwt_module from "../routes/jwt/jwt-util";
+import USER from "../models/USER";
 dotenv.config(); //JWT 키불러오기
 
 // pool 을 사용한 이유 -> Connection 계속 유지하므로 부하 적어짐. (병렬 처리 가능)
@@ -27,6 +28,7 @@ const sql = {
   },
 
   //refresh token 조회
+  //안쓸듯
   getToken: async (username) => {
     const reToken = await promisePool.query(`
       SELECT TOKEN FROM USER WHERE '${username}' = NICKNAME;
@@ -37,10 +39,10 @@ const sql = {
   namedupcheck: async (req) => {
     const { checkname } = req.body;
     try {
-      const check = await promisePool.query(`
-        SELECT COUNT(*) AS 'CHECK' FROM USER WHERE '${checkname}' = NICKNAME;
-      `);
-      return check;
+      const check = await USER.findAndCountAll({
+        where: { NICKNAME: `${checkname}` },
+      });
+      return check["count"];
     } catch (error) {
       console.log(error.message);
     }
@@ -49,10 +51,11 @@ const sql = {
   emaildupcheck: async (req) => {
     const { checkemail } = req.body;
     try {
-      const check = await promisePool.query(`
-        SELECT COUNT(*) AS 'CHECK' FROM USER WHERE '${checkemail}' = EMAIL;
-      `);
-      return check;
+      const check = await USER.findAndCountAll({
+        where: { EMAIL: `${checkemail}` },
+      });
+
+      return check["count"];
     } catch (error) {
       console.log(error.message);
     }
@@ -62,10 +65,12 @@ const sql = {
     //-- 토큰 빠져 있음 -> 임의 추가 했어요. + ORM으로 바꾸어도 상관없어요
     console.log(nickname, email, password);
     try {
-      await promisePool.query(`
-        INSERT INTO Mixbowl.USER (NICKNAME, EMAIL, PASSWORD, LEVEL, TOKEN) 
-        VALUES ('${nickname}', '${email}', '${password}', 1, 'tsetestestes');
-      `);
+      await USER.create({
+        NICKNAME: `${nickname}`,
+        PASSWORD: `${password}`,
+        EMAIL: `${email}`,
+        LEVEL: 1,
+      });
     } catch (error) {
       console.log(error.message);
     }
@@ -74,17 +79,23 @@ const sql = {
   loginUser: async (req) => {
     const { email, password } = req.body;
     try {
-      const [username] = await promisePool.query(`
-      SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
-      `);
+      // const [username] = await promisePool.query(`
+      // SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
+      // `);
+      const { dataValues } = await USER.findOne({
+        where: { email: `${email}`, password: `${password}` },
+      });
+      const username = dataValues["NICKNAME"];
       if (username.length === 0) {
         console.log("hi");
         throw new Error("Invalid Info User");
       }
+      //UNO 도 같이 포함
       const accessToken = await jwt_module.sign(username[0]["NICKNAME"]);
       const refreshToken = await jwt_module.refresh();
 
       //refresh token sql 업데이트
+      //일단 냅둘게요 (아마 안쓸듯)
       await promisePool.query(`
         UPDATE USER SET TOKEN = '${refreshToken}' WHERE NICKNAME = '${username}';
       `);
@@ -103,7 +114,6 @@ const sql = {
       };
     }
   },
-  logoutUser: async (req, res) => {},
 };
 
 export default sql;
