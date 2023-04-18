@@ -116,7 +116,6 @@ const sql = {
       };
     }
   },
-  logoutUser: async (req, res) => {},
 };
 
 export default sql;

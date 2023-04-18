@@ -133,7 +133,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /user/sendauthmail:
     post:
