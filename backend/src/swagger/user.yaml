@@ -29,8 +29,8 @@ paths:
                     type: object
                     example:
                       {
-                        ACCESS-1A3BJOJAPEOJRPA3JRAFEJIJ3434R2,
-                        REFRESH-19WAHR093HAR89AWHG9H0A,
+                        ACCESS-1A3BJOJAPEOJRPA3JRAFEJIJ3434R2: string,
+                        REFRESH-19WAHR093HAR89AWHG9H0A: string,
                       }
 
         '400':
@@ -112,13 +112,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DupCheck'
+                $ref: '#/components/schemas/SuccessDupCheck'
         '400':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: '#/components/schemas/FailDupCheck'
 
   /user/emaildupcheck:
     put:

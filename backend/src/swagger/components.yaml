@@ -40,7 +40,7 @@ components:
     Nickname:
       type: object
       properties:
-        nickname:
+        checkname:
           type: string
           example: mynickname
     Email:
@@ -55,16 +55,29 @@ components:
         email:
           type: string
           example: 12345
-    DupCheck:
+    SuccessDupCheck:
       type: object
       properties:
         success:
           type: boolean
         duplicate:
           type: boolean
+          example: false
         message:
           type: string
-          example: 'duplecate == true => 중복'
+          example: 'duplecate == false => 사용가능'
+    FailDupCheck:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        duplicate:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'duplecate == true => 사용불가'
     BartenderCheck:
       type: object
       properties:
