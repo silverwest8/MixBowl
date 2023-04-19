@@ -20,9 +20,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Success"
-        "400":
-          description: ""
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  tokens:
+                    type: object
+                    example:
+                      {
+                        ACCESS-1A3BJOJAPEOJRPA3JRAFEJIJ3434R2: string,
+                        REFRESH-19WAHR093HAR89AWHG9H0A: string,
+                      }
+
+        '400':
+          description: ''
           content:
             application/json:
               schema:
@@ -100,13 +112,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DupCheck"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/SuccessDupCheck'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/FailDupCheck'
 
   /user/emaildupcheck:
     put:
