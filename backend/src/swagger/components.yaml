@@ -70,6 +70,7 @@ components:
       properties:
         success:
           type: boolean
+          example: false
         duplicate:
           type: boolean
           example: false
