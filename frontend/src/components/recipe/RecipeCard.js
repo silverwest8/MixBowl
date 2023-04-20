@@ -1,14 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FaThumbsUp, FaCommentDots } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
-import recipedummy from "../dummy/recipedummy.json";
 
 const RecipeCard = () => {
+  const [Recipe, setRecipe] = useState([]);
+
+  const GetRecipe = async () => {
+    try {
+      const res = await axios.get("http://localhost:4000/RecipeList");
+      setRecipe(res.data);
+    } catch (error) {
+      return error.message;
+    }
+  };
+
+  useEffect(() => {
+    GetRecipe();
+  }, []);
+
   return (
     <CardBox>
-      {recipedummy.RecipeList.map((index) => (
+      {Recipe.map((index) => (
         <RecipeBox key={index}>
           <img src={index.image_path}></img>
           <h1>{index.name}</h1>
