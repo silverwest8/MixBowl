@@ -5,6 +5,7 @@ import { ThemeProvider as MuiThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "./components/layout/Layout";
 import HomePage from "./pages/HomePage";
+import SamplePage from "./pages/Samplepage";
 import LoginPage from "./pages/LoginPage";
 import RecipePage from "./pages/RecipePage";
 import ToastMessage from "./components/common/ToastMessage";
@@ -37,11 +38,11 @@ function App() {
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="recipe" element={<RecipePage />} />
-                <Route path="community" element={<HomePage />} />
-                <Route path="cocktailbar" element={<HomePage />} />
-                <Route path="mypage" element={<HomePage />} />
+                <Route path="community" element={<SamplePage />} />
+                <Route path="cocktailbar" element={<SamplePage />} />
+                <Route path="mypage" element={<SamplePage />} />
                 <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<HomePage />} />
+                <Route path="register" element={<SamplePage />} />
               </Route>
             </Routes>
           </BrowserRouter>
