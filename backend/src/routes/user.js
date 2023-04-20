@@ -84,7 +84,7 @@ router.put('/nicknamedupcheck', async (req, res) => {
   try {
     const count = await sql.namedupcheck(req);
     if (count !== 0) {
-      return res.send({ success: false });
+      return res.status(409).send({ success: false });
     } else {
       return res.send({ success: true });
     }
@@ -98,7 +98,7 @@ router.put('/emaildupcheck', async (req, res) => {
   try {
     const count = await sql.emaildupcheck(req);
     if (count !== 0) {
-      return res.send({ success: false });
+      return res.status(409).send({ success: false });
     } else {
       return res.send({ success: true });
     }
