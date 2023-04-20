@@ -1,28 +1,33 @@
 import styled from "styled-components";
 import { FaCommentDots, FaThumbsUp } from "react-icons/fa";
+import MemberBadge from "./MemberBadge";
+// import { useEffect } from "react";
 
 const FreeListItem = ({ data }) => {
   console.log("data is ", data);
-  // TODO : 색깔, 뱃지, 크기, 호버, 극단적 경우 처리
+  // TODO : 호버, 글 종류별로 변경
   return (
     <ItemContainer>
       <TopSection>
         <div>
-          <h2>{data.title}</h2>
+          <h4>{data.title}</h4>
         </div>
-        <div>{data.category}</div>
+        <div className="category">{data.category}</div>
       </TopSection>
-      <MainText>{data.maintext}</MainText>
+      <MainText className={data.category === "질문과 답변" ? "question" : ""}>
+        {data.maintext}
+      </MainText>
       <BottomSection>
         <ReactionContainer>
-          <FaThumbsUp className="icon" />
+          <FaThumbsUp className={data.liked ? "icon liked" : "icon"} />
           {data.likes}
           <FaCommentDots className="icon comment" />
           {data.comments}
         </ReactionContainer>
-        <div>
-          {/* {data.date} */}
-          {data.username}
+        <div className="userinfo">
+          {data.date}
+          <span className="username">{data.username}</span>
+          <MemberBadge level={data.userlevel} />
         </div>
       </BottomSection>
     </ItemContainer>
@@ -33,15 +38,22 @@ const ItemContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0.5rem 0;
-  border: 2px solid ${({ theme }) => theme.color.primaryGold};
+  margin: 0.5rem 0 1rem 0;
+  border: 1px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 8px;
-  padding: 0.8rem 0.95rem;
+  padding: 0.8rem 0.2rem;
+  /* width: 50rem; */
   button {
     color: ${({ theme }) => theme.color.primaryGold};
     text-decoration: underline;
-    font-size: 0.875rem;
     flex-shrink: 0;
+  }
+  font-size: 0.875rem;
+  .question {
+    font-weight: bold;
+    font-size: 1rem;
+    -webkit-line-clamp: 2;
+    height: 3.5rem;
   }
 `;
 
@@ -51,6 +63,17 @@ const TopSection = styled.div`
   justify-content: space-between;
   width: 100%;
   padding: 0 1rem;
+  h4 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 35vw;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+  .category {
+    color: ${({ theme }) => theme.color.primaryGold};
+  }
 `;
 const BottomSection = styled.div`
   display: flex;
@@ -58,35 +81,42 @@ const BottomSection = styled.div`
   justify-content: space-between;
   width: 100%;
   padding: 0.2rem 0.9rem;
+  .userinfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .username {
+      margin: 0 0.3rem 0 0.5rem;
+    }
+  }
 `;
 const ReactionContainer = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
   .icon {
-    margin-right: 0.5rem;
+    margin-right: 0.2rem;
+  }
+  .liked {
+    color: ${({ theme }) => theme.color.primaryGold};
   }
   .comment {
-    margin-left: 1.2rem;
+    margin-left: 0.7rem;
   }
 `;
 
 const MainText = styled.div`
-  padding: 2rem;
-`;
-
-const Message = styled.p`
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: 0.75rem;
-  margin: 0.25rem 0 0 0.125rem;
-
-  &.success {
-    color: ${({ theme }) => theme.color.green};
-  }
-  &.error {
-    color: ${({ theme }) => theme.color.red};
-  }
+  padding: 1rem;
+  /* padding-bottom: 2rem; */
+  margin: 0.2rem 0 1rem 0;
+  width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  white-space: no-wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 4rem;
 `;
 
 export default FreeListItem;

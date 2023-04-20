@@ -1,24 +1,26 @@
-const swaggerUi = require("swagger-ui-express")
-const swaggereJsdoc = require("swagger-jsdoc")
+'use strict';
+
+const swaggerUi = require('swagger-ui-express');
+const swaggereJsdoc = require('swagger-jsdoc');
 
 const options = {
   swaggerDefinition: {
-    openapi: "3.0.0",
+    openapi: '3.0.0',
     info: {
-      title: "Mixbowl",
+      title: 'Mixbowl',
       description: "This is Mixbowl's API with swagger",
-      version: "1.0.0",
+      version: '1.0.0',
     },
     servers: [
       {
-        url: "http://localhost:3000", // 요청 URL
-        description: "Development server"
+        url: 'http://localhost:3030', // 요청 URL
+        description: 'Development server',
       },
     ],
   },
-  apis: ['./src/swagger/*', './src/routes/*.js', ]
-}
+  apis: ['./src/swagger/*', './src/routes/*.js'],
+};
 
-const specs = swaggereJsdoc(options)
+const specs = swaggereJsdoc(options);
 
-module.exports = { swaggerUi, specs }
+module.exports = { swaggerUi, specs };

@@ -4,9 +4,9 @@ import styled from "styled-components";
 import { authState } from "../../store/auth";
 
 const AuthButtonBox = () => {
-  const { isLoggined } = useRecoilValue(authState);
+  const { isLoggedin } = useRecoilValue(authState);
   const href = useHref();
-  return isLoggined ? (
+  return isLoggedin ? (
     <ButtonBox>
       <button className={href.includes("mypage") ? "active" : ""}>
         <Link to="mypage">마이페이지</Link>
@@ -33,7 +33,7 @@ const ButtonBox = styled.div`
   & > button {
     padding: 0.3rem 0.5rem;
     border: 2px solid ${({ theme }) => theme.color.primaryGold};
-    border-radius: 12px;
+    border-radius: 0.75rem;
     background-color: transparent;
     flex-shrink: 0;
     font-size: 0.875rem;
