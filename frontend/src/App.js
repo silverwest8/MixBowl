@@ -7,10 +7,13 @@ import Layout from "./components/layout/Layout";
 import HomePage from "./pages/HomePage";
 import SamplePage from "./pages/Samplepage";
 import LoginPage from "./pages/LoginPage";
+import NotLoginRecipePage from "./pages/NotLoginRecipePage";
 import RecipePage from "./pages/RecipePage";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
 import { useStaySignedIn } from "./hooks/useStaySignedIn";
+import LoginRecipeRoute from "./routes/LoginRecipeRoute";
+import NotLoginRecipeRoute from "./routes/NotLoginRecipeRoute.js";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -37,7 +40,15 @@ function App() {
             <Routes>
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
-                <Route path="recipe" element={<RecipePage />} />
+                <Route element={<LoginRecipeRoute />}>
+                  <Route path="recipe" element={<RecipePage />} />
+                </Route>
+                <Route element={<NotLoginRecipeRoute />}>
+                  <Route
+                    path="notloginrecipe"
+                    element={<NotLoginRecipePage />}
+                  />
+                </Route>
                 <Route path="community" element={<SamplePage />} />
                 <Route path="cocktailbar" element={<SamplePage />} />
                 <Route path="mypage" element={<SamplePage />} />

@@ -1,9 +1,9 @@
 import Title from "../components/common/Title";
-import Banner from "../components/common/home/Banner";
-import HomeAnswer from "../components/common/home/HomeAnswer";
-import HomeRecipe from "../components/common/home/HomeRecipe";
-import HomeBar from "../components/common/home/HomeBar";
-import HomeBulletin from "../components/common/home/HomeBulletin";
+import Banner from "../components/home/Banner";
+import HomeAnswer from "../components/home/HomeAnswer";
+import HomeRecipe from "../components/home/HomeRecipe";
+import HomeBar from "../components/home/HomeBar";
+import HomeBulletin from "../components/home/HomeBulletin";
 
 const HomePage = () => {
   return (
