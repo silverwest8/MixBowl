@@ -35,7 +35,9 @@ router.post('/login', async (req, res) => {
 });
 
 //로그아웃
-router.get('/logout', async (req, res) => {});
+router.get('/logout', async (req, res) => {
+  //브라우저 쿠키 삭제
+});
 
 //------- 회원가입---------//
 
