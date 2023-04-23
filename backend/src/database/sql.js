@@ -1,17 +1,17 @@
-import mysql from "mysql2";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import * as jwt_module from "../routes/jwt/jwt-util";
-import USER from "../models/USER";
+import mysql from 'mysql2';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import * as jwt_module from '../routes/jwt/jwt-util';
+import USER from '../models/USER';
 dotenv.config(); //JWT 키불러오기
 
 // pool 을 사용한 이유 -> Connection 계속 유지하므로 부하 적어짐. (병렬 처리 가능)
 const pool = mysql.createPool(
   process.env.JAWSDB_URL ?? {
-    host: "3.34.97.140",
-    user: "mixbowl",
-    database: "Mixbowl",
-    password: "swe302841",
+    host: '3.34.97.140',
+    user: 'mixbowl',
+    database: 'Mixbowl',
+    password: 'swe302841',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
@@ -42,7 +42,7 @@ const sql = {
       const check = await USER.findAndCountAll({
         where: { NICKNAME: `${checkname}` },
       });
-      return check["count"];
+      return check['count'];
     } catch (error) {
       console.log(error.message);
     }
@@ -55,7 +55,7 @@ const sql = {
         where: { EMAIL: `${checkemail}` },
       });
 
-      return check["count"];
+      return check['count'];
     } catch (error) {
       console.log(error.message);
     }
@@ -85,13 +85,13 @@ const sql = {
       const { dataValues } = await USER.findOne({
         where: { email: `${email}`, password: `${password}` },
       });
-      const username = dataValues["NICKNAME"];
+      const username = dataValues['NICKNAME'];
       if (username.length === 0) {
-        console.log("hi");
-        throw new Error("Invalid Info User");
+        console.log('hi');
+        throw new Error('Invalid Info User');
       }
       //UNO 도 같이 포함
-      const accessToken = await jwt_module.sign(username[0]["NICKNAME"]);
+      const accessToken = await jwt_module.sign(username[0]['NICKNAME']);
       const refreshToken = await jwt_module.refresh();
 
       //refresh token sql 업데이트
@@ -101,7 +101,7 @@ const sql = {
       `);
       return {
         code: 200,
-        message: "토큰이 발급되었습니다.",
+        message: '토큰이 발급되었습니다.',
         token: {
           accessToken,
           refreshToken,
