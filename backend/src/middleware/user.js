@@ -4,9 +4,13 @@ const user = {
   signUp: async (req, res) => {
     try {
       const success = await sql.signupUser(req);
-      res.status(200).send({ success: true });
+      if (success) {
+        return res.status(200).send({ success: true });
+      } else {
+        throw new Error();
+      }
     } catch (error) {
-      res.send({ success: false });
+      return res.status(403).send({ success: false });
     }
   },
 };
