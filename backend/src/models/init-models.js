@@ -1,5 +1,7 @@
 import _sequelize from "sequelize";
 const DataTypes = _sequelize.DataTypes;
+import _AUTH_CODE from  "./AUTH_CODE.js";
+import _COLOR from  "./COLOR.js";
 import _POST from  "./POST.js";
 import _POST_LIKE from  "./POST_LIKE.js";
 import _POST_REPL from  "./POST_REPL.js";
@@ -8,6 +10,8 @@ import _RECIPE_LIKE from  "./RECIPE_LIKE.js";
 import _USER from  "./USER.js";
 
 export default function initModels(sequelize) {
+  const AUTH_CODE = _AUTH_CODE.init(sequelize, DataTypes);
+  const COLOR = _COLOR.init(sequelize, DataTypes);
   const POST = _POST.init(sequelize, DataTypes);
   const POST_LIKE = _POST_LIKE.init(sequelize, DataTypes);
   const POST_REPL = _POST_REPL.init(sequelize, DataTypes);
@@ -19,10 +23,10 @@ export default function initModels(sequelize) {
   POST.hasMany(POST_LIKE, { as: "POST_LIKEs", foreignKey: "PNO"});
   POST_REPL.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
   POST.hasMany(POST_REPL, { as: "POST_REPLs", foreignKey: "PNO"});
+  COLOR.belongsTo(RECIPE, { as: "RNO_RECIPE", foreignKey: "RNO"});
+  RECIPE.hasMany(COLOR, { as: "COLORs", foreignKey: "RNO"});
   POST.belongsTo(RECIPE, { as: "RNO_RECIPE", foreignKey: "RNO"});
   RECIPE.hasMany(POST, { as: "POSTs", foreignKey: "RNO"});
-  RECIPE_LIKE.belongsTo(RECIPE, { as: "RNO_RECIPE", foreignKey: "RNO"});
-  RECIPE.hasMany(RECIPE_LIKE, { as: "RECIPE_LIKEs", foreignKey: "RNO"});
   POST.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(POST, { as: "POSTs", foreignKey: "UNO"});
   POST_LIKE.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
@@ -35,6 +39,8 @@ export default function initModels(sequelize) {
   USER.hasMany(RECIPE_LIKE, { as: "RECIPE_LIKEs", foreignKey: "UNO"});
 
   return {
+    AUTH_CODE,
+    COLOR,
     POST,
     POST_LIKE,
     POST_REPL,
