@@ -1,47 +1,43 @@
-import * as user from './user.js';
-import mysql from 'mysql2';
-import dotenv from 'dotenv';
-dotenv.config(); //JWT 키불러오기
+jest.mock('../database/sql.js');
+import sql from '../database/sql.js';
+import * as userTest from './user.js';
+import userUtil from '../middleware/user.js';
+// import mysql from 'mysql2';
 
-// pool 을 사용한 이유 -> Connection 계속 유지하므로 부하 적어짐. (병렬 처리 가능)
-const pool = mysql.createPool(
-  process.env.JAWSDB_URL ?? {
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: 'a1573289',
-    database: 'test_db',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-  }
-);
+describe('회원가입 체크', () => {
+  const req = {
+    nickname: 'testNickname',
+    email: 'testcode@gmail.com',
+    password: 'a12345678',
+  };
+  const res = {
+    status: jest.fn(() => res), //체이닝 하므로 자기자신
+    send: jest.fn(),
+  };
 
-const nickname = console.log(sql.test());
-// 테스트용 DB 연걸할것
-test('test db 연동 확인', () => {
-  expect(
-    promisePool
-      .query(
-        `
-    SELECT NICKNAME FROM USER
-  ;`
-      )
-      .toEqual(['test'])
-  );
+  //테스트 분기 1
+  test('회원 가입 성공', async () => {
+    // User 정보 create return값 강제 지정
+    sql.signupUser.mockReturnValue(Promise.resolve());
+    await userUtil.signUp(req, res);
+    expect(res.send).toBeCalledWith({ success: true });
+  });
 });
+
+// 테스트용 DB 연걸할것
+
 test('비밀번호의 유효성 체크 검사 1 - 숫자로만 이루어짐', () => {
-  expect(user.checkPassword('12345678')).toEqual(false);
+  expect(userTest.checkPassword('12345678')).toEqual(false);
 });
 
 test('비밀번호의 유효성 체크 검사 2 - 영어로만 이루어짐', () => {
-  expect(user.checkPassword('Aafaefee')).toEqual(false);
+  expect(userTest.checkPassword('Aafaefee')).toEqual(false);
 });
 
 test('비밀번호의 유효성 체크 검사 3 - 8~16자', () => {
-  expect(user.checkPassword('12345')).toEqual(false);
+  expect(userTest.checkPassword('12345')).toEqual(false);
 });
 
 test('비밀번호의 유효성 체크 검사 4 - 성공', () => {
-  expect(user.checkPassword('12345678a')).toEqual(true);
+  expect(userTest.checkPassword('12345678a')).toEqual(true);
 });

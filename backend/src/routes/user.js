@@ -2,6 +2,7 @@
 
 import express from 'express';
 import sql from '../database/sql';
+import userUtil from '../middleware/user';
 import checkAccess from '../middleware/checkAccessToken';
 import { refresh_new } from './jwt/jwt-util';
 import AUTH_CODE from '../models/AUTH_CODE';
@@ -70,14 +71,7 @@ router.post('/logout', async (req, res) => {
 //------- 회원가입---------//
 
 //회원 가입
-router.post('/signup', async (req, res) => {
-  try {
-    await sql.signupUser(req);
-    res.status(200).send({ success: true });
-  } catch (error) {
-    res.send({ success: false });
-  }
-});
+router.post('/signup', userUtil.signUp);
 
 //닉네임 중복 체크
 router.put('/nicknamedupcheck', async (req, res) => {

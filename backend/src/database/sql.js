@@ -43,7 +43,7 @@ const sql = {
       const check = await USER.findAndCountAll({
         where: { NICKNAME: `${checkname}` },
       });
-      return check["count"];
+      return check['count'];
     } catch (error) {
       console.log(error.message);
     }
@@ -56,7 +56,7 @@ const sql = {
         where: { EMAIL: `${checkemail}` },
       });
 
-      return check["count"];
+      return check['count'];
     } catch (error) {
       console.log(error.message);
     }
@@ -86,14 +86,14 @@ const sql = {
       const { dataValues } = await USER.findOne({
         where: { email: `${email}`, password: `${password}` },
       });
-      const username = dataValues["NICKNAME"];
+      const username = dataValues['NICKNAME'];
       if (username.length === 0) {
         console.log('hi');
         throw new Error('Invalid Info User');
       }
 
       //UNO 도 같이 포함
-      const accessToken = await jwt_module.sign(username[0]["NICKNAME"]);
+      const accessToken = await jwt_module.sign(username[0]['NICKNAME']);
       const refreshToken = await jwt_module.refresh();
 
       //refresh token sql 업데이트
