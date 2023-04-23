@@ -3,10 +3,22 @@
 import express from 'express';
 import sql from '../database/sql';
 import checkAccess from '../middleware/checkAccessToken';
-import checkRefresh from '../middleware/checkRefreshToken';
 import { refresh_new } from './jwt/jwt-util';
-import USER from '../models/USER';
+import AUTH_CODE from '../models/AUTH_CODE';
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+dotenv.config();
+
 const router = express.Router();
+const smtpTransport = nodemailer.createTransport({
+  service: 'naver',
+	host: 'smtp.naver.com',  // SMTP 서버명
+	port: 465,  // SMTP 포트
+	auth: {
+		user: process.env.NODEMAILER_USER,  // 네이버 아이디
+		pass: process.env.NODEMAILER_PASS,  // 네이버 비밀번호
+	},
+});
 
 //---- 연동확인
 router.get('/', async (req, res) => {
@@ -98,10 +110,59 @@ router.put('/emaildupcheck', async (req, res) => {
 });
 
 // 이메일 인증메일 보내기
-router.post('/sendauthmail', async (req, res) => {});
+router.post('/sendauthmail', async (req, res) => {
+  try {
+    const authNum = Math.random().toString().slice(2, 7);
+    await AUTH_CODE.create({ EMAIL: req.body.email, AUTH_CODE: authNum });
+
+    //인증번호 보내기
+    const mailOptions = {
+      from: 'Cocktell <cocktell@naver.com>',
+      to: req.body.email,
+      subject: 'Cocktell 이메일 인증',
+      text: `아래 인증번호를 확인하여 이메일 주소 인증을 완료해 주세요.\n
+      인증번호 [ ${authNum} ]`,
+    };
+    smtpTransport.sendMail(mailOptions, (error, responses) => {
+      if (error) {
+        return res.status(400).json({
+          sucess: false,
+          message: '인증번호메일 발송 실패',
+          error,
+        });
+      }
+      smtpTransport.close();
+      return res.json({ success: true, message: '인증메일이 발송되었습니다.' });
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: '인증번호메일 발송에 실패하였습니다.',
+      error,
+    });
+  }
+});
 
 //인증번호 확인
-router.put('/checkauth', async (req, res) => {});
+router.put('/checkauth', async (req, res) => {
+  try {
+    const check = await AUTH_CODE.findOne({ where: { EMAIL: req.body.email } });
+    if (!check) {
+      return res.status(200).json({ success: false, message: "이메일 인증을 다시 시도해주세요." });
+    }
+    else if (check.CODE === req.body.authNum) {
+      return res.status(200).json({ success: true, message: "이메일 인증에 성공하였습니다." });
+    } else {
+      return res.status(200).json({ success: false, message: "인증번호가 틀렸습니다." });
+    }
+} catch (error) {
+  return res.status(400).json({
+    success: false,
+    message: '이메일 인증에 실패하였습니다.',
+    error,
+  });
+}
+});
 
 //회원 정보 수정
 router.put('/update', checkAccess, async (req, res) => {

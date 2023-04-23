@@ -61,6 +61,9 @@ components:
       properties:
         email:
           type: string
+          example: john@email.com
+        code:
+          type: string
           example: 12345
     DupCheck:
       type: object
@@ -92,6 +95,31 @@ components:
         message:
           type: string
           example: "baronnwer == true => 인증 완료"
+    Recipe:
+      type: object
+      properties:
+        Name:
+          type: string
+          example: "Old Fashioned"
+        ImagePath:
+          type: string
+        Nickname:
+          type: string
+          example: "nickname"
+        Like:
+          type: integer
+          example: "10"
+        Comment:
+          type: integer
+          example: "5"
+    RecipeFilter:
+      type: object
+      properties:
+        ABV:
+          type: integer
+        Color:
+          type: integer
+          example: "1"
 
     Tag:
       type: object
