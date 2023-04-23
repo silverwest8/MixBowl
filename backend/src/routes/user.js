@@ -10,6 +10,7 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 dotenv.config();
 
+import * as validation from '../validation/user';
 const router = express.Router();
 const smtpTransport = nodemailer.createTransport({
   service: 'naver',
@@ -36,8 +37,7 @@ router.post('/login', async (req, res) => {
       throw new Error();
     }
     const { email } = req.body;
-    //이메일 유효성 검사 함수 정의 필요
-    if (email.length === 0) {
+    if (validation.checkEmail(email) === false) {
       throw new Error();
     }
     return res.status(200).send({
@@ -91,7 +91,7 @@ router.put('/nicknamedupcheck', async (req, res) => {
 router.put('/emaildupcheck', async (req, res) => {
   try {
     const count = await sql.emaildupcheck(req);
-    if (count !== 0) {
+    if (count !== 0 || !validation.checkEmail(req.body['checkemail'])) {
       return res.status(409).send({ success: false });
     } else {
       return res.send({ success: true });
