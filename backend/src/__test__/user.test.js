@@ -2,7 +2,6 @@ jest.mock('../database/sql.js');
 import sql from '../database/sql.js';
 import * as userTest from '../validation/user.js';
 import userUtil from '../middleware/user.js';
-// import mysql from 'mysql2';
 
 describe('회원가입 체크', () => {
   const res = {

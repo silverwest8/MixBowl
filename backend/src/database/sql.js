@@ -79,27 +79,26 @@ const sql = {
   loginUser: async (req) => {
     const { email, password } = req.body;
     try {
-      // const [username] = await promisePool.query(`
-      // SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
-      // `);
       const { dataValues } = await USER.findOne({
+        attributes: {
+          exclude: ['createdAt', 'updatedAt'],
+        },
         where: { email: `${email}`, password: `${password}` },
       });
-      const username = dataValues['NICKNAME'];
-      if (username.length === 0) {
-        console.log('hi');
+      const unum = dataValues['UNO'];
+      if (!(unum > 0)) {
         throw new Error('Invalid Info User');
       }
 
       //UNO 도 같이 포함
-      const accessToken = await jwt_module.sign(username[0]['NICKNAME']);
+      const accessToken = await jwt_module.sign(unum);
       const refreshToken = await jwt_module.refresh();
 
       //refresh token sql 업데이트
       //일단 냅둘게요 (아마 안쓸듯)
-      await promisePool.query(`
-        UPDATE USER SET TOKEN = '${refreshToken}' WHERE NICKNAME = '${username}';
-      `);
+      // await promisePool.query(`
+      //   UPDATE USER SET TOKEN = '${refreshToken}' WHERE NICKNAME = '${username}';
+      // `);
       return {
         code: 200,
         message: '토큰이 발급되었습니다.',
