@@ -213,12 +213,12 @@ router.get('/refresh', refresh_new);
 // JWT access 토큰 체크 라우터 (디버깅용)
 router.get('/check/access', checkAccess, (req, res) => {
   console.log(req.decoded);
-  const nickname = req.decoded.nickname;
+  const uno = req.decoded.unum;
   return res.status(200).json({
     code: 200,
     message: '유효한 토큰입니다.',
     data: {
-      nickname: nickname,
+      uno: uno,
     },
   });
 });
