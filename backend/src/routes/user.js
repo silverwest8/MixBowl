@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
       tokens,
     });
   } catch (error) {
-    return res.send({ success: false });
+    return res.status(400).send({ success: false });
   }
 });
 

@@ -31,7 +31,7 @@ export default class REVIEW extends Model {
       allowNull: false
     },
     RATING: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: false
     }
   }, {

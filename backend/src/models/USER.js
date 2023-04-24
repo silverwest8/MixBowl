@@ -35,7 +35,7 @@ export default class USER extends Model {
   }, {
     sequelize,
     tableName: 'USER',
-    timestamps: true,
+    timestamps: false,
     indexes: [
       {
         name: "PRIMARY",

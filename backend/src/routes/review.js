@@ -17,7 +17,8 @@ router.get('/', async (req, res) => {
   res.send('review');
 });
 
-router.get('/getList', async (req, res) => {
+router.get('/getList', checkAccess, async (req, res) => {
+  console.log('here');
   const data = {
     total_cnt: 0,
     place_list: [],
@@ -79,7 +80,7 @@ router.get('/getList', async (req, res) => {
             },
             where: { PLACE_ID: element.id },
             limit: 2,
-            order: [['CREATED_AT', 'DESC']],
+            order: [['createdAt', 'DESC']],
           });
           let temp = {
             kakao_data: element,
@@ -108,10 +109,39 @@ router.get('/getList', async (req, res) => {
   }
 });
 
-router.get('/getList', async (req, res) => {});
+router.get('/getBar/{id}', checkAccess, async (req, res) => {
+  // {
+  //   // id, place_name, address_name, 위경도 좌표
+  //   "total_rate": 4.0, // 평균 평점
+  // }
+  return res
+    .status(200)
+    .json({ success: true, message: '칵테일 바 단건 조회 성공' });
+});
+
+router.get('/getReview/{id}', checkAccess, async (req, res) => {
+  // {
+  //   "total_cnt": 1,
+  //   "keywords": [ "", "", "" ] // 많은 순
+  //   "list": [
+  //     // 최신순 / 유저 정보 (닉네임, 등급), 리뷰 내용 및 이미지, 작성 날짜, 로그인한 유저가 작성했는지 여부
+  //   ]
+  // }
+  return res
+    .status(200)
+    .json({ success: true, message: '칵테일 바 단건 조회 성공' });
+});
 
 router.post('/create', checkAccess, async (req, res) => {
-  res.send(users);
+  return res.status(200).json({ success: true, message: '리뷰 작성 성공' });
+});
+
+router.put('/update', checkAccess, async (req, res) => {
+  return res.status(200).json({ success: true, message: '리뷰 수정 성공' });
+});
+
+router.delete('/delete', checkAccess, async (req, res) => {
+  return res.status(200).json({ success: true, message: '리뷰 삭제F 성공' });
 });
 
 export default router;

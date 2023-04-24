@@ -2,6 +2,7 @@ import _sequelize from "sequelize";
 const DataTypes = _sequelize.DataTypes;
 import _AUTH_CODE from  "./AUTH_CODE.js";
 import _COLOR from  "./COLOR.js";
+import _IMAGE from  "./IMAGE.js";
 import _KEYWORD from  "./KEYWORD.js";
 import _PLACE from  "./PLACE.js";
 import _POST from  "./POST.js";
@@ -15,6 +16,7 @@ import _USER from  "./USER.js";
 export default function initModels(sequelize) {
   const AUTH_CODE = _AUTH_CODE.init(sequelize, DataTypes);
   const COLOR = _COLOR.init(sequelize, DataTypes);
+  const IMAGE = _IMAGE.init(sequelize, DataTypes);
   const KEYWORD = _KEYWORD.init(sequelize, DataTypes);
   const PLACE = _PLACE.init(sequelize, DataTypes);
   const POST = _POST.init(sequelize, DataTypes);
@@ -35,6 +37,8 @@ export default function initModels(sequelize) {
   RECIPE.hasMany(COLOR, { as: "COLORs", foreignKey: "RNO"});
   POST.belongsTo(RECIPE, { as: "RNO_RECIPE", foreignKey: "RNO"});
   RECIPE.hasMany(POST, { as: "POSTs", foreignKey: "RNO"});
+  IMAGE.belongsTo(REVIEW, { as: "REVIEW", foreignKey: "REVIEW_ID"});
+  REVIEW.hasMany(IMAGE, { as: "IMAGEs", foreignKey: "REVIEW_ID"});
   POST.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(POST, { as: "POSTs", foreignKey: "UNO"});
   POST_LIKE.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
@@ -51,6 +55,7 @@ export default function initModels(sequelize) {
   return {
     AUTH_CODE,
     COLOR,
+    IMAGE,
     KEYWORD,
     PLACE,
     POST,
