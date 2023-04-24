@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import sql from '../../database/sql';
 dotenv.config();
 
-export function sign (username) {
+export function sign(username) {
   // Access 토큰 생성 코드
   const payload = {
     type: 'JWT',
@@ -16,7 +16,7 @@ export function sign (username) {
   });
 }
 
-export function accessVerify (token) {
+export function accessVerify(token) {
   //Access 토큰 확인 코드
   let decoded = null;
   try {
@@ -33,7 +33,7 @@ export function accessVerify (token) {
   }
 }
 
-export function refresh () {
+export function refresh() {
   // Refresh 토큰 생성 코드
   return jwt.sign({}, process.env.SECRET_KEY, {
     expiresIn: '14d',
@@ -42,7 +42,7 @@ export function refresh () {
 }
 
 //토큰 header에 주고, db 내 refresh 토큰으로 확인
-export async function refreshVerify (token, username) {
+export async function refreshVerify(token, username) {
   //Refresh 토큰 확인 코드
   //redis 도입하면 좋을듯
   try {
@@ -76,49 +76,29 @@ export const refresh_new = async (req, res) => {
         ok: false,
         message: 'No Authorization for Access Token',
       });
-    }
-    else {
+    } else {
       const refreshResult = refreshVerify(refresh, decodeAccess.nickname);
 
-<<<<<<< HEAD
-    const refreshResult = refreshVerify(refresh, decodeAccess.nickname);
-
-    if (accessResult.ok === false && accessResult.message === 'jwt expired') {
-      if (refreshResult.ok === false) {
-        res.status(401).send({
-          ok: false,
-          message: 'No Authorization, MAKE A NEW LOGIN',
-        });
-=======
-      if (accessResult.ok === false && accessResult.message === "jwt expired") {
+      if (accessResult.ok === false && accessResult.message === 'jwt expired') {
         if (refreshResult.ok === false) {
           res.status(401).send({
             ok: false,
-            message: "No Authorization, MAKE A NEW LOGIN",
+            message: 'No Authorization, MAKE A NEW LOGIN',
           });
         } else {
           //refresh token이 유효하므로, 새로운 access token 발급
           const newAccessToken = sign(req.body.nickname);
           res.status(200).send({
             ok: true,
-            accessToken: newAccessToken
+            accessToken: newAccessToken,
           });
         }
->>>>>>> backend-jwt
       } else {
         res.status(400).send({
           ok: false,
-          message: "Access Token is not expired",
+          message: 'Access Token is not expired',
         });
       }
-<<<<<<< HEAD
-    } else {
-      res.status(400).send({
-        ok: false,
-        message: 'Access Token is not expired',
-      });
-=======
->>>>>>> backend-jwt
     }
   } else {
     res.status(400).send({
