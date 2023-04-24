@@ -10,7 +10,6 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import * as validation from '../validation/user';
 const router = express.Router();
 const smtpTransport = nodemailer.createTransport({
   service: 'naver',
