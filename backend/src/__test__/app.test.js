@@ -26,7 +26,7 @@ describe('회원가입 체크', () => {
       check = false;
     }
     if (check) {
-      sql.signupUser.mockReturnValue(Promise.resolve());
+      sql.signupUser.mockReturnValue(true);
       await userUtil.signUp(req, res);
       expect(res.send).toBeCalledWith({ success: true });
     }
@@ -46,7 +46,7 @@ describe('회원가입 체크', () => {
       check = false;
     }
     if (!check) {
-      sql.signupUser.mockReturnValue(Promise.reject());
+      sql.signupUser.mockReturnValue(false);
       await userUtil.signUp(req, res);
       expect(res.send).toBeCalledWith({ success: false });
     }
