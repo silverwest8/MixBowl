@@ -25,7 +25,6 @@ const smtpTransport = nodemailer.createTransport({
 //---- 연동확인
 router.get('/', async (req, res) => {
   const users = await sql.getUser();
-  console.log(users);
   res.send(users);
 });
 
@@ -160,8 +159,6 @@ router.put('/checkauth', async (req, res) => {
 router.put('/update', checkAccess, async (req, res) => {
   try {
     const newNickname = req.body.nickname;
-    console.log(newNickname);
-    console.log(req.user);
     req.user.update({ NICKNAME: newNickname });
     return res.status(200).json({ success: true, message: '닉네임 수정 성공' });
   } catch (error) {
@@ -218,7 +215,6 @@ router.get('/refresh', refresh_new);
 
 // JWT access 토큰 체크 라우터 (디버깅용)
 router.get('/check/access', checkAccess, (req, res) => {
-  console.log(req.decoded);
   const nickname = req.decoded.nickname;
   return res.status(200).json({
     code: 200,

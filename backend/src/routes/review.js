@@ -7,7 +7,7 @@ import PLACE from '../models/PLACE';
 import REVIEW from '../models/REVIEW';
 import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
-import { logger } from '../winston/winston';
+import { logger } from '../../winston/winston';
 
 dotenv.config();
 const router = express.Router();
@@ -81,7 +81,6 @@ router.get('/getList', async (req, res) => {
             limit: 2,
             order: [['CREATED_AT', 'DESC']],
           });
-          console.log(reviewList);
           let temp = {
             kakao_data: element,
             total_rate: 5,
@@ -102,7 +101,7 @@ router.get('/getList', async (req, res) => {
       .status(200)
       .json({ success: true, message: 'KAKAO API 조회 성공', data: data });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'KAKAO API 조회 실패', error });
@@ -112,8 +111,6 @@ router.get('/getList', async (req, res) => {
 router.get('/getList', async (req, res) => {});
 
 router.post('/create', checkAccess, async (req, res) => {
-  console.log(req.body);
-  console.log(req.user);
   res.send(users);
 });
 
