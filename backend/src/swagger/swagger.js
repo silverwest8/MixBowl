@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 'use strict';
 
 const swaggerUi = require('swagger-ui-express');
 const swaggereJsdoc = require('swagger-jsdoc');
+=======
+const swaggerUi = require("swagger-ui-express");
+const swaggereJsdoc = require("swagger-jsdoc");
+>>>>>>> backend-jwt
 
 const options = {
   swaggerDefinition: {
@@ -13,12 +18,21 @@ const options = {
     },
     servers: [
       {
+<<<<<<< HEAD
         url: 'http://localhost:3030', // 요청 URL
         description: 'Development server',
       },
     ],
   },
   apis: ['./src/swagger/*', './src/routes/*.js'],
+=======
+        url: "http://localhost:3030", // 요청 URL
+        description: "Development server",
+      },
+    ],
+  },
+  apis: ["./src/swagger/*", "./src/routes/*.js"], //swagger 파일들과 Express Router 파일 연동
+>>>>>>> backend-jwt
 };
 
 const specs = swaggereJsdoc(options);

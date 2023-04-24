@@ -12,12 +12,12 @@ dotenv.config();
 const router = express.Router();
 const smtpTransport = nodemailer.createTransport({
   service: 'naver',
-	host: 'smtp.naver.com',  // SMTP 서버명
-	port: 465,  // SMTP 포트
-	auth: {
-		user: process.env.NODEMAILER_USER,  // 네이버 아이디
-		pass: process.env.NODEMAILER_PASS,  // 네이버 비밀번호
-	},
+  host: 'smtp.naver.com', // SMTP 서버명
+  port: 465, // SMTP 포트
+  auth: {
+    user: process.env.NODEMAILER_USER, // 네이버 아이디
+    pass: process.env.NODEMAILER_PASS, // 네이버 비밀번호
+  },
 });
 
 //---- 연동확인
@@ -50,22 +50,7 @@ router.post('/login', async (req, res) => {
 });
 
 //로그아웃
-router.post('/logout', async (req, res) => {
-  const tokens = await sql.loginUser(req, res);
-  try {
-    const { nickname } = req.body;
-    if (nickname.length === 0) {
-      throw new Error();
-    }
-    return res.status(200).send({
-      success: true,
-      // nickname: nickname[0]["NICKNAME"],
-      tokens,
-    });
-  } catch (error) {
-    return res.send({ success: false });
-  }
-});
+router.get('/logout', async (req, res) => {});
 
 //------- 회원가입---------//
 
@@ -82,10 +67,9 @@ router.post('/signup', async (req, res) => {
 //닉네임 중복 체크
 router.put('/nicknamedupcheck', async (req, res) => {
   try {
-    const [check] = await sql.namedupcheck(req);
-    const check_valid = check[0]['CHECK'];
-    if (check_valid === 1) {
-      return res.send({ success: false });
+    const count = await sql.namedupcheck(req);
+    if (count !== 0) {
+      return res.status(409).send({ success: false });
     } else {
       return res.send({ success: true });
     }
@@ -97,10 +81,9 @@ router.put('/nicknamedupcheck', async (req, res) => {
 //이메일 중복 체크
 router.put('/emaildupcheck', async (req, res) => {
   try {
-    const [check] = await sql.emaildupcheck(req);
-    const check_valid = check[0]['CHECK'];
-    if (check_valid === 1) {
-      return res.send({ success: false });
+    const count = await sql.emaildupcheck(req);
+    if (count !== 0) {
+      return res.status(409).send({ success: false });
     } else {
       return res.send({ success: true });
     }
@@ -148,20 +131,25 @@ router.put('/checkauth', async (req, res) => {
   try {
     const check = await AUTH_CODE.findOne({ where: { EMAIL: req.body.email } });
     if (!check) {
-      return res.status(200).json({ success: false, message: "이메일 인증을 다시 시도해주세요." });
-    }
-    else if (check.CODE === req.body.authNum) {
-      return res.status(200).json({ success: true, message: "이메일 인증에 성공하였습니다." });
+      return res
+        .status(200)
+        .json({ success: false, message: '이메일 인증을 다시 시도해주세요.' });
+    } else if (check.CODE === req.body.authNum) {
+      return res
+        .status(200)
+        .json({ success: true, message: '이메일 인증에 성공하였습니다.' });
     } else {
-      return res.status(200).json({ success: false, message: "인증번호가 틀렸습니다." });
+      return res
+        .status(200)
+        .json({ success: false, message: '인증번호가 틀렸습니다.' });
     }
-} catch (error) {
-  return res.status(400).json({
-    success: false,
-    message: '이메일 인증에 실패하였습니다.',
-    error,
-  });
-}
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: '이메일 인증에 실패하였습니다.',
+      error,
+    });
+  }
 });
 
 //회원 정보 수정
