@@ -11,7 +11,7 @@ components:
           type: boolean
         message:
           type: string
-          example: "Operation success"
+          example: 'Operation success'
     Fail:
       type: object
       properties:
@@ -20,7 +20,7 @@ components:
           example: false
         message:
           type: string
-          example: "Operation Fail"
+          example: 'Operation Fail'
         error:
           type: object
     User:
@@ -31,7 +31,7 @@ components:
           example: john@email.com
         password:
           type: string
-          example: "12345"
+          example: '12345'
     Signup:
       type: object
       properties:
@@ -43,7 +43,7 @@ components:
           example: mynickname
         password:
           type: string
-          example: "12345"
+          example: '12345'
     Nickname:
       type: object
       properties:
@@ -98,7 +98,7 @@ components:
           type: boolean
         message:
           type: string
-          example: "bartender == true => 인증 완료"
+          example: 'bartender == true => 인증 완료'
     BarOwnerCheck:
       type: object
       properties:
@@ -108,24 +108,24 @@ components:
           type: boolean
         message:
           type: string
-          example: "baronnwer == true => 인증 완료"
+          example: 'baronnwer == true => 인증 완료'
     Recipe:
       type: object
       properties:
         Name:
           type: string
-          example: "Old Fashioned"
+          example: 'Old Fashioned'
         ImagePath:
           type: string
         Nickname:
           type: string
-          example: "nickname"
+          example: 'nickname'
         Like:
           type: integer
-          example: "10"
+          example: '10'
         Comment:
           type: integer
-          example: "5"
+          example: '5'
     RecipeFilter:
       type: object
       properties:
@@ -133,7 +133,7 @@ components:
           type: integer
         Color:
           type: integer
-          example: "1"
+          example: '1'
 
     Tag:
       type: object
@@ -159,7 +159,7 @@ components:
           type: string
           example: doggie
         category:
-          $ref: "#/components/schemas/User"
+          $ref: '#/components/schemas/User'
         photoUrls:
           type: array
           xml:
@@ -173,7 +173,7 @@ components:
           xml:
             wrapped: true
           items:
-            $ref: "#/components/schemas/Tag"
+            $ref: '#/components/schemas/Tag'
         status:
           type: string
           description: pet status in the store
@@ -194,17 +194,17 @@ components:
         message:
           type: string
       xml:
-        name: "##default"
+        name: '##default'
   requestBodies:
     Pet:
       description: Pet object that needs to be added to the store
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Pet"
+            $ref: '#/components/schemas/Pet'
         application/xml:
           schema:
-            $ref: "#/components/schemas/Pet"
+            $ref: '#/components/schemas/Pet'
     UserArray:
       description: List of user object
       content:
@@ -212,4 +212,4 @@ components:
           schema:
             type: array
             items:
-              $ref: "#/components/schemas/User"
+              $ref: '#/components/schemas/User'
