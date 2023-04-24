@@ -1,5 +1,3 @@
-'use strict';
-
 import mysql from 'mysql2';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
@@ -64,7 +62,6 @@ const sql = {
   },
   signupUser: async (req) => {
     const { nickname, email, password } = req.body; //regitserInfo에는 Nickname, Email, Password 가 포함되어야 함.
-    //-- 토큰 빠져 있음 -> 임의 추가 했어요. + ORM으로 바꾸어도 상관없어요
     console.log(nickname, email, password);
     try {
       await USER.create({
@@ -73,6 +70,7 @@ const sql = {
         EMAIL: `${email}`,
         LEVEL: 1,
       });
+      return true;
     } catch (error) {
       console.log(error.message);
     }

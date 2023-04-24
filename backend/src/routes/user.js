@@ -2,11 +2,15 @@
 
 import express from 'express';
 import sql from '../database/sql';
+import userUtil from '../middleware/user';
 import checkAccess from '../middleware/checkAccessToken';
 import { refresh_new } from './jwt/jwt-util';
 import AUTH_CODE from '../models/AUTH_CODE';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import * as validation from '../validation/user';
+import USER from '../models/USER';
+
 dotenv.config();
 
 const router = express.Router();
@@ -35,8 +39,7 @@ router.post('/login', async (req, res) => {
       throw new Error();
     }
     const { email } = req.body;
-    //이메일 유효성 검사 함수 정의 필요
-    if (email.length === 0) {
+    if (validation.checkEmail(email) === false) {
       throw new Error();
     }
     return res.status(200).send({
@@ -50,19 +53,14 @@ router.post('/login', async (req, res) => {
 });
 
 //로그아웃
-router.get('/logout', async (req, res) => {});
+router.get('/logout', async (req, res) => {
+  //브라우저 쿠키 삭제
+});
 
 //------- 회원가입---------//
 
 //회원 가입
-router.post('/signup', async (req, res) => {
-  try {
-    await sql.signupUser(req);
-    res.status(200).send({ success: true });
-  } catch (error) {
-    res.send({ success: false });
-  }
-});
+router.post('/signup', userUtil.signUp);
 
 //닉네임 중복 체크
 router.put('/nicknamedupcheck', async (req, res) => {
@@ -82,7 +80,7 @@ router.put('/nicknamedupcheck', async (req, res) => {
 router.put('/emaildupcheck', async (req, res) => {
   try {
     const count = await sql.emaildupcheck(req);
-    if (count !== 0) {
+    if (count !== 0 || !validation.checkEmail(req.body['checkemail'])) {
       return res.status(409).send({ success: false });
     } else {
       return res.send({ success: true });
