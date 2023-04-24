@@ -13,7 +13,7 @@ export default async (req, res, next) => {
     //req.headers.authorization = access Token일 경우
     req.decoded = jwt.verify(req.headers.authorization, process.env.SECRET_KEY);
     const user = await USER.findOne({
-      where: { token: req.headers.refresh_token },
+      where: { token: req.decoded.UNO },
     });
     req.user = user;
     return next();
