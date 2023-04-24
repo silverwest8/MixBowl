@@ -1,13 +1,10 @@
 import styled from "styled-components";
 import SearchBar from "../common/SearchBar";
 
-const RecipeSearch = () => {
+const RecipeSearch = (props) => {
   return (
     <SearchBox>
-      <SearchBar
-        placholder="로그인 이후 검색이 가능합니다!"
-        showSearchButton={true}
-      />
+      <SearchBar placholder={props.placholder} showSearchButton={true} />
     </SearchBox>
   );
 };
@@ -17,6 +14,12 @@ const SearchBox = styled.div`
   margin-top: 40px;
   width: 40.25rem;
   heighgt: 2.875rem;
+  @media screen and (max-width: 1024px) {
+    width: 35.25rem;
+  }
+  @media screen and (max-width: 720px) {
+    width: 30.25rem;
+  }
 `;
 
 export default RecipeSearch;

@@ -61,11 +61,11 @@ const CardBox = styled.div`
   gap: 2rem;
   margin: 2rem;
   justify-items: center;
-  @media screen and (max-width: 1024px) {
+  @media screen and (max-width: 1280px) {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
   }
-  @media screen and (max-width: 720px) {
+  @media screen and (max-width: 1024px) {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
@@ -89,7 +89,7 @@ const RecipeBox = styled.div`
   .ThumbsUp {
     display: flex;
     color: ${({ theme }) => theme.color.primaryGold};
-    margin-left: 3rem;
+    margin-left: 8rem;
   }
   .Comment {
     display: flex;
