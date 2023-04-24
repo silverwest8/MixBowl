@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config(); //JWT 키불러오기
 import USER from '../models/USER';
+import { logger } from '../../winston/winston';
 
 //인증 필요한 expree router에 적용할 미들웨어를 작성한 함수
 
@@ -12,10 +13,12 @@ export default async (req, res, next) => {
   try {
     //req.headers.authorization = access Token일 경우
     req.decoded = jwt.verify(req.headers.authorization, process.env.SECRET_KEY);
-    // const user = await USER.findOne({
-    //   where: { token: req.decoded.UNO },
-    // });
-    // req.user = user;
+    console.log(req.decoded);
+    const user = await USER.findOne({
+      where: { token: req.decoded.unum },
+    });
+    req.user = user;
+    logger.info(user);
     return next();
   } catch (error) {
     //유효시간 만료
@@ -36,3 +39,4 @@ export default async (req, res, next) => {
     }
   }
 };
+

@@ -5,31 +5,15 @@ import * as jwt_module from '../routes/jwt/jwt-util';
 import USER from '../models/USER';
 dotenv.config(); //JWT 키불러오기
 
-// pool 을 사용한 이유 -> Connection 계속 유지하므로 부하 적어짐. (병렬 처리 가능)
-const pool = mysql.createPool(
-  process.env.JAWSDB_URL ?? {
-    host: '3.34.97.140',
-    user: 'mixbowl',
-    database: 'Mixbowl',
-    password: 'swe302841',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-  }
-);
-const promisePool = pool.promise();
-
 const sql = {
   getUser: async () => {
-    const [rows] = await promisePool.query(`
-      SELECT * FROM USER
-    `);
-    return rows;
+    const user = await USER.findAll();
+    return user;
   },
 
   //refresh token 조회
   //안쓸듯
-  getToken: async (username) => {
+  getToken: async username => {
     const reToken = await promisePool.query(`
       SELECT TOKEN FROM USER WHERE '${username}' = NICKNAME;
     `);
@@ -40,7 +24,7 @@ const sql = {
     const { checkname } = req.body;
     try {
       const check = await USER.findAndCountAll({
-        where: { NICKNAME: `${checkname}` },
+        where: { NICKNAME: checkname },
       });
       return check['count'];
     } catch (error) {
@@ -52,7 +36,7 @@ const sql = {
     const { checkemail } = req.body;
     try {
       const check = await USER.findAndCountAll({
-        where: { EMAIL: `${checkemail}` },
+        where: { EMAIL: checkemail },
       });
 
       return check['count'];
@@ -60,14 +44,15 @@ const sql = {
       console.log(error.message);
     }
   },
-  signupUser: async (req) => {
-    const { nickname, email, password } = req.body; //regitserInfo에는 Nickname, Email, Password 가 포함되어야 함.
+
+  signupUser: async req => {
+    const { nickname, email, password } = req.body; // regitserInfo에는 Nickname, Email, Password 가 포함되어야 함.
     console.log(nickname, email, password);
     try {
       await USER.create({
-        NICKNAME: `${nickname}`,
-        PASSWORD: `${password}`,
-        EMAIL: `${email}`,
+        NICKNAME: nickname,
+        PASSWORD: password,
+        EMAIL: email,
         LEVEL: 1,
       });
       return true;
@@ -79,20 +64,17 @@ const sql = {
   loginUser: async (req) => {
     const { email, password } = req.body;
     try {
-      const { dataValues } = await USER.findOne({
-        attributes: {
-          exclude: ['createdAt', 'updatedAt'],
-        },
-        where: { email: `${email}`, password: `${password}` },
+      const user = await USER.findOne({
+        where: { email: email, password: password },
       });
-      const unum = dataValues['UNO'];
+      const unum = user.UNO;
       if (!(unum > 0)) {
         throw new Error('Invalid Info User');
       }
 
       //UNO 도 같이 포함
-      const accessToken = await jwt_module.sign(unum);
-      const refreshToken = await jwt_module.refresh();
+      const accessToken = jwt_module.sign(unum);
+      const refreshToken = jwt_module.refresh();
 
       //refresh token sql 업데이트
       //일단 냅둘게요 (아마 안쓸듯)

@@ -27,7 +27,6 @@ const smtpTransport = nodemailer.createTransport({
 //---- 연동확인
 router.get('/', async (req, res) => {
   const users = await sql.getUser();
-  console.log(users);
   res.send(users);
 });
 
@@ -48,7 +47,7 @@ router.post('/login', async (req, res) => {
       tokens,
     });
   } catch (error) {
-    return res.send({ success: false });
+    return res.status(400).send({ success: false });
   }
 });
 
@@ -154,8 +153,6 @@ router.put('/checkauth', async (req, res) => {
 router.put('/update', checkAccess, async (req, res) => {
   try {
     const newNickname = req.body.nickname;
-    console.log(newNickname);
-    console.log(req.user);
     req.user.update({ NICKNAME: newNickname });
     return res.status(200).json({ success: true, message: '닉네임 수정 성공' });
   } catch (error) {
