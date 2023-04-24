@@ -80,14 +80,14 @@ const sql = {
   loginUser: async req => {
     const { email, password } = req.body;
     try {
-      const { dataValues } = await USER.findOne({
-        attributes: {
-          exclude: ['createdAt', 'updatedAt'],
-        },
+      // const [username] = await promisePool.query(`
+      // SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
+      // `);
+      const user = await USER.findOne({
         where: { email: `${email}`, password: `${password}` },
       });
-      const unum = dataValues['UNO'];
-      if (!(unum > 0)) {
+      if (!user) {
+        console.log('hi');
         throw new Error('Invalid Info User');
       }
 
