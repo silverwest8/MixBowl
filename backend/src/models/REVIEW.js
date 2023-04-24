@@ -1,22 +1,14 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class POST extends Model {
+export default class REVIEW extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    PNO: {
+    REVIEW_ID: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
-    },
-    RNO: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'RECIPE',
-        key: 'RNO'
-      }
     },
     UNO: {
       type: DataTypes.INTEGER,
@@ -26,25 +18,25 @@ export default class POST extends Model {
         key: 'UNO'
       }
     },
-    CATEGORY: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    TITLE: {
+    PLACE_ID: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'PLACE',
+        key: 'PLACE_ID'
+      }
     },
-    CONTENT: {
+    TEXT: {
       type: DataTypes.TEXT,
       allowNull: false
     },
-    LIKE: {
+    RATING: {
       type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'POST',
+    tableName: 'REVIEW',
     timestamps: true,
     indexes: [
       {
@@ -52,28 +44,21 @@ export default class POST extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "PNO" },
+          { name: "REVIEW_ID" },
         ]
       },
       {
-        name: "UNO_idx",
+        name: "PLACE_ID_idx",
+        using: "BTREE",
+        fields: [
+          { name: "PLACE_ID" },
+        ]
+      },
+      {
+        name: "UNO7_idx",
         using: "BTREE",
         fields: [
           { name: "UNO" },
-        ]
-      },
-      {
-        name: "UNO1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "UNO" },
-        ]
-      },
-      {
-        name: "RNO1",
-        using: "BTREE",
-        fields: [
-          { name: "RNO" },
         ]
       },
     ]
