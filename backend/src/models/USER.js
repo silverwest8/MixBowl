@@ -31,21 +31,11 @@ export default class USER extends Model {
     TOKEN: {
       type: DataTypes.STRING(400),
       allowNull: true
-    },
-    DATE_CREATE: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    DATE_UPDATE: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     sequelize,
     tableName: 'USER',
-    timestamps: false,
+    timestamps: true,
     indexes: [
       {
         name: "PRIMARY",

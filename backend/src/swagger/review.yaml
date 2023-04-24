@@ -1,0 +1,314 @@
+# review api for swagger
+components:
+  schemas:
+    Cookie:
+      type: string
+    Review:
+      type: object
+      properties:
+        PLACE_ID:
+          type: integer
+          example: 123
+          description: "장소정보"
+        TEXT:
+          type: string
+          example: "리뷰내용입니다."
+        RATING:
+          type: integer
+          example: 4
+          description: "별점입니다"
+        IMAGE:
+          type: integer
+          example: 4
+          description: "이미지인데 어떻게 적어야할지 몰라서 일단 이렇게..."
+paths:
+  /review/create:
+    post:
+      tags:
+        - review
+      summary: 리뷰 작성
+      description: ""
+      operationId: createReview
+      parameters:
+        
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /review/logout:
+    get:
+      tags:
+        - review
+      summary: 로그아웃
+      description: ""
+      operationId: logoutUser
+      parameters:
+        - in: cookie
+          name: refresh_token
+          schema:
+            $ref: "#/components/schemas/Cookie"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /review/signup:
+    post:
+      tags:
+        - review
+      summary: 회원가입
+      description: ""
+      operationId: signupUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Signup"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /review/nicknamedupcheck:
+    put:
+      tags:
+        - review
+      summary: 닉네임 중복 체크
+      description: ""
+      operationId: checkNickname
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Nickname"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DupCheck"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /review/emaildupcheck:
+    put:
+      tags:
+        - review
+      summary: 이메일 중복 체크
+      description: ""
+      operationId: checkEmail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Email"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DupCheck"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /review/sendauthmail:
+    post:
+      tags:
+        - review
+      summary: "이메일 인증메일 보내기"
+      description: ""
+      operationId: sendAuthMail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Email"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /review/checkauth:
+    put:
+      tags:
+        - review
+      summary: "이메일 인증번호 확인"
+      description: ""
+      operationId: checkAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthNum"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /review/update:
+    put:
+      tags:
+        - review
+      summary: "회원정보수정"
+      description: "닉네임만 바꿀 수 있음"
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Nickname"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /review/checkbarowner:
+    put:
+      tags:
+        - review
+      summary: "사장님 확인"
+      description: "일단 닉네임 보내는 걸로 했는데 다시 정해야 함."
+      operationId: checkBarOwner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Nickname"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BarOwnerCheck"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /review/checkbartender:
+    put:
+      tags:
+        - review
+      summary: "바텐더 확인"
+      description: "일단 닉네임 보내는 걸로 했는데 다시 정해야 함."
+      operationId: checkBartender
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Nickname"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BartenderCheck"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /review/delete:
+    delete:
+      tags:
+        - review
+      summary: "회원 탈퇴"
+      description: ""
+      operationId: deleteUser
+      parameters:
+        - in: cookie
+          name: refresh_token
+          schema:
+            $ref: "#/components/schemas/Cookie"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"

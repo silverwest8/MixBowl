@@ -17,16 +17,11 @@ export default class AUTH_CODE extends Model {
     AUTH_CODE: {
       type: DataTypes.STRING(45),
       allowNull: false
-    },
-    DATE_CREATE: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     sequelize,
     tableName: 'AUTH_CODE',
-    timestamps: false,
+    timestamps: true,
     indexes: [
       {
         name: "PRIMARY",
