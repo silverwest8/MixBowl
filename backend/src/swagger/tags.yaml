@@ -9,3 +9,5 @@ tags:
     description: Operation about community posting
   - name: map
     description: Operation about map
+  - name: review
+    description: Operation about review
