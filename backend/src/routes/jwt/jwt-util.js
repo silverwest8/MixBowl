@@ -23,7 +23,7 @@ export function accessVerify(token) {
     decoded = jwt.verify(token, process.env.SECRET_KEY);
     return {
       ok: true,
-      nickname: decoded.unum[0]['UNO'],
+      unum: decoded.unum,
     };
   } catch (error) {
     return {
@@ -61,6 +61,7 @@ export const refresh_new = async (req, res) => {
 
     const accessResult = accessVerify(access);
     const decodeAccess = jwt.decode(access);
+    console.log(decodeAccess.unum);
 
     if (decodeAccess === null) {
       res.status(401).send({
@@ -84,6 +85,11 @@ export const refresh_new = async (req, res) => {
             accessToken: newAccessToken,
           });
         }
+      } else if (accessResult.message === 'invalid signature') {
+        res.status(403).send({
+          ok: false,
+          message: 'Invalid Access Token',
+        });
       } else {
         res.status(400).send({
           ok: false,

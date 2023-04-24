@@ -220,7 +220,7 @@ router.get('/check/access', checkAccess, (req, res) => {
     code: 200,
     message: '유효한 토큰입니다.',
     data: {
-      nickname: nickname,
+      uno: uno,
     },
   });
 });
