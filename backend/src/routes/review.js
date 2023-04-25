@@ -181,6 +181,7 @@ router.get('/getList', checkAccess, async (req, res) => {
 });
 
 router.get('/getBar/:id', checkAccess, async (req, res) => {
+  // 빈값 처리 필요
   // Example
   // http://localhost:3030/review/getBar/1389819741
   let data = {};
