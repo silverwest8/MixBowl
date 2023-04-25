@@ -147,6 +147,7 @@ components:
           properties:
             total_cnt:
               type: integer
+              example: 15
             place_list:
               type: array
               items:
@@ -211,10 +212,10 @@ components:
                           type: object
                           properties:
                             REVIEW_ID:
-                              type: number
+                              type: integer
                               example: 4
                             UNO:
-                              type: string
+                              type: integer
                               example: 2
                             PLACE_ID:
                               type: string
@@ -223,7 +224,7 @@ components:
                               type: string
                               example: 수원에 있어요
                             RATING:
-                              type: string
+                              type: number
                               example: 4
                             createdAt:
                               type: string
@@ -231,3 +232,104 @@ components:
                             updatedAt:
                               type: string
                               example: 2023-04-24T17:50:29.000Z
+    getBar:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 칵테일 바 단건 조회 성공
+        data:
+          type: object
+          properties:
+            PLACE_ID:
+              type: string
+              example: 1389819741
+            NAME:
+              type: string
+              example: 로랑
+            ADDRESS:
+              type: string
+              example: 경기 수원시 팔달구 매산로2가 40-1
+            ROAD_ADDRESS:
+              type: string
+              example: 경기 수원시 팔달구 매산로 51
+            PHONE:
+              type: string
+              example: 010-2215-5174
+            X:
+              type: string
+              example: 127.00686607922565
+            Y:
+              type: string
+              example: 37.269183431719554
+            URL:
+              type: string
+              example: http://place.map.kakao.com/1389819741
+            AVG_RATING:
+              type: string
+              example: 3.5
+
+    getReview:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 칵테일 바 단건 조회 성공
+        data:
+          type: object
+          properties:
+            total_cnt:
+              type: integer
+              example: 15
+            keyword:
+              type: array
+              items:
+                type: string
+                example: 술이 다양해요
+              minItems: 3
+              maxItems: 3
+            list:
+              type: array
+              items:
+                type: object
+                properties:
+                  REVIEW_ID:
+                    type: integer
+                    example: 2
+                  UNO:
+                    type: integer
+                    example: 2
+                  PLACE_ID:
+                    type: string
+                    example: 17649496
+                  TEXT:
+                    type: string
+                    example: 맛없어요
+                  RATING:
+                    type: number
+                    example: 3
+                  createdAt:
+                    type: string
+                    example: 2023-04-24T17:10:30.000Z
+                  updatedAt:
+                    type: string
+                    example: 2023-04-24T17:12:10.000Z
+                  UNO_USER:
+                    type: object
+                    properties:
+                      UNO:
+                        type: integer
+                        example: 2
+                      NICKNAME:
+                        type: string
+                        example: NEWNICKNAME
+                      LEVEL:
+                        type: integer
+                        example: 1
+                      ISWRITER:
+                        type: boolean
+                        example: false
