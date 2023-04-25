@@ -39,6 +39,8 @@ export default function initModels(sequelize) {
   RECIPE.hasMany(POST, { as: "POSTs", foreignKey: "RNO"});
   IMAGE.belongsTo(REVIEW, { as: "REVIEW", foreignKey: "REVIEW_ID"});
   REVIEW.hasMany(IMAGE, { as: "IMAGEs", foreignKey: "REVIEW_ID"});
+  KEYWORD.belongsTo(REVIEW, { as: "REVIEW", foreignKey: "REVIEW_ID"});
+  REVIEW.hasMany(KEYWORD, { as: "KEYWORDs", foreignKey: "REVIEW_ID"});
   POST.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(POST, { as: "POSTs", foreignKey: "UNO"});
   POST_LIKE.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
