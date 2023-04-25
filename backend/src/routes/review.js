@@ -49,6 +49,15 @@ router.get('/getList', checkAccess, async (req, res) => {
         }
       );
       for (let i = 0; i < response.data.documents.length; i++) {
+        let temp = {
+          kakao_data: null,
+          total_rate: null,
+          keyword: [null, null, null],
+          review: {
+            review_cnt: null,
+            review_list: [],
+          },
+        };
         const element = response.data.documents[i];
         if (element.category_name == '음식점 > 술집 > 칵테일바') {
           const [place, created] = await PLACE.findOrCreate({
@@ -84,14 +93,71 @@ router.get('/getList', checkAccess, async (req, res) => {
             limit: 2,
             order: [['createdAt', 'DESC']],
           });
-          let temp = {
-            kakao_data: element,
-            total_rate: 5,
-            review: {
-              review_cnt: reviewList.length,
-              review_list: reviewList,
+          const rating = await REVIEW.findOne({
+            attributes: [
+              'PLACE_ID',
+              [Sequelize.fn('AVG', Sequelize.col('RATING')), 'AVG_RATING'],
+              [Sequelize.fn('COUNT', Sequelize.col('RATING')), 'COUNT_RATING'],
+            ],
+            where: {
+              PLACE_ID: element.id,
             },
-          };
+            group: ['PLACE_ID'],
+          });
+          const keyword = await KEYWORD.findAll({
+            attributes: [
+              'KEYWORD',
+              [Sequelize.fn('count', Sequelize.col('*')), 'COUNT'],
+            ],
+            include: [
+              {
+                model: REVIEW,
+                as: 'REVIEW',
+                attributes: [],
+                where: { PLACE_ID: element.id },
+              },
+            ],
+            group: ['KEYWORD'],
+            order: [[Sequelize.literal('COUNT'), 'DESC']],
+            limit: 3,
+          });
+          temp.kakao_data = element;
+          if (rating != null) temp.total_rate = rating.dataValues.AVG_RATING;
+          keyword.forEach((keyword, idx) => {
+            switch (keyword.KEYWORD) {
+              case 1:
+                temp.keyword[idx] = '술이 맛있어요';
+                break;
+              case 2:
+                temp.keyword[idx] = '술이 다양해요';
+                break;
+              case 3:
+                temp.keyword[idx] = '혼술하기 좋아요';
+                break;
+              case 4:
+                temp.keyword[idx] = '분위기가 좋아요';
+                break;
+              case 5:
+                temp.keyword[idx] = '직원이 친절해요';
+                break;
+              case 6:
+                temp.keyword[idx] = '대화하기 좋아요';
+                break;
+              case 7:
+                temp.keyword[idx] = '가성비가 좋아요';
+                break;
+              case 8:
+                temp.keyword[idx] = '메뉴가 다양해요';
+                break;
+              case 9:
+                temp.keyword[idx] = '음식이 맛있어요';
+                break;
+              default:
+                temp.keyword[idx] = null;
+            }
+          });
+          temp.review.review_cnt = reviewList.length;
+          temp.review.review_list = Object.assign(reviewList);
           data.place_list.push(temp);
         }
       }
