@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import * as jwt_module from '../routes/jwt/jwt-util';
 import USER from '../models/USER';
+import REVIEW from '../models/REVIEW';
+import IMAGE from '../models/IMAGE';
 dotenv.config(); //JWT 키불러오기
 
 const sql = {
@@ -94,6 +96,36 @@ const sql = {
       return {
         code: 401,
       };
+    }
+  },
+  postReview: async (req) => {
+    const unum = req.decoded.unum;
+    const { ratings, keyword, detail } = req.body;
+    try {
+      const review = REVIEW.create({
+        UNO: `${unum}`,
+        PLACE_ID: `${req.params.placeId}`,
+        TEXT: `${detail}`,
+        RATINGS: `${ratings}`,
+      });
+      return review;
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  postImage: async (req, review) => {
+    try {
+      const reviewId = review.REVIEW_ID;
+      req.files.map(async (data) => {
+        let path = data.path;
+        IMAGE.create({
+          REVIEW_ID: `${reviewId}`,
+          PATH: `${path}`,
+        });
+        return true;
+      });
+    } catch (error) {
+      console.log(error.message);
     }
   },
 };
