@@ -19,6 +19,61 @@ router.get('/', async (req, res) => {
   res.send('review');
 });
 
+async function getKeyword (place_id) {
+  let keywordlist = [null, null, null];
+  const keyword = await KEYWORD.findAll({
+    attributes: [
+      'KEYWORD',
+      [Sequelize.fn('count', Sequelize.col('*')), 'COUNT'],
+    ],
+    include: [
+      {
+        model: REVIEW,
+        as: 'REVIEW',
+        attributes: [],
+        where: { PLACE_ID: place_id },
+      },
+    ],
+    group: ['KEYWORD'],
+    order: [[Sequelize.literal('COUNT'), 'DESC']],
+    limit: 3,
+  });
+  keyword.forEach((keyword, idx) => {
+    switch (keyword.KEYWORD) {
+      case 1:
+        keywordlist[idx] = '술이 맛있어요';
+        break;
+      case 2:
+        keywordlist[idx] = '술이 다양해요';
+        break;
+      case 3:
+        keywordlist[idx] = '혼술하기 좋아요';
+        break;
+      case 4:
+        keywordlist[idx] = '분위기가 좋아요';
+        break;
+      case 5:
+        keywordlist[idx] = '직원이 친절해요';
+        break;
+      case 6:
+        keywordlist[idx] = '대화하기 좋아요';
+        break;
+      case 7:
+        keywordlist[idx] = '가성비가 좋아요';
+        break;
+      case 8:
+        keywordlist[idx] = '메뉴가 다양해요';
+        break;
+      case 9:
+        keywordlist[idx] = '음식이 맛있어요';
+        break;
+      default:
+        keywordlist[idx] = null;
+    }
+  });
+  return keywordlist;
+}
+
 router.get('/getList', checkAccess, async (req, res) => {
   // Example
   // http://localhost:3030/review/getList?query=수원 칵테일바&x=37.514322572335935&y=127.06283102249932&radius=20000&sort=accuracy
@@ -52,7 +107,7 @@ router.get('/getList', checkAccess, async (req, res) => {
         let temp = {
           kakao_data: null,
           total_rate: null,
-          keyword: [null, null, null],
+          keyword: null,
           review: {
             review_cnt: null,
             review_list: [],
@@ -86,9 +141,6 @@ router.get('/getList', checkAccess, async (req, res) => {
 
           data.total_cnt++;
           const reviewList = await REVIEW.findAll({
-            attributes: {
-              exclude: ['createdAt', 'updatedAt'],
-            },
             where: { PLACE_ID: element.id },
             limit: 2,
             order: [['createdAt', 'DESC']],
@@ -104,58 +156,9 @@ router.get('/getList', checkAccess, async (req, res) => {
             },
             group: ['PLACE_ID'],
           });
-          const keyword = await KEYWORD.findAll({
-            attributes: [
-              'KEYWORD',
-              [Sequelize.fn('count', Sequelize.col('*')), 'COUNT'],
-            ],
-            include: [
-              {
-                model: REVIEW,
-                as: 'REVIEW',
-                attributes: [],
-                where: { PLACE_ID: element.id },
-              },
-            ],
-            group: ['KEYWORD'],
-            order: [[Sequelize.literal('COUNT'), 'DESC']],
-            limit: 3,
-          });
           temp.kakao_data = element;
           if (rating != null) temp.total_rate = rating.dataValues.AVG_RATING;
-          keyword.forEach((keyword, idx) => {
-            switch (keyword.KEYWORD) {
-              case 1:
-                temp.keyword[idx] = '술이 맛있어요';
-                break;
-              case 2:
-                temp.keyword[idx] = '술이 다양해요';
-                break;
-              case 3:
-                temp.keyword[idx] = '혼술하기 좋아요';
-                break;
-              case 4:
-                temp.keyword[idx] = '분위기가 좋아요';
-                break;
-              case 5:
-                temp.keyword[idx] = '직원이 친절해요';
-                break;
-              case 6:
-                temp.keyword[idx] = '대화하기 좋아요';
-                break;
-              case 7:
-                temp.keyword[idx] = '가성비가 좋아요';
-                break;
-              case 8:
-                temp.keyword[idx] = '메뉴가 다양해요';
-                break;
-              case 9:
-                temp.keyword[idx] = '음식이 맛있어요';
-                break;
-              default:
-                temp.keyword[idx] = null;
-            }
-          });
+          temp.keyword = await getKeyword(element.id);
           temp.review.review_cnt = reviewList.length;
           temp.review.review_list = Object.assign(reviewList);
           data.place_list.push(temp);
@@ -209,7 +212,7 @@ router.get('/getReview/:id', checkAccess, async (req, res) => {
   try {
     let data = {
       total_cnt: null,
-      keyword: [null, null, null],
+      keyword: null,
       list: [],
     };
     const id = req.params.id;
@@ -234,62 +237,7 @@ router.get('/getReview/:id', checkAccess, async (req, res) => {
         data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = false;
       }
     }
-    console.log(data);
-
-    const keyword = await KEYWORD.findAll({
-      attributes: [
-        'KEYWORD',
-        [Sequelize.fn('count', Sequelize.col('*')), 'COUNT'],
-      ],
-      include: [
-        {
-          model: REVIEW,
-          as: 'REVIEW',
-          attributes: [],
-          where: { PLACE_ID: id },
-        },
-      ],
-      group: ['KEYWORD'],
-      order: [[Sequelize.literal('COUNT'), 'DESC']],
-      limit: 3,
-    });
-    console.log(keyword);
-    keyword.forEach((keyword, idx) => {
-      console.log(keyword);
-      console.log(idx);
-      console.log(keyword.KEYWORD);
-      switch (keyword.KEYWORD) {
-        case 1:
-          data.keyword[idx] = '술이 맛있어요';
-          break;
-        case 2:
-          data.keyword[idx] = '술이 다양해요';
-          break;
-        case 3:
-          data.keyword[idx] = '혼술하기 좋아요';
-          break;
-        case 4:
-          data.keyword[idx] = '분위기가 좋아요';
-          break;
-        case 5:
-          data.keyword[idx] = '직원이 친절해요';
-          break;
-        case 6:
-          data.keyword[idx] = '대화하기 좋아요';
-          break;
-        case 7:
-          data.keyword[idx] = '가성비가 좋아요';
-          break;
-        case 8:
-          data.keyword[idx] = '메뉴가 다양해요';
-          break;
-        case 9:
-          data.keyword[idx] = '음식이 맛있어요';
-          break;
-        default:
-          data.keyword[idx] = null;
-      }
-    });
+    data.keyword = await getKeyword(id);
     return res
       .status(200)
       .json({ success: true, message: '칵테일 바 리뷰 조회 성공', data: data });
