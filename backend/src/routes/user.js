@@ -196,23 +196,14 @@ router.put('/checkbartender', checkAccess, async (req, res) => {
 });
 
 //회원 탈퇴
-router.delete('/delete', checkAccess, async (req, res) => {
-  try {
-    req.user.destroy();
-    return res.status(200).json({ success: true, message: '회원 탈퇴 성공' });
-  } catch (error) {
-    return res
-      .status(400)
-      .json({ success: false, message: '회원 탈퇴 실패', error });
-  }
-});
+router.delete('/delete', checkAccess, userUtil.delUser);
 
 // 토큰 재발급 라우터
 router.get('/refresh', refresh_new);
 
 // JWT access 토큰 체크 라우터 (디버깅용)
 router.get('/check/access', checkAccess, (req, res) => {
-  console.log(req.decoded);
+  console.log(req.user);
   const uno = req.decoded.unum;
   return res.status(200).json({
     code: 200,
