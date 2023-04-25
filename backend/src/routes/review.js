@@ -276,6 +276,15 @@ const fileFilter = (req, file, callback) => {
     );
   }
 };
+//multer 미들웨어 설정
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // 파일이 업로드되는 경로 지정
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // 파일 이름 설정
+  },
+});
 const upload = multer({
   storage: storage,
   dest: __dirname + '/uploads/', // 이미지 업로드 경로

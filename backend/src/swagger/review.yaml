@@ -232,15 +232,9 @@ paths:
     put:
       tags:
         - review
-<<<<<<< HEAD
       summary: 리뷰 수정
-      description: ""
+      description: ''
       operationId: updateReview
-=======
-      summary: '회원정보수정'
-      description: '닉네임만 바꿀 수 있음'
-      operationId: updateUser
->>>>>>> be-review-image
       requestBody:
         required: true
         content:
@@ -261,8 +255,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-<<<<<<< HEAD
-=======
   /review/checkbarowner:
     put:
       tags:
@@ -317,20 +309,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
->>>>>>> be-review-image
   /review/delete:
     delete:
       tags:
         - review
-<<<<<<< HEAD
       summary: 리뷰 삭제
-      description: ""
-      operationId: deleteReview
-=======
-      summary: '회원 탈퇴'
       description: ''
-      operationId: deleteUser
->>>>>>> be-review-image
+      operationId: deleteReview
       parameters:
         - in: cookie
           name: refresh_token
@@ -348,20 +333,19 @@ paths:
           content:
             application/json:
               schema:
-<<<<<<< HEAD
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /review/getList:
     get:
       tags:
         - review
       summary: 칵테일 바 리스트 조회
-      description: ""
+      description: ''
       operationId: getList
       parameters:
         - in: query
           name: query
-          description: ""
+          description: ''
           example: 수원 칵테일바
           schema:
             type: string
@@ -389,27 +373,27 @@ paths:
           description: 정렬기준
           schema:
             type: string
-            enum: ["accuracy", "distance"]
+            enum: ['accuracy', 'distance']
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getReviewList"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/getReviewList'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /review/getBar/{id}:
     get:
       tags:
         - review
       summary: 칵테일 바 단건 조회
-      description: ""
+      description: ''
       operationId: getBar
       parameters:
         - in: path
@@ -420,25 +404,25 @@ paths:
             type: string
           required: true
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getBar"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/getBar'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /review/getReview/{id}:
     get:
       tags:
         - review
       summary: 특정 칵테일 바 리뷰 조회
-      description: ""
+      description: ''
       operationId: getReview
       parameters:
         - in: path
@@ -449,18 +433,15 @@ paths:
             type: string
           required: true
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getReview"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/getReview'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
-=======
                 $ref: '#/components/schemas/Fail'
->>>>>>> be-review-image
