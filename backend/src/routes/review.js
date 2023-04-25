@@ -6,6 +6,7 @@ import axios from 'axios';
 import PLACE from '../models/PLACE';
 import REVIEW from '../models/REVIEW';
 import USER from '../models/USER';
+import KEYWORD from '../models/KEYWORD';
 import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
@@ -111,11 +112,13 @@ router.get('/getList', checkAccess, async (req, res) => {
 });
 
 router.get('/getBar/:id', checkAccess, async (req, res) => {
+  // Example
+  // http://localhost:3030/review/getBar/1389819741
+  let data = {};
+  const id = req.params.id;
+  const place_data = await PLACE.findByPk(id);
+  data = Object.assign(place_data);
   try {
-    let data = {};
-    const id = req.params.id;
-    const place_data = await PLACE.findByPk(id);
-    data = Object.assign(place_data);
     const review = await REVIEW.findByPk(id, {
       attributes: [
         [Sequelize.fn('AVG', Sequelize.col('RATING')), 'AVG_RATING'],
@@ -136,17 +139,13 @@ router.get('/getBar/:id', checkAccess, async (req, res) => {
 
 router.get('/getReview/:id', checkAccess, async (req, res) => {
   // Example
-  // http://localhost:3030/review/getReview/1389819741
-
-  // {
-  //   "total_cnt": 1,
-  //   "keywords": [ "", "", "" ] // 많은 순
-  //   "list": [
-  //     // 최신순 / 유저 정보 (닉네임, 등급), 리뷰 내용 및 이미지, 작성 날짜, 로그인한 유저가 작성했는지 여부
-  //   ]
-  // }
+  // http://localhost:3030/review/getReview/17649496
   try {
-    let data = {};
+    let data = {
+      total_cnt: null,
+      keyword: [null, null, null],
+      list: [],
+    };
     const id = req.params.id;
     const review = await REVIEW.findAll({
       where: { PLACE_ID: id },
@@ -170,6 +169,61 @@ router.get('/getReview/:id', checkAccess, async (req, res) => {
       }
     }
     console.log(data);
+
+    const keyword = await KEYWORD.findAll({
+      attributes: [
+        'KEYWORD',
+        [Sequelize.fn('count', Sequelize.col('*')), 'COUNT'],
+      ],
+      include: [
+        {
+          model: REVIEW,
+          as: 'REVIEW',
+          attributes: [],
+          where: { PLACE_ID: id },
+        },
+      ],
+      group: ['KEYWORD'],
+      order: [[Sequelize.literal('COUNT'), 'DESC']],
+      limit: 3,
+    });
+    console.log(keyword);
+    keyword.forEach((keyword, idx) => {
+      console.log(keyword);
+      console.log(idx);
+      console.log(keyword.KEYWORD);
+      switch (keyword.KEYWORD) {
+        case 1:
+          data.keyword[idx] = '술이 맛있어요';
+          break;
+        case 2:
+          data.keyword[idx] = '술이 다양해요';
+          break;
+        case 3:
+          data.keyword[idx] = '혼술하기 좋아요';
+          break;
+        case 4:
+          data.keyword[idx] = '분위기가 좋아요';
+          break;
+        case 5:
+          data.keyword[idx] = '직원이 친절해요';
+          break;
+        case 6:
+          data.keyword[idx] = '대화하기 좋아요';
+          break;
+        case 7:
+          data.keyword[idx] = '가성비가 좋아요';
+          break;
+        case 8:
+          data.keyword[idx] = '메뉴가 다양해요';
+          break;
+        case 9:
+          data.keyword[idx] = '음식이 맛있어요';
+          break;
+        default:
+          data.keyword[idx] = null;
+      }
+    });
     return res
       .status(200)
       .json({ success: true, message: '칵테일 바 리뷰 조회 성공', data: data });

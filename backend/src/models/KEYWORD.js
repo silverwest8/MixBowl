@@ -12,12 +12,16 @@ export default class KEYWORD extends Model {
     },
     REVIEW_ID: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'REVIEW',
+        key: 'REVIEW_ID'
+      }
     },
     KEYWORD: {
       type: DataTypes.INTEGER,
-      allowNull: true,
-      comment: "1 - 술이 맛있어요\n2 - 술이 다양해요\n3 - 혼술하기 좋아요\n4 - 분위기가 좋아요\n5 - 직원이 친절해요\n6 - 대화하기 좋아요\n7 - 가성비가 좋아요\n8 - 메뉴가 다양해요\n9 - 음식이 맛있어요"
+      allowNull: false,
+      comment: "1 - 술이 맛있어요\\n2 - 술이 다양해요\\n3 - 혼술하기 좋아요\\n4 - 분위기가 좋아요\\n5 - 직원이 친절해요\\n6 - 대화하기 좋아요\\n7 - 가성비가 좋아요\\n8 - 메뉴가 다양해요\\n9 - 음식이 맛있어요"
     }
   }, {
     sequelize,
@@ -30,6 +34,13 @@ export default class KEYWORD extends Model {
         using: "BTREE",
         fields: [
           { name: "KNO" },
+        ]
+      },
+      {
+        name: "REVIEW_ID_idx",
+        using: "BTREE",
+        fields: [
+          { name: "REVIEW_ID" },
         ]
       },
     ]
