@@ -4,7 +4,6 @@ import express from 'express';
 import multer from 'multer';
 import checkAccess from '../middleware/checkAccessToken';
 import axios from 'axios';
-<<<<<<< HEAD
 import PLACE from '../models/PLACE';
 import REVIEW from '../models/REVIEW';
 import USER from '../models/USER';
@@ -13,14 +12,6 @@ import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
 
-=======
-// import PLACE from '../models/PLACE';
-// import REVIEW from '../models/REVIEW';
-// import IMAGE from '../models/IMAGE';
-import dotenv from 'dotenv';
-import { Sequelize } from 'sequelize';
-import sql from '../database/sql';
->>>>>>> be-review-image
 dotenv.config();
 const router = express.Router();
 
@@ -29,7 +20,7 @@ router.get('/', async (req, res) => {
   res.send('review');
 });
 
-async function getKeyword (place_id) {
+async function getKeyword(place_id) {
   let keywordlist = [null, null, null];
   const keyword = await KEYWORD.findAll({
     attributes: [
@@ -99,19 +90,12 @@ router.get('/getList', checkAccess, async (req, res) => {
         'https://dapi.kakao.com/v2/local/search/keyword.json',
         {
           params: {
-<<<<<<< HEAD
-            query: req.query.query,
-            x: req.query.x,
-            y: req.query.y,
-            radius: req.query.radius,
-=======
             // --원의 중심 --
             query: req.body.query,
             x: req.body.x,
             y: req.body.y,
             // --------------
             radius: req.body.radius,
->>>>>>> be-review-image
             page: page,
             size: 15,
             sort: req.query.sort,
@@ -164,7 +148,6 @@ router.get('/getList', checkAccess, async (req, res) => {
             limit: 2,
             order: [['createdAt', 'DESC']],
           });
-<<<<<<< HEAD
           const rating = await REVIEW.findOne({
             attributes: [
               'PLACE_ID',
@@ -173,15 +156,6 @@ router.get('/getList', checkAccess, async (req, res) => {
             ],
             where: {
               PLACE_ID: element.id,
-=======
-          console.log(reviewList);
-          let temp = {
-            kakao_data: element,
-            total_rate: 5, //해야하는거
-            review: {
-              review_cnt: reviewList.length,
-              review_list: reviewList,
->>>>>>> be-review-image
             },
             group: ['PLACE_ID'],
           });
@@ -337,7 +311,6 @@ router.post(
   }
 );
 
-
 router.put('/update', checkAccess, async (req, res) => {
   return res.status(200).json({ success: true, message: '리뷰 수정 성공' });
 });
@@ -345,7 +318,6 @@ router.put('/update', checkAccess, async (req, res) => {
 router.delete('/delete', checkAccess, async (req, res) => {
   return res.status(200).json({ success: true, message: '리뷰 삭제F 성공' });
 });
-
 
 //Error Handler
 router.use((err, req, res, next) => {
