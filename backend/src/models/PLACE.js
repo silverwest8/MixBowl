@@ -36,11 +36,6 @@ export default class PLACE extends Model {
     URL: {
       type: DataTypes.STRING(45),
       allowNull: true
-    },
-    RATING: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
-      unique: "RATING_UNIQUE"
     }
   }, {
     sequelize,
@@ -53,14 +48,6 @@ export default class PLACE extends Model {
         using: "BTREE",
         fields: [
           { name: "PLACE_ID" },
-        ]
-      },
-      {
-        name: "RATING_UNIQUE",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "RATING" },
         ]
       },
     ]

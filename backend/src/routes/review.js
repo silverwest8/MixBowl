@@ -5,6 +5,7 @@ import checkAccess from '../middleware/checkAccessToken';
 import axios from 'axios';
 import PLACE from '../models/PLACE';
 import REVIEW from '../models/REVIEW';
+import USER from '../models/USER';
 import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
@@ -18,8 +19,9 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/getList', checkAccess, async (req, res) => {
-  console.log('here');
-  const data = {
+  // Example
+  // http://localhost:3030/review/getList?query=수원 칵테일바&x=37.514322572335935&y=127.06283102249932&radius=20000&sort=accuracy
+  let data = {
     total_cnt: 0,
     place_list: [],
   };
@@ -31,17 +33,16 @@ router.get('/getList', checkAccess, async (req, res) => {
         'https://dapi.kakao.com/v2/local/search/keyword.json',
         {
           params: {
-            query: req.body.query,
-            x: req.body.x,
-            y: req.body.y,
-            radius: req.body.radius,
+            query: req.query.query,
+            x: req.query.x,
+            y: req.query.y,
+            radius: req.query.radius,
             page: page,
             size: 15,
-            sort: req.body.sort,
+            sort: req.query.sort,
             category_group_code: 'FD6',
           },
           headers: {
-            Accept: '*/*',
             Authorization: 'KakaoAK ' + process.env.KAKAO_REST_API_KEY,
           },
         }
@@ -109,17 +110,34 @@ router.get('/getList', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/getBar/{id}', checkAccess, async (req, res) => {
-  // {
-  //   // id, place_name, address_name, 위경도 좌표
-  //   "total_rate": 4.0, // 평균 평점
-  // }
-  return res
-    .status(200)
-    .json({ success: true, message: '칵테일 바 단건 조회 성공' });
+router.get('/getBar/:id', checkAccess, async (req, res) => {
+  try {
+    let data = {};
+    const id = req.params.id;
+    const place_data = await PLACE.findByPk(id);
+    data = Object.assign(place_data);
+    const review = await REVIEW.findByPk(id, {
+      attributes: [
+        [Sequelize.fn('AVG', Sequelize.col('RATING')), 'AVG_RATING'],
+      ],
+      raw: true,
+    });
+    data.dataValues.AVG_RATING = review.AVG_RATING;
+    return res
+      .status(200)
+      .json({ success: true, message: '칵테일 바 단건 조회 성공', data: data });
+  } catch (error) {
+    logger.error(error);
+    return res
+      .status(400)
+      .json({ success: false, message: '칵테일 바 단건 조회 실패', error });
+  }
 });
 
-router.get('/getReview/{id}', checkAccess, async (req, res) => {
+router.get('/getReview/:id', checkAccess, async (req, res) => {
+  // Example
+  // http://localhost:3030/review/getReview/1389819741
+
   // {
   //   "total_cnt": 1,
   //   "keywords": [ "", "", "" ] // 많은 순
@@ -127,9 +145,40 @@ router.get('/getReview/{id}', checkAccess, async (req, res) => {
   //     // 최신순 / 유저 정보 (닉네임, 등급), 리뷰 내용 및 이미지, 작성 날짜, 로그인한 유저가 작성했는지 여부
   //   ]
   // }
-  return res
-    .status(200)
-    .json({ success: true, message: '칵테일 바 단건 조회 성공' });
+  try {
+    let data = {};
+    const id = req.params.id;
+    const review = await REVIEW.findAll({
+      where: { PLACE_ID: id },
+      include: [
+        {
+          model: USER,
+          as: 'UNO_USER',
+          attributes: ['UNO', 'NICKNAME', 'LEVEL'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+    data.total_cnt = review.length;
+    data.list = Object.assign(review);
+    for (let i = 0; i < data.total_cnt; i++) {
+      if (req.user.UNO == data.list[i].UNO_USER.UNO) {
+        data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = true;
+      } else {
+        console.log(data.list[i].dataValues.UNO_USER);
+        data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = false;
+      }
+    }
+    console.log(data);
+    return res
+      .status(200)
+      .json({ success: true, message: '칵테일 바 리뷰 조회 성공', data: data });
+  } catch (error) {
+    logger.error(error);
+    return res
+      .status(400)
+      .json({ success: false, message: '칵테일 바 리뷰 조회 실패', error });
+  }
 });
 
 router.post('/create', checkAccess, async (req, res) => {

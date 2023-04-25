@@ -13,9 +13,8 @@ export default async (req, res, next) => {
   try {
     //req.headers.authorization = access Token일 경우
     req.decoded = jwt.verify(req.headers.authorization, process.env.SECRET_KEY);
-    console.log(req.decoded);
     const user = await USER.findOne({
-      where: { token: req.decoded.unum },
+      where: { UNO: req.decoded.unum },
     });
     req.user = user;
     logger.info(user);
@@ -39,4 +38,3 @@ export default async (req, res, next) => {
     }
   }
 };
-
