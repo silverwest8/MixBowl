@@ -317,7 +317,7 @@ router.post(
     } catch (error) {
       console.log(error.message);
     }
-    res.json({ ok: true, data: 'Multipart Upload Ok' });
+    res.json({ success: true, message: 'Multipart Upload Ok & DB update OK' });
   }
 );
 
@@ -331,7 +331,7 @@ router.delete('/delete', checkAccess, async (req, res) => {
 
 //Error Handler
 router.use((err, req, res, next) => {
-  res.json({ ok: false, data: err.message });
+  res.json({ success: false, message: err.message });
 });
 
 export default router;
