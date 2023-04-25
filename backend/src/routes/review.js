@@ -11,7 +11,7 @@ import KEYWORD from '../models/KEYWORD';
 import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
-
+import sql from '../database/sql';
 dotenv.config();
 const router = express.Router();
 
@@ -263,11 +263,10 @@ const limits = {
   files: 5, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
 };
 const fileFilter = (req, file, callback) => {
-  const typeArray = file.mimetype.split('/');
+  const typeArray = file.originalname.split('.');
   const fileType = typeArray[1]; // 이미지 확장자 추출
-
   //이미지 확장자 구분 검사
-  if (fileType == 'jpg' || fileType == 'jpeg' || fileType == 'png') {
+  if (fileType === 'jpg' || fileType === 'jpeg' || fileType === 'png') {
     callback(null, true);
   } else {
     return callback(
@@ -295,14 +294,12 @@ const upload = multer({
 // 리뷰 등록
 router.post(
   '/create/:placeId',
-  upload.array('file'),
+  upload.array('files', 5),
   checkAccess,
   async (req, res) => {
     const review = await sql.postReview(req);
-
-    const { name } = req.body;
-
-    console.log('body 데이터 : ', name);
+    console.log(review);
+    console.log('req', req);
 
     //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
     req.files.map(async (data) => {
@@ -313,9 +310,13 @@ router.post(
       console.log('파일이 저장된 폴더 : ', data.destination);
       console.log('destinatin에 저장된 파일 명 : ', data.filename);
       console.log('업로드된 파일의 전체 경로 ', data.path);
-      await sql.postImage(req, review);
       console.log('파일의 바이트(byte 사이즈)', data.size);
     });
+    try {
+      await sql.postImage(req, review);
+    } catch (error) {
+      console.log(error.message);
+    }
     res.json({ ok: true, data: 'Multipart Upload Ok' });
   }
 );
@@ -325,7 +326,7 @@ router.put('/update', checkAccess, async (req, res) => {
 });
 
 router.delete('/delete', checkAccess, async (req, res) => {
-  return res.status(200).json({ success: true, message: '리뷰 삭제F 성공' });
+  return res.status(200).json({ success: true, message: '리뷰 삭제 성공' });
 });
 
 //Error Handler

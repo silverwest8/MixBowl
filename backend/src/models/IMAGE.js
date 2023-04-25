@@ -5,6 +5,7 @@ export default class IMAGE extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     IMAGE_ID: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
@@ -18,7 +19,7 @@ export default class IMAGE extends Model {
       }
     },
     PATH: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(150),
       allowNull: true
     }
   }, {

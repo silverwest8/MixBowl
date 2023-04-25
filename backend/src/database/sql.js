@@ -5,6 +5,7 @@ import * as jwt_module from '../routes/jwt/jwt-util';
 import USER from '../models/USER';
 import REVIEW from '../models/REVIEW';
 import IMAGE from '../models/IMAGE';
+import KEYWORD from '../models/KEYWORD';
 dotenv.config(); //JWT 키불러오기
 
 const sql = {
@@ -15,7 +16,7 @@ const sql = {
 
   //refresh token 조회
   //안쓸듯
-  getToken: async username => {
+  getToken: async (username) => {
     const reToken = await promisePool.query(`
       SELECT TOKEN FROM USER WHERE '${username}' = NICKNAME;
     `);
@@ -47,7 +48,7 @@ const sql = {
     }
   },
 
-  signupUser: async req => {
+  signupUser: async (req) => {
     const { nickname, email, password } = req.body; // regitserInfo에는 Nickname, Email, Password 가 포함되어야 함.
     console.log(nickname, email, password);
     try {
@@ -100,13 +101,16 @@ const sql = {
   },
   postReview: async (req) => {
     const unum = req.decoded.unum;
-    const { ratings, keyword, detail } = req.body;
+    const req_json = JSON.parse(req.body.data);
+    req.keyword = req_json.keyword; //postImage req에 keyword 정보 미리 처리
+    console.log(req_json); //json형식으로 하면 바꿔질수있음, postman으로는 string취급됨
+    const { rating, detail } = req_json;
     try {
       const review = REVIEW.create({
-        UNO: `${unum}`,
-        PLACE_ID: `${req.params.placeId}`,
-        TEXT: `${detail}`,
-        RATINGS: `${ratings}`,
+        UNO: unum,
+        PLACE_ID: req.params.placeId,
+        TEXT: detail,
+        RATING: rating,
       });
       return review;
     } catch (error) {
@@ -115,15 +119,32 @@ const sql = {
   },
   postImage: async (req, review) => {
     try {
+      const keyword = req.keyword;
       const reviewId = review.REVIEW_ID;
       req.files.map(async (data) => {
         let path = data.path;
-        IMAGE.create({
-          REVIEW_ID: `${reviewId}`,
-          PATH: `${path}`,
-        });
-        return true;
+        try {
+          IMAGE.create({
+            REVIEW_ID: `${reviewId}`,
+            PATH: `${path}`,
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
       });
+      console.log(keyword);
+      const keyword_arr = keyword.split(',');
+      keyword_arr.forEach((i) => {
+        try {
+          KEYWORD.create({
+            REVIEW_ID: reviewId,
+            KEYWORD: i,
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+      });
+      return true;
     } catch (error) {
       console.log(error.message);
     }
