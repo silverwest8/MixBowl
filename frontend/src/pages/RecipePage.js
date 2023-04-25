@@ -17,8 +17,6 @@ const RecipePage = () => {
       </section>
       <section>
         <RecipeDrop />
-      </section>
-      <section>
         <RecipeCard></RecipeCard>
       </section>
       <section>

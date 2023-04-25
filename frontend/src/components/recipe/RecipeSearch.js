@@ -1,14 +1,25 @@
+import { useState } from "react";
 import styled from "styled-components";
 import SearchBar from "../common/SearchBar";
 
 const RecipeSearch = (props) => {
+  const [searchValue, setSearchValue] = useState("");
+
+  const handleInputChange = (e) => {
+    setSearchValue(e.target.value);
+  };
+
   return (
     <SearchBox>
-      <SearchBar placholder={props.placholder} showSearchButton={true} />
+      <SearchBar
+        value={searchValue}
+        placholder={props.placholder}
+        onChange={handleInputChange}
+        showSearchButton={true}
+      />
     </SearchBox>
   );
 };
-
 const SearchBox = styled.div`
   margin: auto;
   margin-top: 40px;

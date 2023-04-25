@@ -23,7 +23,7 @@ const RecipeCard = () => {
   return (
     <CardBox>
       {Recipe.map((index) => (
-        <RecipeBox key={index}>
+        <RecipeBox key={Recipe.rno}>
           <img src={index.image_path}></img>
           <h1>{index.name}</h1>
           <TextBox>
