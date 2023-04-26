@@ -98,60 +98,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /review/checkbarowner:
-    put:
-      tags:
-        - review
-      summary: '사장님 확인'
-      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
-      operationId: checkBarOwner
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Nickname'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BarOwnerCheck'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Fail'
-
-  /review/checkbartender:
-    put:
-      tags:
-        - review
-      summary: '바텐더 확인'
-      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
-      operationId: checkBartender
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Nickname'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BartenderCheck'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Fail'
-
   /review/delete:
     delete:
       tags:
