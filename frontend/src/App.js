@@ -7,6 +7,7 @@ import Layout from "./components/layout/Layout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import CommunityHomePage from "./pages/CommunityHomePage";
+import PostingPage from "./pages/PostingPage";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
 import { useStaySignedIn } from "./hooks/useStaySignedIn";
@@ -39,6 +40,7 @@ function App() {
                 <Route path="recipe" element={<HomePage />} />
                 <Route path="cocktailbar" element={<HomePage />} />
                 <Route path="community" element={<CommunityHomePage />} />
+                <Route path="community/posting" element={<PostingPage />} />
                 <Route path="mypage" element={<HomePage />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<HomePage />} />
