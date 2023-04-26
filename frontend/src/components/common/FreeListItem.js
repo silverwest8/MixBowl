@@ -51,7 +51,7 @@ const ItemContainer = styled.div`
   font-size: 0.875rem;
   .question {
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.125rem;
     -webkit-line-clamp: 2;
     height: 3.5rem;
   }
@@ -69,7 +69,7 @@ const TopSection = styled.div`
     text-overflow: ellipsis;
     width: 35vw;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.125rem;
   }
   .category {
     color: ${({ theme }) => theme.color.primaryGold};
@@ -94,6 +94,7 @@ const ReactionContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  font-size: 0.9rem;
   .icon {
     margin-right: 0.2rem;
   }
