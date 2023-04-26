@@ -61,8 +61,10 @@ export const getNewAccessToken = async () => {
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.log("error다");
     const { config: originalRequest, response } = error;
-    if (response.status === 401 && !originalRequest.url.includes("refresh")) {
+    console.log(error);
+    if (response.status === 419 && !originalRequest.url.includes("refresh")) {
       if (getNewAccessToken()) {
         return axios(originalRequest);
       } else throw error;

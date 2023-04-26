@@ -19,6 +19,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 120000,
+      retry: 0,
     },
   },
 });
@@ -38,7 +39,9 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="recipe" element={<HomePage />} />
                 <Route path="community" element={<HomePage />} />
-                <Route path="cocktailbar" element={<CocktailBarPage />} />
+                <Route path="cocktailbar" element={<CocktailBarPage />}>
+                  <Route path=":id" element={<CocktailBarPage />} />
+                </Route>
                 <Route path="mypage" element={<HomePage />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<HomePage />} />
