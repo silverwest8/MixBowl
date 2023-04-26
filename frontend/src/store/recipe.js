@@ -18,3 +18,11 @@ export const colorState = atom({
     no: true,
   },
 });
+
+export const alcoholState = atom({
+  key: "alcoholState ",
+  default: {
+    min: 0,
+    max: 0,
+  },
+});

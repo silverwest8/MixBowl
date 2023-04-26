@@ -33,7 +33,7 @@ const RecipeColor = ({ handleClose }) => {
       <ColorButtonBox>
         <ColorButton
           bgColor="#FF0000"
-          onClick={() =>
+          onClick={() => {
             setColor({
               red: !red,
               pink: pink,
@@ -48,12 +48,13 @@ const RecipeColor = ({ handleClose }) => {
               purple: purple,
               transparent: transparent,
               no: false,
-            })
-          }
+            });
+          }}
         >
           {red === true ? <FaCheckCircle></FaCheckCircle> : null}
           빨강
         </ColorButton>
+
         <ColorButton
           bgColor="#FF41D5"
           onClick={() =>

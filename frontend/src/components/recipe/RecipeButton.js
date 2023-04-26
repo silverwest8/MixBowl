@@ -2,12 +2,13 @@ import { useModal } from "../../hooks/useModal";
 import styled from "styled-components";
 import RecipeColor from "./RecipeColor";
 import RecipeAlcohol from "./RecipeAlcohol";
-import { colorState } from "../../store/recipe";
+import { colorState, alcoholState } from "../../store/recipe";
 import { useRecoilState } from "recoil";
 import { useEffect } from "react";
 
 const RecipeButton = () => {
   const { openModal, closeModal } = useModal();
+  const [{ min, max }, setAlcohol] = useRecoilState(alcoholState);
   const [
     {
       red,
@@ -43,20 +44,66 @@ const RecipeButton = () => {
       transparent: false,
       no: true,
     });
+    setAlcohol({
+      min: 0,
+      max: 0,
+    });
   }, []);
+
+  console.log({
+    red,
+    pink,
+    orange,
+    black,
+    yellow,
+    brown,
+    green,
+    grey,
+    blue,
+    white,
+    purple,
+    transparent,
+    no,
+  });
   return (
     <ButtonBox>
-      <Button
-        width="7rem"
-        onClick={() =>
-          openModal(RecipeAlcohol, {
-            handleClose: closeModal,
-          })
-        }
-      >
-        도수
-      </Button>
-      {no === true ? (
+      {min === 0 && max === 0 ? (
+        <Button
+          width="7rem"
+          onClick={() =>
+            openModal(RecipeAlcohol, {
+              handleClose: closeModal,
+            })
+          }
+        >
+          도수
+        </Button>
+      ) : (
+        <Button
+          width="7rem"
+          onClick={() =>
+            openModal(RecipeAlcohol, {
+              handleClose: closeModal,
+            })
+          }
+        >
+          {min}~{max}
+        </Button>
+      )}
+
+      {no === true ||
+      (red === false &&
+        pink === false &&
+        orange === false &&
+        black === false &&
+        yellow === false &&
+        brown === false &&
+        green === false &&
+        grey === false &&
+        blue === false &&
+        white === false &&
+        purple === false &&
+        transparent === false) ? (
         <Button
           width="7rem"
           onClick={() =>
