@@ -31,9 +31,9 @@ function App() {
       <MuiThemeProvider theme={muiTheme}>
         <QueryClientProvider client={queryClient}>
           <GlobalStyle />
-          <ToastMessage />
-          <ModalRenderer />
           <BrowserRouter>
+            <ToastMessage />
+            <ModalRenderer />
             <Routes>
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
