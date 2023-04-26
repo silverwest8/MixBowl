@@ -17,7 +17,6 @@ export default async (req, res, next) => {
       where: { UNO: req.decoded.unum },
     });
     req.user = user;
-    logger.info(user);
     return next();
   } catch (error) {
     //유효시간 만료
