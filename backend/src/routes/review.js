@@ -90,15 +90,13 @@ router.get('/getList', checkAccess, async (req, res) => {
         'https://dapi.kakao.com/v2/local/search/keyword.json',
         {
           params: {
-            // --원의 중심 --
-            query: req.body.query,
-            x: req.body.x,
-            y: req.body.y,
-            // --------------
-            radius: req.body.radius,
+            query: req.query.query,
+            x: req.query.x,
+            y: req.query.y,
+            radius: req.query.radius,
+            sort: req.query.sort,
             page: page,
             size: 15,
-            sort: req.query.sort,
             category_group_code: 'FD6',
           },
           headers: {
@@ -145,8 +143,15 @@ router.get('/getList', checkAccess, async (req, res) => {
           data.total_cnt++;
           const reviewList = await REVIEW.findAll({
             where: { PLACE_ID: element.id },
-            limit: 2,
+            include: [
+              {
+                model: USER,
+                as: 'UNO_USER',
+                attributes: ['UNO', 'NICKNAME', 'LEVEL'],
+              },
+            ],
             order: [['createdAt', 'DESC']],
+            limit: 2,
           });
           const rating = await REVIEW.findOne({
             attributes: [
@@ -164,6 +169,13 @@ router.get('/getList', checkAccess, async (req, res) => {
           temp.keyword = await getKeyword(element.id);
           temp.review.review_cnt = reviewList.length;
           temp.review.review_list = Object.assign(reviewList);
+          for (let i = 0; i < reviewList.length; i++) {
+            if (req.user.UNO == temp.review.review_list[i].UNO_USER.UNO) {
+              temp.review.review_list[i].dataValues.UNO_USER.dataValues.ISWRITER = true;
+            } else {
+              temp.review.review_list[i].dataValues.UNO_USER.dataValues.ISWRITER = false;
+            }
+          }
           data.place_list.push(temp);
         }
       }
@@ -233,11 +245,10 @@ router.get('/getReview/:id', checkAccess, async (req, res) => {
     });
     data.total_cnt = review.length;
     data.list = Object.assign(review);
-    for (let i = 0; i < data.total_cnt; i++) {
+    for (let i = 0; i < review.length; i++) {
       if (req.user.UNO == data.list[i].UNO_USER.UNO) {
         data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = true;
       } else {
-        console.log(data.list[i].dataValues.UNO_USER);
         data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = false;
       }
     }
