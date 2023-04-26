@@ -91,7 +91,7 @@ export const refresh_new = async (req, res) => {
           message: 'Invalid Access Token',
         });
       } else {
-        res.status(400).send({
+        res.status(202).send({
           ok: false,
           message: 'Access Token is not expired',
         });
