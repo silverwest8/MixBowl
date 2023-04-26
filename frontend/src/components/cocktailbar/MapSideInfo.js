@@ -23,7 +23,7 @@ const MapSideInfo = ({ id }) => {
   }, []);
   useEffect(() => {
     onChangeWidth();
-  }, [ref]);
+  }, [ref, data]);
   return (
     <Wrapper show={show} width={width}>
       <button onClick={() => setShow((state) => !state)}>
