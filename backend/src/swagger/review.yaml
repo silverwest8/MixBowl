@@ -1,49 +1,54 @@
-# user api for swagger
-
+# review api for swagger
+components:
+  schemas:
+    Cookie:
+      type: string
+    Review:
+      type: object
+      properties:
+        PLACE_ID:
+          type: integer
+          example: 123
+          description: "장소정보"
+        TEXT:
+          type: string
+          example: "리뷰내용입니다."
+        RATING:
+          type: integer
+          example: 4
+          description: "별점입니다"
+        IMAGE:
+          type: integer
+          example: 4
+          description: "이미지인데 어떻게 적어야할지 몰라서 일단 이렇게..."
 paths:
-  /user/login:
+  /review/create:
     post:
       tags:
-        - user
-      summary: 로그인
+        - review
+      summary: 리뷰 작성
       description: ""
-      operationId: loginUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/User"
+      operationId: createReview
+      parameters:
+        
       responses:
         "200":
           description: ""
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  tokens:
-                    type: object
-                    example:
-                      {
-                        ACCESS-1A3BJOJAPEOJRPA3JRAFEJIJ3434R2: string,
-                        REFRESH-19WAHR093HAR89AWHG9H0A: string,
-                      }
-
-        '400':
-          description: ''
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
-  /user/logout:
+  /review/logout:
     get:
       tags:
-        - user
+        - review
       summary: 로그아웃
       description: ""
       operationId: logoutUser
@@ -66,10 +71,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /user/signup:
+  /review/signup:
     post:
       tags:
-        - user
+        - review
       summary: 회원가입
       description: ""
       operationId: signupUser
@@ -91,12 +96,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
-  /user/nicknamedupcheck:
+  /review/nicknamedupcheck:
     put:
       tags:
-        - user
+        - review
       summary: 닉네임 중복 체크
       description: ""
       operationId: checkNickname
@@ -112,18 +117,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessDupCheck'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/DupCheck"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FailDupCheck'
+                $ref: "#/components/schemas/Fail"
 
-  /user/emaildupcheck:
+  /review/emaildupcheck:
     put:
       tags:
-        - user
+        - review
       summary: 이메일 중복 체크
       description: ""
       operationId: checkEmail
@@ -139,18 +144,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessDupCheck'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/DupCheck"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FailDupCheck'
+                $ref: "#/components/schemas/Fail"
 
-  /user/sendauthmail:
+  /review/sendauthmail:
     post:
       tags:
-        - user
+        - review
       summary: "이메일 인증메일 보내기"
       description: ""
       operationId: sendAuthMail
@@ -172,12 +177,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
-  /user/checkauth:
+  /review/checkauth:
     put:
       tags:
-        - user
+        - review
       summary: "이메일 인증번호 확인"
       description: ""
       operationId: checkAuth
@@ -199,12 +204,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
-  /user/update:
+  /review/update:
     put:
       tags:
-        - user
+        - review
       summary: "회원정보수정"
       description: "닉네임만 바꿀 수 있음"
       operationId: updateUser
@@ -226,41 +231,41 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
-  /user/checkbarowner:
+  /review/checkbarowner:
     put:
       tags:
-        - user
-      summary: '사장님 확인'
-      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
+        - review
+      summary: "사장님 확인"
+      description: "일단 닉네임 보내는 걸로 했는데 다시 정해야 함."
       operationId: checkBarOwner
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Nickname'
+              $ref: "#/components/schemas/Nickname"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BarOwnerCheck'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/BarOwnerCheck"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
-  /user/checkbartender:
+  /review/checkbartender:
     put:
       tags:
-        - user
-      summary: '바텐더 확인'
-      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
+        - review
+      summary: "바텐더 확인"
+      description: "일단 닉네임 보내는 걸로 했는데 다시 정해야 함."
       operationId: checkBartender
       requestBody:
         required: true
@@ -282,10 +287,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /user/delete:
+  /review/delete:
     delete:
       tags:
-        - user
+        - review
       summary: "회원 탈퇴"
       description: ""
       operationId: deleteUser

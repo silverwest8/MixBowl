@@ -1,61 +1,46 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE extends Model {
+export default class KEYWORD extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    RNO: {
+    KNO: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    UNO: {
+    REVIEW_ID: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'USER',
-        key: 'UNO'
+        model: 'REVIEW',
+        key: 'REVIEW_ID'
       }
     },
-    NAME: {
-      type: DataTypes.STRING(45),
-      allowNull: false
-    },
-    IMAGE_PATH: {
-      type: DataTypes.STRING(45),
-      allowNull: false
-    },
-    RECIPE_JSON: {
-      type: DataTypes.JSON,
-      allowNull: false
-    },
-    COLOR: {
-      type: DataTypes.STRING(45),
-      allowNull: false
-    },
-    LIKE: {
+    KEYWORD: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      comment: "1 - 술이 맛있어요\\n2 - 술이 다양해요\\n3 - 혼술하기 좋아요\\n4 - 분위기가 좋아요\\n5 - 직원이 친절해요\\n6 - 대화하기 좋아요\\n7 - 가성비가 좋아요\\n8 - 메뉴가 다양해요\\n9 - 음식이 맛있어요"
     }
   }, {
     sequelize,
-    tableName: 'RECIPE',
-    timestamps: true,
+    tableName: 'KEYWORD',
+    timestamps: false,
     indexes: [
       {
         name: "PRIMARY",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "RNO" },
+          { name: "KNO" },
         ]
       },
       {
-        name: "UNO3_idx",
+        name: "REVIEW_ID_idx",
         using: "BTREE",
         fields: [
-          { name: "UNO" },
+          { name: "REVIEW_ID" },
         ]
       },
     ]

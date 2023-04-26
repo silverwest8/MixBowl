@@ -20,7 +20,7 @@ components:
           example: false
         message:
           type: string
-          example: "Operation Fail"
+          example: 'Operation Fail'
         error:
           type: object
     User:
@@ -47,7 +47,7 @@ components:
     Nickname:
       type: object
       properties:
-        nickname:
+        checkname:
           type: string
           example: mynickname
     Email:
@@ -61,17 +61,34 @@ components:
       properties:
         email:
           type: string
+          example: john@email.com
+        code:
+          type: string
           example: 12345
-    DupCheck:
+    SuccessDupCheck:
       type: object
       properties:
         success:
           type: boolean
+          example: false
         duplicate:
           type: boolean
+          example: false
         message:
           type: string
-          example: "duplecate == true => 중복"
+          example: 'duplecate == false => 사용가능'
+    FailDupCheck:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        duplicate:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'duplecate == true => 사용불가'
     BartenderCheck:
       type: object
       properties:
@@ -81,7 +98,7 @@ components:
           type: boolean
         message:
           type: string
-          example: "bartender == true => 인증 완료"
+          example: 'bartender == true => 인증 완료'
     BarOwnerCheck:
       type: object
       properties:
@@ -91,7 +108,32 @@ components:
           type: boolean
         message:
           type: string
-          example: "baronnwer == true => 인증 완료"
+          example: 'baronnwer == true => 인증 완료'
+    Recipe:
+      type: object
+      properties:
+        Name:
+          type: string
+          example: 'Old Fashioned'
+        ImagePath:
+          type: string
+        Nickname:
+          type: string
+          example: 'nickname'
+        Like:
+          type: integer
+          example: '10'
+        Comment:
+          type: integer
+          example: '5'
+    RecipeFilter:
+      type: object
+      properties:
+        ABV:
+          type: integer
+        Color:
+          type: integer
+          example: '1'
 
     Tag:
       type: object
@@ -170,4 +212,4 @@ components:
           schema:
             type: array
             items:
-              $ref: "#/components/schemas/User"
+              $ref: '#/components/schemas/User'
