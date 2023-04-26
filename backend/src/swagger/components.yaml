@@ -11,7 +11,7 @@ components:
           type: boolean
         message:
           type: string
-          example: "Operation success"
+          example: Operation success
     Fail:
       type: object
       properties:
@@ -20,7 +20,7 @@ components:
           example: false
         message:
           type: string
-          example: 'Operation Fail'
+          example: Operation Fail
         error:
           type: object
     User:
@@ -31,7 +31,7 @@ components:
           example: john@email.com
         password:
           type: string
-          example: "12345"
+          example: 12345
     Signup:
       type: object
       properties:
@@ -43,7 +43,7 @@ components:
           example: mynickname
         password:
           type: string
-          example: "12345"
+          example: 12345
     Nickname:
       type: object
       properties:
@@ -76,7 +76,7 @@ components:
           example: false
         message:
           type: string
-          example: 'duplecate == false => 사용가능'
+          example: duplecate == false => 사용가능
     FailDupCheck:
       type: object
       properties:
@@ -88,7 +88,7 @@ components:
           example: true
         message:
           type: string
-          example: 'duplecate == true => 사용불가'
+          example: duplecate == true => 사용불가
     BartenderCheck:
       type: object
       properties:
@@ -98,7 +98,7 @@ components:
           type: boolean
         message:
           type: string
-          example: 'bartender == true => 인증 완료'
+          example: bartender == true => 인증 완료
     BarOwnerCheck:
       type: object
       properties:
@@ -108,24 +108,24 @@ components:
           type: boolean
         message:
           type: string
-          example: 'baronnwer == true => 인증 완료'
+          example: baronnwer == true => 인증 완료
     Recipe:
       type: object
       properties:
         Name:
           type: string
-          example: 'Old Fashioned'
+          example: Old Fashioned
         ImagePath:
           type: string
         Nickname:
           type: string
-          example: 'nickname'
+          example: nickname
         Like:
           type: integer
-          example: '10'
+          example: 10
         Comment:
           type: integer
-          example: '5'
+          example: 5
     RecipeFilter:
       type: object
       properties:
@@ -133,83 +133,203 @@ components:
           type: integer
         Color:
           type: integer
-          example: '1'
-
-    Tag:
+          example: 1
+    getReviewList:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-      xml:
-        name: tag
-    Pet:
-      required:
-        - name
-        - photoUrls
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 10
-        name:
-          type: string
-          example: doggie
-        category:
-          $ref: "#/components/schemas/User"
-        photoUrls:
-          type: array
-          xml:
-            wrapped: true
-          items:
-            type: string
-            xml:
-              name: photoUrl
-        tags:
-          type: array
-          xml:
-            wrapped: true
-          items:
-            $ref: "#/components/schemas/Tag"
-        status:
-          type: string
-          description: pet status in the store
-          enum:
-            - available
-            - pending
-            - sold
-      xml:
-        name: pet
-    ApiResponse:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        type:
-          type: string
+        success:
+          type: boolean
         message:
           type: string
-      xml:
-        name: "##default"
-  requestBodies:
-    Pet:
-      description: Pet object that needs to be added to the store
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Pet"
-        application/xml:
-          schema:
-            $ref: "#/components/schemas/Pet"
-    UserArray:
-      description: List of user object
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
+          example: KAKAO API 조회 성공
+        data:
+          type: object
+          properties:
+            total_cnt:
+              type: integer
+              example: 15
+            place_list:
+              type: array
+              items:
+                type: object
+                properties:
+                  kakao_data:
+                    type: object
+                    properties:
+                      address_name:
+                      category_group_code:
+                        type: string
+                        example: 경기 수원시 팔달구 장안동 53-8
+                      category_group_name:
+                        type: string
+                        example: FD6
+                      category_name:
+                        type: string
+                        example: 음식점
+                      distance:
+                        type: string
+                        example: 음식점 > 술집 > 칵테일바
+                      id:
+                        type: string
+                        example: 942533846
+                      phone:
+                        type: string
+                        example: 0507-1361-1972
+                      place_name:
+                        type: string
+                        example: 비원
+                      place_url:
+                        type: string
+                        example: http://place.map.kakao.com/942533846
+                      road_address_name:
+                        type: string
+                        example: 경기 수원시 팔달구 신풍로63번길 3-1
+                      x:
+                        type: string
+                        example: 127.01362255610799
+                      y:
+                        type: string
+                        example: 37.28661616985556
+                  total_rate:
+                    type: number
+                    example: 4.5
+                  keyword:
+                    type: array
+                    items:
+                      type: string
+                      example: 술이 다양해요
+                    minItems: 3
+                    maxItems: 3
+                  review:
+                    type: object
+                    properties:
+                      review_cnt:
+                        type: number
+                        example: 1
+                      review_list:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            REVIEW_ID:
+                              type: integer
+                              example: 4
+                            UNO:
+                              type: integer
+                              example: 2
+                            PLACE_ID:
+                              type: string
+                              example: 942533846
+                            TEXT:
+                              type: string
+                              example: 수원에 있어요
+                            RATING:
+                              type: number
+                              example: 4
+                            createdAt:
+                              type: string
+                              example: 2023-04-24T17:50:29.000Z
+                            updatedAt:
+                              type: string
+                              example: 2023-04-24T17:50:29.000Z
+    getBar:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 칵테일 바 단건 조회 성공
+        data:
+          type: object
+          properties:
+            PLACE_ID:
+              type: string
+              example: 1389819741
+            NAME:
+              type: string
+              example: 로랑
+            ADDRESS:
+              type: string
+              example: 경기 수원시 팔달구 매산로2가 40-1
+            ROAD_ADDRESS:
+              type: string
+              example: 경기 수원시 팔달구 매산로 51
+            PHONE:
+              type: string
+              example: 010-2215-5174
+            X:
+              type: string
+              example: 127.00686607922565
+            Y:
+              type: string
+              example: 37.269183431719554
+            URL:
+              type: string
+              example: http://place.map.kakao.com/1389819741
+            AVG_RATING:
+              type: string
+              example: 3.5
+
+    getReview:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 칵테일 바 단건 조회 성공
+        data:
+          type: object
+          properties:
+            total_cnt:
+              type: integer
+              example: 15
+            keyword:
+              type: array
+              items:
+                type: string
+                example: 술이 다양해요
+              minItems: 3
+              maxItems: 3
+            list:
+              type: array
+              items:
+                type: object
+                properties:
+                  REVIEW_ID:
+                    type: integer
+                    example: 2
+                  UNO:
+                    type: integer
+                    example: 2
+                  PLACE_ID:
+                    type: string
+                    example: 17649496
+                  TEXT:
+                    type: string
+                    example: 맛없어요
+                  RATING:
+                    type: number
+                    example: 3
+                  createdAt:
+                    type: string
+                    example: 2023-04-24T17:10:30.000Z
+                  updatedAt:
+                    type: string
+                    example: 2023-04-24T17:12:10.000Z
+                  UNO_USER:
+                    type: object
+                    properties:
+                      UNO:
+                        type: integer
+                        example: 2
+                      NICKNAME:
+                        type: string
+                        example: NEWNICKNAME
+                      LEVEL:
+                        type: integer
+                        example: 1
+                      ISWRITER:
+                        type: boolean
+                        example: false

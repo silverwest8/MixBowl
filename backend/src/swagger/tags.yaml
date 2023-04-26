@@ -7,7 +7,5 @@ tags:
     description: Operation about recipes
   - name: post
     description: Operation about community posting
-  - name: map
-    description: Operation about map
   - name: review
     description: Operation about review
