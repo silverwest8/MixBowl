@@ -232,6 +232,22 @@ components:
                             updatedAt:
                               type: string
                               example: 2023-04-24T17:50:29.000Z
+                            UNO_USER:
+                              type: object
+                              properties:
+                                UNO:
+                                  type: integer
+                                  example: 2
+                                NICKNAME:
+                                  type: string
+                                  example: NEWNICKNAME
+                                LEVEL:
+                                  type: integer
+                                  example: 1
+                                ISWRITER:
+                                  type: boolean
+                                  example: false
+
     getBar:
       type: object
       properties:
