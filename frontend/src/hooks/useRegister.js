@@ -20,6 +20,13 @@ export const useNickname = () => {
       });
       return;
     }
+    if (nickname.length > 10) {
+      setNickNameMsg({
+        type: "error",
+        value: "10자 이하로 입력해주세요.",
+      });
+      return;
+    }
     try {
       const { data } = await axios.put("/api/user/nicknamedupcheck", {
         checkname: nickname,
@@ -49,6 +56,13 @@ export const useNickname = () => {
         value: "닉네임을 입력해주세요.",
       });
       return false;
+    }
+    if (nickname.length > 10) {
+      setNickNameMsg({
+        type: "error",
+        value: "10자 이하로 입력해주세요.",
+      });
+      return;
     }
     if (nickname !== checkedNickname.current) {
       setNickNameMsg({
@@ -228,6 +242,13 @@ export const useEmail = () => {
       setCodeMsg({
         type: "error",
         value: "위 이메일로 인증번호를 전송해주세요.",
+      });
+      return;
+    }
+    if (code === "") {
+      setCodeMsg({
+        type: "error",
+        value: "인증번호를 입력해주세요.",
       });
       return;
     }
