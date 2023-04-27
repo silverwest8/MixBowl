@@ -13,8 +13,8 @@ import AutoCompleteInput from "./AutoCompleteInput";
 function KakaoMap({ id }) {
   const navigate = useNavigate();
   const [center, setCenter] = useState({
-    lat: 37.498095,
-    lng: 127.02761,
+    lat: 37.5878109,
+    lng: 127.0017424,
   });
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);

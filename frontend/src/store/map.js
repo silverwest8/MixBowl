@@ -4,8 +4,8 @@ export const mapState = atom({
   default: {
     data: null,
     center: {
-      lat: 37.498095,
-      lng: 127.02761,
+      lat: 37.5878109,
+      lng: 127.0017424,
     },
     location: "",
     addressInput: "",
