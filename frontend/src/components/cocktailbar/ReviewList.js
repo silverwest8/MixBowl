@@ -4,7 +4,7 @@ import ReviewModal from "./ReviewModal";
 import { useModal } from "../../hooks/useModal";
 import { FaPen } from "react-icons/fa";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const ReviewList = ({ cnt, reviewList, name, id }) => {
   const params = useParams();
@@ -17,7 +17,7 @@ const ReviewList = ({ cnt, reviewList, name, id }) => {
           <span>{cnt}개</span>
         </div>
 
-        {params.id && (
+        {params.id ? (
           <Button
             onClick={() => {
               openModal(ReviewModal, {
@@ -29,6 +29,10 @@ const ReviewList = ({ cnt, reviewList, name, id }) => {
           >
             <FaPen /> 리뷰 작성하기
           </Button>
+        ) : (
+          <Link to={`/cocktailbar/${id}`} className="more-link">
+            더보기
+          </Link>
         )}
       </ReviewHeader>
       <List>
@@ -84,6 +88,10 @@ const ReviewHeader = styled.div`
       font-size: 0.875rem;
       font-weight: 400;
     }
+  }
+  .more-link {
+    font-size: 0.875rem;
+    color: ${({ theme }) => theme.color.lightGray};
   }
 `;
 

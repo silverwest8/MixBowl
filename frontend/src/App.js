@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "./components/layout/Layout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import CocktailBarPage from "./pages/CocktailBarPage";
 import CommunityHomePage from "./pages/CommunityHomePage";
 import PostingPage from "./pages/PostingPage";
 import ToastMessage from "./components/common/ToastMessage";
@@ -39,7 +40,9 @@ function App() {
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="recipe" element={<HomePage />} />
-                <Route path="cocktailbar" element={<HomePage />} />
+                <Route path="cocktailbar" element={<CocktailBarPage />}>
+                  <Route path=":id" element={<CocktailBarPage />} />
+                </Route>
                 <Route path="community" element={<CommunityHomePage />} />
                 <Route path="community/posting" element={<PostingPage />} />
                 <Route path="mypage" element={<HomePage />} />
