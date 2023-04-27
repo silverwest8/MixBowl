@@ -2,20 +2,22 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { GlobalStyle, muiTheme, theme } from "./styles/theme";
 import { ThemeProvider } from "styled-components";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material";
+import { RecoilRoot } from "recoil";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useStaySignedIn } from "./hooks/useStaySignedIn";
 import Layout from "./components/layout/Layout";
 import HomePage from "./pages/HomePage";
-import SamplePage from "./pages/Samplepage";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import SamplePage from "./pages/Samplepage";
 import NotLoginRecipePage from "./pages/NotLoginRecipePage";
 import RecipePage from "./pages/RecipePage";
 import WriteRecipePage from "./pages/WriteRecipePage";
 import DetailRecipePage from "./pages/DetailRecipePage";
-import ToastMessage from "./components/common/ToastMessage";
-import ModalRenderer from "./components/layout/ModalRenderer";
-import { useStaySignedIn } from "./hooks/useStaySignedIn";
 import LoginRecipeRoute from "./routes/LoginRecipeRoute";
 import NotLoginRecipeRoute from "./routes/NotLoginRecipeRoute.js";
+import ToastMessage from "./components/common/ToastMessage";
+import ModalRenderer from "./components/layout/ModalRenderer";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -25,6 +27,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 120000,
+      retry: 0,
     },
   },
 });
@@ -32,38 +35,40 @@ const queryClient = new QueryClient({
 function App() {
   useStaySignedIn();
   return (
-    <ThemeProvider theme={theme}>
-      <MuiThemeProvider theme={muiTheme}>
-        <QueryClientProvider client={queryClient}>
-          <GlobalStyle />
-          <ToastMessage />
-          <ModalRenderer />
-          <BrowserRouter>
-            <Routes>
-              <Route element={<Layout />}>
-                <Route path="/" element={<HomePage />} />
-                <Route element={<LoginRecipeRoute />}>
-                  <Route path="recipe" element={<RecipePage />} />
-                  <Route path="/recipe/:id" element={<DetailRecipePage />} />
-                  <Route path="/writerecipe" element={<WriteRecipePage />} />
+    <RecoilRoot>
+      <ThemeProvider theme={theme}>
+        <MuiThemeProvider theme={muiTheme}>
+          <QueryClientProvider client={queryClient}>
+            <GlobalStyle />
+            <ToastMessage />
+            <ModalRenderer />
+            <BrowserRouter>
+              <Routes>
+                <Route element={<Layout />}>
+                  <Route path="/" element={<HomePage />} />
+                  <Route element={<LoginRecipeRoute />}>
+                    <Route path="recipe" element={<RecipePage />} />
+                    <Route path="/recipe/:id" element={<DetailRecipePage />} />
+                    <Route path="/writerecipe" element={<WriteRecipePage />} />
+                  </Route>
+                  <Route element={<NotLoginRecipeRoute />}>
+                    <Route
+                      path="notloginrecipe"
+                      element={<NotLoginRecipePage />}
+                    />
+                  </Route>
+                  <Route path="community" element={<HomePage />} />
+                  <Route path="cocktailbar" element={<HomePage />} />
+                  <Route path="mypage" element={<HomePage />} />
+                  <Route path="login" element={<LoginPage />} />
+                  <Route path="register" element={<RegisterPage />} />
                 </Route>
-                <Route element={<NotLoginRecipeRoute />}>
-                  <Route
-                    path="notloginrecipe"
-                    element={<NotLoginRecipePage />}
-                  />
-                </Route>
-                <Route path="community" element={<SamplePage />} />
-                <Route path="cocktailbar" element={<SamplePage />} />
-                <Route path="mypage" element={<SamplePage />} />
-                <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<SamplePage />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </QueryClientProvider>
-      </MuiThemeProvider>
-    </ThemeProvider>
+              </Routes>
+            </BrowserRouter>
+          </QueryClientProvider>
+        </MuiThemeProvider>
+      </ThemeProvider>
+    </RecoilRoot>
   );
 }
 

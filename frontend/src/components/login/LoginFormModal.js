@@ -7,7 +7,7 @@ const LoginFormModal = ({ handleClose }) => {
     <Modal handleClose={handleClose}>
       <h1>로고</h1>
       <Paragraph>로그인 후 다양한 콘텐츠를 즐겨보세요</Paragraph>
-      <LoginForm />
+      <LoginForm handleClose={handleClose} />
     </Modal>
   );
 };

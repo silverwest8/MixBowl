@@ -2,6 +2,7 @@ import { Link, useHref } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { authState } from "../../store/auth";
+import { removeTokens } from "../../utils/token";
 
 const AuthButtonBox = () => {
   const { isLoggedin } = useRecoilValue(authState);
@@ -11,12 +12,19 @@ const AuthButtonBox = () => {
       <button className={href.includes("mypage") ? "active" : ""}>
         <Link to="mypage">마이페이지</Link>
       </button>
-      <button>로그아웃</button>
+      <button
+        onClick={() => {
+          removeTokens();
+          window.location.reload();
+        }}
+      >
+        로그아웃
+      </button>
     </ButtonBox>
   ) : (
     <ButtonBox>
       <button>
-        <Link to="login">로그인</Link>
+        <Link to={`/login?return_url=${href}`}>로그인</Link>
       </button>
       <button>
         <Link to="register">회원가입</Link>
