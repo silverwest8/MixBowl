@@ -94,15 +94,10 @@ const LoginForm = ({ handleClose }) => {
         </p>
       )}
       <Button>로그인</Button>
-      <div className="link-wrapper">
-        <Link to="/login" className="find-pwd-link">
-          비밀번호를 잊으셨나요?
-        </Link>
-        <span />
-        <Link to="/register" className="register-link">
-          회원가입
-        </Link>
-      </div>
+      <Link className="link-wrapper" to="/register">
+        <span>아직 회원이 아니신가요?</span>
+        <span className="register">회원가입하기</span>
+      </Link>
     </Form>
   );
 };
@@ -114,18 +109,13 @@ const Form = styled.form`
   width: 100%;
   .link-wrapper {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     justify-content: center;
+    align-items: center;
     font-size: 0.875rem;
-    .find-pwd-link {
-      color: ${({ theme }) => theme.color.lightGray};
-    }
-    .register-link {
+    color: ${({ theme }) => theme.color.lightGray};
+    .register {
       color: ${({ theme }) => theme.color.secondGold};
-    }
-    span {
-      width: 1px;
-      background-color: ${({ theme }) => theme.color.gray};
     }
   }
   .fail-message {
