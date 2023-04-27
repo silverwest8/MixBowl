@@ -26,11 +26,13 @@ const smtpTransport = nodemailer.createTransport({
 
 //---- 연동확인
 router.get('/', async (req, res) => {
+router.get('/', async (req, res) => {
   const users = await sql.getUser();
   res.send(users);
 });
 
 // 로그인
+router.post('/login', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const tokens = await sql.loginUser(req, res);
@@ -63,6 +65,7 @@ router.post('/signup', userUtil.signUp);
 
 //닉네임 중복 체크
 router.put('/nicknamedupcheck', async (req, res) => {
+router.put('/nicknamedupcheck', async (req, res) => {
   try {
     const count = await sql.namedupcheck(req);
     if (count !== 0) {
@@ -72,10 +75,12 @@ router.put('/nicknamedupcheck', async (req, res) => {
     }
   } catch (error) {
     res.send('error on nicknamedupcheck');
+    res.send('error on nicknamedupcheck');
   }
 });
 
 //이메일 중복 체크
+router.put('/emaildupcheck', async (req, res) => {
 router.put('/emaildupcheck', async (req, res) => {
   try {
     const count = await sql.emaildupcheck(req);
@@ -85,6 +90,7 @@ router.put('/emaildupcheck', async (req, res) => {
       return res.send({ success: true });
     }
   } catch (error) {
+    res.send('error on emaildupcheck');
     res.send('error on emaildupcheck');
   }
 });
@@ -190,12 +196,26 @@ router.put('/checkbartender', checkAccess, async (req, res) => {
       .status(400)
       .json({ success: false, message: '바텐더 인증 실패', error });
   }
+// bartender 인증
+router.put('/checkbartender', checkAccess, async (req, res) => {
+  try {
+    const bartender = true;
+    if (bartender) {
+      req.user.update({ LEVEL: 5 });
+    }
+    return res.status(200).json({ success: true, message: '바텐더 인증 성공' });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: '바텐더 인증 실패', error });
+  }
 });
 
 //회원 탈퇴
 router.delete('/delete', checkAccess, userUtil.delUser);
 
 // 토큰 재발급 라우터
+router.get('/refresh', refresh_new);
 router.get('/refresh', refresh_new);
 
 // JWT access 토큰 체크 라우터 (디버깅용)
@@ -204,6 +224,7 @@ router.get('/check/access', checkAccess, (req, res) => {
   const uno = req.decoded.unum;
   return res.status(200).json({
     code: 200,
+    message: '유효한 토큰입니다.',
     message: '유효한 토큰입니다.',
     data: {
       uno: uno,

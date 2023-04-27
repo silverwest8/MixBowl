@@ -16,7 +16,7 @@ export function sign(userNumber) {
   });
 }
 
-export function accessVerify(token) {
+export function accessVerify (token) {
   //Access 토큰 확인 코드
   let decoded = null;
   try {
@@ -33,7 +33,7 @@ export function accessVerify(token) {
   }
 }
 
-export function refresh() {
+export function refresh () {
   // Refresh 토큰 생성 코드
   return jwt.sign({}, process.env.SECRET_KEY, {
     expiresIn: '14d',
@@ -79,7 +79,7 @@ export const refresh_new = async (req, res) => {
           });
         } else {
           //refresh token이 유효하므로, 새로운 access token 발급
-          const newAccessToken = sign(req.body.unum);
+          const newAccessToken = sign(decodeAccess.unum);
           res.status(200).send({
             ok: true,
             accessToken: newAccessToken,

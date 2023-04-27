@@ -1,18 +1,20 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { GlobalStyle, muiTheme, theme } from "./styles/theme";
-import { ThemeProvider } from "styled-components";
-import { ThemeProvider as MuiThemeProvider } from "@mui/material";
-import { RecoilRoot } from "recoil";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Layout from "./components/layout/Layout";
-import HomePage from "./pages/HomePage";
-import RegisterPage from "./pages/RegisterPage";
-import ToastMessage from "./components/common/ToastMessage";
-import ModalRenderer from "./components/layout/ModalRenderer";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { GlobalStyle, muiTheme, theme } from './styles/theme';
+import { ThemeProvider } from 'styled-components';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material';
+import { RecoilRoot } from 'recoil';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useStaySignedIn } from './hooks/useStaySignedIn';
+import Layout from './components/layout/Layout';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ToastMessage from './components/common/ToastMessage';
+import ModalRenderer from './components/layout/ModalRenderer';
 
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,6 +25,7 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  useStaySignedIn();
   return (
     <RecoilRoot>
       <ThemeProvider theme={theme}>
@@ -39,7 +42,7 @@ function App() {
                   <Route path="community" element={<HomePage />} />
                   <Route path="cocktailbar" element={<HomePage />} />
                   <Route path="mypage" element={<HomePage />} />
-                  <Route path="login" element={<HomePage />} />
+                  <Route path="login" element={<LoginPage />} />
                   <Route path="register" element={<RegisterPage />} />
                 </Route>
               </Routes>
