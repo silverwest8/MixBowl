@@ -72,7 +72,6 @@ router.put('/nicknamedupcheck', async (req, res) => {
     }
   } catch (error) {
     res.send('error on nicknamedupcheck');
-    res.send('error on nicknamedupcheck');
   }
 });
 
@@ -86,7 +85,6 @@ router.put('/emaildupcheck', async (req, res) => {
       return res.send({ success: true });
     }
   } catch (error) {
-    res.send('error on emaildupcheck');
     res.send('error on emaildupcheck');
   }
 });
@@ -203,7 +201,6 @@ router.delete('/delete', checkAccess, userUtil.delUser);
 
 // 토큰 재발급 라우터
 router.get('/refresh', refresh_new);
-router.get('/refresh', refresh_new);
 
 // JWT access 토큰 체크 라우터 (디버깅용)
 router.get('/check/access', checkAccess, (req, res) => {
@@ -211,7 +208,6 @@ router.get('/check/access', checkAccess, (req, res) => {
   const uno = req.decoded.unum;
   return res.status(200).json({
     code: 200,
-    message: '유효한 토큰입니다.',
     message: '유효한 토큰입니다.',
     data: {
       uno: uno,
