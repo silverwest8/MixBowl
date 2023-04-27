@@ -6,7 +6,7 @@ import { FaPen } from "react-icons/fa";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 
-const ReviewList = ({ cnt, reviewList, name }) => {
+const ReviewList = ({ cnt, reviewList, name, id }) => {
   const params = useParams();
   const { openModal, closeModal } = useModal();
   return (!params.id && cnt !== 0) || params.id ? (
@@ -23,6 +23,7 @@ const ReviewList = ({ cnt, reviewList, name }) => {
               openModal(ReviewModal, {
                 handleClose: closeModal,
                 name,
+                id,
               });
             }}
           >
