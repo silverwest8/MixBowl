@@ -8,7 +8,7 @@ const NotLoginRecipePage = () => {
     <main>
       <Title title="칵테일 레시피" />
       <section>
-        <RecipeSearch placholder="로그인 이후 검색이 가능합니다!" />
+        <RecipeSearch placeholder="로그인 이후 검색이 가능합니다!" />
       </section>
       <section>
         <RecipeCard></RecipeCard>

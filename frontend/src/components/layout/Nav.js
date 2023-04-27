@@ -1,62 +1,40 @@
-<<<<<<< HEAD
-import { Link, useHref } from "react-router-dom";
-import styled from "styled-components";
-=======
 import { Link, useHref, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import LoginFormModal from "../login/LoginFormModal";
 import { authState } from "../../store/auth";
 import { useModal } from "../../hooks/useModal";
->>>>>>> 9670774d5a158590f57ca70a2e71e50fdf76bd85
 
 const NAV = [
   {
     to: "/recipe",
     name: "칵테일 레시피",
-<<<<<<< HEAD
-=======
     login: false,
->>>>>>> 9670774d5a158590f57ca70a2e71e50fdf76bd85
   },
   {
     to: "/community",
     name: "커뮤니티",
-<<<<<<< HEAD
-=======
     login: false,
->>>>>>> 9670774d5a158590f57ca70a2e71e50fdf76bd85
   },
   {
     to: "/cocktailbar",
     name: "칵테일 바 지도",
-<<<<<<< HEAD
-=======
     login: true,
->>>>>>> 9670774d5a158590f57ca70a2e71e50fdf76bd85
   },
 ];
 
 const Nav = () => {
   const href = useHref();
-<<<<<<< HEAD
-  return (
-    <NavBox>
-      {NAV.map(({ to, name }) => (
-=======
   const navigate = useNavigate();
   const { openModal, closeModal } = useModal();
   const { isLoggedin } = useRecoilValue(authState);
   return (
     <NavBox>
       {NAV.map(({ to, name, login }) => (
->>>>>>> 9670774d5a158590f57ca70a2e71e50fdf76bd85
         <StyledLink
           to={to}
           key={to}
           className={href.includes(to) ? "active" : ""}
-<<<<<<< HEAD
-=======
           onClick={(e) => {
             e.preventDefault();
             if (login) {
@@ -67,7 +45,6 @@ const Nav = () => {
                 });
             } else navigate(to);
           }}
->>>>>>> 9670774d5a158590f57ca70a2e71e50fdf76bd85
         >
           {href.includes(to) && (
             <>

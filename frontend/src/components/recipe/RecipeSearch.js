@@ -13,7 +13,7 @@ const RecipeSearch = (props) => {
     <SearchBox>
       <SearchBar
         value={searchValue}
-        plaecholder={props.placeholder}
+        placeholder={props.placeholder}
         onChange={handleInputChange}
         showSearchButton={true}
       />

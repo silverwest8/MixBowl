@@ -9,7 +9,7 @@ const RecipePage = () => {
     <main>
       <Title title="칵테일 레시피" />
       <section>
-        <RecipeSearch placholder="원하는 칵테일 레시피를 검색해보세요" />
+        <RecipeSearch placeholder="원하는 칵테일 레시피를 검색해보세요" />
       </section>
       <section>
         <RecipeButton />
