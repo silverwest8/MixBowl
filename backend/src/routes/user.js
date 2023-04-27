@@ -26,13 +26,11 @@ const smtpTransport = nodemailer.createTransport({
 
 //---- 연동확인
 router.get('/', async (req, res) => {
-router.get('/', async (req, res) => {
   const users = await sql.getUser();
   res.send(users);
 });
 
 // 로그인
-router.post('/login', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const tokens = await sql.loginUser(req, res);
@@ -65,7 +63,6 @@ router.post('/signup', userUtil.signUp);
 
 //닉네임 중복 체크
 router.put('/nicknamedupcheck', async (req, res) => {
-router.put('/nicknamedupcheck', async (req, res) => {
   try {
     const count = await sql.namedupcheck(req);
     if (count !== 0) {
@@ -80,7 +77,6 @@ router.put('/nicknamedupcheck', async (req, res) => {
 });
 
 //이메일 중복 체크
-router.put('/emaildupcheck', async (req, res) => {
 router.put('/emaildupcheck', async (req, res) => {
   try {
     const count = await sql.emaildupcheck(req);
@@ -183,19 +179,6 @@ router.put('/checkbarowner', checkAccess, async (req, res) => {
   }
 });
 
-// bartender 인증
-router.put('/checkbartender', checkAccess, async (req, res) => {
-  try {
-    const bartender = true;
-    if (bartender) {
-      req.user.update({ LEVEL: 5 });
-    }
-    return res.status(200).json({ success: true, message: '바텐더 인증 성공' });
-  } catch (error) {
-    return res
-      .status(400)
-      .json({ success: false, message: '바텐더 인증 실패', error });
-  }
 // bartender 인증
 router.put('/checkbartender', checkAccess, async (req, res) => {
   try {
