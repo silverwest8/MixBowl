@@ -91,17 +91,24 @@ const ReviewModal = ({ handleClose, name, id }) => {
       setRatingMsg("");
       return;
     }
+    // review POST API 호출하는 부분
     try {
       const formData = new FormData();
       for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
+        formData.append("files", files[i].file);
+      }
+      /* form data 확인 */
+      const values = formData.values();
+      for (const pair of values) {
+        console.log(pair);
       }
       const { data } = await axios.post(`/api/review/create/${id}`, {
         rating: Number(rating),
-        keyword: keyword.join(","),
         detail,
+        keyword,
         image: formData,
       });
+      /* TODO: 성공 로직 */
       console.log(data);
     } catch (e) {
       console.log(e);
