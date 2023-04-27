@@ -8,12 +8,10 @@ import Layout from "./components/layout/Layout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import NotLoginRecipePage from "./pages/NotLoginRecipePage";
 import RecipePage from "./pages/RecipePage";
 import WriteRecipePage from "./pages/WriteRecipePage";
 import DetailRecipePage from "./pages/DetailRecipePage";
-import LoginRecipeRoute from "./routes/LoginRecipeRoute";
-import NotLoginRecipeRoute from "./routes/NotLoginRecipeRoute.js";
+import RecipeRoute from "./routes/RecipeRoute";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
 import CocktailBarPage from "./pages/CocktailBarPage";
@@ -46,16 +44,10 @@ function App() {
             <Routes>
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
-                <Route element={<LoginRecipeRoute />}>
+                <Route element={<RecipeRoute />}>
                   <Route path="recipe" element={<RecipePage />} />
                   <Route path="/recipe/:id" element={<DetailRecipePage />} />
                   <Route path="/writerecipe" element={<WriteRecipePage />} />
-                </Route>
-                <Route element={<NotLoginRecipeRoute />}>
-                  <Route
-                    path="notloginrecipe"
-                    element={<NotLoginRecipePage />}
-                  />
                 </Route>
                 <Route path="mypage" element={<HomePage />} />
                 <Route path="login" element={<LoginPage />} />

@@ -9,6 +9,7 @@ const SearchBar = ({
   onClear,
   onSearch,
   onChange,
+  disabled,
 }) => {
   const onKeyDown = (e) => {
     if (e.keyCode === 13) onSearch();
@@ -17,6 +18,7 @@ const SearchBar = ({
     <SearchBarBox>
       <FaSearch />
       <input
+        disabled={disabled !== undefined ? disabled : false}
         value={value}
         name={name}
         placeholder={placeholder}
