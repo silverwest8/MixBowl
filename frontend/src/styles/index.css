@@ -12,7 +12,10 @@ html {
   -webkit-text-size-adjust: 100%;
   -moz-tab-size: 4;
   tab-size: 4;
-  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto,
+    "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
+    "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    sans-serif;
   font-feature-settings: normal;
   font-variation-settings: normal;
 }
@@ -21,7 +24,6 @@ body {
   margin: 0;
   line-height: inherit;
 }
-
 
 hr {
   height: 0;
@@ -32,7 +34,6 @@ hr {
 abbr:where([title]) {
   text-decoration: underline dotted;
 }
-
 
 h1,
 h2,
@@ -48,7 +49,6 @@ a {
   color: inherit;
   text-decoration: inherit;
 }
-
 
 b,
 strong {
@@ -81,7 +81,6 @@ table {
   border-collapse: collapse;
 }
 
-
 button,
 input,
 optgroup,
@@ -110,7 +109,7 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
@@ -118,50 +117,40 @@ button {
   background-color: inherit;
 }
 
-
 button,
 select {
   text-transform: none;
 }
 
-
 :-moz-focusring {
   outline: auto;
 }
-
 
 :-moz-ui-invalid {
   box-shadow: none;
 }
 
-
 progress {
   vertical-align: baseline;
 }
-
 
 ::-webkit-inner-spin-button,
 ::-webkit-outer-spin-button {
   height: auto;
 }
 
-
-
 ::-webkit-search-decoration {
   -webkit-appearance: none;
 }
-
 
 ::-webkit-file-upload-button {
   -webkit-appearance: button;
   font: inherit;
 }
 
-
 summary {
   display: list-item;
 }
-
 
 blockquote,
 dl,
@@ -235,7 +224,6 @@ video {
 [hidden] {
   display: none;
 }
-
 
 /* Mui */
 .MuiDialog-paper {

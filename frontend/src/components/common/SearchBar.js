@@ -5,21 +5,29 @@ const SearchBar = ({
   value,
   name,
   placeholder,
-  showSearchButton,
-  onClick,
+  showCloseButton,
+  onClear,
+  onSearch,
   onChange,
 }) => {
+  const onKeyDown = (e) => {
+    if (e.keyCode === 13) onSearch();
+  };
   return (
     <SearchBarBox>
+      <FaSearch />
       <input
         value={value}
         name={name}
         placeholder={placeholder}
         onChange={onChange}
+        onKeyDown={onKeyDown}
       />
-      <button onClick={onClick}>
-        {showSearchButton ? <FaSearch /> : <FaTimesCircle />}
-      </button>
+      {showCloseButton && (
+        <button onClick={onClear}>
+          <FaTimesCircle />
+        </button>
+      )}
     </SearchBarBox>
   );
 };
@@ -27,10 +35,11 @@ const SearchBar = ({
 const SearchBarBox = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.4rem;
   padding: 0.5rem 0.875rem;
   border-radius: 50px;
   width: 100%;
+  background-color: ${({ theme }) => theme.color.black};
   border: 2px solid ${({ theme }) => theme.color.primaryGold};
   & > input {
     flex-grow: 1;
