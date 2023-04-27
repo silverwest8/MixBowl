@@ -10,7 +10,6 @@ components:
         success:
           type: boolean
         message:
-        message:
           type: string
           example: Operation success
     Fail:
@@ -19,7 +18,6 @@ components:
         success:
           type: boolean
           example: false
-        message:
         message:
           type: string
           example: Operation Fail
