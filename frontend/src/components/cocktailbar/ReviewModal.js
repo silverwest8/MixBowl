@@ -94,6 +94,17 @@ const ReviewModal = ({ handleClose, name, id }) => {
     // review POST API 호출하는 부분
     try {
       const formData = new FormData();
+      formData.append(
+        "req",
+        new Blob([
+          JSON.stringify({
+            rating: Number(rating),
+            detail,
+            keyword,
+          }),
+        ]),
+        { type: "application/json" }
+      );
       for (let i = 0; i < files.length; i++) {
         formData.append("files", files[i].file);
       }
@@ -102,11 +113,10 @@ const ReviewModal = ({ handleClose, name, id }) => {
       for (const pair of values) {
         console.log(pair);
       }
-      const { data } = await axios.post(`/api/review/create/${id}`, {
-        rating: Number(rating),
-        detail,
-        keyword,
-        image: formData,
+      const { data } = await axios.post(`/api/review/create/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       /* TODO: 성공 로직 */
       console.log(data);
