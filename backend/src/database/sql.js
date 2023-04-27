@@ -1,100 +1,89 @@
-'use strict';
-
 import mysql from 'mysql2';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import * as jwt_module from '../routes/jwt/jwt-util';
-import USER from "../models/USER";
+import USER from '../models/USER';
+import REVIEW from '../models/REVIEW';
+import IMAGE from '../models/IMAGE';
+import KEYWORD from '../models/KEYWORD';
 dotenv.config(); //JWT 키불러오기
-
-// pool 을 사용한 이유 -> Connection 계속 유지하므로 부하 적어짐. (병렬 처리 가능)
-const pool = mysql.createPool(
-  process.env.JAWSDB_URL ?? {
-    host: '3.34.97.140',
-    user: 'mixbowl',
-    database: 'Mixbowl',
-    password: 'swe302841',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-  }
-);
-const promisePool = pool.promise();
 
 const sql = {
   getUser: async () => {
-    const [rows] = await promisePool.query(`
-      SELECT * FROM USER
-    `);
-    return rows;
+    const user = await USER.findAll();
+    return user;
   },
 
   //refresh token 조회
-  getToken: async username => {
+  //안쓸듯
+  getToken: async (username) => {
     const reToken = await promisePool.query(`
       SELECT TOKEN FROM USER WHERE '${username}' = NICKNAME;
     `);
     return reToken;
   },
 
-  namedupcheck: async req => {
+  namedupcheck: async (req) => {
     const { checkname } = req.body;
     try {
-      const check = await promisePool.query(`
-        SELECT COUNT(*) AS 'CHECK' FROM USER WHERE '${checkname}' = NICKNAME;
-      `);
-      return check;
+      const check = await USER.findAndCountAll({
+        where: { NICKNAME: checkname },
+      });
+      return check['count'];
     } catch (error) {
       console.log(error.message);
     }
   },
 
-  emaildupcheck: async req => {
+  emaildupcheck: async (req) => {
     const { checkemail } = req.body;
     try {
-      const check = await promisePool.query(`
-        SELECT COUNT(*) AS 'CHECK' FROM USER WHERE '${checkemail}' = EMAIL;
-      `);
-      return check;
-    } catch (error) {
-      console.log(error.message);
-    }
-  },
-  signupUser: async req => {
-    const { nickname, email, password } = req.body; //regitserInfo에는 Nickname, Email, Password 가 포함되어야 함.
-    //-- 토큰 빠져 있음 -> 임의 추가 했어요. + ORM으로 바꾸어도 상관없어요
-    console.log(nickname, email, password);
-    try {
-      await promisePool.query(`
-        INSERT INTO Mixbowl.USER (NICKNAME, EMAIL, PASSWORD, LEVEL, TOKEN) 
-        VALUES ('${nickname}', '${email}', '${password}', 1, 'tsetestestes');
-      `);
+      const check = await USER.findAndCountAll({
+        where: { EMAIL: checkemail },
+      });
+
+      return check['count'];
     } catch (error) {
       console.log(error.message);
     }
   },
 
-  loginUser: async req => {
+  signupUser: async (req) => {
+    const { nickname, email, password } = req.body; // regitserInfo에는 Nickname, Email, Password 가 포함되어야 함.
+    console.log(nickname, email, password);
+    try {
+      await USER.create({
+        NICKNAME: nickname,
+        PASSWORD: password,
+        EMAIL: email,
+        LEVEL: 1,
+      });
+      return true;
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+
+  loginUser: async (req) => {
     const { email, password } = req.body;
     try {
-      // const [username] = await promisePool.query(`
-      // SELECT NICKNAME FROM Mixbowl.USER WHERE '${email}' = EMAIL AND '${password}' = PASSWORD ;
-      // `);
-      const {dataValues} = await USER.findOne({ where: { email : `${email}`,password:`${password}` } });
-      const username = dataValues["NICKNAME"];
-      if (username.length === 0) {
-        console.log('hi');
+      const user = await USER.findOne({
+        where: { email: email, password: password },
+      });
+      const unum = user.UNO;
+      if (!(unum > 0)) {
         throw new Error('Invalid Info User');
       }
 
       //UNO 도 같이 포함
-      const accessToken = await jwt_module.sign(username[0]["NICKNAME"]);
-      const refreshToken = await jwt_module.refresh();
+      const accessToken = jwt_module.sign(unum);
+      const refreshToken = jwt_module.refresh();
 
       //refresh token sql 업데이트
-      await promisePool.query(`
-        UPDATE USER SET TOKEN = '${refreshToken}' WHERE NICKNAME = '${username}';
-      `);
+      //일단 냅둘게요 (아마 안쓸듯)
+      // await promisePool.query(`
+      //   UPDATE USER SET TOKEN = '${refreshToken}' WHERE NICKNAME = '${username}';
+      // `);
       return {
         code: 200,
         message: '토큰이 발급되었습니다.',
@@ -110,7 +99,56 @@ const sql = {
       };
     }
   },
-  logoutUser: async (req, res) => {},
+  postReview: async (req) => {
+    const unum = req.decoded.unum;
+    const req_json = JSON.parse(req.body.data);
+    req.keyword = req_json.keyword; //postImage req에 keyword 정보 미리 처리
+    console.log(req_json); //json형식으로 하면 바꿔질수있음, postman으로는 string취급됨
+    const { rating, detail } = req_json;
+    try {
+      const review = REVIEW.create({
+        UNO: unum,
+        PLACE_ID: req.params.placeId,
+        TEXT: detail,
+        RATING: rating,
+      });
+      return review;
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  postImage: async (req, review) => {
+    try {
+      const keyword = req.keyword;
+      const reviewId = review.REVIEW_ID;
+      req.files.map(async (data) => {
+        let path = data.path;
+        try {
+          IMAGE.create({
+            REVIEW_ID: `${reviewId}`,
+            PATH: `${path}`,
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+      });
+      console.log(keyword);
+      const keyword_arr = keyword.split(',');
+      keyword_arr.forEach((i) => {
+        try {
+          KEYWORD.create({
+            REVIEW_ID: reviewId,
+            KEYWORD: i,
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+      });
+      return true;
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
 };
 
 export default sql;

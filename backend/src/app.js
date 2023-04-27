@@ -4,13 +4,14 @@ import express from 'express';
 import Routers from './routes/index';
 import { swaggerUi, specs } from './swagger/swagger';
 import { sequelize } from './models';
+import { logger } from '../winston/winston';
 
 const app = express();
 const port = 3030;
 
 //---- 모든 요청 응답 확인
 app.use((req, res, next) => {
-  console.log('logging for routers');
+  logger.info('logging for routers');
   next();
 });
 
@@ -28,7 +29,7 @@ app.use(
 sequelize
   .sync({ force: false }) //true면 서버 실행마다 테이블 재생성
   .then(() => {
-    console.log('Mysql Connecting Success with Sequelize');
+    logger.info('Mysql Connecting Success with Sequelize');
   })
   .catch(err => {
     console.error(err);
@@ -36,5 +37,5 @@ sequelize
 
 //---- 서버 시작
 app.listen(port, () => {
-  console.log(`Server on "${port}" PortNum`);
+  logger.info(`Server on "${port}" PortNum`);
 });
