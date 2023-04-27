@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 export const useNickname = () => {
@@ -47,6 +47,11 @@ export const useNickname = () => {
       checkedNickname.current = nickname;
     } catch (e) {
       console.log(e);
+      isDuplicated.current = true;
+      setNickNameMsg({
+        type: "error",
+        value: "이미 사용중인 닉네임입니다.",
+      });
     }
   };
   const checkNicknameValidation = () => {
@@ -94,6 +99,7 @@ export const useNickname = () => {
 };
 
 export const usePassword = () => {
+  const ref = useRef(0);
   const [password, setPassword] = useState("");
   const [checkPwd, setCheckPwd] = useState("");
   const [passwordMsg, setPasswordMsg] = useState({
@@ -104,8 +110,16 @@ export const usePassword = () => {
     type: "",
     value: "",
   });
+  useEffect(() => {
+    if (ref.current < 2) {
+      ref.current++;
+      return;
+    }
+    checkPasswordValidation();
+  }, [password, checkPwd]);
   const onChangePassword = (e) => {
     setPassword(e.target.value);
+    checkPasswordValidation();
   };
   const onChangeCheckPwd = (e) => {
     setCheckPwd(e.target.value);
