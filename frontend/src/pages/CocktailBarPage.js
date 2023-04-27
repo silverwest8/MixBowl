@@ -27,14 +27,12 @@ const Main = styled.main`
   height: calc(calc(var(--vh, 1vh) * 100) - 3.5rem);
   .wrapper {
     display: flex;
-    gap: 2rem;
     height: 100%;
   }
   @media screen and (max-width: 920px) {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-
     .wrapper {
       display: block;
       flex-grow: 1;

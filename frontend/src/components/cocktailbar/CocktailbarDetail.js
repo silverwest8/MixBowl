@@ -31,8 +31,19 @@ const CocktailbarDetail = ({ id }) => {
       {
         queryKey: ["cocktail bar detail", id],
         queryFn: getCocktailBar,
+        onError: (error) => {
+          if (error.response.status === 401)
+            navigate("/login?return_url=/cocktailbar");
+        },
       },
-      { queryKey: ["cocktail bar review", id], queryFn: getReview },
+      {
+        queryKey: ["cocktail bar review", id],
+        queryFn: getReview,
+        onError: (error) => {
+          if (error.response.status === 401)
+            navigate("/login?return_url=/cocktailbar");
+        },
+      },
     ],
   });
   useEffect(() => {

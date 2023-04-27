@@ -36,7 +36,7 @@ const Wrapper = styled.div`
     z-index: 2;
     overflow-y: auto;
     flex-shrink: 0;
-    transform: ${({ show }) => !show && `translateX(18rem)`};
+    transform: ${({ show }) => !show && `translateX(19.5rem)`};
     & > button {
       display: block;
       align-self: center;
@@ -56,8 +56,8 @@ const Wrapper = styled.div`
 `;
 
 const InfoWrapper = styled.div`
-  padding: 0 0.5rem;
-  width: 18rem;
+  width: 19.5rem;
+  padding: 0 1.5rem;
   ::-webkit-scrollbar {
     width: 8px;
   }
