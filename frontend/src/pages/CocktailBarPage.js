@@ -1,17 +1,20 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import KakaoMap from "../components/cocktailbar/KakaoMap";
 import Title from "../components/common/Title";
 import MapSideInfo from "../components/cocktailbar/MapSideInfo";
+import { useRecoilValue } from "recoil";
+import { authState } from "../store/auth";
 
 const CocktailBarPage = () => {
   const params = useParams();
+  const { isLoggedin } = useRecoilValue(authState);
   useEffect(() => {
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
   }, []);
-  return (
+  return isLoggedin ? (
     <Main>
       <Title title="칵테일 바 지도" />
       <div className="wrapper">
@@ -19,6 +22,8 @@ const CocktailBarPage = () => {
         <MapSideInfo id={params.id} />
       </div>
     </Main>
+  ) : (
+    <Navigate replace to="/login?return_url=/cocktailbar" />
   );
 };
 
