@@ -16,7 +16,7 @@ export function sign(userNumber) {
   });
 }
 
-export function accessVerify (token) {
+export function accessVerify(token) {
   //Access 토큰 확인 코드
   let decoded = null;
   try {
@@ -33,7 +33,7 @@ export function accessVerify (token) {
   }
 }
 
-export function refresh () {
+export function refresh() {
   // Refresh 토큰 생성 코드
   return jwt.sign({}, process.env.SECRET_KEY, {
     expiresIn: '14d',
@@ -91,7 +91,7 @@ export const refresh_new = async (req, res) => {
           message: 'Invalid Access Token',
         });
       } else {
-        res.status(400).send({
+        res.status(202).send({
           ok: false,
           message: 'Access Token is not expired',
         });

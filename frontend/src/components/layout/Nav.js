@@ -1,30 +1,50 @@
-import { Link, useHref } from "react-router-dom";
+import { Link, useHref, useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import LoginFormModal from "../login/LoginFormModal";
+import { authState } from "../../store/auth";
+import { useModal } from "../../hooks/useModal";
 
 const NAV = [
   {
     to: "/recipe",
     name: "칵테일 레시피",
+    login: false,
   },
   {
     to: "/community",
     name: "커뮤니티",
+    login: false,
   },
   {
     to: "/cocktailbar",
     name: "칵테일 바 지도",
+    login: true,
   },
 ];
 
 const Nav = () => {
   const href = useHref();
+  const navigate = useNavigate();
+  const { openModal, closeModal } = useModal();
+  const { isLoggedin } = useRecoilValue(authState);
   return (
     <NavBox>
-      {NAV.map(({ to, name }) => (
+      {NAV.map(({ to, name, login }) => (
         <StyledLink
           to={to}
           key={to}
           className={href.includes(to) ? "active" : ""}
+          onClick={(e) => {
+            e.preventDefault();
+            if (login) {
+              if (isLoggedin) navigate(to);
+              else
+                openModal(LoginFormModal, {
+                  handleClose: closeModal,
+                });
+            } else navigate(to);
+          }}
         >
           {href.includes(to) && (
             <>

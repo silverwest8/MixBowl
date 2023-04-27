@@ -271,3 +271,7 @@ video {
 .swiper-pagination {
   position: relative;
 }
+
+.MuiRating-iconEmpty {
+  color: inherit !important;
+}
