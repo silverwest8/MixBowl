@@ -20,7 +20,11 @@ export default class RECIPE_LIKE extends Model {
     },
     RNO: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'RECIPE',
+        key: 'RNO'
+      }
     }
   }, {
     sequelize,
@@ -43,14 +47,14 @@ export default class RECIPE_LIKE extends Model {
         ]
       },
       {
-        name: "RNO",
+        name: "RNO4",
         using: "BTREE",
         fields: [
           { name: "RNO" },
         ]
       },
       {
-        name: "RNO4",
+        name: "RNO",
         using: "BTREE",
         fields: [
           { name: "RNO" },
