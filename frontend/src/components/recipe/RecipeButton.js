@@ -140,9 +140,6 @@ const Button = styled.button`
   margin-right: 1rem;
   margin-left: 1rem;
   color: ${({ theme }) => theme.color.secondGold};
-  &:hover {
-    background-color: ${({ theme }) => theme.color.primaryGold};
-  }
   display: flex;
   align-items: center;
   justify-content: center;
