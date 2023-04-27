@@ -1,6 +1,7 @@
 import axios from "axios";
 import CocktailBarItem from "./CocktailbarItem";
 import SearchBar from "../common/SearchBar";
+import Skeleton from "@mui/material/Skeleton";
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { mapState } from "../../store/map";
@@ -8,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAccessToken } from "../../utils/token";
+import { theme } from "../../styles/theme";
 
 const getBarList = async ({ queryKey }) => {
   const accessToken = getAccessToken();
@@ -67,13 +69,29 @@ const CocktailbarList = () => {
       />
       {!query && location && <Location>{location}</Location>}
       <List>
-        {data && data.data.place_list.length !== 0 ? (
-          data.data.place_list.map((item) => (
-            <CocktailBarItem item={item} key={item.kakao_data.id} />
-          ))
-        ) : query ? (
-          <p className="message">검색 결과가 없습니다.</p>
-        ) : null}
+        {data ? (
+          data.data.place_list.length !== 0 ? (
+            data.data.place_list.map((item) => (
+              <CocktailBarItem item={item} key={item.kakao_data.id} />
+            ))
+          ) : (
+            <p className="message">검색 결과가 없습니다.</p>
+          )
+        ) : (
+          Array(10)
+            .fill(1)
+            .map((_, index) => (
+              <Skeleton
+                variant="rounded"
+                width="100%"
+                height="8rem"
+                key={index}
+                sx={{
+                  backgroundColor: theme.color.darkGray,
+                }}
+              />
+            ))
+        )}
       </List>
     </>
   );
