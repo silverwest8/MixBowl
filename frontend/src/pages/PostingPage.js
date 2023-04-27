@@ -144,11 +144,11 @@ const RecommendationSection = styled.div`
 
     > span:first-child {
       color: ${({ theme }) => theme.color.primaryGold};
-      cursor: pointer;
     }
     > span {
       display: flex;
       margin-left: 1rem;
+      cursor: pointer;
       .icon {
         margin-left: 0.5rem;
       }

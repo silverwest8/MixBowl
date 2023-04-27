@@ -11,6 +11,7 @@ import CommunityHomePage from "./pages/CommunityHomePage";
 import PostingPage from "./pages/PostingPage";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
+import RegisterPage from "./pages/RegisterPage";
 import { useStaySignedIn } from "./hooks/useStaySignedIn";
 
 import "swiper/css";
@@ -47,7 +48,7 @@ function App() {
                 <Route path="community/posting" element={<PostingPage />} />
                 <Route path="mypage" element={<HomePage />} />
                 <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<HomePage />} />
+                <Route path="register" element={<RegisterPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
