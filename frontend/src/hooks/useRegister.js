@@ -166,28 +166,95 @@ export const useEmail = () => {
   const onChangeCode = (e) => {
     setCode(e.target.value);
   };
-  const sendCode = () => {
-    // TODO: call API
-    /* 성공 로직 */
-    setEmailMsg({
-      type: "",
-      value: "인증번호가 발송되었습니다. 메일함을 확인해주세요.",
-    });
-    codeSendEmail.current = email;
+  const checkDuplication = async () => {
+    try {
+      const { data } = await axios.put("/api/user/emaildupcheck", {
+        checkemail: email,
+      });
+      if (!data.success) {
+        setEmailMsg({
+          type: "error",
+          value: "중복된 이메일입니다.",
+        });
+        return false;
+      } else return true;
+    } catch (e) {
+      console.log(e);
+      setEmailMsg({
+        type: "error",
+        value: "중복된 이메일입니다.",
+      });
+      return false;
+    }
   };
-  const checkAuth = () => {
+  const sendCode = async () => {
     // TODO: call API
-    /* 성공로직 */
-    setCodeMsg({
-      type: "success",
-      value: "인증이 완료되었습니다.",
-    });
-    verifiedEmail.current = email;
-    /* 실패로직 */
-    // setCodeMsg({
-    //   type: "error",
-    //   value: "인증번호가 불일치합니다.",
-    // });
+    if (email === "") {
+      setEmailMsg({
+        type: "error",
+        value: "이메일을 입력해주세요.",
+      });
+      return;
+    }
+    const success = await checkDuplication();
+    if (!success) return;
+    try {
+      const { data } = await axios.post("/api/user/sendauthmail", {
+        email,
+      });
+      if (data.success) {
+        setEmailMsg({
+          type: "",
+          value: "인증번호가 발송되었습니다. 메일함을 확인해주세요.",
+        });
+        codeSendEmail.current = email;
+      } else {
+        setEmailMsg({
+          type: "error",
+          value: "인증번호 발송에 실패했습니다. 이메일을 다시 입력해주세요.",
+        });
+      }
+    } catch (e) {
+      console.log(e);
+      setEmailMsg({
+        type: "error",
+        value: "인증번호 발송에 실패했습니다. 이메일을 다시 입력해주세요.",
+      });
+    }
+  };
+  const checkAuth = async () => {
+    // TODO: call API
+    if (email !== codeSendEmail.current) {
+      setCodeMsg({
+        type: "error",
+        value: "위 이메일로 인증번호를 전송해주세요.",
+      });
+      return;
+    }
+    try {
+      const { data } = await axios.put("/api/user/checkauth", {
+        email,
+        code,
+      });
+      if (data.success) {
+        setCodeMsg({
+          type: "success",
+          value: "인증이 완료되었습니다.",
+        });
+        verifiedEmail.current = email;
+      } else {
+        setCodeMsg({
+          type: "error",
+          value: "인증번호가 불일치합니다.",
+        });
+      }
+    } catch (e) {
+      console.log(e);
+      setCodeMsg({
+        type: "error",
+        value: "인증번호가 불일치합니다.",
+      });
+    }
   };
   const checkEmailValidation = () => {
     if (email === "") {
