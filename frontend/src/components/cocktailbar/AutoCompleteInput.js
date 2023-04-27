@@ -1,16 +1,15 @@
-import { useState } from "react";
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-places-autocomplete";
 import { FaSearch } from "react-icons/fa";
 import styled from "styled-components";
-import { useSetRecoilState } from "recoil";
-import { mapState } from "../../store/map";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { addressInputState, mapState } from "../../store/map";
 
 const AutoCompleteInput = () => {
   const setMapState = useSetRecoilState(mapState);
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useRecoilState(addressInputState);
   const onChange = (value) => {
     setAddress(value);
   };

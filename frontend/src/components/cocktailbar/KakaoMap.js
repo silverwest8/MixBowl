@@ -110,16 +110,10 @@ function KakaoMap({ id }) {
   }, [map, data]);
   return center ? (
     <MapWrapper>
-      {showInput && <AutoCompleteInput />}
+      {showInput && !id && <AutoCompleteInput />}
       <Map
         center={center}
         onCreate={setMap}
-        onZoomChanged={() => {
-          const lng = map.getCenter().getLng();
-          const lat = map.getCenter().getLat();
-          const bounds = map.getBounds();
-          getDistance(lat, lng, bounds.qa, lng);
-        }}
         style={{ flexGrow: "1", height: "100%", position: "relative" }}
       >
         {markers.map((marker) => (

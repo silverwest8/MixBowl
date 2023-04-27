@@ -8,6 +8,12 @@ export const mapState = atom({
       lng: 127.02761,
     },
     location: "",
+    addressInput: "",
     radius: 1000,
   },
+});
+
+export const addressInputState = atom({
+  key: "addressInputState",
+  default: "",
 });
