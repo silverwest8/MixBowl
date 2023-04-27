@@ -37,21 +37,11 @@ export default class RECIPE extends Model {
     LIKE: {
       type: DataTypes.INTEGER,
       allowNull: false
-    },
-    DATE_CREATE: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    DATE_UPDATE: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     sequelize,
     tableName: 'RECIPE',
-    timestamps: false,
+    timestamps: true,
     indexes: [
       {
         name: "PRIMARY",

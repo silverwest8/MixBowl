@@ -29,6 +29,7 @@ export default class POST_REPL extends Model {
     CONTENT: {
       type: DataTypes.TEXT,
       allowNull: false
+<<<<<<< HEAD
     },
     DATE_CREATE: {
       type: DataTypes.DATE,
@@ -39,11 +40,17 @@ export default class POST_REPL extends Model {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+=======
+>>>>>>> 08ebe5d6512fe3127054b37734a5271733ca69f8
     }
   }, {
     sequelize,
     tableName: 'POST_REPL',
+<<<<<<< HEAD
     timestamps: false,
+=======
+    timestamps: true,
+>>>>>>> 08ebe5d6512fe3127054b37734a5271733ca69f8
     indexes: [
       {
         name: "PRIMARY",

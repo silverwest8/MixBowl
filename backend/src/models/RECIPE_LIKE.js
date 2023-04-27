@@ -53,6 +53,13 @@ export default class RECIPE_LIKE extends Model {
           { name: "RNO" },
         ]
       },
+      {
+        name: "RNO",
+        using: "BTREE",
+        fields: [
+          { name: "RNO" },
+        ]
+      },
     ]
   });
   }
