@@ -1,0 +1,34 @@
+# recipe api for swagger
+
+paths:
+  /recipe/getlist?abv={abv}&color={color}:
+    get:
+      tags:
+        - recipe
+      summary: "칵테일 레시피 목록"
+      description: "1 빨강2 주황3 노랑4 초록5 파랑6 보라7 분홍8 검정9 갈색10 회색11 흰색12 무색, ABV 0 -> 0~9, 1 -> 10~19% ... 9 -> 90~99%"
+      operationId: GetRecipeList
+      parameters:
+        - name: abv
+          in: query
+          type: integer
+          description: ""
+        - name: color
+          in: query
+          type: integer
+          # schema:
+          #   $ref: "#/components/schemas/RecipeFilter"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                - $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+

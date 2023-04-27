@@ -62,8 +62,11 @@ axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     const { config: originalRequest, response } = error;
-    if (response.status === 401 && !originalRequest.url.includes("refresh")) {
-      if (getNewAccessToken()) {
+    console.log(error);
+    if (response.status === 419 && !originalRequest.url.includes("refresh")) {
+      const res = await getNewAccessToken();
+      if (res) {
+        originalRequest.headers.Authorization = getAccessToken();
         return axios(originalRequest);
       } else throw error;
     } else throw error;

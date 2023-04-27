@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { authState } from "../../store/auth";
 import { setToken } from "../../utils/token";
@@ -8,7 +8,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { FaInfoCircle } from "react-icons/fa";
 
-const LoginForm = () => {
+const LoginForm = ({ handleClose }) => {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
@@ -19,6 +19,7 @@ const LoginForm = () => {
     password: "",
   });
   const [failMessage, setFailMessage] = useState("");
+  const [params] = useSearchParams();
   const navigate = useNavigate();
   const setAuthState = useSetRecoilState(authState);
   const onChange = (e) => {
@@ -58,7 +59,8 @@ const LoginForm = () => {
           accessToken: data.tokens.token.accessToken,
           refreshToken: data.tokens.token.refreshToken,
         });
-        navigate("/");
+        if (handleClose) handleClose();
+        navigate(params.get("return_url") ? params.get("return_url") : "/");
       } else {
         setFailMessage("아이디 또는 비밀번호를 확인해주세요.");
       }

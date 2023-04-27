@@ -20,13 +20,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Success"
-        "400":
-          description: ""
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  tokens:
+                    type: object
+                    example:
+                      {
+                        ACCESS-1A3BJOJAPEOJRPA3JRAFEJIJ3434R2: string,
+                        REFRESH-19WAHR093HAR89AWHG9H0A: string,
+                      }
+
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /user/logout:
     get:
@@ -79,7 +91,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /user/nicknamedupcheck:
     put:
@@ -100,13 +112,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DupCheck"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/SuccessDupCheck'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/FailDupCheck'
 
   /user/emaildupcheck:
     put:
@@ -127,13 +139,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DupCheck"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/SuccessDupCheck'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/FailDupCheck'
 
   /user/sendauthmail:
     post:
@@ -160,7 +172,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /user/checkauth:
     put:
@@ -187,7 +199,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /user/update:
     put:
@@ -214,14 +226,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /user/checkbarowner:
     put:
       tags:
         - user
-      summary: "사장님 확인"
-      description: "일단 닉네임 보내는 걸로 했는데 다시 정해야 함."
+      summary: '사장님 확인'
+      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
       operationId: checkBarOwner
       requestBody:
         required: true
@@ -235,9 +247,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BarOwnerCheck"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/BarOwnerCheck'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
@@ -247,8 +259,8 @@ paths:
     put:
       tags:
         - user
-      summary: "바텐더 확인"
-      description: "일단 닉네임 보내는 걸로 했는데 다시 정해야 함."
+      summary: '바텐더 확인'
+      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
       operationId: checkBartender
       requestBody:
         required: true
