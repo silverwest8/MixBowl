@@ -15,7 +15,8 @@ const RecipeSearch = (props) => {
         value={searchValue}
         placeholder={props.placeholder}
         onChange={handleInputChange}
-        showSearchButton={true}
+        showCloseButton={false}
+        disabled={props.disabled}
       />
     </SearchBox>
   );
@@ -24,7 +25,7 @@ const SearchBox = styled.div`
   margin: auto;
   margin-top: 40px;
   width: 40.25rem;
-  heighgt: 2.875rem;
+  height: 2.875rem;
   @media screen and (max-width: 1024px) {
     width: 35.25rem;
   }
