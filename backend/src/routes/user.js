@@ -126,12 +126,16 @@ router.post('/sendauthmail', async (req, res) => {
 //인증번호 확인
 router.put('/checkauth', async (req, res) => {
   try {
-    const check = await AUTH_CODE.findOne({ where: { EMAIL: req.body.email } });
+    const check = await AUTH_CODE.findOne({
+      where: { EMAIL: req.body.email },
+      order: [['createdAt', 'DESC']],
+    });
+    console.log(check);
     if (!check) {
       return res
         .status(200)
         .json({ success: false, message: '이메일 인증을 다시 시도해주세요.' });
-    } else if (check.CODE === req.body.authNum) {
+    } else if (check.AUTH_CODE === req.body.code) {
       return res
         .status(200)
         .json({ success: true, message: '이메일 인증에 성공하였습니다.' });
