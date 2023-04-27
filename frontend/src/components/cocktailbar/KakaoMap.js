@@ -2,37 +2,23 @@ import React, { useEffect, useState } from "react";
 import { Map, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { useRecoilState } from "recoil";
 import { mapState } from "../../store/map";
+import { getDistance } from "../../utils/map";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { BiCurrentLocation } from "react-icons/bi";
-import { FaSearchLocation } from "react-icons/fa";
+import { FaUndoAlt } from "react-icons/fa";
+import { MdEditLocationAlt } from "react-icons/md";
+import AutoCompleteInput from "./AutoCompleteInput";
 
-function getDistance(lat1, lon1, lat2, lon2) {
-  if (lat1 === lat2 && lon1 === lon2) return 0;
-  console.log(lat1, lon1, lat2, lon2);
-  const radLat1 = (Math.PI * lat1) / 180;
-  const radLat2 = (Math.PI * lat2) / 180;
-  const theta = lon1 - lon2;
-  const radTheta = (Math.PI * theta) / 180;
-  let dist =
-    Math.sin(radLat1) * Math.sin(radLat2) +
-    Math.cos(radLat1) * Math.cos(radLat2) * Math.cos(radTheta);
-  if (dist > 1) dist = 1;
-
-  dist = Math.acos(dist);
-  dist = (dist * 180) / Math.PI;
-  dist = dist * 60 * 1.1515 * 1.609344 * 1000;
-  if (dist < 100) dist = Math.round(dist / 10) * 10;
-  else dist = Math.round(dist / 100) * 100;
-  console.log(dist < 0 ? 0 : dist > 20000 ? 20000 : dist);
-  return dist < 0 ? 0 : dist > 20000 ? 20000 : dist;
-}
-
-function KakaoMap() {
+function KakaoMap({ id }) {
   const navigate = useNavigate();
-  const [center, setCenter] = useState(null);
+  const [center, setCenter] = useState({
+    lat: 37.5878109,
+    lng: 127.0017424,
+  });
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const [showInput, setShowInput] = useState(false);
   const [{ data }, setMapState] = useRecoilState(mapState);
   const getCurrentPosition = () => {
     navigator.geolocation.getCurrentPosition(({ coords }) => {
@@ -124,15 +110,10 @@ function KakaoMap() {
   }, [map, data]);
   return center ? (
     <MapWrapper>
+      {showInput && !id && <AutoCompleteInput />}
       <Map
         center={center}
         onCreate={setMap}
-        onZoomChanged={() => {
-          const lng = map.getCenter().getLng();
-          const lat = map.getCenter().getLat();
-          const bounds = map.getBounds();
-          getDistance(lat, lng, bounds.qa, lng);
-        }}
         style={{ flexGrow: "1", height: "100%", position: "relative" }}
       >
         {markers.map((marker) => (
@@ -149,14 +130,28 @@ function KakaoMap() {
           </CustomOverlayMap>
         ))}
       </Map>
-      <ButtonWrapper>
-        <button onClick={() => getCurrentPosition()}>
-          <BiCurrentLocation />
-        </button>
-        <button onClick={() => searchCocktailbar()}>
-          <FaSearchLocation />
-        </button>
-      </ButtonWrapper>
+      {!id && (
+        <>
+          <div className="button-wrapper">
+            <button
+              onClick={() => getCurrentPosition()}
+              className="location-button"
+            >
+              <BiCurrentLocation />
+            </button>
+            <button
+              className={showInput ? "active" : ""}
+              onClick={() => setShowInput((state) => !state)}
+            >
+              <MdEditLocationAlt />
+            </button>
+          </div>
+          <button onClick={() => searchCocktailbar()} className="search-button">
+            <FaUndoAlt />
+            현지도에서 재검색
+          </button>
+        </>
+      )}
     </MapWrapper>
   ) : null;
 }
@@ -165,6 +160,41 @@ const MapWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: white;
+    color: black;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 0.1rem;
+    &.active {
+      background-color: black;
+      color: white;
+    }
+  }
+  .button-wrapper {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 2;
+  }
+  .search-button {
+    position: absolute;
+    left: 50%;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    z-index: 2;
+  }
 `;
 
 const Label = styled.div`
@@ -202,25 +232,6 @@ const Label = styled.div`
     margin-left: -15px;
     margin-bottom: -11px;
     z-index: -1;
-  }
-`;
-
-const ButtonWrapper = styled.div`
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  button {
-    background-color: white;
-    color: black;
-    border-radius: 8px;
-    font-size: 1.5rem;
-    z-index: 2;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 0.1rem;
   }
 `;
 
