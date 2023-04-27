@@ -23,7 +23,7 @@ const sql = {
     return reToken;
   },
 
-  namedupcheck: async req => {
+  namedupcheck: async (req) => {
     const { checkname } = req.body;
     try {
       const check = await USER.findAndCountAll({
@@ -35,7 +35,7 @@ const sql = {
     }
   },
 
-  emaildupcheck: async req => {
+  emaildupcheck: async (req) => {
     const { checkemail } = req.body;
     try {
       const check = await USER.findAndCountAll({
@@ -64,7 +64,7 @@ const sql = {
     }
   },
 
-  loginUser: async req => {
+  loginUser: async (req) => {
     const { email, password } = req.body;
     try {
       const user = await USER.findOne({

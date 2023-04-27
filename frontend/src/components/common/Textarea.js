@@ -1,11 +1,10 @@
 import styled from "styled-components";
-import { FaCheckCircle, FaCheck } from "react-icons/fa";
+import { FaCheckCircle, FaTimes, FaCheck } from "react-icons/fa";
 
 const Textarea = ({
   value,
   name,
   rows,
-  cols,
   placeholder,
   Button,
   onChange,
@@ -13,13 +12,12 @@ const Textarea = ({
   messageType,
 }) => {
   return (
-    <TextareaWrapper>
+    <div>
       <InputBox>
         <textarea
           name={name}
           value={value}
           rows={rows}
-          cols={cols}
           placeholder={placeholder}
           onChange={onChange}
           autoComplete="off"
@@ -31,20 +29,16 @@ const Textarea = ({
           {messageType === "success" ? (
             <FaCheckCircle />
           ) : messageType === "error" ? (
-            "*"
+            <FaTimes />
           ) : (
             <FaCheck />
           )}
           {message}
         </Message>
       )}
-    </TextareaWrapper>
+    </div>
   );
 };
-
-const TextareaWrapper = styled.div`
-  width: 100%;
-`;
 
 const InputBox = styled.div`
   display: flex;
