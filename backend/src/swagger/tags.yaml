@@ -5,7 +5,7 @@ tags:
     description: Operations about users
   - name: recipe
     description: Operation about recipes
-  - name: post
+  - name: community
     description: Operation about community posting
   - name: review
     description: Operation about review
