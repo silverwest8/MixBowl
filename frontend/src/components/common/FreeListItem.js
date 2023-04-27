@@ -4,7 +4,6 @@ import MemberBadge from "./MemberBadge";
 // import { useEffect } from "react";
 
 const FreeListItem = ({ data }) => {
-  console.log("data is ", data);
   // TODO : 호버, 글 종류별로 변경
   return (
     <ItemContainer>
@@ -87,6 +86,14 @@ const BottomSection = styled.div`
     align-items: center;
     .username {
       margin: 0 0.3rem 0 0.5rem;
+      @media screen and (max-width: 400px) {
+        display: none;
+      }
+    }
+    > div {
+      @media screen and (max-width: 400px) {
+        display: none;
+      }
     }
   }
 `;

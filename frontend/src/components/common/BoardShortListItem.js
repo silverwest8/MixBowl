@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { FaCommentDots } from "react-icons/fa";
 
 const BoardShortListItem = ({ data }) => {
-  console.log("data is ", data);
   return (
     <ItemContainer>
       <div>{data.title}</div>

@@ -32,6 +32,9 @@ const Menu = styled.button`
   &:hover {
     background-color: ${({ theme }) => theme.color.secondGold};
   }
+  @media screen and (max-width: 800px) {
+    width: 22vw;
+  }
 `;
 
 const TopSection = styled.div`
@@ -59,6 +62,13 @@ const SelectContainer = styled.div`
   align-items: center;
   .selected {
     background-color: ${({ theme }) => theme.color.primaryGold};
+  }
+  @media screen and (max-width: 800px) {
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: auto auto;
+    gap: 1rem;
+    margin-top: 1rem;
   }
 `;
 const MainSection = styled.div`
@@ -107,6 +117,12 @@ const Button = styled(Link)`
 
   &:hover {
     background-color: ${({ theme }) => theme.color.secondGold};
+  }
+  @media screen and (max-width: 800px) {
+    padding: 0.7rem 2.7rem;
+  }
+  @media screen and (max-width: 400px) {
+    padding: 0.7rem 1.8rem;
   }
 `;
 

@@ -213,7 +213,7 @@ const NewPosts = styled.div`
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 0.5rem;
-    @media screen and (max-width: 400px) {
+    @media screen and (max-width: 800px) {
       flex-direction: column;
       > div {
         margin-top: 1rem;
@@ -329,7 +329,7 @@ const CommunityHomePage = () => {
               최신글
             </h1>
             <SearchBar
-              placholder="관심있는 내용을 검색해보세요!"
+              placeholder="관심있는 내용을 검색해보세요!"
               showSearchButton={true}
             />
           </section>
