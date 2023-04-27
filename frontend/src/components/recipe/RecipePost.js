@@ -1,12 +1,16 @@
 import styled from "styled-components";
 import { FaEdit } from "react-icons/fa";
+import { Link } from "react-router-dom";
+
 const RecipePost = () => {
   return (
     <>
-      <Button>
-        <FaEdit></FaEdit>
-        <p>새 레시피 등록</p>
-      </Button>
+      <Link to="/writerecipe">
+        <Button>
+          <FaEdit></FaEdit>
+          <p>새 레시피 등록</p>
+        </Button>
+      </Link>
     </>
   );
 };

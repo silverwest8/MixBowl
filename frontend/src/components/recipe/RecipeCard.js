@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { FaThumbsUp, FaCommentDots } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import RecipeDrop from "./RecipeDrop";
 
 const RecipeCard = () => {
   const [Recipe, setRecipe] = useState([]);
@@ -21,27 +23,32 @@ const RecipeCard = () => {
   }, []);
 
   return (
-    <CardBox>
-      {Recipe.map((index) => (
-        <RecipeBox key={Recipe.rno}>
-          <img src={index.image_path}></img>
-          <h1>{index.name}</h1>
-          <TextBox>
-            <p>
-              @{index.uname} <MemberBadge level={index.level} />
-            </p>
-            <p className="ThumbsUp">
-              <FaThumbsUp></FaThumbsUp>
-              {index.like}
-            </p>
-            <p className="Comment">
-              <FaCommentDots></FaCommentDots>
-              {index.comment}
-            </p>
-          </TextBox>
-        </RecipeBox>
-      ))}
-    </CardBox>
+    <MiddleBox>
+      <RecipeDrop />
+      <CardBox>
+        {Recipe.map((index) => (
+          <RecipeBox key={Recipe.rno}>
+            <Link to={`/recipe/${index.rno}`}>
+              <img src={index.image_path}></img>
+              <h1>{index.name}</h1>
+            </Link>
+            <TextBox>
+              <p>
+                @{index.uname} <MemberBadge level={index.level} />
+              </p>
+              <p className="ThumbsUp">
+                <FaThumbsUp></FaThumbsUp>
+                {index.like}
+              </p>
+              <p className="Comment">
+                <FaCommentDots></FaCommentDots>
+                {index.comment}
+              </p>
+            </TextBox>
+          </RecipeBox>
+        ))}
+      </CardBox>
+    </MiddleBox>
   );
 };
 
@@ -59,7 +66,8 @@ const CardBox = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 2rem;
-  margin: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
   justify-items: center;
   @media screen and (max-width: 1280px) {
     display: grid;
@@ -96,6 +104,11 @@ const RecipeBox = styled.div`
     color: ${({ theme }) => theme.color.lightGray};
     margin-left: 0.75rem;
   }
+`;
+
+const MiddleBox = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 export default RecipeCard;

@@ -3,7 +3,6 @@ import RecipePost from "../components/recipe/RecipePost";
 import RecipeSearch from "../components/recipe/RecipeSearch";
 import RecipeCard from "../components/recipe/RecipeCard";
 import RecipeButton from "../components/recipe/RecipeButton";
-import RecipeDrop from "../components/recipe/RecipeDrop";
 
 const RecipePage = () => {
   return (
@@ -16,7 +15,6 @@ const RecipePage = () => {
         <RecipeButton />
       </section>
       <section>
-        <RecipeDrop />
         <RecipeCard></RecipeCard>
       </section>
       <section>

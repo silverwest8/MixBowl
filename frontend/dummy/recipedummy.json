@@ -7,7 +7,13 @@
       "like": 1,
       "comment": 1,
       "level": 1,
-      "image_path": "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+      "image_path": "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+      "day": "2023-04-27",
+      "alcohol": 17,
+      "color": "white",
+      "main": "조각얼음, 봄베이 사파이어 진, 45ml드라이 베르무스 30ml",
+      "sub": "레몬 껍질 1조각, 그린 올리브 2개",
+      "how": "1. 글라스에 얼음을 가득 채워 칠링 해 놓고, 그린올리브 2개를 칵테일 픽에 꽂아 냉수에 세척한다. 2. 믹싱글라스에 얼음 5개, 진, 드라이 베르무스를 넣고, 믹싱 스푼으로 10초 정도 휘젓는다. 3. 칠링된 칵테일잔에 얼음을 버리고 스트레이너를 대고 얼음을 걸러내며 음료를 따른다. 4. 레몬 껍질 1조각을 잔 30cm 위에서 가볍게 즙을 짠 뒤 잔 주변에 한바퀴 문지른다. 5. 잔에 그린올리브를 넣어 장식한다."
     },
     {
       "rno": 2,
@@ -37,7 +43,7 @@
       "image_path": "https://images.unsplash.com/photo-1570598912132-0ba1dc952b7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
     },
     {
-      "rno": 1,
+      "rno": 5,
       "name": "Old fashioned",
       "uname": "가나다",
       "like": 1,
@@ -46,7 +52,7 @@
       "image_path": "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
     },
     {
-      "rno": 2,
+      "rno": 6,
       "name": "Daiquiri",
       "uname": "마바사",
       "like": 2,
@@ -55,7 +61,7 @@
       "image_path": "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
     },
     {
-      "rno": 3,
+      "rno": 7,
       "name": "Negroni",
       "uname": "아자차",
       "like": 3,
@@ -64,7 +70,7 @@
       "image_path": "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=465&q=80"
     },
     {
-      "rno": 4,
+      "rno": 8,
       "name": "Dry Martini",
       "uname": "타파하",
       "like": 4,
@@ -73,7 +79,7 @@
       "image_path": "https://images.unsplash.com/photo-1570598912132-0ba1dc952b7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
     },
     {
-      "rno": 1,
+      "rno": 9,
       "name": "Old fashioned",
       "uname": "가나다",
       "like": 1,
@@ -82,7 +88,7 @@
       "image_path": "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
     },
     {
-      "rno": 2,
+      "rno": 10,
       "name": "Daiquiri",
       "uname": "마바사",
       "like": 2,
@@ -91,7 +97,7 @@
       "image_path": "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
     },
     {
-      "rno": 3,
+      "rno": 11,
       "name": "Negroni",
       "uname": "아자차",
       "like": 3,
@@ -100,7 +106,7 @@
       "image_path": "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=465&q=80"
     },
     {
-      "rno": 4,
+      "rno": 12,
       "name": "Dry Martini",
       "uname": "타파하",
       "like": 4,
@@ -109,7 +115,7 @@
       "image_path": "https://images.unsplash.com/photo-1570598912132-0ba1dc952b7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
     },
     {
-      "rno": 1,
+      "rno": 13,
       "name": "Old fashioned",
       "uname": "가나다",
       "like": 1,
@@ -118,7 +124,7 @@
       "image_path": "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
     },
     {
-      "rno": 2,
+      "rno": 14,
       "name": "Daiquiri",
       "uname": "마바사",
       "like": 2,
@@ -127,7 +133,7 @@
       "image_path": "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
     },
     {
-      "rno": 3,
+      "rno": 15,
       "name": "Negroni",
       "uname": "아자차",
       "like": 3,
@@ -136,7 +142,7 @@
       "image_path": "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=465&q=80"
     },
     {
-      "rno": 4,
+      "rno": 16,
       "name": "Dry Martini",
       "uname": "타파하",
       "like": 4,

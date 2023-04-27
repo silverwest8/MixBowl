@@ -10,8 +10,7 @@ const RecipeDrop = () => {
 };
 
 const DropBox = styled.div`
-  position: relative;
-  left: 90%;
+  text-align: right;
 `;
 
 export default RecipeDrop;

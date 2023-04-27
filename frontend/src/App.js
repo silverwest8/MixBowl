@@ -9,6 +9,8 @@ import SamplePage from "./pages/Samplepage";
 import LoginPage from "./pages/LoginPage";
 import NotLoginRecipePage from "./pages/NotLoginRecipePage";
 import RecipePage from "./pages/RecipePage";
+import WriteRecipePage from "./pages/WriteRecipePage";
+import DetailRecipePage from "./pages/DetailRecipePage";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
 import { useStaySignedIn } from "./hooks/useStaySignedIn";
@@ -42,6 +44,8 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route element={<LoginRecipeRoute />}>
                   <Route path="recipe" element={<RecipePage />} />
+                  <Route path="/recipe/:id" element={<DetailRecipePage />} />
+                  <Route path="/writerecipe" element={<WriteRecipePage />} />
                 </Route>
                 <Route element={<NotLoginRecipeRoute />}>
                   <Route

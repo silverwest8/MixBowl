@@ -50,21 +50,6 @@ const RecipeButton = () => {
     });
   }, []);
 
-  console.log({
-    red,
-    pink,
-    orange,
-    black,
-    yellow,
-    brown,
-    green,
-    grey,
-    blue,
-    white,
-    purple,
-    transparent,
-    no,
-  });
   return (
     <ButtonBox>
       {min === 0 && max === 0 ? (
