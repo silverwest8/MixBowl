@@ -114,7 +114,7 @@ paths:
       tags:
         - community
       summary: 이번 주 인기글 조회
-      description: 더보기 했을때 어떻게 할지 알아볼게요 일단은 3개만 보내겠습니다
+      description: 더보기 하면 전체글 리스트로 가는건가요? 일단은 3개만 보내겠습니다
       operationId: communityGetHotPost
       parameters:
       responses:
@@ -160,28 +160,27 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /community/getReview/{id}:
+  /community/getTotal:
     get:
       tags:
         - community
-      summary: 특정 칵테일 바 리뷰 조회
-      description: ""
+      summary: 전체 글, 카테고리별 글 조회
+      description: "query로 검색 필터링 생각중입니다 - 근데 기능 중에 있나요?"
       operationId: getReview
       parameters:
-        - in: path
-          name: id
-          description: 장소 ID
-          example: 1389819741
+        - in: query
+          name: search
+          description: 검색키워드
+          example: 피치크러쉬
           schema:
             type: string
-          required: true
       responses:
         "200":
           description: ""
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getReview"
+                $ref: "#/components/schemas/communityGetTotal"
         "400":
           description: ""
           content:
