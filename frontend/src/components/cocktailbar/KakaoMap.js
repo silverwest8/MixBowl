@@ -133,7 +133,7 @@ function KakaoMap() {
           const bounds = map.getBounds();
           getDistance(lat, lng, bounds.qa, lng);
         }}
-        style={{ width: "100%", height: "100%", position: "relative" }}
+        style={{ flexGrow: "1", height: "100%", position: "relative" }}
       >
         {markers.map((marker) => (
           <CustomOverlayMap // 커스텀 오버레이를 표시할 Container

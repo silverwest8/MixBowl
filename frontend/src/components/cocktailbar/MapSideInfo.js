@@ -1,31 +1,15 @@
-import { useRecoilValue } from "recoil";
-import { mapState } from "../../store/map";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import styled from "styled-components";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import CocktailbarList from "./CocktailbarList";
 import CocktailbarDetail from "./CocktailbarDetail";
 
 const MapSideInfo = ({ id }) => {
-  const { data } = useRecoilValue(mapState);
   const [show, setShow] = useState(false);
-  const [width, setWidth] = useState(0);
   const ref = useRef(null);
 
-  const onChangeWidth = () => {
-    setWidth(ref.current.offsetWidth);
-  };
-  useEffect(() => {
-    window.addEventListener("resize", onChangeWidth);
-    return () => {
-      window.removeEventListener("resize", onChangeWidth);
-    };
-  }, []);
-  useEffect(() => {
-    onChangeWidth();
-  }, [ref, data]);
   return (
-    <Wrapper show={show} width={width}>
+    <Wrapper show={show}>
       <button onClick={() => setShow((state) => !state)}>
         {show ? <FaChevronRight /> : <FaChevronLeft />}
       </button>
@@ -38,6 +22,8 @@ const MapSideInfo = ({ id }) => {
 
 const Wrapper = styled.div`
   overflow-y: scroll;
+
+  flex-shrink: 0;
   & > button {
     display: none;
   }
@@ -47,9 +33,10 @@ const Wrapper = styled.div`
     top: 0;
     bottom: 0;
     right: 0;
-    z-index: 1;
+    z-index: 2;
     overflow-y: auto;
-    transform: ${({ show, width }) => !show && `translateX(${width}px)`};
+    flex-shrink: 0;
+    transform: ${({ show }) => !show && `translateX(18rem)`};
     & > button {
       display: block;
       align-self: center;
@@ -70,6 +57,7 @@ const Wrapper = styled.div`
 
 const InfoWrapper = styled.div`
   padding: 0 0.5rem;
+  width: 18rem;
   ::-webkit-scrollbar {
     width: 8px;
   }

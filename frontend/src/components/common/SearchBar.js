@@ -30,6 +30,7 @@ const SearchBarBox = styled.div`
   gap: 0.25rem;
   padding: 0.5rem 0.875rem;
   border-radius: 50px;
+  width: 100%;
   border: 2px solid ${({ theme }) => theme.color.primaryGold};
   & > input {
     flex-grow: 1;
@@ -39,7 +40,7 @@ const SearchBarBox = styled.div`
     color: ${({ theme }) => theme.color.lightGray};
   }
   svg {
-    font-size: 1.25rem;
+    font-size: 1rem;
     color: ${({ theme }) => theme.color.primaryGold};
   }
 `;

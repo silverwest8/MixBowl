@@ -26,8 +26,7 @@ const Main = styled.main`
   padding: 2rem 1rem;
   height: calc(calc(var(--vh, 1vh) * 100) - 3.5rem);
   .wrapper {
-    display: grid;
-    grid-template-columns: 3fr 1.2fr;
+    display: flex;
     gap: 2rem;
     height: 100%;
   }

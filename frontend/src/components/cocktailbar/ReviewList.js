@@ -70,6 +70,7 @@ const Button = styled.button`
 const ReviewHeader = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: 1.25rem;
   align-items: center;
   margin-top: 1rem;
   .review-info {
