@@ -35,6 +35,9 @@ const Menu = styled.button`
   @media screen and (max-width: 800px) {
     width: 22vw;
   }
+  @media screen and (max-width: 500px) {
+    width: 32vw;
+  }
 `;
 
 const TopSection = styled.div`
@@ -46,6 +49,9 @@ const TopSection = styled.div`
   > span {
     font-size: 1rem;
     margin-bottom: 0.5rem;
+  }
+  @media screen and (max-width: 500px) {
+    width: 70vw;
   }
 `;
 
@@ -76,6 +82,9 @@ const MainSection = styled.div`
   > div:last-child {
     margin-top: 1.2rem;
   }
+  @media screen and (max-width: 500px) {
+    width: 70vw;
+  }
 `;
 const ImageSection = styled.div`
   width: 45vw;
@@ -96,6 +105,9 @@ const ImageSection = styled.div`
     align-items: center;
     color: ${({ theme }) => theme.color.primaryGold};
   }
+  @media screen and (max-width: 500px) {
+    width: 70vw;
+  }
 `;
 const BottomSection = styled.div`
   width: 45vw;
@@ -108,6 +120,9 @@ const BottomSection = styled.div`
   .ok {
     background-color: ${({ theme }) => theme.color.primaryGold};
   }
+  @media screen and (max-width: 500px) {
+    width: 70vw;
+  }
 `;
 const Button = styled(Link)`
   font-size: 1rem;
@@ -119,10 +134,7 @@ const Button = styled(Link)`
     background-color: ${({ theme }) => theme.color.secondGold};
   }
   @media screen and (max-width: 800px) {
-    padding: 0.7rem 2.7rem;
-  }
-  @media screen and (max-width: 400px) {
-    padding: 0.7rem 1.8rem;
+    padding: 1rem 3.2rem;
   }
 `;
 
