@@ -1,0 +1,52 @@
+# components for community
+
+components:
+  schemas:
+    getHotPost:
+      properties:
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                example: 제목입니다
+              content:
+                type: string
+                example: 내용입니다
+              like:
+                type: integer
+                example: 10
+              reply:
+                type: integer
+                example: 10
+              date:
+                type: string
+                example: 1일전
+              UNO_USER:
+                type: object
+                properties:
+                  NICKNAME:
+                    type: string
+                    example: NEWNICKNAME
+                  LEVEL:
+                    type: integer
+                    example: 1
+
+    getNewPost:
+      properties:
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              cagetory_id:
+                type: integer
+                example: 1
+              title:
+                type: string
+                example: 제목입니다(질문답변 카테고리의 경우 제목이 없으므로 내용을 보냅니다)
+              reply:
+                type: integer
+                example: 10

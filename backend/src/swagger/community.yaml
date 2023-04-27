@@ -1,0 +1,190 @@
+paths:
+  /community/create/{category_id}:
+    post:
+      tags:
+        - community
+      summary: 커뮤니티 글 작성
+      description: 1 - 칵테일 추천 || 2 - 질문과 답변 || 3 - 칵테일 리뷰 || 4 - 자유
+      operationId: createPost
+      parameters:
+        - in: path
+          name: category_id
+          description: 카테고리 ID
+          example: 1
+          required: true
+      requestBody:
+        required: true
+        description: category_id에 따른 예시를 하나에 모두 적었습니다. category_id가 3인 경우에만 like(칵테일 추천)를 씁니다.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: 1-이 칵테일을 추천합니다 / 2-질문글은 제목이 없습니다 / 3-이 칵테일을 리뷰합니다(이 경우에만 like를 씁니다) / 4-자유글입니다
+                content:
+                  type: text
+                  example: 1-달달하고 맛있어요 / 2-이 재료 대신 저 재료 써도 되나요? / 3-이 칵테일은 이렇습니다 / 4-저는 칵테일을 좋아합니다
+                image:
+                  type: text
+                  example: multipart/form-data 형식으로 form태그인가?로 최대 5개까지 올려주세요. 이거는 req에 따로 포함하지 않고 form태그로 파일만 올려주시면됩니다
+                like:
+                  type: boolean
+                  example: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /community/update/{category_id}:
+    put:
+      tags:
+        - community
+      summary: 커뮤니티 글 수정
+      description: 1 - 칵테일 추천 || 2 - 질문과 답변 || 3 - 칵테일 리뷰 || 4 - 자유
+      operationId: updatePost
+      parameters:
+        - in: path
+          name: category_id
+          description: 카테고리 ID
+          example: 1
+          required: true
+      requestBody:
+        required: true
+        description: category_id에 따른 예시를 하나에 모두 적었습니다. category_id가 3인 경우에만 like(칵테일 추천)를 씁니다.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: 1-이 칵테일을 추천합니다 / 2-질문글은 제목이 없습니다 / 3-이 칵테일을 리뷰합니다(이 경우에만 like를 씁니다) / 4-자유글입니다
+                content:
+                  type: text
+                  example: 1-달달하고 맛있어요 / 2-이 재료 대신 저 재료 써도 되나요? / 3-이 칵테일은 이렇습니다 / 4-저는 칵테일을 좋아합니다
+                image:
+                  type: text
+                  example: multipart/form-data 형식으로 form태그인가?로 최대 5개까지 올려주세요. 이거는 req에 따로 포함하지 않고 form태그로 파일만 올려주시면됩니다
+                like:
+                  type: boolean
+                  example: true
+
+  /community/delete/{post_id}:
+    delete:
+      tags:
+        - community
+      summary: 커뮤니티 글 삭제
+      description: ""
+      operationId: deletePost
+      parameters:
+        - in: path
+          name: post_id
+          description: 게시글 ID
+          example: 3
+          schema:
+            type: integer
+          required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /community/getHotPost:
+    get:
+      tags:
+        - community
+      summary: 이번 주 인기글 조회
+      description: 더보기 했을때 어떻게 할지 알아볼게요 일단은 3개만 보내겠습니다
+      operationId: communityGetHotPost
+      parameters:
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getHotPost"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /community/getNewPost/{category_id}:
+    get:
+      tags:
+        - community
+      summary: 최신글 조회
+      description: category_id에 따라 카테고리별 최신글을 5개씩 가져옵니다
+      operationId: communityGetNewPost
+      parameters:
+        - in: path
+          name: category_id
+          description: 카테고리 ID
+          example: 1
+          schema:
+            type: integer
+          required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getNewPost"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+  /community/getReview/{id}:
+    get:
+      tags:
+        - community
+      summary: 특정 칵테일 바 리뷰 조회
+      description: ""
+      operationId: getReview
+      parameters:
+        - in: path
+          name: id
+          description: 장소 ID
+          example: 1389819741
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getReview"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
