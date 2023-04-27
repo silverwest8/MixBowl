@@ -34,6 +34,7 @@ const RecipeAlcohol = ({ handleClose }) => {
       <Box
         sx={{
           width: 200,
+          marginTop: "3rem",
         }}
       >
         <Slider
