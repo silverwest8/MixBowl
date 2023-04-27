@@ -33,17 +33,22 @@ const CocktailbarList = () => {
   const [{ center, location, radius }, setMapState] = useRecoilState(mapState);
   const { data } = useQuery(
     ["cocktail bar list", center, query, radius],
-    getBarList
+    getBarList,
+    {
+      onError: (error) => {
+        if (error.response.status === 401)
+          navigate("/login?return_url=/cocktailbar");
+      },
+    }
   );
   const onChange = (e) => setInput(e.target.value);
-  const onClick = () => {
-    if (query) {
-      params.delete("query");
-      setInput("");
-      navigate(`/cocktailbar${params.toString()}`, { replace: true });
-    } else {
-      navigate(`/cocktailbar?query=${input}`);
-    }
+  const onSearch = () => {
+    navigate(`/cocktailbar?query=${input}`);
+  };
+  const onClear = () => {
+    params.delete("query");
+    setInput("");
+    navigate(`/cocktailbar${params.toString()}`, { replace: true });
   };
   useEffect(() => {
     if (data) {
@@ -64,9 +69,11 @@ const CocktailbarList = () => {
         placeholder="칵테일 바를 검색해보세요!"
         value={input}
         onChange={onChange}
-        onClick={onClick}
-        showSearchButton={!query}
+        onSearch={onSearch}
+        onClear={onClear}
+        showCloseButton={query}
       />
+
       {!query && location && <Location>{location}</Location>}
       <List>
         {data ? (
