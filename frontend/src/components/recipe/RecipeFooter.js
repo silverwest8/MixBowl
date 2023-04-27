@@ -14,6 +14,7 @@ const RecipeFooter = () => {
 
 const LoginBox = styled.div`
   text-align: center;
+  margin: 2rem 0;
 `;
 
 const LoginButton = styled.button`
