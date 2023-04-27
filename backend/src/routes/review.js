@@ -223,7 +223,7 @@ router.get('/getBar/:id', checkAccess, async (req, res) => {
       },
       group: ['PLACE_ID'],
     });
-    data.AVG_RATING = rating.dataValues.AVG_RATING;
+    data.AVG_RATING = rating != null ? rating.dataValues.AVG_RATING : null;
     return res
       .status(200)
       .json({ success: true, message: '칵테일 바 단건 조회 성공', data: data });
