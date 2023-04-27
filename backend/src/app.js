@@ -31,7 +31,7 @@ sequelize
   .then(() => {
     logger.info('Mysql Connecting Success with Sequelize');
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err);
   });
 
