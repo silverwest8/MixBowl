@@ -50,3 +50,38 @@ components:
               reply:
                 type: integer
                 example: 10
+
+    /community/getTotal:
+      properties:
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              cagetory_name:
+                type: string
+                example: 자유게시판
+              title:
+                type: string
+                example: 제목입니다(질문답변 카테고리 - 사용X)
+              content:
+                type: string
+                example: 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?  내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 
+              like:
+                type: integer
+                example: 10
+              reply:
+                type: integer
+                example: 10
+              date:
+                type: string
+                example: 1일전
+              UNO_USER:
+                type: object
+                properties:
+                  NICKNAME:
+                    type: string
+                    example: NEWNICKNAME
+                  LEVEL:
+                    type: integer
+                    example: 1
