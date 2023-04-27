@@ -7,6 +7,8 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { BiCurrentLocation } from "react-icons/bi";
 import { FaUndoAlt } from "react-icons/fa";
+import { MdEditLocationAlt } from "react-icons/md";
+import AutoCompleteInput from "./AutoCompleteInput";
 
 function KakaoMap({ id }) {
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ function KakaoMap({ id }) {
   });
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const [showInput, setShowInput] = useState(false);
   const [{ data }, setMapState] = useRecoilState(mapState);
   const getCurrentPosition = () => {
     navigator.geolocation.getCurrentPosition(({ coords }) => {
@@ -107,6 +110,7 @@ function KakaoMap({ id }) {
   }, [map, data]);
   return center ? (
     <MapWrapper>
+      {showInput && <AutoCompleteInput />}
       <Map
         center={center}
         onCreate={setMap}
@@ -134,12 +138,20 @@ function KakaoMap({ id }) {
       </Map>
       {!id && (
         <>
-          <button
-            onClick={() => getCurrentPosition()}
-            className="location-button"
-          >
-            <BiCurrentLocation />
-          </button>
+          <div className="button-wrapper">
+            <button
+              onClick={() => getCurrentPosition()}
+              className="location-button"
+            >
+              <BiCurrentLocation />
+            </button>
+            <button
+              className={showInput ? "active" : ""}
+              onClick={() => setShowInput((state) => !state)}
+            >
+              <MdEditLocationAlt />
+            </button>
+          </div>
           <button onClick={() => searchCocktailbar()} className="search-button">
             <FaUndoAlt />
             현지도에서 재검색
@@ -158,26 +170,36 @@ const MapWrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    position: absolute;
     background-color: white;
     color: black;
     border-radius: 8px;
     font-size: 1.5rem;
-    z-index: 2;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 0.1rem;
+    &.active {
+      background-color: black;
+      color: white;
+    }
   }
-  .location-button {
+  .button-wrapper {
+    position: absolute;
     bottom: 1rem;
     right: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 2;
   }
   .search-button {
+    position: absolute;
     left: 50%;
     bottom: 1rem;
     transform: translateX(-50%);
     font-size: 0.875rem;
     padding: 0.5rem 1rem;
+    z-index: 2;
   }
 `;
 
