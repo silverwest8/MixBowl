@@ -3,6 +3,7 @@ import styled from "styled-components";
 import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { FaThumbsUp } from "react-icons/fa";
 
 const RecipeDetailCard = () => {
   const [Recipe, setRecipe] = useState([]);
@@ -22,36 +23,42 @@ const RecipeDetailCard = () => {
   }, []);
 
   return (
-    <TopBox>
-      <RecipeBox>
-        <img src={Recipe.image_path}></img>
-        <TextBox>
-          <h1>{Recipe.name}</h1>
+    <>
+      <TopBox>
+        <RecipeBox>
+          <img src={Recipe.image_path}></img>
+          <TextBox>
+            <h1>{Recipe.name}</h1>
+            <p>
+              @{Recipe.uname} <MemberBadge level={Recipe.level} />
+            </p>
+            <p>{Recipe.day}</p>
+            <p>
+              <span>도수</span> {Recipe.alcohol}도
+            </p>
+            <p>
+              <span>색상</span> {Recipe.color}
+            </p>
+          </TextBox>
+        </RecipeBox>
+        <Material>
           <p>
-            @{Recipe.uname} <MemberBadge level={Recipe.level} />
-          </p>
-          <p>{Recipe.day}</p>
-          <p>
-            <span>도수</span> {Recipe.alcohol}도
+            <span>필수 재료</span> {Recipe.main}
           </p>
           <p>
-            <span>색상</span> {Recipe.color}
+            <span>부재료</span> {Recipe.sub}
           </p>
-        </TextBox>
-      </RecipeBox>
-      <Material>
-        <p>
-          <span>필수 재료</span> {Recipe.main}
-        </p>
-        <p>
-          <span>부재료</span> {Recipe.sub}
-        </p>
-      </Material>
-      <MaterialHow>
-        <p>{Recipe.how}</p>
-      </MaterialHow>
-      <HorizonLine></HorizonLine>
-    </TopBox>
+        </Material>
+        <MaterialHow>
+          <p>{Recipe.how}</p>
+        </MaterialHow>
+        <RecBox>
+          <FaThumbsUp></FaThumbsUp>
+          {Recipe.rec}
+        </RecBox>
+        <HorizonLine></HorizonLine>
+      </TopBox>
+    </>
   );
 };
 
@@ -114,9 +121,18 @@ const MaterialHow = styled.div`
 `;
 
 const TopBox = styled.div`
+  width: 80%;
+  margin: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+const RecBox = styled.div`
+  display: flex;
+  position: relative;
+  right: 0px;
+  bottom 0px;
 `;
 
 const HorizonLine = styled.div`
