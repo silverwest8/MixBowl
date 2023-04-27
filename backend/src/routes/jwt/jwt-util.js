@@ -79,7 +79,7 @@ export const refresh_new = async (req, res) => {
           });
         } else {
           //refresh token이 유효하므로, 새로운 access token 발급
-          const newAccessToken = sign(req.body.unum);
+          const newAccessToken = sign(decodeAccess.unum);
           res.status(200).send({
             ok: true,
             accessToken: newAccessToken,
@@ -91,7 +91,7 @@ export const refresh_new = async (req, res) => {
           message: 'Invalid Access Token',
         });
       } else {
-        res.status(400).send({
+        res.status(202).send({
           ok: false,
           message: 'Access Token is not expired',
         });

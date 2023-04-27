@@ -23,7 +23,7 @@ const sql = {
     return reToken;
   },
 
-  namedupcheck: async (req) => {
+  namedupcheck: async req => {
     const { checkname } = req.body;
     try {
       const check = await USER.findAndCountAll({
@@ -35,7 +35,7 @@ const sql = {
     }
   },
 
-  emaildupcheck: async (req) => {
+  emaildupcheck: async req => {
     const { checkemail } = req.body;
     try {
       const check = await USER.findAndCountAll({
@@ -64,7 +64,7 @@ const sql = {
     }
   },
 
-  loginUser: async (req) => {
+  loginUser: async req => {
     const { email, password } = req.body;
     try {
       const user = await USER.findOne({
@@ -87,6 +87,7 @@ const sql = {
       return {
         code: 200,
         message: '토큰이 발급되었습니다.',
+        message: '토큰이 발급되었습니다.',
         token: {
           accessToken,
           refreshToken,
@@ -101,16 +102,23 @@ const sql = {
   },
   postReview: async (req) => {
     const unum = req.decoded.unum;
-    const req_json = JSON.parse(req.body.data);
-    req.keyword = req_json.keyword; //postImage req에 keyword 정보 미리 처리
-    console.log(req_json); //json형식으로 하면 바꿔질수있음, postman으로는 string취급됨
-    const { rating, detail } = req_json;
+    const { rating, detail } = req.body;
     try {
       const review = REVIEW.create({
         UNO: unum,
         PLACE_ID: req.params.placeId,
         TEXT: detail,
         RATING: rating,
+      });
+      req.body.keyword.forEach((i) => {
+        try {
+          KEYWORD.create({
+            REVIEW_ID: review.REVIEW_ID,
+            KEYWORD: i,
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
       });
       return review;
     } catch (error) {
@@ -119,7 +127,6 @@ const sql = {
   },
   postImage: async (req, review) => {
     try {
-      const keyword = req.keyword;
       const reviewId = review.REVIEW_ID;
       req.files.map(async (data) => {
         let path = data.path;
@@ -127,18 +134,6 @@ const sql = {
           IMAGE.create({
             REVIEW_ID: `${reviewId}`,
             PATH: `${path}`,
-          });
-        } catch (error) {
-          console.log(error.message);
-        }
-      });
-      console.log(keyword);
-      const keyword_arr = keyword.split(',');
-      keyword_arr.forEach((i) => {
-        try {
-          KEYWORD.create({
-            REVIEW_ID: reviewId,
-            KEYWORD: i,
           });
         } catch (error) {
           console.log(error.message);
