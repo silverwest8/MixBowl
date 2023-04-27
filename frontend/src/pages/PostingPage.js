@@ -3,7 +3,8 @@ import styled from "styled-components";
 import Title from "../components/common/Title";
 import { useState } from "react";
 import Input from "../components/common/Input";
-import { AiOutlinePlusCircle } from "react-icons/ai";
+import { AiOutlinePlusCircle, AiFillHeart } from "react-icons/ai";
+import { ImSad } from "react-icons/im";
 import { Link } from "react-router-dom";
 
 const Background = styled.div`
@@ -124,6 +125,43 @@ const BottomSection = styled.div`
     width: 70vw;
   }
 `;
+const RecommendationSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 45vw;
+  @media screen and (max-width: 500px) {
+    width: 70vw;
+    flex-direction: column;
+  }
+  > div:first-child {
+    margin-bottom: 0.5rem;
+  }
+  > div:last-child {
+    display: flex;
+    @media screen and (max-width: 800px) {
+      flex-direction: column;
+    }
+
+    > span:first-child {
+      color: ${({ theme }) => theme.color.primaryGold};
+      cursor: pointer;
+    }
+    > span {
+      display: flex;
+      margin-left: 1rem;
+      .icon {
+        margin-left: 0.5rem;
+      }
+      @media screen and (max-width: 500px) {
+        margin-left: 0;
+        margin-top: 0.2rem;
+      }
+      &:hover {
+        color: ${({ theme }) => theme.color.secondGold};
+      }
+    }
+  }
+`;
 const Button = styled(Link)`
   font-size: 1rem;
   border-radius: 10px;
@@ -204,6 +242,23 @@ const PostingPage = () => {
             <AiOutlinePlusCircle />
           </div>
         </ImageSection>
+        {tab === "후기 내용" ? (
+          <RecommendationSection>
+            <div>이 칵테일을 추천하시나요?</div>
+            <div>
+              <span>
+                추천합니다!
+                <AiFillHeart className="icon" />
+              </span>
+              <span>
+                아니요
+                <ImSad className="icon" />
+              </span>
+            </div>
+          </RecommendationSection>
+        ) : (
+          ""
+        )}
         <BottomSection>
           <Button className="cancel" to="/community">
             취소
