@@ -22,16 +22,9 @@ const RecipeSearch = (props) => {
   );
 };
 const SearchBox = styled.div`
-  margin: auto;
-  margin-top: 40px;
-  width: 40.25rem;
-  height: 2.875rem;
-  @media screen and (max-width: 1024px) {
-    width: 35.25rem;
-  }
-  @media screen and (max-width: 720px) {
-    width: 30.25rem;
-  }
+  margin: 2rem auto;
+  max-width: 40.25rem;
+  width: 100%;
 `;
 
 export default RecipeSearch;

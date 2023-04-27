@@ -137,7 +137,6 @@ const Button = styled.button`
   height: 2.25rem;
   border: 1px solid ${({ theme }) => theme.color.secondGold};
   border-radius: 1.25rem;
-  margin-top: 2rem;
   margin-right: 1rem;
   margin-left: 1rem;
   color: ${({ theme }) => theme.color.secondGold};

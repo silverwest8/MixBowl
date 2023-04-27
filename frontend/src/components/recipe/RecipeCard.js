@@ -36,14 +36,16 @@ const RecipeCard = () => {
               <p>
                 @{index.uname} <MemberBadge level={index.level} />
               </p>
-              <p className="ThumbsUp">
-                <FaThumbsUp></FaThumbsUp>
-                {index.like}
-              </p>
-              <p className="Comment">
-                <FaCommentDots></FaCommentDots>
-                {index.comment}
-              </p>
+              <div>
+                <p className="ThumbsUp">
+                  <FaThumbsUp></FaThumbsUp>
+                  {index.like}
+                </p>
+                <p className="Comment">
+                  <FaCommentDots></FaCommentDots>
+                  {index.comment}
+                </p>
+              </div>
             </TextBox>
           </RecipeBox>
         ))}
@@ -54,11 +56,15 @@ const RecipeCard = () => {
 
 const TextBox = styled.div`
   display: flex;
+  justify-content: space-between;
+  & > div {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
   p {
     display: flex;
-  }
-  div {
-    margin-left: 0.5rem;
+    align-items: center;
   }
 `;
 
@@ -69,40 +75,47 @@ const CardBox = styled.div`
   margin-top: 2rem;
   margin-bottom: 2rem;
   justify-items: center;
-  @media screen and (max-width: 1280px) {
+
+  @media screen and (max-width: 928px) {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
   }
-  @media screen and (max-width: 1024px) {
+  @media screen and (max-width: 720px) {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+  @media screen and (max-width: 350px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 `;
 
 const RecipeBox = styled.div`
+  width: 12.5rem;
   img {
     height: 12.5rem;
-    width: 16.25rem;
+    width: 100%;
+    object-fit: cover;
     border: 2px solid ${({ theme }) => theme.color.primaryGold};
     border-radius: 0.75rem;
   }
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     margin-top: 0.5rem;
   }
   p {
     font-size: 0.875rem;
     margin-top: 0.5rem;
+    gap: 0.2rem;
   }
   .ThumbsUp {
     display: flex;
     color: ${({ theme }) => theme.color.primaryGold};
-    margin-left: 8rem;
   }
   .Comment {
     display: flex;
     color: ${({ theme }) => theme.color.lightGray};
-    margin-left: 0.75rem;
   }
 `;
 
