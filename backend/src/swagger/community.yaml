@@ -1,5 +1,5 @@
 paths:
-  /community/create/{category_id}:
+  /community/create:
     post:
       tags:
         - community
@@ -20,6 +20,9 @@ paths:
             schema:
               type: object
               properties:
+                category_id:
+                  type: integer
+                  example: 1
                 title:
                   type: string
                   example: 1-이 칵테일을 추천합니다 / 2-질문글은 제목이 없습니다 / 3-이 칵테일을 리뷰합니다(이 경우에만 like를 씁니다) / 4-자유글입니다
@@ -46,7 +49,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /community/update/{category_id}:
+  /community/update/{post_id}:
     put:
       tags:
         - community
@@ -54,11 +57,6 @@ paths:
       description: 1 - 칵테일 추천 || 2 - 질문과 답변 || 3 - 칵테일 리뷰 || 4 - 자유
       operationId: updatePost
       parameters:
-        - in: path
-          name: category_id
-          description: 카테고리 ID
-          example: 1
-          required: true
       requestBody:
         required: true
         description: category_id에 따른 예시를 하나에 모두 적었습니다. category_id가 3인 경우에만 like(칵테일 추천)를 씁니다.
@@ -67,6 +65,9 @@ paths:
             schema:
               type: object
               properties:
+                category_id:
+                  type: integer
+                  example: 1
                 title:
                   type: string
                   example: 1-이 칵테일을 추천합니다 / 2-질문글은 제목이 없습니다 / 3-이 칵테일을 리뷰합니다(이 경우에만 like를 씁니다) / 4-자유글입니다
@@ -131,7 +132,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /community/getNewPost/{category_id}:
+  /community/getNewPost/{category_name}:
     get:
       tags:
         - community
@@ -140,8 +141,8 @@ paths:
       operationId: communityGetNewPost
       parameters:
         - in: path
-          name: category_id
-          description: 카테고리 ID
+          name: category_name
+          description: 카테고리 이름
           example: 1
           schema:
             type: integer
@@ -160,7 +161,41 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /community/getTotal:
+  /community/getPostList/{category_name}:
+    get:
+      tags:
+        - community
+      summary: 전체 글, 카테고리별 글 조회
+      description: "query로 검색 필터링 생각중입니다"
+      operationId: getReview
+      parameters:
+        - in: path
+          name: category_name
+          description: 카테고리 이름
+          example: total, recommand, question, review, free
+          schema:
+            type: string
+        - in: query
+          name: search
+          description: 검색키워드
+          example: 피치크러쉬
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/communityGetTotal"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+/community/getTotal:
     get:
       tags:
         - community

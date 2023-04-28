@@ -51,7 +51,7 @@ components:
                 type: integer
                 example: 10
 
-    /community/getTotal:
+    communityGetTotal:
       properties:
         list:
           type: array
