@@ -280,8 +280,8 @@ const Board = styled.div`
 
 const WritingButton = styled(Link)`
   position: fixed;
-  right: 10vw;
-  bottom: 5rem;
+  right: 1rem;
+  bottom: 1rem;
   z-index: 9;
   color: white;
   padding: 0.7rem 0.7rem;
