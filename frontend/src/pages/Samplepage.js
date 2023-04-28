@@ -62,11 +62,12 @@ const SamplePage = () => {
       </section>
       <section>
         <h2>Search Bar</h2>
+        <SearchBar placholder="원하는 레시피를 검색해보세요" />
         <SearchBar
           placholder="원하는 레시피를 검색해보세요"
-          showSearchButton={true}
+          value="asdf"
+          showCloseButton={true}
         />
-        <SearchBar placholder="원하는 레시피를 검색해보세요" value="asdf" />
       </section>
       <section>
         <h2>Member Badge</h2>
