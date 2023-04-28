@@ -11,6 +11,6 @@ import review from './review';
 router.use('/', main);
 router.use('/user', user);
 router.use('/recipe', recipe);
-// router.use('/review', review);
+router.use('/reviews', review);
 
 export default router;

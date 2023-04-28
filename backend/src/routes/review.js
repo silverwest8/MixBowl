@@ -15,11 +15,6 @@ import sql from '../database/sql';
 dotenv.config();
 const router = express.Router();
 
-//---- 연동확인
-// router.get('/', async (req, res) => {
-//   res.send('review');
-// });
-
 async function getKeyword(place_id) {
   let keywordlist = [null, null, null];
   const keyword = await KEYWORD.findAll({
@@ -75,7 +70,7 @@ async function getKeyword(place_id) {
   return keywordlist;
 }
 
-router.get('/reviews', checkAccess, async (req, res) => {
+router.get('/list', checkAccess, async (req, res) => {
   // Example
   // http://localhost:3030/review/getList?query=수원 칵테일바&x=37.514322572335935&y=127.06283102249932&radius=20000&sort=accuracy
   let data = {
@@ -235,9 +230,9 @@ router.get('/bar/:id', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/reviews/:id', checkAccess, async (req, res) => {
+router.get('/:id', checkAccess, async (req, res) => {
   // Example
-  // http://localhost:3030/review/getReview/17649496
+  // http://localhost:3030/reviews/17649496
   try {
     let data = {
       total_cnt: null,
@@ -317,7 +312,7 @@ const upload = multer({
 
 // 리뷰 등록
 router.post(
-  '/review/:placeId',
+  '/:placeId',
   upload.array('files', 5),
   checkAccess,
   async (req, res) => {
@@ -345,9 +340,9 @@ router.post(
   }
 );
 
-router.put('/review', checkAccess, async (req, res) => {});
+router.put('/:placeId', checkAccess, async (req, res) => {});
 
-router.delete('/review', checkAccess, async (req, res) => {
+router.delete('/placeId', checkAccess, async (req, res) => {
   return res.status(200).json({ success: true, message: '리뷰 삭제 성공' });
 });
 

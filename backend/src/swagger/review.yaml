@@ -21,19 +21,20 @@ components:
           type: integer
           example: 4
           description: '이미지인데 어떻게 적어야할지 몰라서 일단 이렇게...'
+
 paths:
-  /review:
+  /reviews/{placeid}:
     post:
       tags:
-        - post review
-      summary: 리뷰 작성 -> placeId가 주소 쿼리로 붙습니다.
+        - review
+      summary: 리뷰 작성 -> placeId가 주소 파라미터로 붙습니다.
       description: ''
       operationId: createReview
       parameters:
-        - name: placeId
-          in: query
+        - name: placeid
+          in: path
           type: integer
-          description: 'placeId정보'
+          description: 'placeid정보'
       requestBody:
         required: true
         content:
@@ -56,7 +57,6 @@ paths:
                 image:
                   type: text
                   example: 'multipart/form-data 형식으로 form태그인가?로 최대 5개까지 올려주세요. 이거는 req에 따로 포함하지 않고 form태그로 파일만 올려주시면됩니다'
-
       responses:
         '200':
           description: ''
@@ -70,11 +70,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-
-  /review:
     put:
       tags:
-        - update review
+        - review
       summary: 리뷰 수정
       description: ''
       operationId: updateReview
@@ -97,11 +95,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-
-  /review:
     delete:
       tags:
-        - delete review
+        - review
       summary: 리뷰 삭제
       description: ''
       operationId: deleteReview
@@ -123,8 +119,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-
-  /reviews:
+  /reviews/list:
     get:
       tags:
         - review
@@ -177,10 +172,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /bar/{id}:
+  /reviews/bar/{id}:
     get:
       tags:
-        - get bar review
+        - review
       summary: 칵테일 바 단건 조회
       description: ''
       operationId: getBar
@@ -209,7 +204,7 @@ paths:
   /reviews/{id}:
     get:
       tags:
-        - get one review
+        - review
       summary: 특정 칵테일 바 리뷰 조회
       description: ''
       operationId: getReview
