@@ -10,41 +10,46 @@ import { imageListState } from "../../store/image";
 
 const KEYWORDS = [
   {
+    id: 1,
     icon: "👍",
     keyword: "술이 맛있어요",
   },
   {
+    id: 2,
     icon: "🍹",
     keyword: "술이 다양해요",
   },
   {
+    id: 3,
     icon: "🍸",
     keyword: "혼술하기 좋아요",
   },
   {
-    icon: "",
+    id: 4,
+    icon: "🙌",
     keyword: "메뉴가 다양해요",
   },
   {
+    id: 5,
     icon: "🍽️",
     keyword: "음식이 맛있어요",
   },
   {
+    id: 6,
     icon: "🌃",
     keyword: "분위기가 좋아요",
   },
   {
+    id: 7,
     icon: "😀",
     keyword: "직원이 친절해요",
   },
   {
+    id: 8,
     icon: "🗣️",
     keyword: "대화하기 좋아요",
   },
-  {
-    icon: "💵",
-    keyword: "가성비가 좋아요",
-  },
+  { id: 9, icon: "💵", keyword: "가성비가 좋아요" },
 ];
 
 const ReviewModal = ({ handleClose, name, id }) => {
@@ -64,17 +69,17 @@ const ReviewModal = ({ handleClose, name, id }) => {
       [name]: value,
     }));
   };
-  const changeKeyword = (text) => {
-    if (keyword.find((item) => item === text)) {
+  const changeKeyword = (id) => {
+    if (keyword.find((item) => item === id)) {
       setInputs((state) => ({
         ...state,
-        keyword: state.keyword.filter((item) => item !== text),
+        keyword: state.keyword.filter((item) => item !== id),
       }));
       return true;
     } else if (keyword.length < 3) {
       setInputs((state) => ({
         ...state,
-        keyword: state.keyword.concat([text]),
+        keyword: state.keyword.concat([id]),
       }));
       return true;
     }
@@ -95,15 +100,12 @@ const ReviewModal = ({ handleClose, name, id }) => {
     try {
       const formData = new FormData();
       formData.append(
-        "req",
-        new Blob([
-          JSON.stringify({
-            rating: Number(rating),
-            detail,
-            keyword,
-          }),
-        ]),
-        { type: "application/json" }
+        "data",
+        JSON.stringify({
+          rating: Number(rating),
+          detail,
+          keyword,
+        })
       );
       for (let i = 0; i < files.length; i++) {
         formData.append("files", files[i].file);
@@ -113,13 +115,13 @@ const ReviewModal = ({ handleClose, name, id }) => {
       for (const pair of values) {
         console.log(pair);
       }
-      const { data } = await axios.post(`/api/review/create/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      /* TODO: 성공 로직 */
-      console.log(data);
+      // const { data } = await axios.post(`/api/review/create/${id}`, formData, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
+      // /* TODO: 성공 로직 */
+      // console.log(data);
     } catch (e) {
       console.log(e);
     }
@@ -148,12 +150,13 @@ const ReviewModal = ({ handleClose, name, id }) => {
           <section>
             <h3>술/음식</h3>
             <div className="keyword-list">
-              {KEYWORDS.slice(0, 5).map(({ icon, keyword }) => (
+              {KEYWORDS.slice(0, 5).map(({ icon, keyword, id }) => (
                 <KeywordButton
                   key={keyword}
                   icon={icon}
                   keyword={keyword}
                   onChange={changeKeyword}
+                  id={id}
                 />
               ))}
             </div>
@@ -161,12 +164,13 @@ const ReviewModal = ({ handleClose, name, id }) => {
           <section>
             <h3>매장</h3>
             <div className="keyword-list">
-              {KEYWORDS.slice(5).map(({ icon, keyword }) => (
+              {KEYWORDS.slice(5).map(({ icon, keyword, id }) => (
                 <KeywordButton
                   key={keyword}
                   icon={icon}
                   keyword={keyword}
                   onChange={changeKeyword}
+                  id={id}
                 />
               ))}
             </div>
@@ -187,12 +191,12 @@ const ReviewModal = ({ handleClose, name, id }) => {
   );
 };
 
-const KeywordButton = ({ icon, keyword, onChange }) => {
+const KeywordButton = ({ icon, keyword, onChange, id }) => {
   const [select, setSelect] = useState(false);
   return (
     <button
       onClick={() => {
-        if (onChange(keyword)) {
+        if (onChange(id)) {
           setSelect((state) => !state);
         }
       }}
@@ -246,7 +250,7 @@ const KeywordWrapper = styled.div`
     margin-top: 0.625rem;
   }
   button {
-    border: 1px solid white;
+    border: 1px solid black;
     text-align: center;
     font-weight: 500;
     font-size: 0.875rem;
