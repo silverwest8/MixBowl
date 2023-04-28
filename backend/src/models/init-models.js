@@ -1,4 +1,4 @@
-import _sequelize from "sequelize";
+import _sequelize from 'sequelize';
 const DataTypes = _sequelize.DataTypes;
 import _AUTH_CODE from  "./AUTH_CODE.js";
 import _COLOR from  "./COLOR.js";

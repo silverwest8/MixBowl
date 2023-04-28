@@ -23,6 +23,16 @@ const Background = styled.div`
   }
 `;
 
+const Section = styled.div`
+  width: 45vw;
+  @media screen and (max-width: 500px) {
+    width: 60vw;
+  }
+  @media screen and (max-width: 800px) {
+    width: 83vw;
+  }
+`;
+
 const Menu = styled.button`
   border: 2px solid ${({ theme }) => theme.color.primaryGold};
   color: white;
@@ -34,25 +44,22 @@ const Menu = styled.button`
     background-color: ${({ theme }) => theme.color.secondGold};
   }
   @media screen and (max-width: 800px) {
-    width: 22vw;
+    width: 18vw;
   }
   @media screen and (max-width: 500px) {
-    width: 32vw;
+    width: 40vw;
   }
 `;
 
 const TopSection = styled.div`
   display: flex;
   flex-direction: column;
-  width: 45vw;
+  width: 100%;
   justify-content: center;
   margin-bottom: 2rem;
   > span {
     font-size: 1rem;
     margin-bottom: 0.5rem;
-  }
-  @media screen and (max-width: 500px) {
-    width: 70vw;
   }
 `;
 
@@ -70,7 +77,7 @@ const SelectContainer = styled.div`
   .selected {
     background-color: ${({ theme }) => theme.color.primaryGold};
   }
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 500px) {
     display: grid;
     grid-template-rows: repeat(2, auto);
     grid-template-columns: auto auto;
@@ -79,16 +86,13 @@ const SelectContainer = styled.div`
   }
 `;
 const MainSection = styled.div`
-  width: 45vw;
+  width: 100%;
   > div:last-child {
     margin-top: 1.2rem;
   }
-  @media screen and (max-width: 500px) {
-    width: 70vw;
-  }
 `;
 const ImageSection = styled.div`
-  width: 45vw;
+  width: 100%;
   margin-top: 2rem;
   > div {
     font-size: 0.9rem;
@@ -106,12 +110,9 @@ const ImageSection = styled.div`
     align-items: center;
     color: ${({ theme }) => theme.color.primaryGold};
   }
-  @media screen and (max-width: 500px) {
-    width: 70vw;
-  }
 `;
 const BottomSection = styled.div`
-  width: 45vw;
+  width: 100%;
   display: flex;
   justify-content: space-around;
   margin-top: 2rem;
@@ -121,18 +122,11 @@ const BottomSection = styled.div`
   .ok {
     background-color: ${({ theme }) => theme.color.primaryGold};
   }
-  @media screen and (max-width: 500px) {
-    width: 70vw;
-  }
 `;
 const RecommendationSection = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 45vw;
-  @media screen and (max-width: 500px) {
-    width: 70vw;
-    flex-direction: column;
-  }
+  width: 100%;
   > div:first-child {
     margin-bottom: 0.5rem;
   }
@@ -193,80 +187,82 @@ const PostingPage = () => {
       <Title title="커뮤니티" />
       <Background>
         <MiniTitle>글 작성</MiniTitle>
-        <TopSection>
-          <span>카테고리</span>
-          <SelectContainer>
-            <Menu
-              onClick={recommendationTab}
-              className={tab === "추천 이유" ? "selected" : ""}
-            >
-              칵테일 추천
-            </Menu>
-            <Menu
-              onClick={qnaTab}
-              className={tab === "질문 내용" ? "selected" : ""}
-            >
-              질문과 답변
-            </Menu>
-            <Menu
-              onClick={reviewTab}
-              className={tab === "후기 내용" ? "selected" : ""}
-            >
-              칵테일 리뷰
-            </Menu>
-            <Menu
-              onClick={freeTab}
-              className={tab === "글 내용" ? "selected" : ""}
-            >
-              자유
-            </Menu>
-          </SelectContainer>
-        </TopSection>
-        <MainSection>
-          {tab === "질문 내용" ? (
-            ""
-          ) : (
-            <Input
-              placeholder={tab === "후기 내용" ? "칵테일 이름" : "제목"}
-              className="input-title"
-            />
-          )}
-          <Textarea rows={15} placeholder={tab} />
-        </MainSection>
-        <ImageSection>
-          <div>
-            <span>이미지 첨부</span>
-            0/5
-          </div>
-          <div>
-            <AiOutlinePlusCircle />
-          </div>
-        </ImageSection>
-        {tab === "후기 내용" ? (
-          <RecommendationSection>
-            <div>이 칵테일을 추천하시나요?</div>
+        <Section>
+          <TopSection>
+            <span>카테고리</span>
+            <SelectContainer>
+              <Menu
+                onClick={recommendationTab}
+                className={tab === "추천 이유" ? "selected" : ""}
+              >
+                칵테일 추천
+              </Menu>
+              <Menu
+                onClick={qnaTab}
+                className={tab === "질문 내용" ? "selected" : ""}
+              >
+                질문과 답변
+              </Menu>
+              <Menu
+                onClick={reviewTab}
+                className={tab === "후기 내용" ? "selected" : ""}
+              >
+                칵테일 리뷰
+              </Menu>
+              <Menu
+                onClick={freeTab}
+                className={tab === "글 내용" ? "selected" : ""}
+              >
+                자유
+              </Menu>
+            </SelectContainer>
+          </TopSection>
+          <MainSection>
+            {tab === "질문 내용" ? (
+              ""
+            ) : (
+              <Input
+                placeholder={tab === "후기 내용" ? "칵테일 이름" : "제목"}
+                className="input-title"
+              />
+            )}
+            <Textarea rows={15} placeholder={tab} />
+          </MainSection>
+          <ImageSection>
             <div>
-              <span>
-                추천합니다!
-                <AiFillHeart className="icon" />
-              </span>
-              <span>
-                아니요
-                <ImSad className="icon" />
-              </span>
+              <span>이미지 첨부</span>
+              0/5
             </div>
-          </RecommendationSection>
-        ) : (
-          ""
-        )}
-        <BottomSection>
-          <Button className="cancel" to="/community">
-            취소
-          </Button>
-          <Button className="ok" to="/community">
-            확인
-          </Button>
-        </BottomSection>
+            <div>
+              <AiOutlinePlusCircle />
+            </div>
+          </ImageSection>
+          {tab === "후기 내용" ? (
+            <RecommendationSection>
+              <div>이 칵테일을 추천하시나요?</div>
+              <div>
+                <span>
+                  추천합니다!
+                  <AiFillHeart className="icon" />
+                </span>
+                <span>
+                  아니요
+                  <ImSad className="icon" />
+                </span>
+              </div>
+            </RecommendationSection>
+          ) : (
+            ""
+          )}
+          <BottomSection>
+            <Button className="cancel" to="/community">
+              취소
+            </Button>
+            <Button className="ok" to="/community">
+              확인
+            </Button>
+          </BottomSection>
+        </Section>
       </Background>
     </main>
   );
