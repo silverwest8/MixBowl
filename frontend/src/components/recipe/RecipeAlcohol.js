@@ -33,7 +33,7 @@ const RecipeAlcohol = ({ handleClose }) => {
     <Modal content="원하는 도수를 선택하세요" handleClose={handleClose}>
       <Box
         sx={{
-          width: 200,
+          width: "12.5rem",
           marginTop: "3rem",
         }}
       >
