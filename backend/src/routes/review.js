@@ -141,6 +141,9 @@ router.get('/getList', checkAccess, async (req, res) => {
           }
 
           data.total_cnt++;
+          const review_num = await REVIEW.findAll({
+            where: { PLACE_ID: element.id },
+          });
           const reviewList = await REVIEW.findAll({
             where: { PLACE_ID: element.id },
             include: [
@@ -167,13 +170,17 @@ router.get('/getList', checkAccess, async (req, res) => {
           temp.kakao_data = element;
           if (rating != null) temp.total_rate = rating.dataValues.AVG_RATING;
           temp.keyword = await getKeyword(element.id);
-          temp.review.review_cnt = reviewList.length;
+          temp.review.review_cnt = review_num.length;
           temp.review.review_list = Object.assign(reviewList);
           for (let i = 0; i < reviewList.length; i++) {
             if (req.user.UNO == temp.review.review_list[i].UNO_USER.UNO) {
-              temp.review.review_list[i].dataValues.UNO_USER.dataValues.ISWRITER = true;
+              temp.review.review_list[
+                i
+              ].dataValues.UNO_USER.dataValues.ISWRITER = true;
             } else {
-              temp.review.review_list[i].dataValues.UNO_USER.dataValues.ISWRITER = false;
+              temp.review.review_list[
+                i
+              ].dataValues.UNO_USER.dataValues.ISWRITER = false;
             }
           }
           data.place_list.push(temp);
@@ -201,16 +208,22 @@ router.get('/getBar/:id', checkAccess, async (req, res) => {
   // http://localhost:3030/review/getBar/1389819741
   let data = {};
   const id = req.params.id;
+  console.log(id);
   const place_data = await PLACE.findByPk(id);
-  data = Object.assign(place_data);
+  data = Object.assign(place_data.dataValues);
   try {
-    const review = await REVIEW.findByPk(id, {
+    const rating = await REVIEW.findOne({
       attributes: [
+        'PLACE_ID',
         [Sequelize.fn('AVG', Sequelize.col('RATING')), 'AVG_RATING'],
+        [Sequelize.fn('COUNT', Sequelize.col('RATING')), 'COUNT_RATING'],
       ],
-      raw: true,
+      where: {
+        PLACE_ID: id,
+      },
+      group: ['PLACE_ID'],
     });
-    data.dataValues.AVG_RATING = review.AVG_RATING;
+    data.AVG_RATING = rating != null ? rating.dataValues.AVG_RATING : null;
     return res
       .status(200)
       .json({ success: true, message: '칵테일 바 단건 조회 성공', data: data });
