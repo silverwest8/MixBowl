@@ -22,10 +22,10 @@ components:
           example: 4
           description: '이미지인데 어떻게 적어야할지 몰라서 일단 이렇게...'
 paths:
-  /review/create:
+  /review:
     post:
       tags:
-        - review
+        - post review
       summary: 리뷰 작성 -> placeId가 주소 쿼리로 붙습니다.
       description: ''
       operationId: createReview
@@ -71,10 +71,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /review/update:
+  /review:
     put:
       tags:
-        - review
+        - update review
       summary: 리뷰 수정
       description: ''
       operationId: updateReview
@@ -98,10 +98,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /review/delete:
+  /review:
     delete:
       tags:
-        - review
+        - delete review
       summary: 리뷰 삭제
       description: ''
       operationId: deleteReview
@@ -124,7 +124,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /review/getList:
+  /reviews:
     get:
       tags:
         - review
@@ -177,10 +177,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /review/getBar/{id}:
+  /bar/{id}:
     get:
       tags:
-        - review
+        - get bar review
       summary: 칵테일 바 단건 조회
       description: ''
       operationId: getBar
@@ -206,10 +206,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /review/getReview/{id}:
+  /reviews/{id}:
     get:
       tags:
-        - review
+        - get one review
       summary: 특정 칵테일 바 리뷰 조회
       description: ''
       operationId: getReview

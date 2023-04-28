@@ -16,9 +16,9 @@ dotenv.config();
 const router = express.Router();
 
 //---- 연동확인
-router.get('/', async (req, res) => {
-  res.send('review');
-});
+// router.get('/', async (req, res) => {
+//   res.send('review');
+// });
 
 async function getKeyword(place_id) {
   let keywordlist = [null, null, null];
@@ -75,7 +75,7 @@ async function getKeyword(place_id) {
   return keywordlist;
 }
 
-router.get('/getList', checkAccess, async (req, res) => {
+router.get('/reviews', checkAccess, async (req, res) => {
   // Example
   // http://localhost:3030/review/getList?query=수원 칵테일바&x=37.514322572335935&y=127.06283102249932&radius=20000&sort=accuracy
   let data = {
@@ -202,7 +202,7 @@ router.get('/getList', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/getBar/:id', checkAccess, async (req, res) => {
+router.get('/bar/:id', checkAccess, async (req, res) => {
   // 빈값 처리 필요
   // Example
   // http://localhost:3030/review/getBar/1389819741
@@ -235,7 +235,7 @@ router.get('/getBar/:id', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/getReview/:id', checkAccess, async (req, res) => {
+router.get('/reviews/:id', checkAccess, async (req, res) => {
   // Example
   // http://localhost:3030/review/getReview/17649496
   try {
@@ -317,7 +317,7 @@ const upload = multer({
 
 // 리뷰 등록
 router.post(
-  '/create/:placeId',
+  '/review/:placeId',
   upload.array('files', 5),
   checkAccess,
   async (req, res) => {
@@ -345,11 +345,9 @@ router.post(
   }
 );
 
-router.put('/update', checkAccess, async (req, res) => {
-  return res.status(200).json({ success: true, message: '리뷰 수정 성공' });
-});
+router.put('/review', checkAccess, async (req, res) => {});
 
-router.delete('/delete', checkAccess, async (req, res) => {
+router.delete('/review', checkAccess, async (req, res) => {
   return res.status(200).json({ success: true, message: '리뷰 삭제 성공' });
 });
 
