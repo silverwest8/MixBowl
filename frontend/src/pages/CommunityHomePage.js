@@ -1,13 +1,13 @@
 import SearchBar from "../components/common/SearchBar";
 // import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
-import FreeListItem from "../components/common/FreeListItem";
+import FreeListItem from "../components/community/FreeListItem";
 import { Link } from "react-router-dom";
 import { FaFire, FaComments } from "react-icons/fa";
 import Title from "../components/common/Title";
 import { HiPencilAlt } from "react-icons/hi";
 import { MdArrowForwardIos } from "react-icons/md";
-import BoardShortListItem from "../components/common/BoardShortListItem";
+import BoardShortListItem from "../components/community/BoardShortListItem";
 
 const dummyData = [
   {

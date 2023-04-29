@@ -15,8 +15,9 @@ import RecipeRoute from "./routes/RecipeRoute";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
 import CocktailBarPage from "./pages/CocktailBarPage";
+import CommunityPostDetailPage from "./pages/CommunityPostDetailPage";
 import CommunityHomePage from "./pages/CommunityHomePage";
-import PostingPage from "./pages/PostingPage";
+import CommunityPostingPage from "./pages/CommunityPostingPage";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -56,7 +57,14 @@ function App() {
                   <Route path=":id" element={<CocktailBarPage />} />
                 </Route>
                 <Route path="community" element={<CommunityHomePage />} />
-                <Route path="community/posting" element={<PostingPage />} />
+                <Route
+                  path="community/:id"
+                  element={<CommunityPostDetailPage />}
+                />
+                <Route
+                  path="community/posting"
+                  element={<CommunityPostingPage />}
+                />
               </Route>
             </Routes>
           </BrowserRouter>

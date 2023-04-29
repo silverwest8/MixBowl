@@ -3,7 +3,8 @@ import styled from "styled-components";
 import Title from "../components/common/Title";
 import { useState } from "react";
 import Input from "../components/common/Input";
-import { AiOutlinePlusCircle, AiFillHeart } from "react-icons/ai";
+import ImageUpload from "../components/common/ImageUpload";
+import { AiFillHeart } from "react-icons/ai";
 import { ImSad } from "react-icons/im";
 import { Link } from "react-router-dom";
 
@@ -94,22 +95,6 @@ const MainSection = styled.div`
 const ImageSection = styled.div`
   width: 100%;
   margin-top: 2rem;
-  > div {
-    font-size: 0.9rem;
-    color: ${({ theme }) => theme.color.gray};
-    > span {
-      font-size: 1rem;
-      margin-right: 0.5rem;
-      color: white;
-    }
-  }
-  > div:last-child {
-    font-size: 1.8rem;
-    height: 5rem;
-    display: flex;
-    align-items: center;
-    color: ${({ theme }) => theme.color.primaryGold};
-  }
 `;
 const BottomSection = styled.div`
   width: 100%;
@@ -170,7 +155,7 @@ const Button = styled(Link)`
   }
 `;
 
-const PostingPage = () => {
+const CommunityPostingPage = () => {
   const [tab, setTab] = useState("글 내용");
   const recommendationTab = () => setTab("추천 이유");
   const qnaTab = () => setTab("질문 내용");
@@ -229,13 +214,7 @@ const PostingPage = () => {
             <Textarea rows={15} placeholder={tab} />
           </MainSection>
           <ImageSection>
-            <div>
-              <span>이미지 첨부</span>
-              0/5
-            </div>
-            <div>
-              <AiOutlinePlusCircle />
-            </div>
+            <ImageUpload />
           </ImageSection>
           {tab === "후기 내용" ? (
             <RecommendationSection>
@@ -268,4 +247,4 @@ const PostingPage = () => {
   );
 };
 
-export default PostingPage;
+export default CommunityPostingPage;

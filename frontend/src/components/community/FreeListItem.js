@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { FaCommentDots, FaThumbsUp } from "react-icons/fa";
-import MemberBadge from "./MemberBadge";
+import MemberBadge from "../common/MemberBadge";
 // import { useEffect } from "react";
 
 const FreeListItem = ({ data }) => {
