@@ -10,7 +10,7 @@
       "image_path": "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
       "day": "2023-04-27",
       "alcohol": 17,
-      "color": "white",
+      "color": ["white", "red"],
       "main": "조각얼음, 봄베이 사파이어 진, 45ml드라이 베르무스 30ml",
       "sub": "레몬 껍질 1조각, 그린 올리브 2개",
       "how": "1. 글라스에 얼음을 가득 채워 칠링 해 놓고, 그린올리브 2개를 칵테일 픽에 꽂아 냉수에 세척한다. 2. 믹싱글라스에 얼음 5개, 진, 드라이 베르무스를 넣고, 믹싱 스푼으로 10초 정도 휘젓는다. 3. 칠링된 칵테일잔에 얼음을 버리고 스트레이너를 대고 얼음을 걸러내며 음료를 따른다. 4. 레몬 껍질 1조각을 잔 30cm 위에서 가볍게 즙을 짠 뒤 잔 주변에 한바퀴 문지른다. 5. 잔에 그린올리브를 넣어 장식한다.",
@@ -151,5 +151,6 @@
       "level": 4,
       "image_path": "https://images.unsplash.com/photo-1570598912132-0ba1dc952b7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
     }
-  ]
+  ],
+  "CommentList": []
 }

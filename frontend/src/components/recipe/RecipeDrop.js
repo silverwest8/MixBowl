@@ -10,7 +10,9 @@ const RecipeDrop = () => {
 };
 
 const DropBox = styled.div`
-  text-align: right;
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
 `;
 
 export default RecipeDrop;
