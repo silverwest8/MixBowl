@@ -15,7 +15,7 @@ import sql from '../database/sql';
 dotenv.config();
 const router = express.Router();
 
-async function getKeyword(place_id) {
+async function getKeyword(placeId) {
   let keywordlist = [null, null, null];
   const keyword = await KEYWORD.findAll({
     attributes: [
@@ -27,7 +27,7 @@ async function getKeyword(place_id) {
         model: REVIEW,
         as: 'REVIEW',
         attributes: [],
-        where: { PLACE_ID: place_id },
+        where: { PLACE_ID: placeId },
       },
     ],
     group: ['KEYWORD'],
@@ -70,9 +70,9 @@ async function getKeyword(place_id) {
   return keywordlist;
 }
 
-router.get('/list', checkAccess, async (req, res) => {
+router.get('/barlist', checkAccess, async (req, res) => {
   // Example
-  // http://localhost:3030/review/getList?query=수원 칵테일바&x=37.514322572335935&y=127.06283102249932&radius=20000&sort=accuracy
+  // http://localhost:3030/reviews/list?query=수원 칵테일바&x=37.514322572335935&y=127.06283102249932&radius=20000&sort=accuracy
   let data = {
     total_cnt: 0,
     place_list: [],
@@ -197,14 +197,14 @@ router.get('/list', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/bar/:id', checkAccess, async (req, res) => {
+router.get('/bar/:placeId', checkAccess, async (req, res) => {
   // 빈값 처리 필요
   // Example
-  // http://localhost:3030/review/getBar/1389819741
+  // http://localhost:3030/reviews/getBar/1389819741
   let data = {};
-  const id = req.params.id;
-  console.log(id);
-  const place_data = await PLACE.findByPk(id);
+  const placeId = req.params.placeId;
+  console.log(placeId);
+  const place_data = await PLACE.findByPk(placeId);
   data = Object.assign(place_data.dataValues);
   try {
     const rating = await REVIEW.findOne({
@@ -214,7 +214,7 @@ router.get('/bar/:id', checkAccess, async (req, res) => {
         [Sequelize.fn('COUNT', Sequelize.col('RATING')), 'COUNT_RATING'],
       ],
       where: {
-        PLACE_ID: id,
+        PLACE_ID: placeId,
       },
       group: ['PLACE_ID'],
     });
@@ -230,7 +230,7 @@ router.get('/bar/:id', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/:id', checkAccess, async (req, res) => {
+router.get('/:place_id', checkAccess, async (req, res) => {
   // Example
   // http://localhost:3030/reviews/17649496
   try {
@@ -239,9 +239,9 @@ router.get('/:id', checkAccess, async (req, res) => {
       keyword: null,
       list: [],
     };
-    const id = req.params.id;
+    const place_id = req.params.place_id;
     const review = await REVIEW.findAll({
-      where: { PLACE_ID: id },
+      where: { PLACE_ID: place_id },
       include: [
         {
           model: USER,
@@ -260,7 +260,7 @@ router.get('/:id', checkAccess, async (req, res) => {
         data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = false;
       }
     }
-    data.keyword = await getKeyword(id);
+    data.keyword = await getKeyword(place_id);
     return res
       .status(200)
       .json({ success: true, message: '칵테일 바 리뷰 조회 성공', data: data });
@@ -283,7 +283,7 @@ const limits = {
 };
 const fileFilter = (req, file, callback) => {
   const typeArray = file.originalname.split('.');
-  const fileType = typeArray[1]; // 이미지 확장자 추출
+  const fileType = typeArray[typeArray.length - 1]; // 이미지 확장자 추출
   //이미지 확장자 구분 검사
   if (fileType === 'jpg' || fileType === 'jpeg' || fileType === 'png') {
     callback(null, true);
@@ -311,34 +311,27 @@ const upload = multer({
 });
 
 // 리뷰 등록
-router.post(
-  '/:placeId',
-  upload.array('files', 5),
-  checkAccess,
-  async (req, res) => {
-    const review = await sql.postReview(req);
-    console.log(review);
-    console.log('req', req);
+router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
+  const review = await sql.postReview(req);
 
-    //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
-    req.files.map(async (data) => {
-      console.log('폼에 정의된 필드명 : ', data.fieldname);
-      console.log('사용자가 업로드한 파일 명 : ', data.originalname);
-      console.log('파일의 엔코딩 타입 : ', data.encoding);
-      console.log('파일의 Mime 타입 : ', data.mimetype);
-      console.log('파일이 저장된 폴더 : ', data.destination);
-      console.log('destinatin에 저장된 파일 명 : ', data.filename);
-      console.log('업로드된 파일의 전체 경로 ', data.path);
-      console.log('파일의 바이트(byte 사이즈)', data.size);
-    });
-    try {
-      await sql.postImage(req, review);
-    } catch (error) {
-      console.log(error.message);
-    }
-    res.json({ success: true, message: 'Multipart Upload Ok & DB update OK' });
+  //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
+  req.files.map(async (data) => {
+    console.log('폼에 정의된 필드명 : ', data.fieldname);
+    console.log('사용자가 업로드한 파일 명 : ', data.originalname);
+    console.log('파일의 엔코딩 타입 : ', data.encoding);
+    console.log('파일의 Mime 타입 : ', data.mimetype);
+    console.log('파일이 저장된 폴더 : ', data.destination);
+    console.log('destinatin에 저장된 파일 명 : ', data.filename);
+    console.log('업로드된 파일의 전체 경로 ', data.path);
+    console.log('파일의 바이트(byte 사이즈)', data.size);
+  });
+  try {
+    await sql.postImage(req, review);
+  } catch (error) {
+    console.log(error.message);
   }
-);
+  res.json({ success: true, message: 'Multipart Upload Ok & DB update OK' });
+});
 
 router.put('/:placeId', checkAccess, async (req, res) => {});
 

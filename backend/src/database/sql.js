@@ -102,23 +102,25 @@ const sql = {
   },
   postReview: async (req) => {
     const unum = req.decoded.unum;
-    const { rating, detail } = req.body;
+    console.log(req.body.data);
+    const data = JSON.parse(req.body.data);
+    console.log(data);
+    const { placeId, rating, detail, keyword } = data;
     try {
-      const review = REVIEW.create({
+      const review = await REVIEW.create({
         UNO: unum,
-        PLACE_ID: req.params.placeId,
+        PLACE_ID: placeId,
         TEXT: detail,
         RATING: rating,
       });
-      req.body.keyword.forEach((i) => {
-        try {
-          KEYWORD.create({
-            REVIEW_ID: review.REVIEW_ID,
-            KEYWORD: i,
-          });
-        } catch (error) {
-          console.log(error.message);
-        }
+      console.log(keyword);
+      console.log(review);
+      console.log(review.REVIEW_ID);
+      keyword.forEach(async (keyword) => {
+        await KEYWORD.create({
+          REVIEW_ID: review.REVIEW_ID,
+          KEYWORD: keyword,
+        });
       });
       return review;
     } catch (error) {
@@ -132,8 +134,8 @@ const sql = {
         let path = data.path;
         try {
           IMAGE.create({
-            REVIEW_ID: `${reviewId}`,
-            PATH: `${path}`,
+            REVIEW_ID: reviewId,
+            PATH: path,
           });
         } catch (error) {
           console.log(error.message);
