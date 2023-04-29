@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import Modal from "../common/Modal";
 import Textarea from "../common/Textarea";
 import Rating from "@mui/material/Rating";
@@ -7,6 +6,8 @@ import styled from "styled-components";
 import ImageUpload from "../common/ImageUpload";
 import { useRecoilValue } from "recoil";
 import { imageListState } from "../../store/image";
+import { useMutation } from "@tanstack/react-query";
+import { postReview } from "../../api/cocktailbar";
 
 const KEYWORDS = [
   {
@@ -62,6 +63,18 @@ const ReviewModal = ({ handleClose, name, id }) => {
   const { urls, files } = useRecoilValue(imageListState);
   const [detailMsg, setDetailMsg] = useState("");
   const [ratingMsg, setRatingMsg] = useState("");
+  const { mutate } = useMutation({
+    mutationFn: postReview,
+    onError: (e) => {
+      /* TODO: 실패로직 작성 */
+      console.log(e);
+    },
+    onSuccess: (data) => {
+      /* TODO: 성공로직 작성 */
+      console.log(data);
+      // handleClose();
+    },
+  });
   const onChange = (e) => {
     const { name, value } = e.target;
     setInputs((state) => ({
@@ -96,36 +109,13 @@ const ReviewModal = ({ handleClose, name, id }) => {
       setRatingMsg("");
       return;
     }
-    // review POST API 호출하는 부분
-    try {
-      const formData = new FormData();
-      formData.append(
-        "data",
-        JSON.stringify({
-          rating: Number(rating),
-          detail,
-          keyword,
-        })
-      );
-      for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i].file);
-      }
-      /* form data 확인 */
-      const values = formData.values();
-      for (const pair of values) {
-        console.log(pair);
-      }
-      // const { data } = await axios.post(`/api/review/create/${id}`, formData, {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // });
-      // /* TODO: 성공 로직 */
-      // console.log(data);
-    } catch (e) {
-      console.log(e);
-    }
-    // handleClose();
+    mutate({
+      id,
+      rating,
+      keyword,
+      detail,
+      files,
+    });
   };
   return (
     <Modal
