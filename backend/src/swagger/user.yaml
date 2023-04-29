@@ -1,10 +1,10 @@
-# user api for swagger
+# users api for swagger
 
 paths:
-  /user/login:
+  /users/login:
     post:
       tags:
-        - user
+        - users
       summary: 로그인
       description: ''
       operationId: loginUser
@@ -40,10 +40,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /user/logout:
+  /users/logout:
     get:
       tags:
-        - user
+        - users
       summary: 로그아웃
       description: ''
       operationId: logoutUser
@@ -66,10 +66,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /user/signup:
+  /users/signup:
     post:
       tags:
-        - user
+        - users
       summary: 회원가입
       description: ''
       operationId: signupUser
@@ -93,10 +93,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /user/nicknamedupcheck:
+  /users/nicknamedupcheck:
     put:
       tags:
-        - user
+        - users
       summary: 닉네임 중복 체크
       description: ''
       operationId: checkNickname
@@ -120,10 +120,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/FailDupCheck'
 
-  /user/emaildupcheck:
+  /users/emaildupcheck:
     put:
       tags:
-        - user
+        - users
       summary: 이메일 중복 체크
       description: ''
       operationId: checkEmail
@@ -147,10 +147,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/FailDupCheck'
 
-  /user/sendauthmail:
+  /users/sendauthmail:
     post:
       tags:
-        - user
+        - users
       summary: '이메일 인증메일 보내기'
       description: ''
       operationId: sendAuthMail
@@ -174,10 +174,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /user/checkauth:
+  /users/checkauth:
     put:
       tags:
-        - user
+        - users
       summary: '이메일 인증번호 확인'
       description: ''
       operationId: checkAuth
@@ -201,37 +201,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /user/update:
+  /users/checkbarowner:
     put:
       tags:
-        - user
-      summary: '회원정보수정'
-      description: '닉네임만 바꿀 수 있음'
-      operationId: updateUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Nickname'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Success'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Fail'
-
-  /user/checkbarowner:
-    put:
-      tags:
-        - user
+        - users
       summary: '사장님 확인'
       description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
       operationId: checkBarOwner
@@ -255,10 +228,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /user/checkbartender:
+  /users/checkbartender:
     put:
       tags:
-        - user
+        - users
       summary: '바텐더 확인'
       description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
       operationId: checkBartender
@@ -282,10 +255,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /user/delete:
+  /users:
+    put:
+      tags:
+        - users
+      summary: '회원정보수정'
+      description: '닉네임만 바꿀 수 있음'
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nickname'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
     delete:
       tags:
-        - user
+        - users
       summary: '회원 탈퇴'
       description: ''
       operationId: deleteUser

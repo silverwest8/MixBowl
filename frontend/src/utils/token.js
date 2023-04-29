@@ -48,7 +48,7 @@ export const getTokens = () => {
 
 export const getNewAccessToken = async () => {
   try {
-    const { data } = await axios.get("/api/user/refresh");
+    const { data } = await axios.get("/api/users/refresh");
     if (data.ok) setToken({ accessToken: data.accessToken });
     return true;
   } catch (e) {

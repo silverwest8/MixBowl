@@ -1,8 +1,8 @@
 paths:
-  /community/create:
+  /communities:
     post:
       tags:
-        - community
+        - communities
       summary: 커뮤니티 글 작성
       description: 1 - 칵테일 추천 || 2 - 질문과 답변 || 3 - 칵테일 리뷰 || 4 - 자유
       operationId: createPost
@@ -49,10 +49,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /community/update/{post_id}:
+  /communities/{postId}:
     put:
       tags:
-        - community
+        - communities
       summary: 커뮤니티 글 수정
       description: 1 - 칵테일 추천 || 2 - 질문과 답변 || 3 - 칵테일 리뷰 || 4 - 자유
       operationId: updatePost
@@ -81,16 +81,15 @@ paths:
                   type: boolean
                   example: true
 
-  /community/delete/{post_id}:
     delete:
       tags:
-        - community
+        - communities
       summary: 커뮤니티 글 삭제
       description: ""
       operationId: deletePost
       parameters:
         - in: path
-          name: post_id
+          name: postId
           description: 게시글 ID
           example: 3
           schema:
@@ -110,10 +109,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /community/getHotPost:
+  /communities/getHotPost:
     get:
       tags:
-        - community
+        - communities
       summary: 이번 주 인기글 조회
       description: 더보기 하면 전체글 리스트로 가는건가요? 일단은 3개만 보내겠습니다
       operationId: communityGetHotPost
@@ -132,10 +131,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /community/getNewPost/{category_name}:
+  /communities/getNewPost/{category_name}:
     get:
       tags:
-        - community
+        - communities
       summary: 최신글 조회
       description: category_id에 따라 카테고리별 최신글을 5개씩 가져옵니다
       operationId: communityGetNewPost
@@ -161,10 +160,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /community/getPostList/{category_name}:
+  /communities/getPostList/{category_name}:
     get:
       tags:
-        - community
+        - communities
       summary: 전체 글, 카테고리별 글 조회
       description: "query로 검색 필터링 생각중입니다"
       operationId: getReview
@@ -195,10 +194,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-/community/getTotal:
+/communities/getTotal:
     get:
       tags:
-        - community
+        - communities
       summary: 전체 글, 카테고리별 글 조회
       description: "query로 검색 필터링 생각중입니다 - 근데 기능 중에 있나요?"
       operationId: getReview

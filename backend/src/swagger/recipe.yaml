@@ -1,10 +1,10 @@
-# recipe api for swagger
+# recipes api for swagger
 
 paths:
-  /recipe/create:
+  /recipes:
     post:
       tags:
-        - recipe
+        - recipes
       summary: 칵테일 레시피 작성
       description: ""
       operationId: createRecpie
@@ -36,16 +36,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /recipe/update/{recipe_id}:
+  /recipes/{recipeId}:
     put:
       tags:
-        - recipe
+        - recipes
       summary: 칵테일 레시피 수정
       description: ""
       operationId: updateRecpie
       parameters:
         - in: path
-          name: recipe_id
+          name: recipeId
           type: integer
           example: 3 
           description: 변경하려는 레시피 id
@@ -57,16 +57,15 @@ paths:
             schema:
               $ref: "#/components/schemas/createRecpie"
 
-  /recipe/delete/{recipe_id}:
     delete:
       tags:
-        - recipe
+        - recipes
       summary: 칵테일 레시피 삭제
       description: ""
       operationId: deleteRecpie
       parameters:
         - in: path
-          name: recipe_id
+          name: recipeId
           description: 게시글 ID
           example: 3
           schema:
@@ -86,10 +85,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /recipe/getlist:
+  /recipes/getlist:
     get:
       tags:
-        - recipe
+        - recipes
       summary: 칵테일 레시피 목록
       description: ""
       operationId: GetRecipeList
@@ -133,10 +132,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /recipe/getDetail/{recpie_id}:
+  /recipes/getDetail/{recpie_id}:
     get:
       tags:
-        - recipe
+        - recipes
       summary: 칵테일 레시피 상세
       description: ""
       operationId: GetRecipeDetail

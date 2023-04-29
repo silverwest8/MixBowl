@@ -43,7 +43,7 @@ const RegisterForm = () => {
     if (!checkPasswordValidation()) return;
     if (!checkNicknameValidation()) return;
     try {
-      const { data } = await axios.post("/api/user/signup", {
+      const { data } = await axios.post("/api/users/signup", {
         nickname,
         email,
         password,
