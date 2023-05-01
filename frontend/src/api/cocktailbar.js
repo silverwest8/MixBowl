@@ -11,7 +11,9 @@ export const getCocktailBar = async ({ queryKey }) => {
 export const getReview = async ({ queryKey }) => {
   const token = getAccessToken();
   axios.defaults.headers.common.Authorization = token;
-  const { data } = await axios.get(`/api/reviews/${queryKey[1]}`);
+  const { data } = await axios.get(
+    `/api/reviews/bar/reviewlist/${queryKey[1]}`
+  );
   return data;
 };
 

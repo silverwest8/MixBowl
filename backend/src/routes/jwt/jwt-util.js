@@ -11,7 +11,7 @@ export function sign(userNumber) {
   };
 
   return jwt.sign(payload, process.env.SECRET_KEY, {
-    expiresIn: '10s',
+    expiresIn: '1h',
     issuer: 'MixBowl',
   });
 }
