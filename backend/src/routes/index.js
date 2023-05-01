@@ -10,7 +10,7 @@ import review from './review';
 
 router.use('/', main);
 router.use('/user', user);
-router.use('/recipe', recipe);
+router.use('/recipes', recipe);
 router.use('/reviews', review);
 
 export default router;

@@ -133,7 +133,7 @@ const sql = {
       req.files.map(async (data) => {
         let path = data.path;
         try {
-          IMAGE.create({
+          await IMAGE.create({
             REVIEW_ID: reviewId,
             PATH: path,
           });

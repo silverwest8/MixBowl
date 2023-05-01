@@ -20,7 +20,8 @@ export default class RECIPE extends Model {
     },
     NAME: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: false,
+      unique: "NAME_UNIQUE"
     },
     IMAGE_PATH: {
       type: DataTypes.STRING(45),
@@ -49,6 +50,14 @@ export default class RECIPE extends Model {
         using: "BTREE",
         fields: [
           { name: "RNO" },
+        ]
+      },
+      {
+        name: "NAME_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "NAME" },
         ]
       },
       {

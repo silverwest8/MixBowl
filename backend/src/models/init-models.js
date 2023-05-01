@@ -1,5 +1,6 @@
-import _sequelize from 'sequelize';
+import _sequelize from "sequelize";
 const DataTypes = _sequelize.DataTypes;
+import _API_cocktaildb from  "./API_cocktaildb.js";
 import _AUTH_CODE from  "./AUTH_CODE.js";
 import _COLOR from  "./COLOR.js";
 import _IMAGE from  "./IMAGE.js";
@@ -14,6 +15,7 @@ import _REVIEW from  "./REVIEW.js";
 import _USER from  "./USER.js";
 
 export default function initModels(sequelize) {
+  const API_cocktaildb = _API_cocktaildb.init(sequelize, DataTypes);
   const AUTH_CODE = _AUTH_CODE.init(sequelize, DataTypes);
   const COLOR = _COLOR.init(sequelize, DataTypes);
   const IMAGE = _IMAGE.init(sequelize, DataTypes);
@@ -57,6 +59,7 @@ export default function initModels(sequelize) {
   USER.hasMany(REVIEW, { as: "REVIEWs", foreignKey: "UNO"});
 
   return {
+    API_cocktaildb,
     AUTH_CODE,
     COLOR,
     IMAGE,
