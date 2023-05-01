@@ -54,37 +54,29 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /reviews/{placeId}:
+  /reviews/{reviewId}:
     get:
       tags:
-        - reviews
-      summary: 특정 칵테일 바 리뷰 조회
+        - reviews 
+      summary: 리뷰 데이터 가져오기
       description: ""
       operationId: getReview
-      parameters:
-        - in: path
-          name: placeId
-          description: 장소 ID
-          example: 1389819741
-          schema:
-            type: string
-          required: true
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/getReview"
-        "400":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fail"
-
-
-  /reviews/{reviewId}:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                placeId:
+                  type: integer
+                rating:
+                  type: integer
+                  example: 4
+                keyword:
+                  type: array
+                  items:
+                    type: integer
     put:
       tags:
         - reviews
@@ -217,3 +209,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Fail"
+
+
+  /reviews/bar/reviewlist/{placeId}:
+    get:
+      tags:
+        - reviews
+      summary: 특정 칵테일 바 리뷰 조회
+      description: ""
+      operationId: getReviewFromBar
+      parameters:
+        - in: path
+          name: placeId
+          description: 장소 ID
+          example: 1389819741
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getReview"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+
