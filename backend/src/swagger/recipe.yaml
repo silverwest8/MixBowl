@@ -6,15 +6,15 @@ paths:
       tags:
         - recipes
       summary: 칵테일 레시피 작성
-      description: ""
+      description: ''
       operationId: createRecpie
       requestBody:
         required: true
-        description: ""
+        description: ''
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/createRecpie"
+              $ref: '#/components/schemas/createRecpie'
           multipart/form-data:
             schema:
               type: object
@@ -23,45 +23,58 @@ paths:
                   type: string
                   format: binary
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Success"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /recipes/{recipeId}:
-    put:
+    get:
       tags:
         - recipes
       summary: 칵테일 레시피 수정
-      description: ""
-      operationId: updateRecpie
+      description: ''
+      operationId: getRecipe
       parameters:
         - in: path
           name: recipeId
           type: integer
-          example: 3 
+          example: 3
+          description: 가져올 레시피 id
+
+    put:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 수정
+      description: ''
+      operationId: updateRecipe
+      parameters:
+        - in: path
+          name: recipeId
+          type: integer
+          example: 3
           description: 변경하려는 레시피 id
       requestBody:
         required: true
-        description: ""
+        description: ''
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/createRecpie"
+              $ref: '#/components/schemas/updateRecipe'
 
     delete:
       tags:
         - recipes
       summary: 칵테일 레시피 삭제
-      description: ""
+      description: ''
       operationId: deleteRecpie
       parameters:
         - in: path
@@ -72,25 +85,25 @@ paths:
             type: integer
           required: true
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Success"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /recipes/getlist:
     get:
       tags:
         - recipes
       summary: 칵테일 레시피 목록
-      description: ""
+      description: ''
       operationId: GetRecipeList
       parameters:
         - in: query
@@ -119,25 +132,25 @@ paths:
           description: 정렬기준
           example: like, newest
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getRecpieList"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/getRecpieList'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /recipes/getDetail/{recpie_id}:
     get:
       tags:
         - recipes
       summary: 칵테일 레시피 상세
-      description: ""
+      description: ''
       operationId: GetRecipeDetail
       parameters:
         - in: path
@@ -146,15 +159,15 @@ paths:
           description: 칵테일 레시피 ID
           example: 10
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/recpieDetail"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/recpieDetail'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
