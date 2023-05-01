@@ -14,7 +14,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/createRecpie'
+              $ref: '#/components/schemas/createRecipe'
           multipart/form-data:
             schema:
               type: object
@@ -40,7 +40,7 @@ paths:
     get:
       tags:
         - recipes
-      summary: 칵테일 레시피 수정
+      summary: 칵테일 레시피 가져오기
       description: ''
       operationId: getRecipe
       parameters:
@@ -50,8 +50,18 @@ paths:
           example: 3
           description: 가져올 레시피 id
       responses:
-        schema:
-          $ref: '#/
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getRecipe'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
 
     put:
       tags:

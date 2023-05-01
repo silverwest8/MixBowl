@@ -1,4 +1,4 @@
-# components for community
+# components for recipe
 
 components:
   schemas:
@@ -86,7 +86,7 @@ components:
           type: text
           example: multipart/form-data 형식, 최대 5개
 
-      createRecipe:
+    getRecipe:
       properties:
         name:
           type: string
