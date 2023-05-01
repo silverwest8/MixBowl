@@ -6,17 +6,17 @@ paths:
       tags:
         - users
       summary: 로그인
-      description: ''
+      description: ""
       operationId: loginUser
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -29,280 +29,280 @@ paths:
                     type: object
                     example:
                       {
-                        ACCESS-1A3BJOJAPEOJRPA3JRAFEJIJ3434R2: string,
-                        REFRESH-19WAHR093HAR89AWHG9H0A: string,
+                        accessToken: ACCESS-1A3BJOJAPEOJRPA3JRAFEJIJ3434R2,
+                        refreshToken: REFRESH-19WAHR093HAR89AWHG9H0A,
                       }
 
-        '400':
-          description: ''
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
   /users/logout:
     get:
       tags:
         - users
       summary: 로그아웃
-      description: ''
+      description: ""
       operationId: logoutUser
       parameters:
         - in: cookie
           name: refresh_token
           schema:
-            $ref: '#/components/schemas/Cookie'
+            $ref: "#/components/schemas/Cookie"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
   /users/signup:
     post:
       tags:
         - users
       summary: 회원가입
-      description: ''
+      description: ""
       operationId: signupUser
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Signup'
+              $ref: "#/components/schemas/Signup"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
   /users/nicknamedupcheck:
     put:
       tags:
         - users
       summary: 닉네임 중복 체크
-      description: ''
+      description: ""
       operationId: checkNickname
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Nickname'
+              $ref: "#/components/schemas/Nickname"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessDupCheck'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/SuccessDupCheck"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FailDupCheck'
+                $ref: "#/components/schemas/FailDupCheck"
 
   /users/emaildupcheck:
     put:
       tags:
         - users
       summary: 이메일 중복 체크
-      description: ''
+      description: ""
       operationId: checkEmail
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Email'
+              $ref: "#/components/schemas/Email"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessDupCheck'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/SuccessDupCheck"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FailDupCheck'
+                $ref: "#/components/schemas/FailDupCheck"
 
   /users/sendauthmail:
     post:
       tags:
         - users
-      summary: '이메일 인증메일 보내기'
-      description: ''
+      summary: "이메일 인증메일 보내기"
+      description: ""
       operationId: sendAuthMail
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Email'
+              $ref: "#/components/schemas/Email"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
   /users/checkauth:
     put:
       tags:
         - users
-      summary: '이메일 인증번호 확인'
-      description: ''
+      summary: "이메일 인증번호 확인"
+      description: ""
       operationId: checkAuth
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthNum'
+              $ref: "#/components/schemas/AuthNum"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
   /users/checkbarowner:
     put:
       tags:
         - users
-      summary: '사장님 확인'
-      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
+      summary: "사장님 확인"
+      description: "일단 닉네임 보내는 걸로 했는데 다시 정해야 함."
       operationId: checkBarOwner
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Nickname'
+              $ref: "#/components/schemas/Nickname"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BarOwnerCheck'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/BarOwnerCheck"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
   /users/checkbartender:
     put:
       tags:
         - users
-      summary: '바텐더 확인'
-      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
+      summary: 바텐더 확인
+      description: 일단 닉네임 보내는 걸로 했는데 다시 정해야 함.
       operationId: checkBartender
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Nickname'
+              $ref: "#/components/schemas/Nickname"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BartenderCheck'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/BartenderCheck"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
   /users:
     put:
       tags:
         - users
-      summary: '회원정보수정'
-      description: '닉네임만 바꿀 수 있음'
+      summary: 회원정보수정
+      description: 닉네임만 바꿀 수 있음
       operationId: updateUser
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Nickname'
+              $ref: "#/components/schemas/Nickname"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
 
     delete:
       tags:
         - users
-      summary: '회원 탈퇴'
-      description: ''
+      summary: 회원 탈퇴
+      description: ""
       operationId: deleteUser
       parameters:
         - in: cookie
           name: refresh_token
           schema:
-            $ref: '#/components/schemas/Cookie'
+            $ref: "#/components/schemas/Cookie"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
-        '400':
-          description: ''
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: ""
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                $ref: "#/components/schemas/Fail"
