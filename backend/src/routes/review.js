@@ -8,10 +8,10 @@ import PLACE from '../models/PLACE';
 import REVIEW from '../models/REVIEW';
 import USER from '../models/USER';
 import KEYWORD from '../models/KEYWORD';
-import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
 import sql from '../database/sql';
+import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
 

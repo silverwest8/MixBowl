@@ -1,7 +1,7 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class API_cocktaildb extends Model {
+export default class API_cocktaildb_en extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     idDrink: {
@@ -13,7 +13,23 @@ export default class API_cocktaildb extends Model {
       type: DataTypes.STRING(45),
       allowNull: false
     },
+    strDrinkAlternate: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
+    strTags: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
+    strVideo: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
     strCategory: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
+    strIBA: {
       type: DataTypes.STRING(45),
       allowNull: true
     },
@@ -26,6 +42,10 @@ export default class API_cocktaildb extends Model {
       allowNull: true
     },
     strInstructions: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    strDrinkThumb: {
       type: DataTypes.TEXT,
       allowNull: true
     },
@@ -148,10 +168,18 @@ export default class API_cocktaildb extends Model {
     strMeasure15: {
       type: DataTypes.STRING(45),
       allowNull: true
+    },
+    strImageSource: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    strImageAttribution: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'API_cocktaildb',
+    tableName: 'API_cocktaildb_en',
     timestamps: false,
     indexes: [
       {

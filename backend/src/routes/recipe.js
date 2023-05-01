@@ -2,7 +2,9 @@
 
 import express from 'express';
 import axios from 'axios';
-import API_cocktaildb from '../models/API_cocktaildb';
+import API_cocktaildb from '../models/API_cocktaildb_en';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const router = express.Router();
 
@@ -25,11 +27,53 @@ router.get('/testAPIs', async (req, res) => {
     );
     if (data.drinks != null) {
       for (let i = 0; i < data.drinks.length; i++) {
-        await API_cocktaildb.create(data.drinks[i]);
+        console.log(data.drinks[i]);
+        const recipe = await API_cocktaildb.findByPk(
+          Number(data.drinks[i].idDrink)
+        );
+        await recipe.update(data.drinks[i]);
       }
     }
     res.status(200).json(data);
   } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Cocktaildb API 조회 실패', error });
+  }
+});
+
+router.get('/testAPIsAll', async (req, res) => {
+  try {
+    for (
+      let i = req.query.f.charCodeAt(0);
+      i < req.query.f.charCodeAt(0) + 26;
+      i++
+    ) {
+      const { data } = await axios.get(
+        'https://www.thecocktaildb.com/api/json/v1/1/search.php',
+        {
+          params: {
+            f: String.fromCharCode(i),
+          },
+          headers: {
+            Authorization: '1',
+          },
+        }
+      );
+      if (data.drinks != null) {
+        for (let i = 0; i < data.drinks.length; i++) {
+          console.log(data.drinks[i]);
+          const recipe = await API_cocktaildb.findByPk(
+            Number(data.drinks[i].idDrink)
+          );
+          await recipe.update(data.drinks[i]);
+        }
+      }
+    }
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.log(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktaildb API 조회 실패', error });
@@ -78,8 +122,31 @@ router.get('/testAPIs/getlist', async (req, res) => {
         },
       }
     );
+    data.count = data.drinks.length;
     res.status(200).json(data);
   } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: 'Cocktaildb API list 조회 실패',
+      error,
+    });
+  }
+});
+
+router.get('/testAPIs/ninja', async (req, res) => {
+  try {
+    const { data } = await axios.get('https://api.api-ninjas.com/v1/cocktail', {
+      params: {
+        [req.query.param]: req.query.content, // name or ingredients
+      },
+      headers: {
+        'X-Api-Key': process.env.NINJA_API_Key,
+      },
+    });
+    console.log(data);
+    res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktaildb API id 조회 실패', error });
