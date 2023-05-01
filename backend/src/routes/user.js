@@ -24,12 +24,6 @@ const smtpTransport = nodemailer.createTransport({
   },
 });
 
-//---- 연동확인
-router.get('/', async (req, res) => {
-  const users = await sql.getUser();
-  res.send(users);
-});
-
 // 로그인
 router.post('/login', async (req, res) => {
   try {
@@ -51,12 +45,11 @@ router.post('/login', async (req, res) => {
   }
 });
 
-//로그아웃
-router.get('/logout', async (req, res) => {
-  //브라우저 쿠키 삭제
-});
+// 토큰 재발급 라우터
+router.get('/refresh', refresh_new);
 
-//------- 회원가입---------//
+//로그아웃
+router.get('/logout'); //브라우저 쿠키 삭제
 
 //회원 가입
 router.post('/signup', userUtil.signUp);
@@ -153,19 +146,6 @@ router.put('/checkauth', async (req, res) => {
   }
 });
 
-//회원 정보 수정
-router.put('/update', checkAccess, async (req, res) => {
-  try {
-    const newNickname = req.body.nickname;
-    req.user.update({ NICKNAME: newNickname });
-    return res.status(200).json({ success: true, message: '닉네임 수정 성공' });
-  } catch (error) {
-    return res
-      .status(400)
-      .json({ success: false, message: '닉네임 수정 실패', error });
-  }
-});
-
 // bar owner 인증
 router.put('/checkbarowner', checkAccess, async (req, res) => {
   try {
@@ -173,7 +153,9 @@ router.put('/checkbarowner', checkAccess, async (req, res) => {
     if (barOwner) {
       req.user.update({ LEVEL: 4 });
     }
-    return res.status(200).json({ success: true, message: '사장님 인증 성공' });
+    return res
+      .status(200)
+      .json({ success: true, baronnwer: true, message: '사장님 인증 성공' });
   } catch (error) {
     return res
       .status(400)
@@ -188,7 +170,9 @@ router.put('/checkbartender', checkAccess, async (req, res) => {
     if (bartender) {
       req.user.update({ LEVEL: 5 });
     }
-    return res.status(200).json({ success: true, message: '바텐더 인증 성공' });
+    return res
+      .status(200)
+      .json({ success: true, bartender: true, message: '바텐더 인증 성공' });
   } catch (error) {
     return res
       .status(400)
@@ -196,11 +180,21 @@ router.put('/checkbartender', checkAccess, async (req, res) => {
   }
 });
 
-//회원 탈퇴
-router.delete('/delete', checkAccess, userUtil.delUser);
+//회원 정보 수정
+router.put('/', checkAccess, async (req, res) => {
+  try {
+    const newNickname = req.body.nickname;
+    req.user.update({ NICKNAME: newNickname });
+    return res.status(200).json({ success: true, message: '닉네임 수정 성공' });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: '닉네임 수정 실패', error });
+  }
+});
 
-// 토큰 재발급 라우터
-router.get('/refresh', refresh_new);
+//회원 탈퇴
+router.delete('/', checkAccess, userUtil.delUser);
 
 // JWT access 토큰 체크 라우터 (디버깅용)
 router.get('/check/access', checkAccess, (req, res) => {

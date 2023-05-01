@@ -49,7 +49,7 @@ export const getTokens = () => {
 export const getNewAccessToken = async () => {
   try {
     const { data } = await axios.get("/api/users/refresh");
-    if (data.ok) setToken({ accessToken: data.accessToken });
+    if (data.success) setToken({ accessToken: data.accessToken });
     return true;
   } catch (e) {
     if (e.response.data.message.includes("not expired")) {

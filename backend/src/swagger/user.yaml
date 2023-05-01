@@ -29,8 +29,8 @@ paths:
                     type: object
                     example:
                       {
-                        ACCESS-1A3BJOJAPEOJRPA3JRAFEJIJ3434R2: string,
-                        REFRESH-19WAHR093HAR89AWHG9H0A: string,
+                        accessToken: ACCESS-1A3BJOJAPEOJRPA3JRAFEJIJ3434R2,
+                        refreshToken: REFRESH-19WAHR093HAR89AWHG9H0A,
                       }
 
         '400':
@@ -316,8 +316,8 @@ paths:
     put:
       tags:
         - users
-      summary: '바텐더 확인'
-      description: '일단 닉네임 보내는 걸로 했는데 다시 정해야 함.'
+      summary: 바텐더 확인
+      description: 일단 닉네임 보내는 걸로 했는데 다시 정해야 함.
       operationId: checkBartender
       requestBody:
         required: true
@@ -343,8 +343,8 @@ paths:
     put:
       tags:
         - users
-      summary: '회원정보수정'
-      description: '닉네임만 바꿀 수 있음'
+      summary: 회원정보수정
+      description: 닉네임만 바꿀 수 있음
       operationId: updateUser
       requestBody:
         required: true
@@ -369,7 +369,7 @@ paths:
     delete:
       tags:
         - users
-      summary: '회원 탈퇴'
+      summary: 회원 탈퇴
       description: ''
       operationId: deleteUser
       parameters:
