@@ -87,7 +87,6 @@ const sql = {
       return {
         code: 200,
         message: '토큰이 발급되었습니다.',
-        message: '토큰이 발급되었습니다.',
         token: {
           accessToken,
           refreshToken,

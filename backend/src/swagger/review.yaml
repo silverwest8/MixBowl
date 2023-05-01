@@ -1,9 +1,9 @@
-# review api for swagger
+# reviews api for swagger
 paths:
   /reviews:
     post:
       tags:
-        - review
+        - reviews
       summary: 리뷰 작성
       description: ""
       operationId: createReview
@@ -54,40 +54,32 @@ paths:
               schema:
                 $ref: "#/components/schemas/Fail"
 
-  /reviews/{placeId}:
+  /reviews/{reviewId}:
     get:
       tags:
-        - review
-      summary: 특정 칵테일 바 리뷰 조회
+        - reviews 
+      summary: 리뷰 데이터 가져오기
       description: ""
       operationId: getReview
-      parameters:
-        - in: path
-          name: placeId
-          description: 장소 ID
-          example: 1389819741
-          schema:
-            type: string
-          required: true
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/getReview"
-        "400":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fail"
-
-
-  /reviews/{reviewId}:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                placeId:
+                  type: integer
+                rating:
+                  type: integer
+                  example: 4
+                keyword:
+                  type: array
+                  items:
+                    type: integer
     put:
       tags:
-        - review
+        - reviews
       summary: 리뷰 수정
       description: ""
       operationId: updateReview
@@ -113,7 +105,7 @@ paths:
                 $ref: "#/components/schemas/Fail"
     delete:
       tags:
-        - review
+        - reviews
       summary: 리뷰 삭제
       description: ""
       operationId: deleteReview
@@ -139,7 +131,7 @@ paths:
   /reviews/barlist:
     get:
       tags:
-        - review
+        - reviews
       summary: 칵테일 바 리스트 조회
       description: ""
       operationId: getList
@@ -192,7 +184,7 @@ paths:
   /reviews/bar/{placeId}:
     get:
       tags:
-        - review
+        - reviews
       summary: 칵테일 바 단건 조회
       description: ""
       operationId: getBar
@@ -217,3 +209,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Fail"
+
+
+  /reviews/bar/reviewlist/{placeId}:
+    get:
+      tags:
+        - reviews
+      summary: 특정 칵테일 바 리뷰 조회
+      description: ""
+      operationId: getReviewFromBar
+      parameters:
+        - in: path
+          name: placeId
+          description: 장소 ID
+          example: 1389819741
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getReview"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+
