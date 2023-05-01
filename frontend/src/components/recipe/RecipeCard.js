@@ -5,9 +5,13 @@ import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import RecipeDrop from "./RecipeDrop";
-
+import { useRecoilState } from "recoil";
+import { alcoholState, arrState, colorState } from "../../store/recipe";
 const RecipeCard = () => {
   const [Recipe, setRecipe] = useState([]);
+  const [color, setColor] = useRecoilState(colorState);
+  const [alcohol, setAlcohol] = useRecoilState(alcoholState);
+  const [arr, setArr] = useRecoilState(arrState);
 
   const GetRecipe = async () => {
     try {
@@ -22,10 +26,15 @@ const RecipeCard = () => {
     GetRecipe();
   }, []);
 
+  console.log(color);
+  console.log(alcohol);
+  console.log(arr);
   return (
     <MiddleBox>
-      <RecipeDrop />
       <CardBox>
+        <div className="arr">
+          <RecipeDrop />
+        </div>
         {Recipe.map((index) => (
           <RecipeBox key={Recipe.rno}>
             <Link to={`/recipe/${index.rno}`}>
@@ -76,6 +85,13 @@ const CardBox = styled.div`
   margin-bottom: 2rem;
   justify-items: center;
 
+  .arr {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: end;
+    margin-right: 1rem;
+  }
+
   @media screen and (max-width: 928px) {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -85,9 +101,8 @@ const CardBox = styled.div`
     grid-template-columns: 1fr 1fr;
   }
   @media screen and (max-width: 350px) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
   }
 `;
 

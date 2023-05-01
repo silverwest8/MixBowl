@@ -6,7 +6,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import { theme } from "../../styles/theme";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../common/Modal";
-
+import { useNavigate, useParams } from "react-router-dom";
 const OPTIONS = ["수정", "삭제"];
 
 const DropdownMenu = ({ options }) => {
@@ -15,6 +15,9 @@ const DropdownMenu = ({ options }) => {
   const [Edit, setEdit] = useState(false);
   const [Delete, setDelete] = useState(false);
   const { openModal, closeModal } = useModal();
+  const navigate = useNavigate();
+  const params = useParams();
+  const id = params.id;
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -24,12 +27,19 @@ const DropdownMenu = ({ options }) => {
 
   const handleOptionClick = (option) => {
     if (option === "수정") {
-      setEdit(!Edit);
+      setEdit(true);
+      navigate(`/recipe/${id}/edit`);
     }
     if (option === "삭제") {
       setDelete(true);
     }
     handleClose();
+  };
+
+  const handleConform = () => {
+    console.log("레시피삭제시");
+    closeModal();
+    navigate(-1);
   };
 
   const DeleteModal = ({ handleClose }) => {
@@ -38,7 +48,7 @@ const DropdownMenu = ({ options }) => {
       <Modal
         handleClose={handleClose}
         onCancel={handleClose}
-        onConfirm={handleClose}
+        onConfirm={handleConform}
         title="레시피 삭제"
       >
         <p>레시피를 삭제하시겠습니까?</p>

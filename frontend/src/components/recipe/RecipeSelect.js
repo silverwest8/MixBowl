@@ -1,73 +1,48 @@
-import styled from "styled-components";
-import { useRecoilState } from "recoil";
-import { arrState } from "../../store/recipe";
-import { useState, useEffect } from "react";
-import IconButton from "@mui/material/IconButton";
+import { useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { FaSortAmountDown } from "react-icons/fa";
 import { theme } from "../../styles/theme";
+import RecipeInputBox from "./RecipeInputBox";
+const OPTIONS = [
+  "ml",
+  "oz",
+  "drops",
+  "gram",
+  "slice",
+  "peel",
+  "leaves",
+  "dash",
+  "개",
+];
 
-const OPTIONS = ["최신순", "추천순"];
-
-const RecipeDrop = ({ options }) => {
+const RecipeSelect = ({ options }) => {
+  const [value, setValue] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const [arr, setArr] = useRecoilState(arrState);
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  const handleClose = () => {
+  const handleClose = (event) => {
+    setValue(event.target.innerText);
     setAnchorEl(null);
   };
-
-  const handleOptionClick = (option) => () => {
-    setAnchorEl(null);
-    if (option === "최신순") {
-      setArr((prevState) => ({
-        ...prevState,
-        latest: true,
-        recommendation: false,
-      }));
-    } else if (option === "추천순") {
-      setArr((prevState) => ({
-        ...prevState,
-        latest: false,
-        recommendation: true,
-      }));
-    }
-  };
-
-  useEffect(() => {
-    setArr({
-      latest: true,
-      recommendation: false,
-    });
-  }, []);
 
   return (
-    <DropBox>
-      <IconButton
+    <div>
+      <div
         aria-label="more"
         id="long-button"
         aria-controls={open ? "long-menu" : undefined}
         aria-expanded={open ? "true" : undefined}
         aria-haspopup="true"
         onClick={handleClick}
-        sx={{
-          color: theme.color.lightGray,
-          padding: 0,
-        }}
       >
-        <FaSortAmountDown
-          style={{
-            fontSize: "1.5rem",
-            color: theme.color.primaryGold,
-          }}
-        />
-      </IconButton>
+        <RecipeInputBox
+          disabled={true}
+          placeholder={"도수"}
+          value={value}
+        ></RecipeInputBox>
+      </div>
       <Menu
         id="long-menu"
         MenuListProps={{
@@ -81,7 +56,6 @@ const RecipeDrop = ({ options }) => {
             color: "white",
             width: "6rem",
             borderRadius: "12px",
-
             backgroundColor: theme.color.darkGray,
           },
         }}
@@ -90,7 +64,7 @@ const RecipeDrop = ({ options }) => {
           <MenuItem
             key={option}
             selected={option === "Pyxis"}
-            onClick={handleOptionClick(option)}
+            onClick={handleClose}
             sx={{
               justifyContent: "center",
               fontSize: "0.875rem",
@@ -103,10 +77,8 @@ const RecipeDrop = ({ options }) => {
           </MenuItem>
         ))}
       </Menu>
-    </DropBox>
+    </div>
   );
 };
 
-const DropBox = styled.div``;
-
-export default RecipeDrop;
+export default RecipeSelect;

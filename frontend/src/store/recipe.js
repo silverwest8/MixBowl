@@ -20,9 +20,35 @@ export const colorState = atom({
 });
 
 export const alcoholState = atom({
-  key: "alcoholState ",
+  key: "alcoholState",
   default: {
     min: 0,
     max: 0,
+  },
+});
+
+export const arrState = atom({
+  key: "arrState",
+  default: {
+    latest: true,
+    recommendation: false,
+  },
+});
+
+export const AddRecipeState = atom({
+  key: "AddRecipeState",
+  default: {
+    addImg: "",
+    addName: "",
+    addColor: [],
+    mainname: [],
+    mainamount: [],
+    mainunit: [],
+    subname: [],
+    subamount: [],
+    subunit: [],
+    explain: "",
+    mainnum: [0],
+    subnum: [0],
   },
 });

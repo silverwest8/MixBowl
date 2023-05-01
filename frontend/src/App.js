@@ -11,6 +11,7 @@ import RegisterPage from "./pages/RegisterPage";
 import RecipePage from "./pages/RecipePage";
 import WriteRecipePage from "./pages/WriteRecipePage";
 import DetailRecipePage from "./pages/DetailRecipePage";
+import EditRecipePage from "./pages/EditRecipePage";
 import RecipeRoute from "./routes/RecipeRoute";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
@@ -47,6 +48,7 @@ function App() {
                 <Route element={<RecipeRoute />}>
                   <Route path="recipe" element={<RecipePage />} />
                   <Route path="/recipe/:id" element={<DetailRecipePage />} />
+                  <Route path="/recipe/:id/edit" element={<EditRecipePage />} />
                   <Route path="/writerecipe" element={<WriteRecipePage />} />
                 </Route>
                 <Route path="mypage" element={<HomePage />} />

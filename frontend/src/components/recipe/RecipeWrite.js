@@ -1,62 +1,267 @@
 import styled from "styled-components";
 import Input from "../common/Input";
-import RecipeInput from "./RecipeInput";
+import RecipeWriteB from "./RecipeWriteB";
+import { AddRecipeState } from "../../store/recipe";
+import { useRecoilState } from "recoil";
+import { useState, useRef } from "react";
+import { FaCheckCircle } from "react-icons/fa";
 
 const RecipeWrite = () => {
+  const fileInput = useRef();
+  const [{ addImg }, setAddImg] = useRecoilState(AddRecipeState);
+  const [{ addName }, setAddName] = useRecoilState(AddRecipeState);
+  const [{ addColor }, setAddColor] = useRecoilState(AddRecipeState);
+  const [coloritem, setColoritem] = useState({
+    red: false,
+    pink: false,
+    orange: false,
+    black: false,
+    yellow: false,
+    brown: false,
+    green: false,
+    grey: false,
+    blue: false,
+    white: false,
+    purple: false,
+    transparent: false,
+  });
+
+  const handleAddButton = (e) => {
+    fileInput.current.click();
+  };
+
+  const handleDeleteButton = (e) => {
+    setAddImg((prevAddImg) => ({
+      ...prevAddImg,
+      addImg: "",
+    }));
+  };
+
+  const handleImg = (e) => {
+    const file = fileInput.current.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setAddImg((prevAddImg) => ({
+        ...prevAddImg,
+        addImg: reader.result,
+      }));
+    };
+  };
+
+  const handleColor = (color) => {
+    if (addColor.length >= 2) {
+      alert("최대 2개까지의 색상만 선택이 가능합니다.");
+      setAddColor((prev) => ({ ...prev, addColor: [] }));
+      setColoritem({
+        red: false,
+        pink: false,
+        orange: false,
+        black: false,
+        yellow: false,
+        brown: false,
+        green: false,
+        grey: false,
+        blue: false,
+        white: false,
+        purple: false,
+        transparent: false,
+      });
+    } else {
+      setAddColor((prev) => {
+        if (prev.addColor.includes(color)) {
+          return {
+            ...prev,
+            addColor: prev.addColor.filter((prevColor) => prevColor !== color),
+          };
+        } else {
+          return { ...prev, addColor: [...prev.addColor, color] };
+        }
+      });
+
+      setColoritem((prevColoritem) => {
+        return { ...prevColoritem, [color]: !prevColoritem[color] };
+      });
+    }
+  };
+
+  const handleName = (e) => {
+    setAddName((prev) => ({
+      ...prev,
+      addName: e.target.value,
+    }));
+  };
+
   return (
     <>
-      <MainBox>
-        <RecipeBox>
-          <TopBox>
-            <h1>새 레시피 작성</h1>
-            <FlexBox>
-              <img src="https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"></img>
-              <ButtonBox>
-                <Button>첨부</Button> <Button>삭제</Button>
-              </ButtonBox>
-            </FlexBox>
-          </TopBox>
-          <Input placeholder={"칵테일 이름"}></Input>
-          <ColorBox>
-            색상
-            <ColorButtonBox>
-              <ColorButton bgColor="#FF0000">빨강</ColorButton>
-              <ColorButton bgColor="#FF9900">주황</ColorButton>
-              <ColorButton bgColor="#FFC700">노랑</ColorButton>
-              <ColorButton bgColor="#04D100">초록</ColorButton>
-              <ColorButton bgColor="#0066FF">파랑</ColorButton>
-              <ColorButton bgColor="#AD00FF">보라</ColorButton>
-              <ColorButton bgColor="#FF41D5">분홍</ColorButton>
-              <ColorButton
-                bgColor="#000000"
-                style={{ border: "1px solid #E9AA33" }}
-              >
-                검정
-              </ColorButton>
-              <ColorButton bgColor="#532503">갈색</ColorButton>
-              <ColorButton bgColor="#787878">회색</ColorButton>
-              <ColorButton bgColor="#FFFFFF" textColor="#000000">
-                흰색
-              </ColorButton>
-              <ColorButton bgColor="#3E3E3E">무색</ColorButton>
-            </ColorButtonBox>
-          </ColorBox>
-          <RecipeInput></RecipeInput>
-        </RecipeBox>
-      </MainBox>
+      <TopBox>
+        <h1>새 레시피 작성</h1>
+        <FlexBox>
+          <img
+            src={
+              addImg === ""
+                ? "https://images.unsplash.com/photo-1609951651556-5334e2706168?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+                : addImg
+            }
+          />
+          <ButtonBox>
+            <Button onClick={handleAddButton}>첨부</Button>
+            <input
+              type="file"
+              ref={fileInput}
+              accept="image/*"
+              onChange={handleImg}
+              style={{ display: "none" }}
+            />
+            <Button onClick={handleDeleteButton}>삭제</Button>
+          </ButtonBox>
+        </FlexBox>
+      </TopBox>
+      <RecipeBox>
+        <Input placeholder={"칵테일 이름"} onChange={handleName}></Input>
+      </RecipeBox>
+      <RecipeBox>
+        <ColorBox>
+          색상
+          <ColorButtonBox>
+            <ColorButton
+              bgColor="#FF0000"
+              onClick={() => {
+                handleColor("red");
+              }}
+            >
+              {coloritem.red === true ? <FaCheckCircle></FaCheckCircle> : null}
+              빨강
+            </ColorButton>
+            <ColorButton
+              bgColor="#FF9900"
+              onClick={() => {
+                handleColor("orange");
+              }}
+            >
+              {coloritem.orange === true ? (
+                <FaCheckCircle></FaCheckCircle>
+              ) : null}
+              주황
+            </ColorButton>
+            <ColorButton
+              bgColor="#FFC700"
+              onClick={() => {
+                handleColor("yellow");
+              }}
+            >
+              {coloritem.yellow === true ? (
+                <FaCheckCircle></FaCheckCircle>
+              ) : null}
+              노랑
+            </ColorButton>
+            <ColorButton
+              bgColor="#04D100"
+              onClick={() => {
+                handleColor("green");
+              }}
+            >
+              {coloritem.green === true ? (
+                <FaCheckCircle></FaCheckCircle>
+              ) : null}
+              초록
+            </ColorButton>
+            <ColorButton
+              bgColor="#0066FF"
+              onClick={() => {
+                handleColor("blue");
+              }}
+            >
+              {coloritem.blue === true ? <FaCheckCircle></FaCheckCircle> : null}
+              파랑
+            </ColorButton>
+            <ColorButton
+              bgColor="#AD00FF"
+              onClick={() => {
+                handleColor("purple");
+              }}
+            >
+              {coloritem.purple === true ? (
+                <FaCheckCircle></FaCheckCircle>
+              ) : null}
+              보라
+            </ColorButton>
+            <ColorButton
+              bgColor="#FF41D5"
+              onClick={() => {
+                handleColor("pink");
+              }}
+            >
+              {coloritem.pink === true ? <FaCheckCircle></FaCheckCircle> : null}
+              분홍
+            </ColorButton>
+            <ColorButton
+              bgColor="#000000"
+              style={{ border: "1px solid #E9AA33" }}
+              onClick={() => {
+                handleColor("black");
+              }}
+            >
+              {coloritem.black === true ? (
+                <FaCheckCircle></FaCheckCircle>
+              ) : null}
+              검정
+            </ColorButton>
+            <ColorButton
+              bgColor="#532503"
+              onClick={() => {
+                handleColor("brown");
+              }}
+            >
+              {coloritem.brown === true ? (
+                <FaCheckCircle></FaCheckCircle>
+              ) : null}
+              갈색
+            </ColorButton>
+            <ColorButton
+              bgColor="#787878"
+              onClick={() => {
+                handleColor("grey");
+              }}
+            >
+              {coloritem.grey === true ? <FaCheckCircle></FaCheckCircle> : null}
+              회색
+            </ColorButton>
+            <ColorButton
+              bgColor="#FFFFFF"
+              textColor="#000000"
+              onClick={() => {
+                handleColor("white");
+              }}
+            >
+              {coloritem.white === true ? (
+                <FaCheckCircle></FaCheckCircle>
+              ) : null}
+              흰색
+            </ColorButton>
+            <ColorButton
+              bgColor="#3E3E3E"
+              onClick={() => {
+                handleColor("transparent");
+              }}
+            >
+              {coloritem.transparent === true ? (
+                <FaCheckCircle></FaCheckCircle>
+              ) : null}
+              무색
+            </ColorButton>
+          </ColorButtonBox>
+        </ColorBox>
+      </RecipeBox>
+      <RecipeBox>
+        <RecipeWriteB />
+      </RecipeBox>
     </>
   );
 };
 
-const MainBox = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
 const RecipeBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  width: 40%;
   margin: auto;
 `;
 
@@ -100,7 +305,7 @@ const Button = styled.button`
   font-size: 0.75rem;
   margin-top: 0.3rem;
   margin-bottom: 0.3rem;
-  letter-spacing: 0.01rem;
+  letter-spacing: 0.1rem;
 `;
 
 const ColorBox = styled.div`
@@ -124,6 +329,15 @@ const ColorButtonBox = styled.div`
   row-gap: 1rem;
   margin-top: 0.5rem;
   margin-bottom: 2rem;
+  @media screen and (max-width: 1280px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+  @media screen and (max-width: 1024px) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  @media screen and (max-width: 720px) {
+    grid-template-columns: 1fr 1fr;
+  }
 `;
 
 export default RecipeWrite;
