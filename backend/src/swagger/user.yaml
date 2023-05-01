@@ -39,6 +39,90 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
+  /users/refresh:
+    get:
+      tags:
+        - users
+      summary: 토큰 재발급 라우터
+      description: ''
+      operationId: refreshToken
+      parameters:
+        - name: authorization
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+        - name: refresh
+          in: header
+          description: an authorization header
+          required: true
+          type: string
+      responses:
+        '401':
+          description: 'access token에 대한 권한 없음 or 새로운 로그인 필요'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'No Authorization for Access Token /or/ No Authorization, MAKE A NEW LOGIN'
+        '200':
+          description: '발급 성공'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  accessToken:
+                    type: string
+                    example: 'RREAGIN430THA08042U59-4AJTERAAA'
+        '403':
+          description: '유효하지 않은 토큰 정보'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Invalid Access Token'
+        '202':
+          description: '아직 토큰이 만료 안됨'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Access Token is not expired'
+        '400':
+          description: 'Access, Refresh Token 둘다 필요함'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'AAccess token and Refresh Token are needed for refresh'
 
   /users/logout:
     get:
@@ -299,10 +383,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: '회원 탈퇴 성공'
         '400':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fail'
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: '회원 탈퇴 실패'
+                  error:
+                    type: object
+                    example: {}
