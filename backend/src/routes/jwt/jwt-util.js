@@ -22,12 +22,12 @@ export function accessVerify(token) {
   try {
     decoded = jwt.verify(token, process.env.SECRET_KEY);
     return {
-      ok: true,
+      success: true,
       unum: decoded.unum,
     };
   } catch (error) {
     return {
-      ok: false,
+      success: false,
       message: error.message,
     };
   }
@@ -65,41 +65,41 @@ export const refresh_new = async (req, res) => {
 
     if (decodeAccess === null) {
       res.status(401).send({
-        ok: false,
+        success: false,
         message: 'No Authorization for Access Token',
       });
     } else {
       const refreshResult = refreshVerify(refresh, decodeAccess.unum);
 
-      if (accessResult.ok === false && accessResult.message === 'jwt expired') {
-        if (refreshResult.ok === false) {
+      if (accessResult.success === false && accessResult.message === 'jwt expired') {
+        if (refreshResult.success === false) {
           res.status(401).send({
-            ok: false,
+            success: false,
             message: 'No Authorization, MAKE A NEW LOGIN',
           });
         } else {
           //refresh token이 유효하므로, 새로운 access token 발급
           const newAccessToken = sign(decodeAccess.unum);
           res.status(200).send({
-            ok: true,
+            success: true,
             accessToken: newAccessToken,
           });
         }
       } else if (accessResult.message === 'invalid signature') {
         res.status(403).send({
-          ok: false,
+          success: false,
           message: 'Invalid Access Token',
         });
       } else {
         res.status(202).send({
-          ok: false,
+          success: false,
           message: 'Access Token is not expired',
         });
       }
     }
   } else {
     res.status(400).send({
-      ok: false,
+      success: false,
       message: 'Access token and Refresh Token are needed for refresh',
     });
   }

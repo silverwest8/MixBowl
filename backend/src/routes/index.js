@@ -9,7 +9,7 @@ import recipe from './recipe';
 import review from './review';
 
 router.use('/', main);
-router.use('/user', user);
+router.use('/users', user);
 router.use('/recipes', recipe);
 router.use('/reviews', review);
 

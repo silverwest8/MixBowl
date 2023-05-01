@@ -28,7 +28,7 @@ export const useNickname = () => {
       return;
     }
     try {
-      const { data } = await axios.put("/api/user/nicknamedupcheck", {
+      const { data } = await axios.put("/api/users/nicknamedupcheck", {
         checkname: nickname,
       });
       if (data.success) {
@@ -196,7 +196,7 @@ export const useEmail = () => {
   };
   const checkDuplication = async () => {
     try {
-      const { data } = await axios.put("/api/user/emaildupcheck", {
+      const { data } = await axios.put("/api/users/emaildupcheck", {
         checkemail: email,
       });
       if (!data.success) {
@@ -227,7 +227,7 @@ export const useEmail = () => {
     const success = await checkDuplication();
     if (!success) return;
     try {
-      const { data } = await axios.post("/api/user/sendauthmail", {
+      const { data } = await axios.post("/api/users/sendauthmail", {
         email,
       });
       if (data.success) {
@@ -267,7 +267,7 @@ export const useEmail = () => {
       return;
     }
     try {
-      const { data } = await axios.put("/api/user/checkauth", {
+      const { data } = await axios.put("/api/users/checkauth", {
         email,
         code,
       });

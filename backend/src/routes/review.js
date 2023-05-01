@@ -230,7 +230,7 @@ router.get('/bar/:placeId', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/:place_id', checkAccess, async (req, res) => {
+router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
   // Example
   // http://localhost:3030/reviews/17649496
   try {

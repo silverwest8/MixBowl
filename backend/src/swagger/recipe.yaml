@@ -1,34 +1,186 @@
-# recipe api for swagger
+# recipes api for swagger
 
 paths:
-  /recipe/getlist?abv={abv}&color={color}:
+  /recipes:
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 작성
+      description: ''
+      operationId: createRecpie
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createRecipe'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/{recipeId}:
     get:
       tags:
-        - recipe
-      summary: "칵테일 레시피 목록"
-      description: "1 빨강2 주황3 노랑4 초록5 파랑6 보라7 분홍8 검정9 갈색10 회색11 흰색12 무색, ABV 0 -> 0~9, 1 -> 10~19% ... 9 -> 90~99%"
+        - recipes
+      summary: 칵테일 레시피 가져오기
+      description: ''
+      operationId: getRecipe
+      parameters:
+        - in: path
+          name: recipeId
+          type: integer
+          example: 3
+          description: 가져올 레시피 id
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getRecipe'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+    put:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 수정
+      description: ''
+      operationId: updateRecipe
+      parameters:
+        - in: path
+          name: recipeId
+          type: integer
+          example: 3
+          description: 변경하려는 레시피 id
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateRecipe'
+
+    delete:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 삭제
+      description: ''
+      operationId: deleteRecpie
+      parameters:
+        - in: path
+          name: recipeId
+          description: 게시글 ID
+          example: 3
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/getlist:
+    get:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 목록
+      description: ''
       operationId: GetRecipeList
       parameters:
-        - name: abv
-          in: query
+        - in: query
+          name: max
           type: integer
-          description: ""
-        - name: color
-          in: query
+          description: 최대 도수
+          example: 20
+        - in: query
+          name: min
           type: integer
-          # schema:
-          #   $ref: "#/components/schemas/RecipeFilter"
+          description: 최소 도수
+          example: 3
+        - in: query
+          name: color
+          type: string
+          description: 색상, 최대 몇개?, 1-빨강 2-주황 3-노랑 4-초록 5-파랑 6-보라 7-분홍 8-검정 9-갈색 10-회색 11-흰색 12-무색
+          example: 1
+        - in: query
+          name: search
+          type: string
+          description: 검색키워드
+          example: 진
+        - in: query
+          name: sort
+          type: string
+          description: 정렬기준
+          example: like, newest
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                - $ref: "#/components/schemas/Success"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/getRecpieList'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
+  /recipes/getDetail/{recpie_id}:
+    get:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 상세
+      description: ''
+      operationId: GetRecipeDetail
+      parameters:
+        - in: path
+          name: recpie_id
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 10
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/recpieDetail'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
