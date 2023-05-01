@@ -6,6 +6,7 @@ import USER from '../models/USER';
 import REVIEW from '../models/REVIEW';
 import IMAGE from '../models/IMAGE';
 import KEYWORD from '../models/KEYWORD';
+import fs from 'fs';
 dotenv.config(); //JWT 키불러오기
 
 const sql = {
@@ -104,7 +105,7 @@ const sql = {
     const unum = req.decoded.unum;
     console.log(req.body.data);
     const data = JSON.parse(req.body.data);
-    console.log(data);
+    console.log('data', data);
     const { placeId, rating, detail, keyword } = data;
     try {
       const review = await REVIEW.create({
@@ -113,9 +114,9 @@ const sql = {
         TEXT: detail,
         RATING: rating,
       });
-      console.log(keyword);
-      console.log(review);
-      console.log(review.REVIEW_ID);
+      console.log('keyword', keyword);
+      console.log('review', review);
+      console.log('reviewId', review.REVIEW_ID);
       keyword.forEach(async (keyword) => {
         await KEYWORD.create({
           REVIEW_ID: review.REVIEW_ID,
@@ -145,6 +146,59 @@ const sql = {
     } catch (error) {
       console.log(error.message);
     }
+  },
+  changeReview: async (req) => {
+    const unum = req.decoded.unum;
+    console.log(unum);
+    // const data = JSON.parse(req.body.data);
+    const data = {
+      rating: 3,
+      text: '수정API확인중',
+      keyword: [1],
+    };
+    const reviewId = req.params.reviewId;
+    const review = await REVIEW.findByPk(reviewId);
+    if (review.UNO === req.user.UNO) {
+      console.log('권한 확인');
+    } else {
+      throw new Error('no authorization to modify review');
+    }
+    if (review !== null) {
+      try {
+        await REVIEW.update(
+          {
+            RATING: data.rating,
+            TEXT: data.text,
+          },
+          { where: { REVIEW_ID: reviewId } }
+        );
+        await KEYWORD.destroy({
+          where: {
+            REVIEW_ID: reviewId,
+          },
+        });
+        data.keyword.forEach(async (key) => {
+          await KEYWORD.create({
+            REVIEW_ID: reviewId,
+            KEYWORD: key,
+          });
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      console.log('There is no review of URI parameter reviewId');
+    }
+    // const { rating, detail, keyword } = data;
+  },
+  deleteImage: async (req, res, next) => {
+    const reviewId = req.params.reviewId;
+    const images = await IMAGE.findAll({
+      where: {
+        REVIEW_ID: reviewId,
+      },
+    });
+    return next();
   },
 };
 
