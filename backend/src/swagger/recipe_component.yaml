@@ -88,6 +88,11 @@ components:
 
     getRecipe:
       properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 칵테일 레시피 조회 성공(수정을 위한)
         name:
           type: string
           example: 드라이마티니
@@ -189,9 +194,17 @@ components:
 
     recipeDetail:
       properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 칵테일 레시피 디테일 조회 성공
         name:
           type: string
           example: 드라이마티니
+        date:
+          type: string
+          example: 2023.05.02
         ABV:
           type: integer
           example: 17
@@ -250,3 +263,37 @@ components:
             ISWRITER:
               type: boolean
               example: true
+    recipeDetailReview:
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 칵테일 레시피 리뷰 리스트 조회 성공
+        count:
+          type: integer
+          example: 10
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+                example: |
+                  후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.
+              date:
+                type: string
+                example: 2023.05.02(열두시간 전 일케 하는건 시간남으면...)
+              UNO_USER:
+                type: object
+                properties:
+                  NICKNAME:
+                    type: string
+                    example: 알콜릭
+                  LEVEL:
+                    type: integer
+                    example: 2
+                  ISWRITER:
+                    type: boolean
+                    example: true

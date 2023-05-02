@@ -40,7 +40,7 @@ paths:
     get:
       tags:
         - recipes
-      summary: 칵테일 레시피 가져오기
+      summary: 칵테일 레시피 가져오기(수정을 위해)
       description: ''
       operationId: getRecipe
       parameters:
@@ -158,7 +158,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /recipes/getDetail/{recpie_id}:
+  /recipes/detail/{cocktailId}:
     get:
       tags:
         - recipes
@@ -167,7 +167,7 @@ paths:
       operationId: GetRecipeDetail
       parameters:
         - in: path
-          name: recpie_id
+          name: cocktailId
           type: integer
           description: 칵테일 레시피 ID
           example: 10
@@ -177,7 +177,34 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/recpieDetail'
+                $ref: '#/components/schemas/recipeDetail'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/detail/review/{cocktailId}:
+    get:
+      tags:
+        - recipes
+      summary: 칵테일 레시피에 대한 리뷰 상세
+      description: ''
+      operationId: GetRecipeDetailReview
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 10
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/recipeDetailReview'
         '400':
           description: ''
           content:
