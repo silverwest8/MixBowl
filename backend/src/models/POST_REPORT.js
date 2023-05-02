@@ -1,27 +1,35 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class KEYWORD extends Model {
+export default class POST_REPORT extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    REVIEW_ID: {
+    PNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'REVIEW',
-        key: 'REVIEW_ID'
+        model: 'POST',
+        key: 'PNO'
       }
     },
-    KEYWORD: {
+    UNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      comment: "1 - 술이 맛있어요\\n2 - 술이 다양해요\\n3 - 혼술하기 좋아요\\n4 - 분위기가 좋아요\\n5 - 직원이 친절해요\\n6 - 대화하기 좋아요\\n7 - 가성비가 좋아요\\n8 - 메뉴가 다양해요\\n9 - 음식이 맛있어요"
+      references: {
+        model: 'USER',
+        key: 'UNO'
+      }
+    },
+    REPORT: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      comment: "1-부적절한 표현, 욕설 또는 혐오 표현\\n2-스팸 또는 사용자를 현혹하는 콘텐츠\\n3-유해하거나 위험한 컨텐츠\\n4-증오 또는 위험한 콘텐츠"
     }
   }, {
     sequelize,
-    tableName: 'KEYWORD',
+    tableName: 'POST_REPORT',
     timestamps: false,
     indexes: [
       {
@@ -29,15 +37,15 @@ export default class KEYWORD extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "REVIEW_ID" },
-          { name: "KEYWORD" },
+          { name: "PNO" },
+          { name: "UNO" },
         ]
       },
       {
-        name: "REVIEW_ID_idx",
+        name: "UNO_idx",
         using: "BTREE",
         fields: [
-          { name: "REVIEW_ID" },
+          { name: "UNO" },
         ]
       },
     ]
