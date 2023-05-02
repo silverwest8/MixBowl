@@ -17,6 +17,7 @@ import ModalRenderer from "./components/layout/ModalRenderer";
 import CocktailBarPage from "./pages/CocktailBarPage";
 import CommunityHomePage from "./pages/CommunityHomePage";
 import PostingPage from "./pages/PostingPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -57,6 +58,7 @@ function App() {
                 </Route>
                 <Route path="community" element={<CommunityHomePage />} />
                 <Route path="community/posting" element={<PostingPage />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
