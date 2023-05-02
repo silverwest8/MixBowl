@@ -2,26 +2,36 @@
 
 import express from 'express';
 import axios from 'axios';
+import { db } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
-import API_cocktaildb_en from '../models/API_cocktaildb_en';
-import API_ninja_en from '../models/API_ninja_en';
-import COCKTAIL from '../models/COCKTAIL';
-import COCKTAIL_LIKE from '../models/COCKTAIL_LIKE';
-import INGREDIENT from '../models/INGREDIENT';
-import POST from '../models/POST';
 import dotenv from 'dotenv';
 import multer from 'multer';
-import { Sequelize } from 'sequelize';
+import fs from 'fs';
 dotenv.config();
 const router = express.Router();
 
 //multer 미들웨어 설정
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // 파일이 업로드되는 경로 지정
+    cb(null, 'uploads/cocktailImage'); // 파일이 업로드되는 경로 지정
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // 파일 이름 설정
+    const date = new Date();
+    date.toLocaleDateString('ko-KR'); // 한국 시간 설정
+    cb(
+      null,
+      `${date.getFullYear()}${
+        date.getMonth() + 1 >= 10
+          ? date.getMonth() + 1
+          : `0${date.getMonth() + 1}`
+      }${date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`}${
+        date.getHours() >= 10 ? date.getHours() : `0${date.getHours()}`
+      }${
+        date.getMinutes() >= 10 ? date.getMinutes() : `0${date.getMinutes()}`
+      }${
+        date.getSeconds() >= 10 ? date.getSeconds() : `0${date.getSeconds()}`
+      }_${file.originalname}`
+    ); // 파일 이름 설정
   },
 });
 const fileFilter = (req, file, callback) => {
@@ -42,31 +52,39 @@ const limits = {
   filedSize: 1024 * 1024, // 필드 사이즈 값 설정 (기본값 1MB)
   fields: 2, // 파일 형식이 아닌 필드의 최대 개수 (기본 값 무제한)
   fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
-  files: 5, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
+  files: 1, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
 };
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter, // 이미지 업로드 필터링 설정
   limits: limits, // 이미지 업로드 제한 설정
-  dest: __dirname + '/uploads/', // 이미지 업로드 경로
 });
 router.post('/', checkAccess, upload.single('image'), async (req, res) => {
   try {
-    const cocktail = await COCKTAIL.create({
+    console.log(__dirname);
+    const data = JSON.parse(req.body.data);
+    console.log(data);
+    console.log(req.file);
+    const cocktail = await db.COCKTAIL.create({
       UNO: req.user.UNO,
-      NAME: req.body.name,
-      INSTRUCTION: req.body.instruction,
+      NAME: data.name,
+      INSTRUCTION: data.instruction,
+      IMAGE_PATH: req.file.path,
     });
     console.log(cocktail.CNO);
-    // 이미지명 CNO로 지정
-
     // color 저장
+    for (let i = 0; i < data.color.length; i++) {
+      if (data.color[i] != null) {
+        await db.COLOR.create({ CNO: cocktail.CNO, COLOR: data.color[i] });
+      }
+    }
 
     // main, sub ingredient 저장
 
     res.status(200).json({ success: true, message: 'Recipe post 성공' });
   } catch (error) {
     console.log(error);
+    // 중간 실패시 COCKTAIL, COLOR, RECIPE 모두 삭제해줘야 함
     return res
       .status(400)
       .json({ success: false, message: 'Recipe post 실패', error });
@@ -75,13 +93,38 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
 
 router.get('/:cocktailId', checkAccess, async (req, res) => {
   try {
+    let data = {
+      name: '',
+      color: [],
+      main: [],
+      sub: [],
+      instruction: '',
+    };
+
+    // cocktail get
     const cocktailId = req.params.cocktailId;
-    const cocktail = COCKTAIL.findByPk(cocktailId);
-    // color get
+    const cocktail = await db.COCKTAIL.findByPk(cocktailId, {
+      attributes: ['CNO', 'NAME', 'INSTRUCTION'],
+      include: [
+        {
+          model: db.COLOR,
+          as: 'COLORs',
+          attributes: ['COLOR'],
+          where: { CNO: cocktailId },
+          required: false,
+        },
+      ],
+    });
+    console.log(cocktail);
+    data.name = cocktail.NAME;
+    data.instruction = cocktail.INSTRUCTION;
+    for (let i = 0; i < cocktail.COLORs.length; i++) {
+      data.color.push(cocktail.COLORs[i].COLOR);
+    }
     // main, sub ingredient get
     return res
       .status(200)
-      .json({ success: true, message: 'Recipe get 성공', data: cocktail });
+      .json({ success: true, message: 'Recipe get 성공', data });
   } catch (error) {
     console.log(error);
     return res
@@ -90,6 +133,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
   }
 });
 
+// update - Not supporting formdata at put method
 router.post(
   '/:cocktailId',
   checkAccess,
@@ -97,15 +141,44 @@ router.post(
   async (req, res) => {
     try {
       const cocktailId = req.params.cocktailId;
-      const cocktail = COCKTAIL.findByPk(cocktailId);
-      await cocktail.update({
-        NAME: req.body.name,
-        INSTRUCTION: req.body.instruction,
+      const data = JSON.parse(req.body.data);
+      console.log(data);
+      console.log(req.file);
+      const cocktail = await db.COCKTAIL.findByPk(cocktailId, {
+        attributes: ['CNO', 'NAME', 'INSTRUCTION', 'IMAGE_PATH'],
+        include: [
+          {
+            model: db.COLOR,
+            as: 'COLORs',
+            attributes: ['COLOR'],
+            where: { CNO: cocktailId },
+            required: false,
+          },
+        ],
       });
-      console.log(cocktail.CNO);
-      // 이미지명 CNO로 지정, 변경, 이전꺼 삭제
-
-      // color 변경
+      console.log(cocktail.IMAGE_PATH);
+      if (cocktail.IMAGE_PATH) {
+        const oldFilePath = `./${cocktail.IMAGE_PATH}`;
+        console.log(oldFilePath);
+        fs.unlinkSync(oldFilePath);
+      }
+      await cocktail.update({
+        NAME: data.name,
+        INSTRUCTION: data.instruction,
+        IMAGE_PATH: req.file ? req.file.path : null,
+      });
+      // color는 개수 달라질 수 있으므로 삭제 후 저장
+      for (let i = 0; i < cocktail.COLORs.length; i++) {
+        console.log(cocktail.COLORs[i].COLOR);
+        await db.COLOR.destroy({
+          where: { CNO: cocktailId, COLOR: cocktail.COLORs[i].COLOR },
+        });
+      }
+      for (let i = 0; i < data.color.length; i++) {
+        if (data.color[i] != null) {
+          await db.COLOR.create({ CNO: cocktail.CNO, COLOR: data.color[i] });
+        }
+      }
 
       // main, sub ingredient 변경
 
@@ -122,17 +195,16 @@ router.post(
 router.delete('/:cocktailId', async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
-    const cocktail = COCKTAIL.findByPk(cocktailId);
-    await cocktail.update({
-      NAME: req.body.name,
-      INSTRUCTION: req.body.instruction,
-    });
-    console.log(cocktail.CNO);
-    // 이미지명 CNO로 지정, 변경, 이전꺼 삭제
+    const cocktail = await db.COCKTAIL.findByPk(cocktailId);
 
-    // color 변경
-
-    // main, sub ingredient 변경F
+    // file system에서 이미지파일 삭제
+    const oldFilePath = `./${cocktail.IMAGE_PATH}`;
+    console.log(oldFilePath);
+    fs.unlinkSync(oldFilePath);
+    // color 삭제(아마 자동)
+    // main, sub ingredient 삭제(아마 자동)
+    console.log(cocktail);
+    await cocktail.destroy();
 
     res.status(200).json({ success: true, message: 'Cocktail delete 성공' });
   } catch (error) {
@@ -143,38 +215,54 @@ router.delete('/:cocktailId', async (req, res) => {
   }
 });
 
-router.get('/getlist', checkAccess, async (req, res) => {
+router.get('/list/filter', checkAccess, async (req, res) => {
   try {
-    const cocktailId = req.params.cocktailId;
     const max = req.query.max;
     const min = req.query.min;
     const color = req.query.color; // json string parse?
     const search = req.query.search;
     const sort = req.query.sort;
+    console.log(max, min, color, search, sort);
     let list = [];
-    const cocktail = await COCKTAIL.findAll({
+    const cocktail = await db.COCKTAIL.findAll({
+      attributes: ['CNO', 'NAME'],
       where: {
         //
       },
       include: [
         {
-          model: USER,
+          model: db.USER,
           as: 'UNO_USER',
           attributes: ['UNO', 'NICKNAME', 'LEVEL'],
+          required: false,
         },
       ],
     });
-
+    // console.log(cocktail);
     for (let i = 0; i < cocktail.length; i++) {
-      const like = await COCKTAIL_LIKE.findAndCountAll({
+      let temp = {
+        id: cocktail[i].CNO,
+        name: cocktail[i].NAME,
+        like: 0,
+        post: 0,
+        USER: {
+          nickname: cocktail[i].UNO_USER.NICKNAME,
+          level: cocktail[i].UNO_USER.LEVEL,
+          iswriter: false,
+        },
+      };
+      const like = await db.COCKTAIL_LIKE.findAndCountAll({
         where: cocktail[i].CNO,
       });
-      console.log(like.count);
-      const post = await POST.findAndCountAll({ where: cocktail[i].CNO });
-      console.log(post.count);
+      temp.like = like.count;
+      const post = await db.POST.findAndCountAll({ where: cocktail[i].CNO });
+      temp.post = post.count;
+      if (req.user.UNO == cocktail[i].UNO_USER.UNO) {
+        temp.USER.iswriter = true;
+      }
+      list.push(temp);
     }
 
-    // color get
     // main, sub ingredient get
     return res
       .status(200)
@@ -190,14 +278,14 @@ router.get('/getlist', checkAccess, async (req, res) => {
 router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
-    const cocktail = await COCKTAIL.findByPk(cocktailId);
+    const cocktail = await db.COCKTAIL.findByPk(cocktailId);
 
     for (let i = 0; i < cocktail.length; i++) {
-      const like = await COCKTAIL_LIKE.findAndCountAll({
+      const like = await db.COCKTAIL_LIKE.findAndCountAll({
         where: cocktail[i].CNO,
       });
       console.log(like.count);
-      const post = await POST.findAndCountAll({ where: cocktail[i].CNO });
+      const post = await db.POST.findAndCountAll({ where: cocktail[i].CNO });
       console.log(post.count);
     }
 
@@ -217,14 +305,14 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
 router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
-    const cocktail = await COCKTAIL.findByPk(cocktailId);
+    const cocktail = await db.COCKTAIL.findByPk(cocktailId);
 
     for (let i = 0; i < cocktail.length; i++) {
-      const like = await COCKTAIL_LIKE.findAndCountAll({
+      const like = await db.COCKTAIL_LIKE.findAndCountAll({
         where: cocktail[i].CNO,
       });
       console.log(like.count);
-      const post = await POST.findAndCountAll({ where: cocktail[i].CNO });
+      const post = await db.POST.findAndCountAll({ where: cocktail[i].CNO });
       console.log(post.count);
     }
 
@@ -241,13 +329,17 @@ router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/image/:cocktailId', checkAccess, async (req, res) => {
+router.get('/image/:cocktailId', async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
-    const cocktail = COCKTAIL.findByPk(cocktailId);
+    const cocktail = await db.COCKTAIL.findByPk(cocktailId);
     console.log(cocktail.IMAGE_PATH);
-
-    res.status(200).send('cocktailImage');
+    fs.readFile(cocktail.IMAGE_PATH, (err, data) => {
+      if (err) throw Error;
+      res.writeHead(200, { 'Context-Type': 'image/jpg' }); //보낼 헤더를 만듬
+      res.write(data); //본문을 만들고
+      return res.end(); //클라이언트에게 응답을 전송한다
+    });
   } catch (error) {
     console.log(error);
     return res
@@ -255,7 +347,6 @@ router.get('/image/:cocktailId', checkAccess, async (req, res) => {
       .json({ success: false, message: 'Recipe Image get 실패', error });
   }
 });
-
 
 //  ----- 이 아래는 데이터 가공을 위해 쓴 코드 - 배포 시 지울 예정 ----- //
 
@@ -275,7 +366,7 @@ router.get('/testAPIs', async (req, res) => {
     if (data.drinks != null) {
       for (let i = 0; i < data.drinks.length; i++) {
         console.log(data.drinks[i]);
-        const recipe = await API_cocktaildb_en.findByPk(
+        const recipe = await db.API_cocktaildb_en.findByPk(
           Number(data.drinks[i].idDrink)
         );
         await recipe.update(data.drinks[i]);
