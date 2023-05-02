@@ -2,38 +2,6 @@
 
 components:
   schemas:
-    getRecipeList:
-      properties:
-        list:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-                example: 1
-              name:
-                type: string
-                example: 드라이마티니
-              like:
-                type: integer
-                example: 10
-              reply:
-                type: integer
-                example: 10
-              UNO_USER:
-                type: object
-                properties:
-                  NICKNAME:
-                    type: string
-                    example: 알콜릭
-                  LEVEL:
-                    type: integer
-                    example: 2
-                  ISWRITER:
-                    type: boolean
-                    example: true
-
     createRecipe:
       properties:
         name:
@@ -74,7 +42,7 @@ components:
               unit:
                 type: string
                 example: 조각
-        text:
+        instruction:
           type: string
           example: |
             1. 글라스에 얼음을 가득 채워 칠링 해 놓고, 그린올리브 2개를 칵테일 픽에 꽂아 냉수에 세척한다.
@@ -88,55 +56,60 @@ components:
 
     getRecipe:
       properties:
-        name:
+        success:
+          type: boolean
+        message:
           type: string
-          example: 드라이마티니
-        color:
-          type: array
-          items:
-            type: integer
-          example: [1, 2, 3]
-          minItems: 1
-          maxItems: 3
-        main:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-                example: 봄베이 사파이어 진
-              amount:
+          example: Recipe get 성공(수정을 위한)
+        data:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 드라이마티니
+            color:
+              type: array
+              items:
                 type: integer
-                example: 45
-              unit:
-                type: string
-                example: ml
-        sub:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-                example: 레몬 껍질
-              amount:
-                type: integer
-                example: 1
-              unit:
-                type: string
-                example: 조각
-        text:
-          type: string
-          example: |
-            1. 글라스에 얼음을 가득 채워 칠링 해 놓고, 그린올리브 2개를 칵테일 픽에 꽂아 냉수에 세척한다.
-            2. 믹싱글라스에 얼음 5개, 진, 드라이 베르무스를 넣고, 믹싱 스푼으로 10초 정도 휘젓는다.
-            3. 칠링된 칵테일잔에 얼음을 버리고 스트레이너를 대고 얼음을 걸러내며 음료를 따른다.
-            4. 레몬 껍질 1조각을 잔 30cm 위에서 가볍게 즙을 짠 뒤 잔 주변에 한바퀴 문지른다.
-            5. 잔에 그린올리브를 넣어 장식한다.
-        image:
-          type: text
-          example: multipart/form-data 형식, 최대 5개
+              example: [1, 2, 3]
+              minItems: 1
+              maxItems: 3
+            main:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: 봄베이 사파이어 진
+                  amount:
+                    type: integer
+                    example: 45
+                  unit:
+                    type: string
+                    example: ml
+            sub:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: 레몬 껍질
+                  amount:
+                    type: integer
+                    example: 1
+                  unit:
+                    type: string
+                    example: 조각
+            instruction:
+              type: string
+              example: |
+                1. 글라스에 얼음을 가득 채워 칠링 해 놓고, 그린올리브 2개를 칵테일 픽에 꽂아 냉수에 세척한다.
+                2. 믹싱글라스에 얼음 5개, 진, 드라이 베르무스를 넣고, 믹싱 스푼으로 10초 정도 휘젓는다.
+                3. 칠링된 칵테일잔에 얼음을 버리고 스트레이너를 대고 얼음을 걸러내며 음료를 따른다.
+                4. 레몬 껍질 1조각을 잔 30cm 위에서 가볍게 즙을 짠 뒤 잔 주변에 한바퀴 문지른다.
+                5. 잔에 그린올리브를 넣어 장식한다.
 
     updateRecipe:
       properties:
@@ -178,7 +151,7 @@ components:
               unit:
                 type: string
                 example: 조각
-        text:
+        instruction:
           type: string
           example: |
             1. 글라스에 얼음을 가득 채워 칠링 해 놓고, 그린올리브 2개를 칵테일 픽에 꽂아 냉수에 세척한다.
@@ -190,66 +163,149 @@ components:
           type: text
           example: multipart/form-data 형식, 최대 5개
 
-    recipeDetail:
+    getRecipeList:
       properties:
-        name:
+        success:
+          type: boolean
+        message:
           type: string
-          example: 드라이마티니
-        ABV:
-          type: integer
-          example: 17
-        color:
-          type: array
-          items:
-            type: integer
-          example: [1, 2, 3]
-          minItems: 1
-          maxItems: 3
-        main:
+          example: 칵테일 레시피 디테일 조회 성공
+        list:
           type: array
           items:
             type: object
             properties:
-              name:
-                type: string
-                example: 봄베이 사파이어 진
-              amount:
-                type: integer
-                example: 45
-              unit:
-                type: string
-                example: ml
-        sub:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-                example: 레몬 껍질
-              amount:
+              id:
                 type: integer
                 example: 1
-              unit:
+              name:
                 type: string
-                example: 조각
-        text:
+                example: 드라이마티니
+              like:
+                type: integer
+                example: 10
+              post:
+                type: integer
+                example: 10
+              USER:
+                type: object
+                properties:
+                  nickname:
+                    type: string
+                    example: 알콜릭
+                  level:
+                    type: integer
+                    example: 2
+                  iswriter:
+                    type: boolean
+                    example: true
+
+    recipeDetail:
+      properties:
+        success:
+          type: boolean
+        message:
           type: string
-          example: |
-            1. 글라스에 얼음을 가득 채워 칠링 해 놓고, 그린올리브 2개를 칵테일 픽에 꽂아 냉수에 세척한다.
-            2. 믹싱글라스에 얼음 5개, 진, 드라이 베르무스를 넣고, 믹싱 스푼으로 10초 정도 휘젓는다.
-            3. 칠링된 칵테일잔에 얼음을 버리고 스트레이너를 대고 얼음을 걸러내며 음료를 따른다.
-            4. 레몬 껍질 1조각을 잔 30cm 위에서 가볍게 즙을 짠 뒤 잔 주변에 한바퀴 문지른다.
-            5. 잔에 그린올리브를 넣어 장식한다.
-        UNO_USER:
+          example: 칵테일 레시피 디테일 조회 성공
+        data:
           type: object
           properties:
-            NICKNAME:
+            name:
               type: string
-              example: 알콜릭
-            LEVEL:
+              example: 드라이마티니
+            date:
+              type: string
+              example: 2023.05.02
+            ABV:
               type: integer
-              example: 2
-            ISWRITER:
-              type: boolean
-              example: true
+              example: 17
+            color:
+              type: array
+              items:
+                type: integer
+              example: [1, 2, 3]
+              minItems: 1
+              maxItems: 3
+            main:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: 봄베이 사파이어 진
+                  amount:
+                    type: integer
+                    example: 45
+                  unit:
+                    type: string
+                    example: ml
+            sub:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: 레몬 껍질
+                  amount:
+                    type: integer
+                    example: 1
+                  unit:
+                    type: string
+                    example: 조각
+            instruction:
+              type: string
+              example: |
+                1. 글라스에 얼음을 가득 채워 칠링 해 놓고, 그린올리브 2개를 칵테일 픽에 꽂아 냉수에 세척한다.
+                2. 믹싱글라스에 얼음 5개, 진, 드라이 베르무스를 넣고, 믹싱 스푼으로 10초 정도 휘젓는다.
+                3. 칠링된 칵테일잔에 얼음을 버리고 스트레이너를 대고 얼음을 걸러내며 음료를 따른다.
+                4. 레몬 껍질 1조각을 잔 30cm 위에서 가볍게 즙을 짠 뒤 잔 주변에 한바퀴 문지른다.
+                5. 잔에 그린올리브를 넣어 장식한다.
+            USER:
+              type: object
+              properties:
+                nickname:
+                  type: string
+                  example: 알콜릭
+                level:
+                  type: integer
+                  example: 2
+                iswriter:
+                  type: boolean
+                  example: true
+
+    recipeDetailReview:
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 칵테일 레시피 리뷰 리스트 조회 성공
+        count:
+          type: integer
+          example: 10
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+                example: |
+                  후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.
+              date:
+                type: string
+                example: 2023.05.02(열두시간 전 일케 하는건 시간남으면...)
+              USER:
+                type: object
+                properties:
+                  nickname:
+                    type: string
+                    example: 알콜릭
+                  level:
+                    type: integer
+                    example: 2
+                  iswriter:
+                    type: boolean
+                    example: true

@@ -1,10 +1,10 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE extends Model {
+export default class COCKTAIL_REPORT extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    RNO: {
+    CNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -13,26 +13,23 @@ export default class RECIPE extends Model {
         key: 'CNO'
       }
     },
-    INO: {
+    UNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'INGREDIENT',
-        key: 'INO'
+        model: 'USER',
+        key: 'UNO'
       }
     },
-    VOLUME: {
-      type: DataTypes.FLOAT,
-      allowNull: true
-    },
-    UNIT: {
-      type: DataTypes.STRING(45),
-      allowNull: true
+    REPORT: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      comment: "1-부적절한 표현, 욕설 또는 혐오 표현\n2-스팸 또는 사용자를 현혹하는 콘텐츠\n3-유해하거나 위험한 컨텐츠\n4-증오 또는 위험한 콘텐츠"
     }
   }, {
     sequelize,
-    tableName: 'RECIPE',
+    tableName: 'COCKTAIL_REPORT',
     timestamps: false,
     indexes: [
       {
@@ -40,15 +37,15 @@ export default class RECIPE extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "RNO" },
-          { name: "INO" },
+          { name: "CNO" },
+          { name: "UNO" },
         ]
       },
       {
-        name: "INO_idx",
+        name: "UNO_idx",
         using: "BTREE",
         fields: [
-          { name: "INO" },
+          { name: "UNO" },
         ]
       },
     ]

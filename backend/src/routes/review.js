@@ -8,10 +8,10 @@ import PLACE from '../models/PLACE';
 import REVIEW from '../models/REVIEW';
 import USER from '../models/USER';
 import KEYWORD from '../models/KEYWORD';
-import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
 import sql from '../database/sql';
+import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
 
@@ -28,6 +28,7 @@ async function getKeyword(placeId) {
         as: 'REVIEW',
         attributes: [],
         where: { PLACE_ID: placeId },
+        required: false,
       },
     ],
     group: ['KEYWORD'],
@@ -146,6 +147,7 @@ router.get('/barlist', checkAccess, async (req, res) => {
                 model: USER,
                 as: 'UNO_USER',
                 attributes: ['UNO', 'NICKNAME', 'LEVEL'],
+                required: false,
               },
             ],
             order: [['createdAt', 'DESC']],
@@ -247,6 +249,7 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
           model: USER,
           as: 'UNO_USER',
           attributes: ['UNO', 'NICKNAME', 'LEVEL'],
+          required: false,
         },
       ],
       order: [['createdAt', 'DESC']],

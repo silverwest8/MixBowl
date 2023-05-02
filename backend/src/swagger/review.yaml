@@ -77,7 +77,7 @@ paths:
                   type: array
                   items:
                     type: integer
-    put:
+    post:
       tags:
         - reviews
       summary: 리뷰 수정
