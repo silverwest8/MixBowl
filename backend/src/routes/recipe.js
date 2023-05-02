@@ -8,11 +8,140 @@ import API_ninja_en from '../models/API_ninja_en';
 import COCKTAIL from '../models/COCKTAIL';
 import COCKTAIL_LIKE from '../models/COCKTAIL_LIKE';
 import INGREDIENT from '../models/INGREDIENT';
+import POST from '../models/POST';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import { Sequelize } from 'sequelize';
 dotenv.config();
+const router = express.Router();
 
+//multer 미들웨어 설정
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // 파일이 업로드되는 경로 지정
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // 파일 이름 설정
+  },
+});
+const fileFilter = (req, file, callback) => {
+  const typeArray = file.originalname.split('.');
+  const fileType = typeArray[typeArray.length - 1]; // 이미지 확장자 추출
+  //이미지 확장자 구분 검사
+  if (fileType === 'jpg' || fileType === 'jpeg' || fileType === 'png') {
+    callback(null, true);
+  } else {
+    return callback(
+      { message: '*.jpg, *.jpeg, *.png 파일만 업로드가 가능합니다.' },
+      false
+    );
+  }
+};
+const limits = {
+  fieldNameSize: 200, // 필드명 사이즈 최대값 (기본값 100bytes)
+  filedSize: 1024 * 1024, // 필드 사이즈 값 설정 (기본값 1MB)
+  fields: 2, // 파일 형식이 아닌 필드의 최대 개수 (기본 값 무제한)
+  fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
+  files: 5, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
+};
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter, // 이미지 업로드 필터링 설정
+  limits: limits, // 이미지 업로드 제한 설정
+  dest: __dirname + '/uploads/', // 이미지 업로드 경로
+});
+router.post('/', checkAccess, upload.single('image'), async (req, res) => {
+  try {
+    const cocktail = await COCKTAIL.create({
+      UNO: req.user.UNO,
+      NAME: req.body.name,
+      INSTRUCTION: req.body.instruction,
+    });
+    console.log(cocktail.CNO);
+    // 이미지명 CNO로 지정
+
+    // color 저장
+
+    // main, sub ingredient 저장
+
+    res.status(200).json({ success: true, message: 'Recipe post 성공' });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Recipe post 실패', error });
+  }
+});
+
+router.get('/:cocktailId', checkAccess, async (req, res) => {
+  try {
+    const cocktailId = req.params.cocktailId;
+    const cocktail = COCKTAIL.findByPk(cocktailId);
+    // color get
+    // main, sub ingredient get
+    return res
+      .status(200)
+      .json({ success: true, message: 'Recipe get 성공', data: cocktail });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Recipe get 실패', error });
+  }
+});
+
+router.post(
+  '/:cocktailId',
+  checkAccess,
+  upload.single('image'),
+  async (req, res) => {
+    try {
+      const cocktailId = req.params.cocktailId;
+      const cocktail = COCKTAIL.findByPk(cocktailId);
+      await cocktail.update({
+        NAME: req.body.name,
+        INSTRUCTION: req.body.instruction,
+      });
+      console.log(cocktail.CNO);
+      // 이미지명 CNO로 지정, 변경, 이전꺼 삭제
+
+      // color 변경
+
+      // main, sub ingredient 변경
+
+      res.status(200).json({ success: true, message: 'Cocktail update 성공' });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(400)
+        .json({ success: false, message: 'Cocktail update 실패', error });
+    }
+  }
+);
+
+router.delete('/:cocktailId', async (req, res) => {
+  try {
+    const cocktailId = req.params.cocktailId;
+    const cocktail = COCKTAIL.findByPk(cocktailId);
+    await cocktail.update({
+      NAME: req.body.name,
+      INSTRUCTION: req.body.instruction,
+    });
+    console.log(cocktail.CNO);
+    // 이미지명 CNO로 지정, 변경, 이전꺼 삭제
+
+    // color 변경
+
+    // main, sub ingredient 변경F
+
+    res.status(200).json({ success: true, message: 'Cocktail delete 성공' });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Cocktail delete 실패', error });
+  }
+});
 
 //  ----- 이 아래는 데이터 가공을 위해 쓴 코드 - 배포 시 지울 예정 ----- //
 
@@ -32,7 +161,7 @@ router.get('/testAPIs', async (req, res) => {
     if (data.drinks != null) {
       for (let i = 0; i < data.drinks.length; i++) {
         console.log(data.drinks[i]);
-        const recipe = await API_cocktaildb.findByPk(
+        const recipe = await API_cocktaildb_en.findByPk(
           Number(data.drinks[i].idDrink)
         );
         await recipe.update(data.drinks[i]);
@@ -68,7 +197,7 @@ router.get('/testAPIsAll', async (req, res) => {
       if (data.drinks != null) {
         for (let i = 0; i < data.drinks.length; i++) {
           console.log(data.drinks[i]);
-          const recipe = await API_cocktaildb.findByPk(
+          const recipe = await API_cocktaildb_en.findByPk(
             Number(data.drinks[i].idDrink)
           );
           await recipe.update(data.drinks[i]);
@@ -98,7 +227,7 @@ router.get('/testAPIs/findById', async (req, res) => {
       }
     );
     if (data.drinks != null) {
-      await API_cocktaildb.findByPk(data.drinks[0].idDrink);
+      await API_cocktaildb_en.findByPk(data.drinks[0].idDrink);
     }
     res.status(200).json(data);
   } catch (error) {
