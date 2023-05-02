@@ -62,6 +62,9 @@ const ModalWrapper = styled.div`
   .modal-content {
     text-align: center;
   }
+  @media screen and (max-width: 320px) {
+    padding: 3rem 0.7rem;
+  }
 `;
 
 const ButtonWrapper = styled.div`
