@@ -54,7 +54,6 @@ const RecipeButton = () => {
     <ButtonBox>
       {min === 0 && max === 0 ? (
         <Button
-          width="7rem"
           onClick={() =>
             openModal(RecipeAlcohol, {
               handleClose: closeModal,
@@ -65,7 +64,6 @@ const RecipeButton = () => {
         </Button>
       ) : (
         <Button
-          width="7rem"
           onClick={() =>
             openModal(RecipeAlcohol, {
               handleClose: closeModal,
@@ -90,7 +88,6 @@ const RecipeButton = () => {
         purple === false &&
         transparent === false) ? (
         <Button
-          width="7rem"
           onClick={() =>
             openModal(RecipeColor, {
               handleClose: closeModal,
@@ -101,7 +98,6 @@ const RecipeButton = () => {
         </Button>
       ) : (
         <Button
-          width="20rem"
           onClick={() =>
             openModal(RecipeColor, {
               handleClose: closeModal,
@@ -130,20 +126,21 @@ const ButtonBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
 `;
 
 const Button = styled.button`
-  width: ${(props) => props.width};
   height: 2.25rem;
   border: 1px solid ${({ theme }) => theme.color.secondGold};
   border-radius: 1.25rem;
-  margin-right: 1rem;
-  margin-left: 1rem;
   color: ${({ theme }) => theme.color.secondGold};
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  padding: 0 2rem;
 `;
 
 const Circle = styled.div`
