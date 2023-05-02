@@ -29,7 +29,7 @@ export default class COCKTAIL extends Model {
     },
     IMAGE_PATH: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: true
     },
     GLASS: {
       type: DataTypes.STRING(45),

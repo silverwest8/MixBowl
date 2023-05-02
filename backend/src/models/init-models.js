@@ -43,8 +43,8 @@ export default function initModels(sequelize) {
   USER.belongsToMany(COCKTAIL, { as: 'CNO_COCKTAILs', through: COCKTAIL_LIKE, foreignKey: "UNO", otherKey: "CNO" });
   COCKTAIL_LIKE.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
   COCKTAIL.hasMany(COCKTAIL_LIKE, { as: "COCKTAIL_LIKEs", foreignKey: "CNO"});
-  COLOR.belongsTo(COCKTAIL, { as: "RNO_COCKTAIL", foreignKey: "RNO"});
-  COCKTAIL.hasMany(COLOR, { as: "COLORs", foreignKey: "RNO"});
+  COLOR.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
+  COCKTAIL.hasMany(COLOR, { as: "COLORs", foreignKey: "CNO"});
   POST.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
   COCKTAIL.hasMany(POST, { as: "POSTs", foreignKey: "CNO"});
   RECIPE.belongsTo(COCKTAIL, { as: "RNO_COCKTAIL", foreignKey: "RNO"});
