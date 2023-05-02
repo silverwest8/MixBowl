@@ -18,6 +18,7 @@ import CocktailBarPage from "./pages/CocktailBarPage";
 import CommunityPostDetailPage from "./pages/CommunityPostDetailPage";
 import CommunityHomePage from "./pages/CommunityHomePage";
 import CommunityPostingPage from "./pages/CommunityPostingPage";
+import CommunityBoardPage from "./pages/CommunityBoardPage";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -57,6 +58,10 @@ function App() {
                   <Route path=":id" element={<CocktailBarPage />} />
                 </Route>
                 <Route path="community" element={<CommunityHomePage />} />
+                <Route
+                  path="community/board"
+                  element={<CommunityBoardPage />}
+                />
                 <Route
                   path="community/:id"
                   element={<CommunityPostDetailPage />}

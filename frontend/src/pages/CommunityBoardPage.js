@@ -7,7 +7,6 @@ import { FaFire, FaComments } from "react-icons/fa";
 import Title from "../components/common/Title";
 import { HiPencilAlt } from "react-icons/hi";
 import { MdArrowForwardIos } from "react-icons/md";
-import BoardShortListItem from "../components/community/BoardShortListItem";
 
 const dummyData = [
   {
@@ -50,117 +49,6 @@ const dummyData = [
   },
 ];
 
-const RecentRecommandation = [
-  {
-    id: 0,
-    title:
-      "칵테일 추천글 예시 만약 제목이 너무 길어진다면 이런 식으로 표시됩니다",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "칵테일 추천글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "칵테일 추천글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "칵테일 추천글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "칵테일 추천글 예시",
-    comments: 0,
-  },
-];
-const RecentQustion = [
-  {
-    id: 0,
-    title: "칵테일 질문글 예시",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "칵테일 질문글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "칵테일 질문글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "칵테일 질문글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "칵테일 질문글 예시",
-    comments: 0,
-  },
-];
-const RecentReview = [
-  {
-    id: 0,
-    title: "칵테일 리뷰글 예시",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "칵테일 리뷰글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "칵테일 추천글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "칵테일 리뷰글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "칵테일 리뷰글 예시",
-    comments: 0,
-  },
-];
-
-const RecentFree = [
-  {
-    id: 0,
-    title: "자유게시글 예시",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "자유게시글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "자유게시글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "자유게시글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "자유게시글 예시",
-    comments: 0,
-  },
-];
-
 const Background = styled.div`
   color: white;
   display: flex;
@@ -177,12 +65,10 @@ const Background = styled.div`
   }
 `;
 
-const HotPosts = styled.div`
+const MainSection = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100%;
-  width: 60vw;
   margin-bottom: 5rem;
   > h3 {
     display: flex;
@@ -201,53 +87,24 @@ const HotPosts = styled.div`
     align-items: center;
     padding-top: 1rem;
   }
+  width: 60vw;
   @media screen and (max-width: 500px) {
     width: 80vw;
   }
 `;
-const NewPosts = styled.div`
+const TopSection = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  height: 100%;
   width: 60vw;
-  > section:first-child {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-    @media screen and (max-width: 800px) {
-      flex-direction: column;
-      > div {
-        margin-top: 1rem;
-      }
-    }
-    > h1 {
-      display: flex;
-      flex-direction: row;
-      margin-bottom: 0.5rem;
-      font-weight: bold;
-      font-size: 1.5rem;
-    }
-    > div {
-      width: 40%;
-      min-width: 17.5rem;
-    }
-  }
-  .grid-container {
-    display: grid;
-    grid-template-rows: repeat(2, auto);
-    grid-template-columns: auto auto;
-    gap: 2rem;
-    margin-top: 1rem;
-    max-width: 60vw;
-    @media screen and (max-width: 800px) {
-      display: flex;
-      flex-direction: column;
-    }
-  }
   @media screen and (max-width: 500px) {
     width: 80vw;
+  }
+  > div:first-child {
+    display: flex;
+  }
+  > div:last-child {
+    display: flex;
+    margin: 3rem 0 0.5rem 0;
   }
 `;
 
@@ -255,14 +112,18 @@ const Button = styled.button`
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   color: white;
   border-radius: 10px;
-  padding: 0.7rem 1.5rem;
-  background-color: ${({ theme }) => theme.color.primaryGold};
+  padding: 0.7rem 0.7rem;
+  min-width: 10vw;
+  margin: 0rem 1rem 0.5rem 0;
   &:hover {
     background-color: ${({ theme }) => theme.color.secondGold};
   }
+  @media screen and (max-width: 500px) {
+    /* width: 20vw; */
+  }
 `;
 
-const Board = styled(Link)`
+const Board = styled.div`
   padding: 1rem;
   background-color: ${({ theme }) => theme.color.darkGray};
   border-radius: 10px;
@@ -281,9 +142,6 @@ const Board = styled(Link)`
   }
   > ul {
     margin-top: 0.8rem;
-  }
-  @media screen and (max-width: 500px) {
-    width: 80vw;
   }
 `;
 
@@ -306,7 +164,7 @@ const WritingButton = styled(Link)`
   }
 `;
 
-const CommunityHomePage = () => {
+const CommunityBoardPage = () => {
   return (
     <main
       style={{
@@ -317,78 +175,29 @@ const CommunityHomePage = () => {
     >
       <Title title="커뮤니티" />
       <Background>
-        <HotPosts>
-          <h3>
-            <FaFire className="icon fire" />
-            이번주 인기글
-          </h3>
+        <TopSection>
+          <div>
+            <span>전체</span>
+            <SearchBar
+              placeholder="관심있는 내용을 검색해보세요!"
+              showSearchButton={true}
+            />
+          </div>
+          <div>
+            <Button>전체</Button>
+            <Button>칵테일 추천</Button>
+            <Button>질문과 답변</Button>
+            <Button>칵테일 리뷰</Button>
+            <Button>자유게시판</Button>
+          </div>
+        </TopSection>
+        <MainSection>
           <section>
             {dummyData.map((el) => (
               <FreeListItem data={el} key={el.id} />
             ))}
           </section>
-          <div>
-            <Button>더보기</Button>
-          </div>
-        </HotPosts>
-        <NewPosts>
-          <section>
-            <h1>
-              <FaComments className="icon" />
-              최신글
-            </h1>
-            <SearchBar
-              placeholder="관심있는 내용을 검색해보세요!"
-              showSearchButton={true}
-            />
-          </section>
-          <div className="grid-container">
-            <Board to="/community/board?category=recommendation">
-              <span className="mini-title">
-                칵테일 추천
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {RecentRecommandation.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
-                ))}
-              </ul>
-            </Board>
-            <Board to="/community/board?category=qna">
-              <span className="mini-title">
-                질문과 답변
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {RecentQustion.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
-                ))}
-              </ul>
-            </Board>
-            <Board to="/community/board?category=review">
-              <span className="mini-title">
-                칵테일 리뷰
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {RecentReview.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
-                ))}
-              </ul>
-            </Board>
-            <Board to="/community/board?category=free">
-              <span className="mini-title">
-                자유게시판
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {RecentFree.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
-                ))}
-              </ul>
-            </Board>
-          </div>
-        </NewPosts>
+        </MainSection>
         <WritingButton to="/community/posting">
           <HiPencilAlt />
           글쓰기
@@ -398,4 +207,4 @@ const CommunityHomePage = () => {
   );
 };
 
-export default CommunityHomePage;
+export default CommunityBoardPage;

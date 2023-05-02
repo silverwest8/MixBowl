@@ -121,6 +121,9 @@ const TopSection = styled.div`
   flex-direction: column;
   width: 100%;
   margin-bottom: 2rem;
+  .none {
+    display: none;
+  }
 `;
 
 const TopMost = styled.div`
@@ -261,7 +264,9 @@ const CommunityPostDetailPage = () => {
               <span>{post.username}</span>
               <MemberBadge level={post.userlevel} />
             </Username>
-            <TitleContainer>
+            <TitleContainer
+              className={post.category === "질문과 답변" ? "none" : ""}
+            >
               <span>{post.title}</span>
               <DropdownMenu />
             </TitleContainer>

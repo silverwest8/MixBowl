@@ -69,6 +69,9 @@ const TopSection = styled.div`
     width: 35vw;
     font-weight: bold;
     font-size: 1.125rem;
+    @media screen and (max-width: 500px) {
+      width: 50vw;
+    }
   }
   .category {
     color: ${({ theme }) => theme.color.primaryGold};
@@ -86,14 +89,6 @@ const BottomSection = styled.div`
     align-items: center;
     .username {
       margin: 0 0.3rem 0 0.5rem;
-      @media screen and (max-width: 400px) {
-        display: none;
-      }
-    }
-    > div {
-      @media screen and (max-width: 400px) {
-        display: none;
-      }
     }
   }
 `;

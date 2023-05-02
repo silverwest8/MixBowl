@@ -28,7 +28,10 @@ const ItemContainer = styled.li`
     text-overflow: ellipsis;
     height: 1rem;
     @media screen and (max-width: 800px) {
-      width: 30vw;
+      width: 40vw;
+    }
+    @media screen and (max-width: 500px) {
+      width: 50vw;
     }
   }
   > div:last-child {
