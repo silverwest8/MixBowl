@@ -348,6 +348,35 @@ router.get('/image/:cocktailId', async (req, res) => {
   }
 });
 
+router.post('/like/:cocktailId', async (req, res) => {
+  try {
+    const cocktailId = req.params.cocktailId;
+    await db.COCKTAIL_LIKE.create({ CNO: cocktailId, UNO: req.user.UNO });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Recipe Like 실패', error });
+  }
+});
+
+router.post('/report/:cocktailId', async (req, res) => {
+  try {
+    const cocktailId = req.params.cocktailId;
+    const report = req.body.report;
+    await db.COCKTAIL_REPORT.create({
+      CNO: cocktailId,
+      UNO: req.user.UNO,
+      REPORT: report,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Recipe Report 실패', error });
+  }
+});
+
 //  ----- 이 아래는 데이터 가공을 위해 쓴 코드 - 배포 시 지울 예정 ----- //
 
 router.get('/testAPIs', async (req, res) => {

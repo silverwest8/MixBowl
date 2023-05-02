@@ -239,3 +239,67 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
+
+  /recipes/like/{cocktailId}:
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 좋아요
+      description: ''
+      operationId: LikeCocktail
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 11000
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/report/{cocktailId}:
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 신고
+      description: ''
+      operationId: ReportCocktail
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 11000
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              properties:
+                report:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
