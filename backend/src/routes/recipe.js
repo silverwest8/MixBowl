@@ -2,15 +2,19 @@
 
 import express from 'express';
 import axios from 'axios';
-import API_cocktaildb from '../models/API_cocktaildb_en';
+import checkAccess from '../middleware/checkAccessToken';
+import API_cocktaildb_en from '../models/API_cocktaildb_en';
+import API_ninja_en from '../models/API_ninja_en';
+import COCKTAIL from '../models/COCKTAIL';
+import COCKTAIL_LIKE from '../models/COCKTAIL_LIKE';
+import INGREDIENT from '../models/INGREDIENT';
 import dotenv from 'dotenv';
+import multer from 'multer';
+import { Sequelize } from 'sequelize';
 dotenv.config();
 
-const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.send('recipe');
-});
+//  ----- 이 아래는 데이터 가공을 위해 쓴 코드 - 배포 시 지울 예정 ----- //
 
 router.get('/testAPIs', async (req, res) => {
   try {
@@ -105,51 +109,210 @@ router.get('/testAPIs/findById', async (req, res) => {
   }
 });
 
-router.get('/testAPIs/getlist', async (req, res) => {
-  // c=list categories
-  // g=list glasses
-  // i=list ingredients
-  // a=list alcoholic
+router.get('/testAPIs/ninja', async (req, res) => {
   try {
-    const { data } = await axios.get(
-      'https://www.thecocktaildb.com/api/json/v1/1/list.php',
-      {
-        params: {
-          [req.query.list]: 'list',
-        },
-        headers: {
-          Authorization: '1',
-        },
+    const ingredient = await INGREDIENT.findAll();
+    for (let i = 0; i < ingredient.length; i++) {
+      const { data } = await axios.get(
+        'https://api.api-ninjas.com/v1/cocktail',
+        {
+          params: {
+            // [req.query.param]: req.query.content, // name or ingredients
+            ingredients: ingredient[i].NAME,
+          },
+          headers: {
+            'X-Api-Key': process.env.NINJA_API_KEY,
+          },
+        }
+      );
+      console.log(data.length);
+      for (let j = 0; j < data.length; j++) {
+        const [row, created] = await API_ninja_en.findOrCreate({
+          where: { NAME: data[j].name },
+        });
+        row.update({
+          INSTRUCTION: data[j].instructions,
+          INGREDIENT1: data[j].ingredients[0],
+          INGREDIENT2: data[j].ingredients[1],
+          INGREDIENT3: data[j].ingredients[2],
+          INGREDIENT4: data[j].ingredients[3],
+          INGREDIENT5: data[j].ingredients[4],
+          INGREDIENT6: data[j].ingredients[5],
+          INGREDIENT7: data[j].ingredients[6],
+          INGREDIENT8: data[j].ingredients[7],
+          INGREDIENT9: data[j].ingredients[8],
+          INGREDIENT10: data[j].ingredients[9],
+        });
       }
-    );
-    data.count = data.drinks.length;
-    res.status(200).json(data);
+    }
+    res.status(200).json({ success: true });
   } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Ninja API id 조회 실패', error });
+  }
+});
+
+router.get('/data/migration', async (req, res) => {
+  try {
+    const DB = await API_cocktaildb_en.findAll();
+    DB.forEach(async (element) => {
+      console.log(element);
+      await COCKTAIL.create({
+        CNO: element.idDrink,
+        UNO: 1,
+        NAME: element.strDrink,
+        ALCOHOLIC: element.strAlcoholic,
+        GLASS: element.strGlass,
+        INSTRUCTION: element.strInstructions,
+        IMAGE_PATH: element.strDrinkThumb,
+      });
+    });
+
+    res.status(200).json({ success: true });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
     return res.status(400).json({
       success: false,
-      message: 'Cocktaildb API list 조회 실패',
+      message: 'Cocktaildb API migration 실패',
       error,
     });
   }
 });
 
-router.get('/testAPIs/ninja', async (req, res) => {
+router.get('/data/ingredient', async (req, res) => {
   try {
-    const { data } = await axios.get('https://api.api-ninjas.com/v1/cocktail', {
-      params: {
-        [req.query.param]: req.query.content, // name or ingredients
-      },
-      headers: {
-        'X-Api-Key': process.env.NINJA_API_Key,
-      },
-    });
-    console.log(data);
-    res.status(200).json(data);
+    for (let i = 1; i <= 15; i++) {
+      const DB = await API_cocktaildb_en.findAll({
+        attributes: [`strIngredient${i}`],
+        group: [`strIngredient${i}`],
+      });
+      DB.forEach(async (element) => {
+        try {
+          if (element[`strIngredient${i}`] != null) {
+            console.log(element[`strIngredient${i}`]);
+            await INGREDIENT.findOrCreate({
+              where: { NAME: element[`strIngredient${i}`] },
+            });
+          }
+        } catch (error) {
+          console.log(error);
+          return res.status(400).json({
+            success: false,
+            message: 'Cocktaildb API ingredient building 실패',
+            error,
+          });
+        }
+      });
+    }
+    res.status(200).json({ success: true });
+    // res.status(200).json(data);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({ success: false, message: 'Cocktaildb API id 조회 실패', error });
+    return res.status(400).json({
+      success: false,
+      message: 'Cocktaildb API migration 실패',
+      error,
+    });
+  }
+});
+
+router.get('/data/processing', async (req, res) => {
+  try {
+    // const searchWord = '1 2/3';
+    // for (let i = 1; i <= 10; i++) {
+    //   const DB = await API_ninja_en.findAll({
+    //     attributes: ['ID', `INGREDIENT${i}`],
+    //     where: {
+    //       [`INGREDIENT${i}`]: { [Sequelize.Op.like]: '%' + searchWord + '%' },
+    //     },
+    //   });
+    //   for (let j = 0; j < DB.length; j++) {
+    //     console.log(DB[j].dataValues);
+    //     if (DB[j][`INGREDIENT${i}`].substring(0, 5) == '1 2/3') {
+    //       console.log('일치');
+    //       const temp = await API_ninja_en.findByPk(DB[j].ID);
+    //       temp.update({
+    //         [`INGREDIENT${i}`]: '1.66' + DB[j][`INGREDIENT${i}`].substring(5),
+    //       });
+    //       console.log('change');
+    //       console.log('1.66' + DB[j][`INGREDIENT${i}`].substring(5));
+    //     }
+    //   }
+    //   console.log(DB.length);
+    // }
+    // ----------------------------------
+    // const searchWord = '(6 parts)';
+    // for (let i = 1; i <= 10; i++) {
+    //   const DB = await API_ninja_en.findAll({
+    //     attributes: ['ID', `INGREDIENT${i}`],
+    //     where: {
+    //       [`INGREDIENT${i}`]: { [Sequelize.Op.like]: '%' + searchWord + '%' },
+    //     },
+    //   });
+    //   for (let j = 0; j < DB.length; j++) {
+    //     console.log(DB[j].dataValues);
+    //     let idx = DB[j][`INGREDIENT${i}`].indexOf('(6 parts)');
+    //     console.log('일치');
+    //     const temp = await API_ninja_en.findByPk(DB[j].ID);
+    //     temp.update({
+    //       [`INGREDIENT${i}`]:
+    //         DB[j][`INGREDIENT${i}`].substring(0, idx) +
+    //         DB[j][`INGREDIENT${i}`].substring(idx + 10),
+    //     });
+    //     console.log('change');
+    //     console.log(
+    //       DB[j][`INGREDIENT${i}`].substring(0, idx) +
+    //         DB[j][`INGREDIENT${i}`].substring(idx + 10)
+    //     );
+    //   }
+    //   console.log(DB.length);
+    // }
+    for (let i = 1; i <= 10; i++) {
+      const DB = await API_ninja_en.findAll({
+        attributes: ['ID', `INGREDIENT${i}`],
+      });
+      for (let j = 0; j < DB.length; j++) {
+        const str = DB[j][`INGREDIENT${i}`];
+        // if (str) console.log(DB[j].dataValues);
+        const space1 = str ? str.indexOf(' ') : null;
+        const space2 = str ? str.indexOf(' ', space1 + 1) : null;
+
+        const temp1 = str ? str.split(' ', 2) : null;
+        // if (temp1) console.log(temp1);
+        const list = [
+          temp1 ? temp1[0] : null,
+          temp1 ? temp1[1] : null,
+          str ? str.substring(space2 + 1) : null,
+        ];
+        if (str) console.log(list);
+        // let idx = str.indexOf('(6 parts)');
+        // console.log('일치');
+        // const temp = await API_ninja_en.findByPk(DB[j].ID);
+        // temp.update({
+        //   [`INGREDIENT${i}`]:
+        //     str.substring(0, idx) +
+        //     str.substring(idx + 10),
+        // });
+        // console.log('change');
+        // console.log(
+        //   str.substring(0, idx) +
+        //     str.substring(idx + 10)
+        // );
+      }
+      console.log(DB.length);
+    }
+    res.status(200).json({ success: true });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Cocktaildb API processing 실패',
+      error,
+    });
   }
 });
 
