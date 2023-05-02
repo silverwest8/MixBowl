@@ -15,7 +15,7 @@ const RecipeInputBox = ({
   return (
     <div>
       {disabled === true ? (
-        <InputBox>
+        <InputBox style={{ cursor: "pointer" }}>
           <input
             type={type}
             name={name}
@@ -23,8 +23,8 @@ const RecipeInputBox = ({
             placeholder={placeholder}
             onChange={onChange}
             autoComplete="off"
-            disabled
             style={{ cursor: "pointer" }}
+            disabled
           />
           {Button || null}
         </InputBox>
@@ -67,12 +67,6 @@ const InputBox = styled.div`
   padding: 0.8rem 0.95rem;
   & > input::placeholder {
     color: ${({ theme }) => theme.color.lightGray};
-  }
-  button {
-    color: ${({ theme }) => theme.color.primaryGold};
-    text-decoration: underline;
-    font-size: 0.875rem;
-    flex-shrink: 0;
   }
 `;
 

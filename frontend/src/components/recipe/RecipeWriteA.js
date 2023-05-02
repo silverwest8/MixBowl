@@ -1,12 +1,11 @@
 import styled from "styled-components";
 import Input from "../common/Input";
-import RecipeWriteB from "./RecipeWriteB";
 import { AddRecipeState } from "../../store/recipe";
 import { useRecoilState } from "recoil";
 import { useState, useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 
-const RecipeWrite = () => {
+const RecipeWriteA = () => {
   const fileInput = useRef();
   const [{ addImg }, setAddImg] = useRecoilState(AddRecipeState);
   const [{ addName }, setAddName] = useRecoilState(AddRecipeState);
@@ -253,16 +252,16 @@ const RecipeWrite = () => {
           </ColorButtonBox>
         </ColorBox>
       </RecipeBox>
-      <RecipeBox>
-        <RecipeWriteB />
-      </RecipeBox>
     </>
   );
 };
 
 const RecipeBox = styled.div`
-  width: 40%;
+  width: 40vw;
   margin: auto;
+  @media screen and (max-width: 840px) {
+    width: 80vw;
+  }
 `;
 
 const TopBox = styled.div`
@@ -326,18 +325,15 @@ const ColorButton = styled.button`
 const ColorButtonBox = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  row-gap: 1rem;
+  gap: 1rem;
   margin-top: 0.5rem;
   margin-bottom: 2rem;
   @media screen and (max-width: 1280px) {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
-  @media screen and (max-width: 1024px) {
+  @media screen and (max-width: 350px) {
     grid-template-columns: 1fr 1fr 1fr;
-  }
-  @media screen and (max-width: 720px) {
-    grid-template-columns: 1fr 1fr;
   }
 `;
 
-export default RecipeWrite;
+export default RecipeWriteA;

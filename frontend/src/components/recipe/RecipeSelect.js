@@ -23,7 +23,8 @@ const RecipeSelect = ({ options }) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = (event) => {
-    setValue(event.target.innerText);
+    const selectedOption = event.target.innerText;
+    setValue(selectedOption);
     setAnchorEl(null);
   };
 

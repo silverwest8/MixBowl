@@ -1,5 +1,5 @@
 import Title from "../components/common/Title";
-import RecipePost from "../components/recipe/RecipePost";
+import RecipePostButton from "../components/recipe/RecipePostButton";
 import RecipeSearch from "../components/recipe/RecipeSearch";
 import RecipeCard from "../components/recipe/RecipeCard";
 import RecipeButton from "../components/recipe/RecipeButton";
@@ -19,7 +19,7 @@ const RecipePage = () => {
         <RecipeCard></RecipeCard>
       </section>
       <section>
-        <RecipePost></RecipePost>
+        <RecipePostButton></RecipePostButton>
       </section>
     </Main>
   );

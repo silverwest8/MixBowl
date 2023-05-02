@@ -1,19 +1,59 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { FaPen } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
+import Textarea from "../common/Textarea";
+import Modal from "../common/Modal";
+import { useModal } from "../../hooks/useModal";
+
+const CommentModal = ({ handleClose }) => {
+  const [msg, setMsg] = useState("");
+  const [detailMsg, setDetailMsg] = useState("");
+  const handleMsg = (e) => {
+    setMsg(e.target.value);
+  };
+
+  const onSubmit = () => {
+    console.log("제출");
+    handleClose();
+  };
+
+  return (
+    <Modal
+      handleClose={handleClose}
+      onCancel={handleClose}
+      title="댓글작성"
+      onSubmit={onSubmit}
+    >
+      <Textarea
+        onChange={handleMsg}
+        name="detail"
+        messageType="error"
+        placeholder="레시피에 대한 댓글을 남겨주세요."
+      />
+    </Modal>
+  );
+};
 
 const RecipeComment = () => {
+  const { openModal, closeModal } = useModal();
   return (
     <Comment>
       <TopBox>
         <p>
           리뷰<span>(10)</span>
         </p>
-        <PostButton>
+        <PostButton
+          onClick={() => {
+            openModal(CommentModal, {
+              handleClose: closeModal,
+            });
+          }}
+        >
           <FaPen className="pen"></FaPen>작성하기
         </PostButton>
       </TopBox>
-      {[1, 2, 3].map((index) => (
+      {[1, 2, 3, 4].map((index) => (
         <CommentBox key={index}>
           <p className="user">
             @닉네임
@@ -78,10 +118,13 @@ const HorizonLine = styled.div`
 `;
 
 const Comment = styled.div`
-  width: 65%;
+  width: 50vw;
   margin: auto;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 1024px) {
+    width: 80vw;
+  }
 `;
 
 const PostButton = styled.button`

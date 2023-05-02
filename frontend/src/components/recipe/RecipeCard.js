@@ -5,13 +5,22 @@ import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import RecipeDrop from "./RecipeDrop";
-import { useRecoilState } from "recoil";
-import { alcoholState, arrState, colorState } from "../../store/recipe";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import {
+  alcoholState,
+  arrState,
+  colorState,
+  AddItemState,
+  AddRecipeState,
+} from "../../store/recipe";
+
 const RecipeCard = () => {
   const [Recipe, setRecipe] = useState([]);
   const [color, setColor] = useRecoilState(colorState);
   const [alcohol, setAlcohol] = useRecoilState(alcoholState);
   const [arr, setArr] = useRecoilState(arrState);
+  const addItemState = useResetRecoilState(AddItemState);
+  const addRecipeState = useResetRecoilState(AddRecipeState);
 
   const GetRecipe = async () => {
     try {
@@ -24,6 +33,11 @@ const RecipeCard = () => {
 
   useEffect(() => {
     GetRecipe();
+  }, []);
+
+  useEffect(() => {
+    addItemState();
+    addRecipeState();
   }, []);
 
   console.log(color);

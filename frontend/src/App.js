@@ -9,7 +9,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import RecipePage from "./pages/RecipePage";
-import WriteRecipePage from "./pages/WriteRecipePage";
+import RecipeWritePage from "./pages/RecipeWritePage";
 import DetailRecipePage from "./pages/DetailRecipePage";
 import EditRecipePage from "./pages/EditRecipePage";
 import RecipeRoute from "./routes/RecipeRoute";
@@ -49,7 +49,7 @@ function App() {
                   <Route path="recipe" element={<RecipePage />} />
                   <Route path="/recipe/:id" element={<DetailRecipePage />} />
                   <Route path="/recipe/:id/edit" element={<EditRecipePage />} />
-                  <Route path="/writerecipe" element={<WriteRecipePage />} />
+                  <Route path="/recipe/write" element={<RecipeWritePage />} />
                 </Route>
                 <Route path="mypage" element={<HomePage />} />
                 <Route path="login" element={<LoginPage />} />

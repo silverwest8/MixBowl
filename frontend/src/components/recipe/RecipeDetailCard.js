@@ -94,13 +94,15 @@ const RecipeDetailCard = () => {
           </TextBox>
         </RecipeBox>
         <Material>
-          <p>
-            <span>필수 재료</span> {Recipe.main}
-          </p>
-          <p>
-            <span>부재료</span> {Recipe.sub}
-          </p>
-          <p className="how">{Recipe.how}</p>
+          <div>
+            <span>필수 재료</span>
+            {Recipe.main}
+          </div>
+          <div>
+            <span>부재료</span>
+            {Recipe.sub}
+          </div>
+          <div className="how">{Recipe.how}</div>
         </Material>
       </TopBox>
       <MidBox>
@@ -111,7 +113,10 @@ const RecipeDetailCard = () => {
                 LikeCheck === true ? setLike(Like - 1) : setLike(Like + 1);
                 setLikeCheck(!LikeCheck);
               }}
-              style={{ color: LikeCheck === true ? "#E9AA33" : "white" }}
+              style={{
+                color: LikeCheck === true ? "#E9AA33" : "white",
+                fontSize: "2rem",
+              }}
             ></FaThumbsUp>
           </button>
           <p style={{ color: LikeCheck === true ? "#E9AA33" : "white" }}>
@@ -184,7 +189,7 @@ const Material = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  p {
+  div {
     margin-top: 1rem;
     span {
       margin-right: 0.75rem;
@@ -197,34 +202,36 @@ const Material = styled.div`
 `;
 
 const TopBox = styled.div`
-  width: 60%;
+  width: 50vw;
   margin: auto;
   display: flex;
   flex-direction: column;
   }
+  @media screen and (max-width: 1024px) {
+    width: 80vw;
+  }
 `;
 
 const MidBox = styled.div`
-  width: 65%;
+  width: 50vw;
   margin: auto;
   margin-top: 2rem;
   div {
     display: flex;
     justify-content: flex-end;
   }
+  @media screen and (max-width: 1024px) {
+    width: 80vw;
+  }
 `;
 
 const RecBox = styled.div`
   display: flex;
-  position: relative;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
   p {
     margin-left: 0.5rem;
-  }
-  .FaThumsup {
-    &:hover {
-      background-color: rgb(0, 0, 0, 0.5);
-      color: rgb(255, 255, 255, 100);
-    }
   }
 `;
 
