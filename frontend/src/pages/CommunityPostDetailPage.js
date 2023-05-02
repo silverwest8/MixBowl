@@ -1,6 +1,6 @@
 // import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Title from "../components/common/Title";
 import { FaThumbsUp } from "react-icons/fa";
@@ -9,6 +9,7 @@ import DropdownMenu from "../components/common/DropdownMenu";
 import { MdArrowBackIosNew } from "react-icons/md";
 import Textarea from "../components/common/Textarea";
 import CommentItem from "../components/community/CommentItem";
+import AnswerItem from "../components/community/AnswerItem";
 
 const postData = [
   {
@@ -166,6 +167,12 @@ const BottomInfo = styled.div`
   > div {
     display: flex;
     align-items: end;
+    .liked {
+      color: ${({ theme }) => theme.color.primaryGold};
+      &:hover {
+        color: ${({ theme }) => theme.color.secondGold};
+      }
+    }
   }
 `;
 const CommentSection = styled.div`
@@ -175,18 +182,60 @@ const CommentSection = styled.div`
   > ul {
     margin-top: 2rem;
   }
+  > div:first-child {
+    > div {
+      display: flex;
+      align-items: end;
+    }
+  }
+`;
+const CommentButton = styled.div`
+  border-radius: 10px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  background-color: ${({ theme }) => theme.color.primaryGold};
+  cursor: pointer;
 `;
 const CommunityPostDetailPage = () => {
   const params = useParams();
   const id = params.id;
   const [post, setPost] = useState([]);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   const GetPost = async () => {
     try {
       setPost(postData[id]);
+      setLiked(postData[id].liked);
+      setLikeCount(postData[id].likes);
     } catch (error) {
       return error.message;
     }
+  };
+
+  const [comment, setComment] = useState("");
+  const onChangeComment = (e) => {
+    setComment(e.target.value);
+  };
+  const registerComment = () => {
+    console.log("comment is ", comment);
+    console.log(post.comments);
+    post.comments.push({
+      id: 3,
+      username: "namelikeit",
+      date: "1시간 전",
+      userlevel: 3,
+      content: comment,
+    });
+  };
+  const changeLike = () => {
+    if (liked) {
+      setLikeCount(likeCount - 1);
+    } else {
+      setLikeCount(likeCount + 1);
+    }
+    setLiked(!liked);
+    console.log("like is ", liked);
   };
 
   useEffect(() => {
@@ -222,8 +271,11 @@ const CommunityPostDetailPage = () => {
             <BottomInfo>
               <span>{post.date}</span>
               <div>
-                <FaThumbsUp className="icon" />
-                {post.likes}
+                <FaThumbsUp
+                  className={liked ? "icon liked" : "icon"}
+                  onClick={changeLike}
+                />
+                {likeCount}
               </div>
             </BottomInfo>
             <hr />
@@ -232,13 +284,28 @@ const CommunityPostDetailPage = () => {
             <Textarea
               placeholder="당신의 의견을 댓글로 남겨 주세요!"
               rows={3}
+              onChange={onChangeComment}
+              Button={
+                <CommentButton type="button" onClick={registerComment}>
+                  댓글 등록
+                </CommentButton>
+              }
             />
-            <ul>
-              {post.comments &&
-                post.comments.map((el) => (
-                  <CommentItem data={el} key={el.id} />
-                ))}
-            </ul>
+            {post.category === "질문과 답변" ? (
+              <ul>
+                {post.comments &&
+                  post.comments.map((el) => (
+                    <AnswerItem data={el} key={el.id} />
+                  ))}
+              </ul>
+            ) : (
+              <ul>
+                {post.comments &&
+                  post.comments.map((el) => (
+                    <CommentItem data={el} key={el.id} />
+                  ))}
+              </ul>
+            )}
           </CommentSection>
         </EntireSection>
       </Background>

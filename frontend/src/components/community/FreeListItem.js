@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import { FaCommentDots, FaThumbsUp } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
-// import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const FreeListItem = ({ data }) => {
   // TODO : 호버, 글 종류별로 변경
   return (
-    <ItemContainer>
+    <ItemContainer to={`/community/${data.id}`}>
       <TopSection>
         <div>
           <h4>{data.title}</h4>
@@ -33,7 +33,7 @@ const FreeListItem = ({ data }) => {
   );
 };
 
-const ItemContainer = styled.div`
+const ItemContainer = styled(Link)`
   display: flex;
   flex-direction: column;
   align-items: center;
