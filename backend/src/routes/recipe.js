@@ -143,6 +143,120 @@ router.delete('/:cocktailId', async (req, res) => {
   }
 });
 
+router.get('/getlist', checkAccess, async (req, res) => {
+  try {
+    const cocktailId = req.params.cocktailId;
+    const max = req.query.max;
+    const min = req.query.min;
+    const color = req.query.color; // json string parse?
+    const search = req.query.search;
+    const sort = req.query.sort;
+    let list = [];
+    const cocktail = await COCKTAIL.findAll({
+      where: {
+        //
+      },
+      include: [
+        {
+          model: USER,
+          as: 'UNO_USER',
+          attributes: ['UNO', 'NICKNAME', 'LEVEL'],
+        },
+      ],
+    });
+
+    for (let i = 0; i < cocktail.length; i++) {
+      const like = await COCKTAIL_LIKE.findAndCountAll({
+        where: cocktail[i].CNO,
+      });
+      console.log(like.count);
+      const post = await POST.findAndCountAll({ where: cocktail[i].CNO });
+      console.log(post.count);
+    }
+
+    // color get
+    // main, sub ingredient get
+    return res
+      .status(200)
+      .json({ success: true, message: 'Cocktail list get 성공', list });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Cocktail list get 실패', error });
+  }
+});
+
+router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
+  try {
+    const cocktailId = req.params.cocktailId;
+    const cocktail = await COCKTAIL.findByPk(cocktailId);
+
+    for (let i = 0; i < cocktail.length; i++) {
+      const like = await COCKTAIL_LIKE.findAndCountAll({
+        where: cocktail[i].CNO,
+      });
+      console.log(like.count);
+      const post = await POST.findAndCountAll({ where: cocktail[i].CNO });
+      console.log(post.count);
+    }
+
+    // color get
+    // main, sub ingredient get
+    return res
+      .status(200)
+      .json({ success: true, message: 'Cocktail detail get 성공', list });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Cocktail detail get 실패', error });
+  }
+});
+
+router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
+  try {
+    const cocktailId = req.params.cocktailId;
+    const cocktail = await COCKTAIL.findByPk(cocktailId);
+
+    for (let i = 0; i < cocktail.length; i++) {
+      const like = await COCKTAIL_LIKE.findAndCountAll({
+        where: cocktail[i].CNO,
+      });
+      console.log(like.count);
+      const post = await POST.findAndCountAll({ where: cocktail[i].CNO });
+      console.log(post.count);
+    }
+
+    // color get
+    // main, sub ingredient get
+    return res
+      .status(200)
+      .json({ success: true, message: 'Cocktail detail get 성공', list });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Cocktail detail get 실패', error });
+  }
+});
+
+router.get('/image/:cocktailId', checkAccess, async (req, res) => {
+  try {
+    const cocktailId = req.params.cocktailId;
+    const cocktail = COCKTAIL.findByPk(cocktailId);
+    console.log(cocktail.IMAGE_PATH);
+
+    res.status(200).send('cocktailImage');
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Recipe Image get 실패', error });
+  }
+});
+
+
 //  ----- 이 아래는 데이터 가공을 위해 쓴 코드 - 배포 시 지울 예정 ----- //
 
 router.get('/testAPIs', async (req, res) => {
