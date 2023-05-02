@@ -5,44 +5,35 @@ export default class RECIPE extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     RNO: {
-      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
-    },
-    UNO: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      primaryKey: true,
       references: {
-        model: 'USER',
-        key: 'UNO'
+        model: 'COCKTAIL',
+        key: 'CNO'
       }
     },
-    NAME: {
-      type: DataTypes.STRING(45),
-      allowNull: false,
-      unique: "NAME_UNIQUE"
-    },
-    IMAGE_PATH: {
-      type: DataTypes.STRING(45),
-      allowNull: false
-    },
-    RECIPE_JSON: {
-      type: DataTypes.JSON,
-      allowNull: false
-    },
-    COLOR: {
-      type: DataTypes.STRING(45),
-      allowNull: false
-    },
-    LIKE: {
+    INO: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: 'INGREDIENT',
+        key: 'INO'
+      }
+    },
+    VOLUME: {
+      type: DataTypes.FLOAT,
+      allowNull: true
+    },
+    UNIT: {
+      type: DataTypes.STRING(45),
+      allowNull: true
     }
   }, {
     sequelize,
     tableName: 'RECIPE',
-    timestamps: true,
+    timestamps: false,
     indexes: [
       {
         name: "PRIMARY",
@@ -50,21 +41,14 @@ export default class RECIPE extends Model {
         using: "BTREE",
         fields: [
           { name: "RNO" },
+          { name: "INO" },
         ]
       },
       {
-        name: "NAME_UNIQUE",
-        unique: true,
+        name: "INO_idx",
         using: "BTREE",
         fields: [
-          { name: "NAME" },
-        ]
-      },
-      {
-        name: "UNO3_idx",
-        using: "BTREE",
-        fields: [
-          { name: "UNO" },
+          { name: "INO" },
         ]
       },
     ]

@@ -18,7 +18,7 @@ export default class API_cocktaildb_en extends Model {
       allowNull: true
     },
     strTags: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.TEXT,
       allowNull: true
     },
     strVideo: {

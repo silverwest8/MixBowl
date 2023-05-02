@@ -10,14 +10,6 @@ export default class POST extends Model {
       allowNull: false,
       primaryKey: true
     },
-    RNO: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'RECIPE',
-        key: 'RNO'
-      }
-    },
     UNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -30,6 +22,15 @@ export default class POST extends Model {
       type: DataTypes.INTEGER,
       allowNull: false,
       comment: "1 - 칵테일 추천 || 2 - 질문과 답변 || 3 - 칵테일 리뷰 || 4 - 자유"
+    },
+    CNO: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: "CATEGORY 3일때만 있음",
+      references: {
+        model: 'COCKTAIL',
+        key: 'CNO'
+      }
     },
     TITLE: {
       type: DataTypes.STRING(45),
@@ -72,7 +73,7 @@ export default class POST extends Model {
         name: "RNO1",
         using: "BTREE",
         fields: [
-          { name: "RNO" },
+          { name: "CNO" },
         ]
       },
     ]
