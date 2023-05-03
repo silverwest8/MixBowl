@@ -340,8 +340,9 @@ router.post(
   checkAccess,
   upload.array('files', 5),
   async (req, res) => {
-    await sql.changeReview(req);
-    await sql.postImage(req);
+    const review = await sql.changeReview(req);
+    await sql.postImage(req,review);
+    res.json({success: true, message: 'Change Review Success'})
   }
 );
 

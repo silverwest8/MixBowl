@@ -1,10 +1,19 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE extends Model {
+export default class COCKTAIL_LIKE extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    RNO: {
+    UNO: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: 'USER',
+        key: 'UNO'
+      }
+    },
+    CNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -12,27 +21,10 @@ export default class RECIPE extends Model {
         model: 'COCKTAIL',
         key: 'CNO'
       }
-    },
-    INO: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'INGREDIENT',
-        key: 'INO'
-      }
-    },
-    VOLUME: {
-      type: DataTypes.FLOAT,
-      allowNull: true
-    },
-    UNIT: {
-      type: DataTypes.STRING(45),
-      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'RECIPE',
+    tableName: 'COCKTAIL_LIKE',
     timestamps: false,
     indexes: [
       {
@@ -40,15 +32,29 @@ export default class RECIPE extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "RNO" },
-          { name: "INO" },
+          { name: "UNO" },
+          { name: "CNO" },
         ]
       },
       {
-        name: "INO_idx",
+        name: "UNO_idx",
         using: "BTREE",
         fields: [
-          { name: "INO" },
+          { name: "UNO" },
+        ]
+      },
+      {
+        name: "RNO4",
+        using: "BTREE",
+        fields: [
+          { name: "CNO" },
+        ]
+      },
+      {
+        name: "RNO",
+        using: "BTREE",
+        fields: [
+          { name: "CNO" },
         ]
       },
     ]

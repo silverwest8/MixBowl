@@ -85,10 +85,10 @@ paths:
 
 
   /reviews/{reviewId}:
-    put:
+    post:
       tags:
         - review
-      summary: 리뷰 수정
+      summary: 리뷰 수정 (post로 수정하기로 결정)
       description: ""
       operationId: updateReview
 
@@ -97,7 +97,34 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Nickname"
+              type: object
+              properties:
+                placeId:
+                  type: integer
+                rating:
+                  type: integer
+                  example: 4
+                keyword:
+                  type: array
+                  items:
+                    type: integer
+                  maxItem: 3
+                  minItem: 3
+                  example: [3, 4, 5]
+                  description: 키워드 종류를 쉼표로 구분하여 전송
+                detail:
+                  type: text
+                  example: 너무 맛있고 분위기가 좋아요
+                  description: 리뷰 세부 내용 담아서 전송
+                image:
+                  type: text
+                  example: multipart/form-data 형식으로 최대 5개
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: integer
       responses:
         "200":
           description: ""

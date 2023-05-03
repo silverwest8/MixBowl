@@ -4,15 +4,10 @@ const { Model, Sequelize } = _sequelize;
 export default class POST_LIKE extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    PLNO: {
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true
-    },
     UNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      primaryKey: true,
       references: {
         model: 'USER',
         key: 'UNO'
@@ -21,6 +16,7 @@ export default class POST_LIKE extends Model {
     PNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      primaryKey: true,
       references: {
         model: 'POST',
         key: 'PNO'
@@ -36,7 +32,8 @@ export default class POST_LIKE extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "PLNO" },
+          { name: "UNO" },
+          { name: "PNO" },
         ]
       },
       {
