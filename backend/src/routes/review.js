@@ -331,25 +331,37 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   });
   try {
     await sql.postImage(req, review);
+    res.json({ success: true, message: 'Multipart Upload Ok & DB update OK' });
   } catch (error) {
     console.log(error.message);
   }
-  res.json({ success: true, message: 'Multipart Upload Ok & DB update OK' });
 });
 
 router.post(
   '/:reviewId',
-  sql.deleteImage,
   checkAccess,
+  sql.deleteImage,
   upload.array('files', 5),
   async (req, res) => {
-    await sql.changeReview(req);
-    await sql.postImage(req);
+    try{
+    const review = await sql.changeReview(req);
+    await sql.postImage(req,review);
+    res.json({success: true, message: 'Change Review Success'})
+    }
+    catch(error){
+      console.log(error.message);
+    }
   }
 );
 
-router.delete('/reviewId', checkAccess, async (req, res) => {
-  return res.status(200).json({ success: true, message: '리뷰 삭제 성공' });
+router.delete('/:reviewId', checkAccess, sql.deleteImage,async (req, res) => {
+  console.log('hi');
+  try{
+    await sql.deleteReview(req);
+    return res.status(200).json({ success: true, message: 'Delete Review Success' });
+  }catch(error){
+    console.log(error.message);
+  }
 });
 
 //Error Handler

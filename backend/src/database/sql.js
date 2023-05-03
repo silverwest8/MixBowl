@@ -149,12 +149,7 @@ const sql = {
   changeReview: async (req) => {
     const unum = req.decoded.unum;
     console.log(unum);
-    // const data = JSON.parse(req.body.data);
-    const data = {
-      rating: 3,
-      text: '수정API확인중',
-      keyword: [1],
-    };
+    const data = JSON.parse(req.body.data);
     const reviewId = req.params.reviewId;
     const review = await REVIEW.findByPk(reviewId);
     if (review.UNO === req.user.UNO) {
@@ -167,7 +162,7 @@ const sql = {
         await REVIEW.update(
           {
             RATING: data.rating,
-            TEXT: data.text,
+            TEXT: data.detail,
           },
           { where: { REVIEW_ID: reviewId } }
         );
@@ -185,10 +180,36 @@ const sql = {
       } catch (error) {
         console.log(error.message);
       }
+      return review;
     } else {
       console.log('There is no review of URI parameter reviewId');
     }
     // const { rating, detail, keyword } = data;
+  },
+  deleteReview: async(req)=>{
+    const unum = req.decoded.unum;
+    console.log(unum);
+    const reviewId = req.params.reviewId;
+    const review = await REVIEW.findByPk(reviewId);
+    if (review.UNO === req.user.UNO) {
+      console.log('권한 확인');
+    } else {
+      throw new Error('no authorization to modify review');
+    }
+    if (review !== null) {
+      try {
+        await REVIEW.destroy(
+          { where: { REVIEW_ID: reviewId } }
+        );
+        await KEYWORD.destroy({
+          where: {
+            REVIEW_ID: reviewId,
+          },
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
   },
   deleteImage: async (req, res, next) => {
     const reviewId = req.params.reviewId;
@@ -197,6 +218,17 @@ const sql = {
         REVIEW_ID: reviewId,
       },
     });
+    images.forEach(img=>{
+      fs.unlink(img.PATH,err=>{
+        if(err) throw err;
+        console.log('delete success');
+      })
+    }) 
+    await IMAGE.destroy({
+      where:{
+        REVIEW_ID:reviewId
+      }
+    })
     return next();
   },
 };

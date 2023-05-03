@@ -61,6 +61,37 @@ paths:
       summary: 리뷰 데이터 가져오기
       description: ""
       operationId: getReview
+      parameters:
+        - in: path
+          name: placeId
+          description: 장소 ID
+          example: 1389819741
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getReview"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Fail"
+
+
+  /reviews/{reviewId}:
+    post:
+      tags:
+        - review
+      summary: 리뷰 수정 (post로 수정하기로 결정)
+      description: ""
+      operationId: updateReview
+
       requestBody:
         required: true
         content:
@@ -77,19 +108,23 @@ paths:
                   type: array
                   items:
                     type: integer
-    post:
-      tags:
-        - reviews
-      summary: 리뷰 수정
-      description: ""
-      operationId: updateReview
-
-      requestBody:
-        required: true
-        content:
-          application/json:
+                  maxItem: 3
+                  minItem: 3
+                  example: [3, 4, 5]
+                  description: 키워드 종류를 쉼표로 구분하여 전송
+                detail:
+                  type: text
+                  example: 너무 맛있고 분위기가 좋아요
+                  description: 리뷰 세부 내용 담아서 전송
+                image:
+                  type: text
+                  example: multipart/form-data 형식으로 최대 5개
+          multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Nickname"
+              type: object
+              properties:
+                image:
+                  type: integer
       responses:
         "200":
           description: ""
