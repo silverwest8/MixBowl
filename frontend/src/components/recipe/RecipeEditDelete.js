@@ -7,17 +7,31 @@ import { theme } from "../../styles/theme";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../common/Modal";
 import { useNavigate, useParams } from "react-router-dom";
+import { toastState, toastShowState } from "../../store/toast";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 const OPTIONS = ["수정", "삭제"];
 
-const DropdownMenu = ({ options }) => {
+const RecipeEditDelete = ({ options }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [Edit, setEdit] = useState(false);
   const [Delete, setDelete] = useState(false);
+  const setToastState = useSetRecoilState(toastState);
+  const showToast = useRecoilValue(toastShowState);
   const { openModal, closeModal } = useModal();
   const navigate = useNavigate();
   const params = useParams();
   const id = params.id;
+
+  const ToastMessageDelete = () => {
+    setToastState({
+      show: true,
+      message: "삭제가 완료되었습니다.",
+      type: "success",
+      ms: 2000,
+    });
+  };
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -38,6 +52,7 @@ const DropdownMenu = ({ options }) => {
 
   const handleConform = () => {
     console.log("레시피삭제시");
+    ToastMessageDelete();
     closeModal();
     navigate(-1);
   };
@@ -89,7 +104,6 @@ const DropdownMenu = ({ options }) => {
             color: "white",
             width: "6rem",
             borderRadius: "12px",
-
             backgroundColor: theme.color.darkGray,
           },
         }}
@@ -120,4 +134,4 @@ const DropdownMenu = ({ options }) => {
   );
 };
 
-export default DropdownMenu;
+export default RecipeEditDelete;

@@ -14,6 +14,7 @@ const RecipeDrop = ({ options }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [arr, setArr] = useRecoilState(arrState);
+  const token = localStorage.getItem("access_token");
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,6 +57,7 @@ const RecipeDrop = ({ options }) => {
         aria-expanded={open ? "true" : undefined}
         aria-haspopup="true"
         onClick={handleClick}
+        disabled={!token}
         sx={{
           color: theme.color.lightGray,
           padding: 0,

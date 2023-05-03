@@ -1,14 +1,15 @@
 import styled from "styled-components";
 import Input from "../common/Input";
 import { AddRecipeState } from "../../store/recipe";
-import { useRecoilState } from "recoil";
 import { useState, useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { toastState } from "../../store/toast";
 
-const RecipeWriteA = () => {
+const RecipeTitleImgColor = () => {
   const fileInput = useRef();
   const [{ addImg }, setAddImg] = useRecoilState(AddRecipeState);
-  const [{ addName }, setAddName] = useRecoilState(AddRecipeState);
+  const setAddName = useSetRecoilState(AddRecipeState);
   const [{ addColor }, setAddColor] = useRecoilState(AddRecipeState);
   const [coloritem, setColoritem] = useState({
     red: false,
@@ -24,6 +25,16 @@ const RecipeWriteA = () => {
     purple: false,
     transparent: false,
   });
+  const setToastState = useSetRecoilState(toastState);
+
+  const ToastMessageColor = () => {
+    setToastState({
+      show: true,
+      message: "최대 3개까지만 선택 가능합니다.",
+      type: "error",
+      ms: 2000,
+    });
+  };
 
   const handleAddButton = (e) => {
     fileInput.current.click();
@@ -49,8 +60,8 @@ const RecipeWriteA = () => {
   };
 
   const handleColor = (color) => {
-    if (addColor.length >= 2) {
-      alert("최대 2개까지의 색상만 선택이 가능합니다.");
+    if (addColor.length >= 3) {
+      ToastMessageColor();
       setAddColor((prev) => ({ ...prev, addColor: [] }));
       setColoritem({
         red: false,
@@ -305,6 +316,10 @@ const Button = styled.button`
   margin-top: 0.3rem;
   margin-bottom: 0.3rem;
   letter-spacing: 0.1rem;
+  &:hover {
+    background-color: ${({ theme }) => theme.color.primaryGold};
+    color: white;
+  }
 `;
 
 const ColorBox = styled.div`
@@ -336,4 +351,4 @@ const ColorButtonBox = styled.div`
   }
 `;
 
-export default RecipeWriteA;
+export default RecipeTitleImgColor;

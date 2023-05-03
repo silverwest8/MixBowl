@@ -5,17 +5,34 @@ import MemberBadge from "../common/MemberBadge";
 import Textarea from "../common/Textarea";
 import Modal from "../common/Modal";
 import { useModal } from "../../hooks/useModal";
+import { useSetRecoilState } from "recoil";
+import { toastState } from "../../store/toast";
 
 const CommentModal = ({ handleClose }) => {
   const [msg, setMsg] = useState("");
-  const [detailMsg, setDetailMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const setToastState = useSetRecoilState(toastState);
   const handleMsg = (e) => {
     setMsg(e.target.value);
   };
 
   const onSubmit = () => {
-    console.log("제출");
-    handleClose();
+    if (msg === "") {
+      setErrorMsg("* 댓글을 입력해주세요");
+    } else {
+      ToastMessageEnter();
+      console.log("댓글작성완료");
+      handleClose();
+    }
+  };
+
+  const ToastMessageEnter = () => {
+    setToastState({
+      show: true,
+      message: "작성이 완료되었습니다.",
+      type: "success",
+      ms: 2000,
+    });
   };
 
   return (
@@ -25,8 +42,10 @@ const CommentModal = ({ handleClose }) => {
       title="댓글작성"
       onSubmit={onSubmit}
     >
+      <Msg>{errorMsg && <p className="errmessage">{errorMsg}</p>}</Msg>
       <Textarea
         onChange={handleMsg}
+        rows={4}
         name="detail"
         messageType="error"
         placeholder="레시피에 대한 댓글을 남겨주세요."
@@ -122,9 +141,15 @@ const Comment = styled.div`
   margin: auto;
   display: flex;
   flex-direction: column;
-  @media screen and (max-width: 1024px) {
-    width: 80vw;
+  @media screen and (max-width: 840px) {
+    width: 70vw;
   }
+`;
+
+const Msg = styled.div`
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.color.red};
+  margin-bottom: 0.25rem;
 `;
 
 const PostButton = styled.button`

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { FaEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-const RecipePostButton = () => {
+const RecipeWriteBtn = () => {
   return (
     <>
       <Link to="/recipe/write">
@@ -30,4 +30,4 @@ const Button = styled.button`
   background-color: ${({ theme }) => theme.color.primaryGold};
 `;
 
-export default RecipePostButton;
+export default RecipeWriteBtn;

@@ -5,22 +5,21 @@ import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import RecipeDrop from "./RecipeDrop";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useRecoilValue, useResetRecoilState } from "recoil";
 import {
   alcoholState,
   arrState,
   colorState,
-  AddItemState,
   AddRecipeState,
 } from "../../store/recipe";
 
 const RecipeCard = () => {
   const [Recipe, setRecipe] = useState([]);
-  const [color, setColor] = useRecoilState(colorState);
-  const [alcohol, setAlcohol] = useRecoilState(alcoholState);
-  const [arr, setArr] = useRecoilState(arrState);
-  const addItemState = useResetRecoilState(AddItemState);
+  const color = useRecoilValue(colorState);
+  const alcohol = useRecoilValue(alcoholState);
+  const arr = useRecoilValue(arrState);
   const addRecipeState = useResetRecoilState(AddRecipeState);
+  const token = localStorage.getItem("access_token");
 
   const GetRecipe = async () => {
     try {
@@ -36,13 +35,10 @@ const RecipeCard = () => {
   }, []);
 
   useEffect(() => {
-    addItemState();
     addRecipeState();
   }, []);
 
-  console.log(color);
-  console.log(alcohol);
-  console.log(arr);
+  console.log(color, alcohol, arr);
   return (
     <MiddleBox>
       <CardBox>
@@ -51,10 +47,18 @@ const RecipeCard = () => {
         </div>
         {Recipe.map((index) => (
           <RecipeBox key={Recipe.rno}>
-            <Link to={`/recipe/${index.rno}`}>
-              <img src={index.image_path}></img>
-              <h1>{index.name}</h1>
-            </Link>
+            {token ? (
+              <Link to={`/recipe/${index.rno}`}>
+                <img src={index.image_path}></img>
+                <h1>{index.name}</h1>
+              </Link>
+            ) : (
+              <>
+                <img src={index.image_path}></img>
+                <h1>{index.name}</h1>
+              </>
+            )}
+
             <TextBox>
               <p>
                 @{index.uname} <MemberBadge level={index.level} />

@@ -41,30 +41,21 @@ export const AddRecipeState = atom({
     addImg: "",
     addName: "",
     addColor: [],
-    explain: "",
-  },
-});
-
-export const AddItemState = atom({
-  key: "AddItemState",
-  default: {
-    main: [
+    addItem: [
       {
-        mainId: 1,
-        mainName: "",
-        mainAmount: null,
-        mainUnit: "",
-        mainHover: false,
+        addLength: 1,
+        addName: "",
+        addAmount: null,
+        addUnit: "",
+      },
+      {
+        addLength: 2,
+        addName: "",
+        addAmount: null,
+        addUnit: "",
       },
     ],
-    sub: [
-      {
-        subId: 1,
-        subName: "",
-        subAmount: null,
-        subnUnit: "",
-        subHover: false,
-      },
-    ],
+    addAlcohol: "",
+    addExplain: "",
   },
 });

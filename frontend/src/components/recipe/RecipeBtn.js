@@ -6,7 +6,7 @@ import { colorState, alcoholState } from "../../store/recipe";
 import { useRecoilState } from "recoil";
 import { useEffect } from "react";
 
-const RecipeButton = () => {
+const RecipeBtn = () => {
   const { openModal, closeModal } = useModal();
   const [{ min, max }, setAlcohol] = useRecoilState(alcoholState);
   const [
@@ -151,4 +151,4 @@ const Circle = styled.div`
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
 `;
 
-export default RecipeButton;
+export default RecipeBtn;

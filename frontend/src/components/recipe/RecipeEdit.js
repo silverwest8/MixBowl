@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Input from "../common/Input";
-import RecipeWriteB from "./RecipeWriteB";
+import RecipeExplain from "./RecipeExplain";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
@@ -59,7 +59,7 @@ const RecipeEdit = () => {
             <ColorButton bgColor="#3E3E3E">무색</ColorButton>
           </ColorButtonBox>
         </ColorBox>
-        <RecipeWriteB></RecipeWriteB>
+        <RecipeExplain></RecipeExplain>
       </RecipeBox>
     </>
   );
