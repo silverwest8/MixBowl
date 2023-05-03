@@ -1,15 +1,15 @@
 import styled from "styled-components";
 import Input from "../common/Input";
 import { AddRecipeState } from "../../store/recipe";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { toastState } from "../../store/toast";
 
-const RecipeTitleImgColor = () => {
+const RecipeTitleImgColor = ({ Title, Color }) => {
   const fileInput = useRef();
   const [{ addImg }, setAddImg] = useRecoilState(AddRecipeState);
-  const setAddName = useSetRecoilState(AddRecipeState);
+  const [{ addName }, setAddName] = useRecoilState(AddRecipeState);
   const [{ addColor }, setAddColor] = useRecoilState(AddRecipeState);
   const [coloritem, setColoritem] = useState({
     red: false,
@@ -102,10 +102,33 @@ const RecipeTitleImgColor = () => {
     }));
   };
 
+  useEffect(() => {
+    if (Color) {
+      const initialColors = {
+        red: false,
+        pink: false,
+        orange: false,
+        black: false,
+        yellow: false,
+        brown: false,
+        green: false,
+        grey: false,
+        blue: false,
+        white: false,
+        purple: false,
+        transparent: false,
+      };
+      Color.forEach((color) => {
+        initialColors[color] = true;
+      });
+      setColoritem(initialColors);
+    }
+  }, [Color]);
+
   return (
     <>
       <TopBox>
-        <h1>새 레시피 작성</h1>
+        <h1>{Title}</h1>
         <FlexBox>
           <img
             src={
@@ -128,7 +151,11 @@ const RecipeTitleImgColor = () => {
         </FlexBox>
       </TopBox>
       <RecipeBox>
-        <Input placeholder={"칵테일 이름"} onChange={handleName}></Input>
+        <Input
+          placeholder={"칵테일 이름"}
+          onChange={handleName}
+          value={addName}
+        ></Input>
       </RecipeBox>
       <RecipeBox>
         <ColorBox>

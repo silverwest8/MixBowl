@@ -7,8 +7,8 @@ import { theme } from "../../styles/theme";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../common/Modal";
 import { useNavigate, useParams } from "react-router-dom";
-import { toastState, toastShowState } from "../../store/toast";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { toastState } from "../../store/toast";
+import { useSetRecoilState } from "recoil";
 const OPTIONS = ["수정", "삭제"];
 
 const RecipeEditDelete = ({ options }) => {
@@ -17,7 +17,6 @@ const RecipeEditDelete = ({ options }) => {
   const [Edit, setEdit] = useState(false);
   const [Delete, setDelete] = useState(false);
   const setToastState = useSetRecoilState(toastState);
-  const showToast = useRecoilValue(toastShowState);
   const { openModal, closeModal } = useModal();
   const navigate = useNavigate();
   const params = useParams();

@@ -51,7 +51,7 @@ const RecipeDetailCard = () => {
             </div>
             <div className="color">
               <p>
-                <span>도수</span> {Recipe.alcohol}도
+                <span>도수</span> {Recipe.alcohol}
               </p>
               {Recipe.color && (
                 <p>
@@ -99,15 +99,20 @@ const RecipeDetailCard = () => {
         </RecipeBox>
         <Material>
           <div>
-            <span>필수 재료</span>
-            {Recipe.main}
+            <span>재료 목록</span>
+            {Recipe.additem &&
+              Recipe.additem.map((item) => {
+                return (
+                  <p key={item.addlength}>
+                    {item.addname}
+                    {item.addamount}
+                    {item.addunit}
+                  </p>
+                );
+              })}
           </div>
           <div>
-            <span>부재료</span>
-            {Recipe.sub}
-          </div>
-          <div className="how">
-            <Json>{Recipe.how}</Json>
+            <Explain>{Recipe.explain}</Explain>
           </div>
         </Material>
       </TopBox>
@@ -222,13 +227,12 @@ const Material = styled.div`
   justify-content: center;
   div {
     margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
     span {
       margin-right: 0.75rem;
       color: ${({ theme }) => theme.color.primaryGold};
     }
-  }
-  .how {
-    margin-top: 2rem;
   }
 `;
 
@@ -264,7 +268,6 @@ const RecBox = styled.div`
   p {
     margin-left: 0.5rem;
   }
-  }
 `;
 
 const HorizonLine = styled.div`
@@ -282,7 +285,7 @@ const Circle = styled.div`
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
 `;
 
-const Json = styled.div`
+const Explain = styled.div`
   white-space: pre-wrap;
 `;
 

@@ -1,24 +1,22 @@
 import styled from "styled-components";
 import Textarea from "../common/Textarea";
-import { useState } from "react";
 import { AddRecipeState } from "../../store/recipe";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { FaCheckCircle } from "react-icons/fa";
 import RecipeIngredients from "./RecipeIngredients";
 
-const RecipeExplain = () => {
-  const setAddAlcohol = useSetRecoilState(AddRecipeState);
-  const setAddExplain = useSetRecoilState(AddRecipeState);
-  const [alcohol, setAlcohol] = useState([0, 0, 0]);
+const RecipeExplain = ({ Alcohol, Explain }) => {
+  const [{ addAlcohol }, setAddAlcohol] = useRecoilState(AddRecipeState);
+  const [{ addExplain }, setAddExplain] = useRecoilState(AddRecipeState);
 
   const handleClick = (value) => {
     let alcoholText = "";
-    setAlcohol(value);
-    if (value[0] === 1) {
+
+    if (value === "낮음") {
       alcoholText = "낮음";
-    } else if (value[1] === 1) {
+    } else if (value === "보통") {
       alcoholText = "보통";
-    } else if (value[2] === 1) {
+    } else if (value === "높음") {
       alcoholText = "높음";
     }
     setAddAlcohol((prev) => ({
@@ -47,30 +45,33 @@ const RecipeExplain = () => {
             <div>
               <AlcoholButton
                 onClick={() => {
-                  handleClick([1, 0, 0]);
+                  handleClick("낮음");
                 }}
               >
-                {alcohol[0] ? <FaCheckCircle></FaCheckCircle> : null}낮음
+                {addAlcohol === "낮음" ? <FaCheckCircle></FaCheckCircle> : null}
+                낮음
               </AlcoholButton>
               <p>0~5</p>
             </div>
             <div>
               <AlcoholButton
                 onClick={() => {
-                  handleClick([0, 1, 0]);
+                  handleClick("보통");
                 }}
               >
-                {alcohol[1] ? <FaCheckCircle></FaCheckCircle> : null}보통
+                {addAlcohol === "보통" ? <FaCheckCircle></FaCheckCircle> : null}
+                보통
               </AlcoholButton>
               <p>6~15</p>
             </div>
             <div>
               <AlcoholButton
                 onClick={() => {
-                  handleClick([0, 0, 1]);
+                  handleClick("높음");
                 }}
               >
-                {alcohol[2] ? <FaCheckCircle></FaCheckCircle> : null}높음
+                {addAlcohol === "높음" ? <FaCheckCircle></FaCheckCircle> : null}
+                높음
               </AlcoholButton>
               <p>16~99</p>
             </div>
@@ -82,7 +83,8 @@ const RecipeExplain = () => {
             onChange={(e) => {
               handleExplain(e);
             }}
-            rows={5}
+            rows={10}
+            value={addExplain}
           ></Textarea>
         </RecipeBox>
       </Box>

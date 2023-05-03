@@ -18,7 +18,7 @@ const RecipeAlcohol = ({ handleClose }) => {
     },
   ];
   const [value, setValue] = useState([min, max]);
-  const handleChange = (event, newValue) => {
+  const handleChange = (e, newValue) => {
     setValue(newValue);
   };
 

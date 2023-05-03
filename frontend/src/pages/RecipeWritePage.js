@@ -8,7 +8,7 @@ const RecipeWritePage = () => {
     <main>
       <Title title="칵테일 레시피" />
       <section>
-        <RecipeTitleImgColor></RecipeTitleImgColor>
+        <RecipeTitleImgColor Title={"새 레시피 작성"}></RecipeTitleImgColor>
       </section>
       <section>
         <RecipeExplain></RecipeExplain>
