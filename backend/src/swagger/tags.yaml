@@ -9,3 +9,5 @@ tags:
     description: Operation about community posting
   - name: reviews
     description: Operation about review
+  - name: mypages
+    description: Operation about mypage
