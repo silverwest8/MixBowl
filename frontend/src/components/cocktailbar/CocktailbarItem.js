@@ -12,7 +12,7 @@ const CocktailBarItem = ({ item }) => {
         {item.total_rate && (
           <div>
             <FaStar />
-            <span>{item.total_rate}</span>
+            <span>{Number(item.total_rate).toFixed(2)}</span>
           </div>
         )}
       </Header>
