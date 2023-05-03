@@ -187,6 +187,31 @@ const sql = {
     }
     // const { rating, detail, keyword } = data;
   },
+  deleteReview: async(req)=>{
+    const unum = req.decoded.unum;
+    console.log(unum);
+    const reviewId = req.params.reviewId;
+    const review = await REVIEW.findByPk(reviewId);
+    if (review.UNO === req.user.UNO) {
+      console.log('권한 확인');
+    } else {
+      throw new Error('no authorization to modify review');
+    }
+    if (review !== null) {
+      try {
+        await REVIEW.destroy(
+          { where: { REVIEW_ID: reviewId } }
+        );
+        await KEYWORD.destroy({
+          where: {
+            REVIEW_ID: reviewId,
+          },
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  },
   deleteImage: async (req, res, next) => {
     const reviewId = req.params.reviewId;
     const images = await IMAGE.findAll({
