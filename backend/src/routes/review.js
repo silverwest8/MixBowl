@@ -2,6 +2,7 @@
 
 import express from 'express';
 import multer from 'multer';
+import fs from 'fs';
 import checkAccess from '../middleware/checkAccessToken';
 import axios from 'axios';
 import PLACE from '../models/PLACE';
@@ -336,9 +337,18 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   res.json({ success: true, message: 'Multipart Upload Ok & DB update OK' });
 });
 
-router.put('/:placeId', checkAccess, async (req, res) => {});
+router.post(
+  '/:reviewId',
+  sql.deleteImage,
+  checkAccess,
+  upload.array('files', 5),
+  async (req, res) => {
+    await sql.changeReview(req);
+    await sql.postImage(req);
+  }
+);
 
-router.delete('/placeId', checkAccess, async (req, res) => {
+router.delete('/reviewId', checkAccess, async (req, res) => {
   return res.status(200).json({ success: true, message: '리뷰 삭제 성공' });
 });
 
