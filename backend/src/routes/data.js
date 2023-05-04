@@ -207,17 +207,21 @@ router.get('/cocktaildb/processing2', async (req, res) => {
 
 router.get('/cocktaildb/recipe', async (req, res) => {
   try {
-    const ninja = await db.ninjaset.findAll();
-    for (let i = 0; i < ninja.length; i++) {
-      // console.log(ninja[i]);
-      const find = await db.API_ninja_en.findOne({
-        where: { NAME: ninja[i].dataValues.NAME },
-      });
-      console.log(ninja[i].CNO, find.ID);
-      await db.ninjaset.update(
-        { CNO: find.ID },
-        { where: { CNO: ninja[i].CNO } }
-      );
+    // migration
+    const cocktaildb = await db.cocktaildbset.findAll();
+    for (let i = 0; i < cocktaildb.length; i++) {
+      // console.log(cocktaildb[i]);
+      const find = await db.API_cocktaildb_en.findByPk(cocktaildb[i].CNO);
+      console.log(find);
+      for (let j = 1; j <= 10; j++) {
+        if (find[`strIngredient${j}`] && find[`strMeasure${j}`]) {
+          await db.cocktaildb_recipeset.create({
+            CNO: cocktaildb[i].CNO,
+            INGRED: find[`strIngredient${j}`],
+            UNIT: find[`strMeasure${j}`],
+          });
+        }
+      }
     }
 
     return res
@@ -228,7 +232,7 @@ router.get('/cocktaildb/recipe', async (req, res) => {
     console.log(error);
     return res.status(400).json({
       success: false,
-      message: 'Ninja API processing3 실패',
+      message: 'cocktaildb recipe set 실패',
       error,
     });
   }
@@ -412,14 +416,18 @@ router.get('/ninja/recipe', async (req, res) => {
     const ninja = await db.ninjaset.findAll();
     for (let i = 0; i < ninja.length; i++) {
       // console.log(ninja[i]);
-      // const find = await db.API_ninja_en.findOne({
-      //   where: { NAME: ninja[i].dataValues.NAME },
-      // });
-      // console.log(ninja[i].CNO, find.ID);
-      // await db.ninjaset.update(
-      //   { CNO: find.ID },
-      //   { where: { CNO: ninja[i].CNO } }
-      // );
+      const find = await db.API_ninja_en.findByPk(ninja[i].CNO);
+      // console.log(find);
+      for (let j = 1; j <= 10; j++) {
+        if (find[`INGREDIENT${j}`]) {
+          await db.ninja_recipe.findOrCreate({
+            where: {
+              CNO: ninja[i].CNO,
+              INGRED: find[`INGREDIENT${j}`],
+            },
+          });
+        }
+      }
     }
 
     return res
@@ -435,4 +443,234 @@ router.get('/ninja/recipe', async (req, res) => {
     });
   }
 });
+
+router.get('/ninja/unit', async (req, res) => {
+  try {
+    const ninja = await db.ninja_recipe.findAll({
+      where: { AMOUNT: null, UNIT: null },
+      order: [['INGRED', 'DESC']],
+    });
+    for (let i = 0; i < ninja.length; i++) {
+      const str = ninja[i].INGRED;
+      const space1 = str ? str.indexOf(' ') : null;
+      const space2 = str ? str.indexOf(' ', space1 + 1) : null;
+      const temp1 = str ? str.split(' ', 2) : null;
+      const list = [
+        temp1 ? temp1[0] : null,
+        temp1 ? temp1[1] : null,
+        str ? str.substring(space2 + 1) : null,
+      ];
+      if (list[0] == null || list[1] == null || list[2] == null) {
+        console.log('HERE NULL');
+      }
+
+      // 1. oz -> ml
+      /*
+      if (list[1] == 'oz') {
+        console.log(list);
+        await db.ninja_recipe.update(
+          {
+            INGRED: list[2],
+            AMOUNT: Number(list[0]) * 30,
+            UNIT: 'ml',
+          },
+          {
+            where: {
+              CNO: ninja[i].CNO,
+              INGRED: ninja[i].INGRED,
+            },
+          }
+        );
+        console.log([list[2], Number(list[0]) * 30, 'ml']);
+      }
+      */
+
+      /*
+      // 2. ml -> ml
+      if (list[1] == 'ml') {
+        console.log(list);
+        await db.ninja_recipe.update(
+          {
+            INGRED: list[2],
+            AMOUNT: Number(list[0]),
+            UNIT: 'ml',
+          },
+          {
+            where: {
+              CNO: ninja[i].CNO,
+              INGRED: ninja[i].INGRED,
+            },
+          }
+        );
+        console.log([list[2], Number(list[0]), 'ml']);
+      }
+      */
+
+      /*
+      // 3. cl -> ml
+      if (list[1] == 'cl') {
+        console.log(list);
+        await db.ninja_recipe.update(
+          {
+            INGRED: list[2],
+            AMOUNT: Number(list[0]) * 10,
+            UNIT: 'ml',
+          },
+          {
+            where: {
+              CNO: ninja[i].CNO,
+              INGRED: ninja[i].INGRED,
+            },
+          }
+        );
+        console.log([list[2], Number(list[0]) * 10, 'ml']);
+      }
+      */
+
+      /*
+      // 4. part/parts/measure -> part
+      if (list[1] == 'part' || list[1] == 'parts' || list[1] == 'measure') {
+        console.log(list);
+        await db.ninja_recipe.update(
+          {
+            INGRED: list[2],
+            AMOUNT: Number(list[0]),
+            UNIT: 'part',
+          },
+          {
+            where: {
+              CNO: ninja[i].CNO,
+              INGRED: ninja[i].INGRED,
+            },
+          }
+        );
+        console.log([list[2], Number(list[0]), 'part']);
+      }
+      */
+
+      /*
+      // 5. dash/dashes/ds -> ml 0.62인데 그냥 1로 통침
+      if (
+        list[1] == 'ds' ||
+        list[1] == 'dash' ||
+        list[1] == 'dashes' ||
+        list[1] == 'Dash' ||
+        list[1] == 'Dashes'
+      ) {
+        console.log(list);
+        await db.ninja_recipe.update(
+          {
+            INGRED: list[2],
+            AMOUNT: Number(list[0]),
+            UNIT: 'ml', // --->  ml 했어야 했는데 part로 고침 하 근데 귀찮아서 그냥 냅두고싶다...
+          },
+          {
+            where: {
+              CNO: ninja[i].CNO,
+              INGRED: ninja[i].INGRED,
+            },
+          }
+        );
+        console.log([list[2], Number(list[0]), 'ml']);
+      }
+      */
+
+      // 6. cup, glass => 240ml
+      // 7. bottle => 750ml
+      // 8. liter(L)은 그냥 L로 썼음! 1000ml보단 L이 나은 것 같아서
+      // 9. T -> table spoon => 15ml
+      // 10. dr(dram) -> * 3.6
+
+      /*
+      // 11. bsp, barspoon == t, teaspoon, teaspoons => 5ml
+      if (
+        list[1] == 'bsp' ||
+        list[1] == 'barspoon' ||
+        list[1] == 't' ||
+        list[1] == 'teaspoon' ||
+        list[1] == 'teaspoons'
+      ) {
+        console.log(list);
+        await db.ninja_recipe.update(
+          {
+            INGRED: list[2],
+            AMOUNT: Number(list[0]) * 5,
+            UNIT: 'ml',
+          },
+          {
+            where: {
+              CNO: ninja[i].CNO,
+              INGRED: ninja[i].INGRED,
+            },
+          }
+        );
+        console.log([list[2], Number(list[0]) * 5, 'ml']);
+      }
+      */
+
+      /*
+      // 12. leaf => 잎, sprig, sprigs => 잔가지...인데 그냥 leaf로 퉁침
+      if (list[1] == 'lf' || list[1] == 'sprig' || list[1] == 'sprigs') {
+        console.log(list);
+        await db.ninja_recipe.update(
+          {
+            INGRED: list[2],
+            AMOUNT: Number(list[0]),
+            UNIT: 'leaf',
+          },
+          {
+            where: {
+              CNO: ninja[i].CNO,
+              INGRED: ninja[i].INGRED,
+            },
+          }
+        );
+        console.log([list[2], Number(list[0]), 'leaf']);
+      }
+      */
+
+      // 13. rinse -> 대충 알아보니 3ml... 정확하지 않음
+      // 14. twst -> 껍질 세는 느낌
+      // 15. wdg -> wedge(조각) 하 질린다...
+
+      // 16. pn
+      // 17. spl
+      // 모르겠는건 걍 삭제...에라모르겠다
+      // 12. leaf => 잎, sprig, sprigs => 잔가지...인데 그냥 leaf로 퉁침
+
+      // 수량 숫자 없는거
+      if (list[1] == '#' && list[0] == '$') {
+        // isNaN(Number(list[0]))
+        console.log(list);
+        await db.ninja_recipe.update(
+          {
+            INGRED: list[2],
+            AMOUNT: list[0], // Number(list[0])
+            UNIT: list[1],
+          },
+          {
+            where: {
+              CNO: ninja[i].CNO,
+              INGRED: ninja[i].INGRED,
+            },
+          }
+        );
+        console.log([list[2], list[0], list[1]]); // Number(list[0])
+      }
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: 'Ninja API recipe 성공' });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Ninja API recipe 실패',
+      error,
+    });
+  }
+});
+
 export default router;
