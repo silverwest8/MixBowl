@@ -4,10 +4,11 @@ import Textarea from "../common/Textarea";
 import Rating from "@mui/material/Rating";
 import styled from "styled-components";
 import ImageUpload from "../common/ImageUpload";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { imageListState } from "../../store/image";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postReview } from "../../api/cocktailbar";
+import { toastState } from "../../store/toast";
 
 const KEYWORDS = [
   {
@@ -63,16 +64,21 @@ const ReviewModal = ({ handleClose, name, placeId }) => {
   const { urls, files } = useRecoilValue(imageListState);
   const [detailMsg, setDetailMsg] = useState("");
   const [ratingMsg, setRatingMsg] = useState("");
+  const setToastState = useSetRecoilState(toastState);
+  const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: postReview,
     onError: (e) => {
-      /* TODO: 실패로직 작성 */
+      setToastState({
+        show: true,
+        message: "리뷰 등록에 실패했습니다. 다시 시도해주세요.",
+        type: "error",
+      });
       console.log(e);
     },
-    onSuccess: (data) => {
-      /* TODO: 성공로직 작성 */
-      console.log(data);
-      // handleClose();
+    onSuccess: () => {
+      queryClient.invalidateQueries(["cocktail bar review", placeId]);
+      handleClose();
     },
   });
   const onChange = (e) => {

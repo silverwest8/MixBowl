@@ -13,7 +13,7 @@ const ToastMessage = () => {
     if (show) {
       setTimeout(() => {
         setToastState((state) => ({ ...state, show: false }));
-      }, ms);
+      }, ms || 2000);
     }
   }, [show]);
   return (
