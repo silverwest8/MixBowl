@@ -15,6 +15,7 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
     openModal(ReviewDeleteModal, {
       handleClose: closeModal,
       reviewId,
+      placeId,
     });
   };
   return (!params.id && cnt !== 0) || params.id ? (
