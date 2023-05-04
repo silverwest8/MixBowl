@@ -11,7 +11,9 @@ export const getCocktailBar = async ({ queryKey }) => {
 export const getReview = async ({ queryKey }) => {
   const token = getAccessToken();
   axios.defaults.headers.common.Authorization = token;
-  const { data } = await axios.get(`/api/reviews/${queryKey[1]}`);
+  const { data } = await axios.get(
+    `/api/reviews/bar/reviewlist/${queryKey[1]}`
+  );
   return data;
 };
 
@@ -21,7 +23,7 @@ export const getCocktailBarList = async ({ queryKey }) => {
     axios.defaults.headers.common.Authorization = getAccessToken();
   if (queryKey[1] !== null) {
     const { data } = await axios.get(
-      `/api/reviews/list?query=${queryKey[2] || "칵테일 바"}&x=${
+      `/api/reviews/barlist?query=${queryKey[2] || "칵테일 바"}&x=${
         queryKey[1].lng
       }&y=${queryKey[1].lat}&radius=${queryKey[3]}&sort=accuracy`
     );

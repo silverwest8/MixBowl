@@ -6,6 +6,7 @@ import USER from '../models/USER';
 import REVIEW from '../models/REVIEW';
 import IMAGE from '../models/IMAGE';
 import KEYWORD from '../models/KEYWORD';
+import fs from 'fs';
 dotenv.config(); //JWT 키불러오기
 
 const sql = {
@@ -87,7 +88,6 @@ const sql = {
       return {
         code: 200,
         message: '토큰이 발급되었습니다.',
-        message: '토큰이 발급되었습니다.',
         token: {
           accessToken,
           refreshToken,
@@ -102,23 +102,25 @@ const sql = {
   },
   postReview: async (req) => {
     const unum = req.decoded.unum;
-    const { rating, detail } = req.body;
+    console.log(req.body.data);
+    const data = JSON.parse(req.body.data);
+    console.log('data', data);
+    const { placeId, rating, detail, keyword } = data;
     try {
-      const review = REVIEW.create({
+      const review = await REVIEW.create({
         UNO: unum,
-        PLACE_ID: req.params.placeId,
+        PLACE_ID: placeId,
         TEXT: detail,
         RATING: rating,
       });
-      req.body.keyword.forEach((i) => {
-        try {
-          KEYWORD.create({
-            REVIEW_ID: review.REVIEW_ID,
-            KEYWORD: i,
-          });
-        } catch (error) {
-          console.log(error.message);
-        }
+      console.log('keyword', keyword);
+      console.log('review', review);
+      console.log('reviewId', review.REVIEW_ID);
+      keyword.forEach(async (keyword) => {
+        await KEYWORD.create({
+          REVIEW_ID: review.REVIEW_ID,
+          KEYWORD: keyword,
+        });
       });
       return review;
     } catch (error) {
@@ -131,9 +133,9 @@ const sql = {
       req.files.map(async (data) => {
         let path = data.path;
         try {
-          IMAGE.create({
-            REVIEW_ID: `${reviewId}`,
-            PATH: `${path}`,
+          await IMAGE.create({
+            REVIEW_ID: reviewId,
+            PATH: path,
           });
         } catch (error) {
           console.log(error.message);
@@ -143,6 +145,91 @@ const sql = {
     } catch (error) {
       console.log(error.message);
     }
+  },
+  changeReview: async (req) => {
+    const unum = req.decoded.unum;
+    console.log(unum);
+    const data = JSON.parse(req.body.data);
+    const reviewId = req.params.reviewId;
+    const review = await REVIEW.findByPk(reviewId);
+    if (review.UNO === req.user.UNO) {
+      console.log('권한 확인');
+    } else {
+      throw new Error('no authorization to modify review');
+    }
+    if (review !== null) {
+      try {
+        await REVIEW.update(
+          {
+            RATING: data.rating,
+            TEXT: data.detail,
+          },
+          { where: { REVIEW_ID: reviewId } }
+        );
+        await KEYWORD.destroy({
+          where: {
+            REVIEW_ID: reviewId,
+          },
+        });
+        data.keyword.forEach(async (key) => {
+          await KEYWORD.create({
+            REVIEW_ID: reviewId,
+            KEYWORD: key,
+          });
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+      return review;
+    } else {
+      console.log('There is no review of URI parameter reviewId');
+    }
+    // const { rating, detail, keyword } = data;
+  },
+  deleteReview: async(req)=>{
+    const unum = req.decoded.unum;
+    console.log(unum);
+    const reviewId = req.params.reviewId;
+    const review = await REVIEW.findByPk(reviewId);
+    if (review.UNO === req.user.UNO) {
+      console.log('권한 확인');
+    } else {
+      throw new Error('no authorization to modify review');
+    }
+    if (review !== null) {
+      try {
+        await REVIEW.destroy(
+          { where: { REVIEW_ID: reviewId } }
+        );
+        await KEYWORD.destroy({
+          where: {
+            REVIEW_ID: reviewId,
+          },
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  },
+  deleteImage: async (req, res, next) => {
+    const reviewId = req.params.reviewId;
+    const images = await IMAGE.findAll({
+      where: {
+        REVIEW_ID: reviewId,
+      },
+    });
+    images.forEach(img=>{
+      fs.unlink(img.PATH,err=>{
+        if(err) throw err;
+        console.log('delete success');
+      })
+    }) 
+    await IMAGE.destroy({
+      where:{
+        REVIEW_ID:reviewId
+      }
+    })
+    return next();
   },
 };
 

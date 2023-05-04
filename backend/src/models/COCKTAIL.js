@@ -1,10 +1,10 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE_LIKE extends Model {
+export default class COCKTAIL extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    RLNO: {
+    CNO: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -18,46 +18,57 @@ export default class RECIPE_LIKE extends Model {
         key: 'UNO'
       }
     },
-    RNO: {
-      type: DataTypes.INTEGER,
+    NAME: {
+      type: DataTypes.STRING(45),
       allowNull: false,
-      references: {
-        model: 'RECIPE',
-        key: 'RNO'
-      }
+      unique: "NAME_UNIQUE"
+    },
+    INSTRUCTION: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    IMAGE_PATH: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    GLASS: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
+    ALCOHOLIC: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
+    COLOR: {
+      type: DataTypes.STRING(45),
+      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'RECIPE_LIKE',
-    timestamps: false,
+    tableName: 'COCKTAIL',
+    timestamps: true,
     indexes: [
       {
         name: "PRIMARY",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "RLNO" },
+          { name: "CNO" },
         ]
       },
       {
-        name: "UNO_idx",
+        name: "NAME_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "NAME" },
+        ]
+      },
+      {
+        name: "UNO3_idx",
         using: "BTREE",
         fields: [
           { name: "UNO" },
-        ]
-      },
-      {
-        name: "RNO4",
-        using: "BTREE",
-        fields: [
-          { name: "RNO" },
-        ]
-      },
-      {
-        name: "RNO",
-        using: "BTREE",
-        fields: [
-          { name: "RNO" },
         ]
       },
     ]
