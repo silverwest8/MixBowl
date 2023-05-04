@@ -53,7 +53,7 @@ const KEYWORDS = [
   { id: 9, icon: "💵", keyword: "가성비가 좋아요" },
 ];
 
-const ReviewModal = ({ handleClose, name, id }) => {
+const ReviewModal = ({ handleClose, name, placeId }) => {
   const [inputs, setInputs] = useState({
     rating: 0,
     keyword: [],
@@ -110,7 +110,7 @@ const ReviewModal = ({ handleClose, name, id }) => {
       return;
     }
     mutate({
-      id,
+      placeId,
       rating,
       keyword,
       detail,

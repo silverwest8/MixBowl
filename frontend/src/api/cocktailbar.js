@@ -31,7 +31,13 @@ export const getCocktailBarList = async ({ queryKey }) => {
   } else return null;
 };
 
-export const postReview = async ({ rating, detail, keyword, files, id }) => {
+export const postReview = async ({
+  rating,
+  detail,
+  keyword,
+  files,
+  placeId,
+}) => {
   const formData = new FormData();
   formData.append(
     "data",
@@ -39,6 +45,7 @@ export const postReview = async ({ rating, detail, keyword, files, id }) => {
       rating: Number(rating),
       detail,
       keyword,
+      placeId,
     })
   );
   for (let i = 0; i < files.length; i++) {
@@ -49,10 +56,15 @@ export const postReview = async ({ rating, detail, keyword, files, id }) => {
   for (const pair of values) {
     console.log(pair);
   }
-  const { data } = await axios.post(`/api/reviews/${id}`, formData, {
+  const { data } = await axios.post("/api/reviews", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
+  return data;
+};
+
+export const deleteReview = async (id) => {
+  const { data } = await axios.delete(`/api/reviews/${id}`);
   return data;
 };

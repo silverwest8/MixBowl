@@ -5,10 +5,18 @@ import { useModal } from "../../hooks/useModal";
 import { FaPen } from "react-icons/fa";
 import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
+import ReviewDeleteModal from "./ReviewDeleteModal";
 
-const ReviewList = ({ cnt, reviewList, name, id }) => {
+const ReviewList = ({ cnt, reviewList, name, placeId }) => {
   const params = useParams();
   const { openModal, closeModal } = useModal();
+  const onClickEditMenu = () => {};
+  const onClickDeleteMenu = (reviewId) => {
+    openModal(ReviewDeleteModal, {
+      handleClose: closeModal,
+      reviewId,
+    });
+  };
   return (!params.id && cnt !== 0) || params.id ? (
     <div>
       <ReviewHeader>
@@ -23,14 +31,14 @@ const ReviewList = ({ cnt, reviewList, name, id }) => {
               openModal(ReviewModal, {
                 handleClose: closeModal,
                 name,
-                id,
+                placeId,
               });
             }}
           >
             <FaPen /> 리뷰 작성하기
           </Button>
         ) : (
-          <Link to={`/cocktailbar/${id}`} className="more-link">
+          <Link to={`/cocktailbar/${placeId}`} className="more-link">
             더보기
           </Link>
         )}
@@ -43,7 +51,14 @@ const ReviewList = ({ cnt, reviewList, name, id }) => {
                 <span>{review.UNO_USER.NICKNAME}</span>
                 <MemberBadge level={review.UNO_USER.LEVEL} />
               </div>
-              {review.UNO_USER.ISWRITER && <DropdownMenu />}
+              {review.UNO_USER.ISWRITER && (
+                <DropdownMenu
+                  handlers={[
+                    onClickEditMenu,
+                    () => onClickDeleteMenu(review.REVIEW_ID),
+                  ]}
+                />
+              )}
             </div>
             <p>&ldquo;{review.TEXT}&rdquo;</p>
             <span className="date">
