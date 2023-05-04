@@ -16,6 +16,42 @@ import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
 
+const KEYWORD_VALUE = [
+  {
+    id: 1,
+    value: "술이 맛있어요",
+  },
+  {
+    id: 2,
+    value: "술이 다양해요",
+  },
+  {
+    id: 3,
+    value: "혼술하기 좋아요",
+  },
+  {
+    id: 4,
+    value: "메뉴가 다양해요",
+  },
+  {
+    id: 5,
+    value: "음식이 맛있어요",
+  },
+  {
+    id: 6,
+    value: "분위기가 좋아요",
+  },
+  {
+    id: 7,
+    value: "직원이 친절해요",
+  },
+  {
+    id: 8,
+    value: "대화하기 좋아요",
+  },
+  { id: 9,  value: "가성비가 좋아요" },
+];
+
 async function getKeyword(placeId) {
   let keywordlist = [null, null, null];
   const keyword = await KEYWORD.findAll({
@@ -36,83 +72,18 @@ async function getKeyword(placeId) {
     order: [[Sequelize.literal('COUNT'), 'DESC']],
     limit: 3,
   });
-  keyword.forEach((keyword, idx) => {
-    switch (keyword.KEYWORD) {
-      case 1:
-        keywordlist[idx] = '술이 맛있어요';
-        break;
-      case 2:
-        keywordlist[idx] = '술이 다양해요';
-        break;
-      case 3:
-        keywordlist[idx] = '혼술하기 좋아요';
-        break;
-      case 4:
-        keywordlist[idx] = '분위기가 좋아요';
-        break;
-      case 5:
-        keywordlist[idx] = '직원이 친절해요';
-        break;
-      case 6:
-        keywordlist[idx] = '대화하기 좋아요';
-        break;
-      case 7:
-        keywordlist[idx] = '가성비가 좋아요';
-        break;
-      case 8:
-        keywordlist[idx] = '메뉴가 다양해요';
-        break;
-      case 9:
-        keywordlist[idx] = '음식이 맛있어요';
-        break;
-      default:
-        keywordlist[idx] = null;
-    }
-  });
+  keyword.forEach((keyword) => keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1].value));
   return keywordlist;
 }
 
 async function getKeywordByReviewId(reviewId) {
   const keywordlist = [];
-  let value = "";
   const keyword = await KEYWORD.findAll({
     where: {
       REVIEW_ID: reviewId
     }
   });
-  keyword.forEach((keyword) => {
-    switch (keyword.KEYWORD) {
-      case 1:
-        value = '술이 맛있어요';
-        break;
-      case 2:
-        value = '술이 다양해요';
-        break;
-      case 3:
-        value = '혼술하기 좋아요';
-        break;
-      case 4:
-        value = '분위기가 좋아요';
-        break;
-      case 5:
-        value = '직원이 친절해요';
-        break;
-      case 6:
-        value = '대화하기 좋아요';
-        break;
-      case 7:
-        value = '가성비가 좋아요';
-        break;
-      case 8:
-        value = '메뉴가 다양해요';
-        break;
-      case 9:
-        value = '음식이 맛있어요';
-        break;
-      default:
-    }
-    keywordlist.push({ id: keyword.KEYWORD, value });
-  });
+  keyword.forEach((keyword) => keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1]));
   return keywordlist;
 }
 
