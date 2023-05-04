@@ -3,12 +3,6 @@
 import express from 'express';
 import axios from 'axios';
 import { db } from '../models';
-import checkAccess from '../middleware/checkAccessToken';
-import dotenv from 'dotenv';
-import multer from 'multer';
-import fs from 'fs';
-import ninjaset from '../models/ninjaset';
-dotenv.config();
 const router = express.Router();
 
 router.get('/cocktaildb', async (req, res) => {
@@ -42,7 +36,7 @@ router.get('/cocktaildb', async (req, res) => {
   }
 });
 
-router.get('/testAPIsAll', async (req, res) => {
+router.get('/cocktaildb/save', async (req, res) => {
   try {
     for (
       let i = req.query.f.charCodeAt(0);
@@ -104,6 +98,142 @@ router.get('/cocktaildb/findById', async (req, res) => {
   }
 });
 
+router.get('/cocktaildb/migration', async (req, res) => {
+  try {
+    const DB = await db.API_cocktaildb_en.findAll();
+    DB.forEach(async (element) => {
+      console.log(element);
+      await db.COCKTAIL.create({
+        CNO: element.idDrink,
+        UNO: 1,
+        NAME: element.strDrink,
+        ALCOHOLIC: element.strAlcoholic,
+        GLASS: element.strGlass,
+        INSTRUCTION: element.strInstructions,
+        IMAGE_PATH: element.strDrinkThumb,
+      });
+    });
+
+    res.status(200).json({ success: true });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Cocktaildb API migration 실패',
+      error,
+    });
+  }
+});
+
+router.get('/cocktaildb/ingredient', async (req, res) => {
+  try {
+    for (let i = 1; i <= 15; i++) {
+      const DB = await db.API_cocktaildb_en.findAll({
+        attributes: [`strIngredient${i}`],
+        group: [`strIngredient${i}`],
+      });
+      DB.forEach(async (element) => {
+        try {
+          if (element[`strIngredient${i}`] != null) {
+            console.log(element[`strIngredient${i}`]);
+            await db.INGREDIENT.findOrCreate({
+              where: { NAME: element[`strIngredient${i}`] },
+            });
+          }
+        } catch (error) {
+          console.log(error);
+          return res.status(400).json({
+            success: false,
+            message: 'Cocktaildb API ingredient building 실패',
+            error,
+          });
+        }
+      });
+    }
+    res.status(200).json({ success: true });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Cocktaildb API migration 실패',
+      error,
+    });
+  }
+});
+
+router.get('/cocktaildb/processing2', async (req, res) => {
+  try {
+    const ctdb = await db.cocktaildbset.findAll();
+    for (let i = 0; i < ctdb.length; i++) {
+      // console.log(ctdb[i]);
+      const find = await db.API_cocktaildb_en.findOne({
+        where: { strDrink: ctdb[i].dataValues.NAME },
+      });
+      // console.log(find);
+      await db.cocktaildbset.update(
+        {
+          CNO: find.idDrink,
+          // INSTRUCTION: find.strInstructions,
+          // IMAGE_PATH: find.strDrinkThumb,
+          // GLASS: find.strGlass,
+          // ALCOHOLIC: find.strAlcoholic,
+        },
+        {
+          where: {
+            CNO: ctdb[i].CNO,
+          },
+        }
+      );
+      await ctdb[i].update({
+        UNO: 16,
+      });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: 'Cocktaildb API processing2 성공' });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Cocktaildb API processing2 실패',
+      error,
+    });
+  }
+});
+
+router.get('/cocktaildb/recipe', async (req, res) => {
+  try {
+    const ninja = await db.ninjaset.findAll();
+    for (let i = 0; i < ninja.length; i++) {
+      // console.log(ninja[i]);
+      const find = await db.API_ninja_en.findOne({
+        where: { NAME: ninja[i].dataValues.NAME },
+      });
+      console.log(ninja[i].CNO, find.ID);
+      await db.ninjaset.update(
+        { CNO: find.ID },
+        { where: { CNO: ninja[i].CNO } }
+      );
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: 'cocktaildb recipe set 성공' });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Ninja API processing3 실패',
+      error,
+    });
+  }
+});
+
 router.get('/ninja', async (req, res) => {
   try {
     const ingredient = await db.INGREDIENT.findAll();
@@ -149,76 +279,11 @@ router.get('/ninja', async (req, res) => {
   }
 });
 
-router.get('/migration', async (req, res) => {
-  try {
-    const DB = await db.API_cocktaildb_en.findAll();
-    DB.forEach(async (element) => {
-      console.log(element);
-      await db.COCKTAIL.create({
-        CNO: element.idDrink,
-        UNO: 1,
-        NAME: element.strDrink,
-        ALCOHOLIC: element.strAlcoholic,
-        GLASS: element.strGlass,
-        INSTRUCTION: element.strInstructions,
-        IMAGE_PATH: element.strDrinkThumb,
-      });
-    });
-
-    res.status(200).json({ success: true });
-    // res.status(200).json(data);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      success: false,
-      message: 'Cocktaildb API migration 실패',
-      error,
-    });
-  }
-});
-
-router.get('/ingredient', async (req, res) => {
-  try {
-    for (let i = 1; i <= 15; i++) {
-      const DB = await db.API_cocktaildb_en.findAll({
-        attributes: [`strIngredient${i}`],
-        group: [`strIngredient${i}`],
-      });
-      DB.forEach(async (element) => {
-        try {
-          if (element[`strIngredient${i}`] != null) {
-            console.log(element[`strIngredient${i}`]);
-            await db.INGREDIENT.findOrCreate({
-              where: { NAME: element[`strIngredient${i}`] },
-            });
-          }
-        } catch (error) {
-          console.log(error);
-          return res.status(400).json({
-            success: false,
-            message: 'Cocktaildb API ingredient building 실패',
-            error,
-          });
-        }
-      });
-    }
-    res.status(200).json({ success: true });
-    // res.status(200).json(data);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      success: false,
-      message: 'Cocktaildb API migration 실패',
-      error,
-    });
-  }
-});
-
-router.get('/processing', async (req, res) => {
+router.get('/ninja/processing', async (req, res) => {
   try {
     // const searchWord = '1 2/3';
     // for (let i = 1; i <= 10; i++) {
-    //   const DB = await API_ninja_en.findAll({
+    //   const DB = await db.API_ninja_en.findAll({
     //     attributes: ['ID', `INGREDIENT${i}`],
     //     where: {
     //       [`INGREDIENT${i}`]: { [Sequelize.Op.like]: '%' + searchWord + '%' },
@@ -228,7 +293,7 @@ router.get('/processing', async (req, res) => {
     //     console.log(DB[j].dataValues);
     //     if (DB[j][`INGREDIENT${i}`].substring(0, 5) == '1 2/3') {
     //       console.log('일치');
-    //       const temp = await API_ninja_en.findByPk(DB[j].ID);
+    //       const temp = await db.API_ninja_en.findByPk(DB[j].ID);
     //       temp.update({
     //         [`INGREDIENT${i}`]: '1.66' + DB[j][`INGREDIENT${i}`].substring(5),
     //       });
@@ -241,7 +306,7 @@ router.get('/processing', async (req, res) => {
     // ----------------------------------
     // const searchWord = '(6 parts)';
     // for (let i = 1; i <= 10; i++) {
-    //   const DB = await API_ninja_en.findAll({
+    //   const DB = await db.API_ninja_en.findAll({
     //     attributes: ['ID', `INGREDIENT${i}`],
     //     where: {
     //       [`INGREDIENT${i}`]: { [Sequelize.Op.like]: '%' + searchWord + '%' },
@@ -251,8 +316,8 @@ router.get('/processing', async (req, res) => {
     //     console.log(DB[j].dataValues);
     //     let idx = DB[j][`INGREDIENT${i}`].indexOf('(6 parts)');
     //     console.log('일치');
-    //     const temp = await API_ninja_en.findByPk(DB[j].ID);
-    //     temp.update({
+    //     const temp = await db.API_ninja_en.findByPk(DB[j].ID);
+    //     await temp.update({
     //       [`INGREDIENT${i}`]:
     //         DB[j][`INGREDIENT${i}`].substring(0, idx) +
     //         DB[j][`INGREDIENT${i}`].substring(idx + 10),
@@ -266,7 +331,7 @@ router.get('/processing', async (req, res) => {
     //   console.log(DB.length);
     // }
     for (let i = 1; i <= 10; i++) {
-      const DB = await API_ninja_en.findAll({
+      const DB = await db.API_ninja_en.findAll({
         attributes: ['ID', `INGREDIENT${i}`],
       });
       for (let j = 0; j < DB.length; j++) {
@@ -285,7 +350,7 @@ router.get('/processing', async (req, res) => {
         if (str) console.log(list);
         // let idx = str.indexOf('(6 parts)');
         // console.log('일치');
-        // const temp = await API_ninja_en.findByPk(DB[j].ID);
+        // const temp = await db.API_ninja_en.findByPk(DB[j].ID);
         // temp.update({
         //   [`INGREDIENT${i}`]:
         //     str.substring(0, idx) +
@@ -301,61 +366,19 @@ router.get('/processing', async (req, res) => {
     }
     res
       .status(200)
-      .json({ success: true, message: 'Cocktaildb API processing 성공' });
+      .json({ success: true, message: 'Ninja API processing 성공' });
     // res.status(200).json(data);
   } catch (error) {
     console.log(error);
     return res.status(400).json({
       success: false,
-      message: 'Cocktaildb API processing 실패',
+      message: 'Ninja API processing 실패',
       error,
     });
   }
 });
 
-router.get('/processing2', async (req, res) => {
-  try {
-    const ctdb = await db.cocktaildbset.findAll();
-    for (let i = 0; i < ctdb.length; i++) {
-      // console.log(ctdb[i]);
-      const find = await db.API_cocktaildb_en.findOne({
-        where: { strDrink: ctdb[i].dataValues.NAME },
-      });
-      // console.log(find);
-      await db.cocktaildbset.update(
-        {
-          CNO: find.idDrink,
-          // INSTRUCTION: find.strInstructions,
-          // IMAGE_PATH: find.strDrinkThumb,
-          // GLASS: find.strGlass,
-          // ALCOHOLIC: find.strAlcoholic,
-        },
-        {
-          where: {
-            CNO: ctdb[i].CNO,
-          },
-        }
-      );
-      await ctdb[i].update({
-        UNO: 16,
-      });
-    }
-
-    res
-      .status(200)
-      .json({ success: true, message: 'Cocktaildb API processing2 성공' });
-    // res.status(200).json(data);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      success: false,
-      message: 'Cocktaildb API processing2 실패',
-      error,
-    });
-  }
-});
-
-router.get('/processing3', async (req, res) => {
+router.get('/ninja/processing3', async (req, res) => {
   try {
     const ninja = await db.ninjaset.findAll();
     for (let i = 0; i < ninja.length; i++) {
@@ -372,16 +395,44 @@ router.get('/processing3', async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: 'Cocktaildb API processing3 성공' });
+      .json({ success: true, message: 'Ninja API processing3 성공' });
     // res.status(200).json(data);
   } catch (error) {
     console.log(error);
     return res.status(400).json({
       success: false,
-      message: 'Cocktaildb API processing3 실패',
+      message: 'Ninja API processing3 실패',
       error,
     });
   }
 });
 
+router.get('/ninja/recipe', async (req, res) => {
+  try {
+    const ninja = await db.ninjaset.findAll();
+    for (let i = 0; i < ninja.length; i++) {
+      // console.log(ninja[i]);
+      // const find = await db.API_ninja_en.findOne({
+      //   where: { NAME: ninja[i].dataValues.NAME },
+      // });
+      // console.log(ninja[i].CNO, find.ID);
+      // await db.ninjaset.update(
+      //   { CNO: find.ID },
+      //   { where: { CNO: ninja[i].CNO } }
+      // );
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: 'Ninja API recipe 성공' });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Ninja API recipe 실패',
+      error,
+    });
+  }
+});
 export default router;
