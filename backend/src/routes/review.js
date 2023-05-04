@@ -72,6 +72,51 @@ async function getKeyword(placeId) {
   return keywordlist;
 }
 
+async function getKeywordByReviewId(reviewId) {
+  const keywordlist = [];
+  let value = "";
+  const keyword = await KEYWORD.findAll({
+    where: {
+      REVIEW_ID: reviewId
+    }
+  });
+  keyword.forEach((keyword) => {
+    switch (keyword.KEYWORD) {
+      case 1:
+        value = '술이 맛있어요';
+        break;
+      case 2:
+        value = '술이 다양해요';
+        break;
+      case 3:
+        value = '혼술하기 좋아요';
+        break;
+      case 4:
+        value = '분위기가 좋아요';
+        break;
+      case 5:
+        value = '직원이 친절해요';
+        break;
+      case 6:
+        value = '대화하기 좋아요';
+        break;
+      case 7:
+        value = '가성비가 좋아요';
+        break;
+      case 8:
+        value = '메뉴가 다양해요';
+        break;
+      case 9:
+        value = '음식이 맛있어요';
+        break;
+      default:
+    }
+    keywordlist.push({ id: keyword.KEYWORD, value });
+  });
+  return keywordlist;
+}
+
+
 router.get('/barlist', checkAccess, async (req, res) => {
   // Example
   // http://localhost:3030/reviews/list?query=수원 칵테일바&x=37.514322572335935&y=127.06283102249932&radius=20000&sort=accuracy
@@ -263,6 +308,7 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
       } else {
         data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = false;
       }
+      data.list[i].dataValues.KEYWORDS = await getKeywordByReviewId(data.list[i].dataValues.REVIEW_ID);
     }
     data.keyword = await getKeyword(place_id);
     return res
