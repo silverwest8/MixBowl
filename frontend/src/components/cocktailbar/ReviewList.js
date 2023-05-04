@@ -10,7 +10,19 @@ import ReviewDeleteModal from "./ReviewDeleteModal";
 const ReviewList = ({ cnt, reviewList, name, placeId }) => {
   const params = useParams();
   const { openModal, closeModal } = useModal();
-  const onClickEditMenu = () => {};
+  const onClickEditMenu = (reviewId, { rating, keyword, detail }) => {
+    openModal(ReviewModal, {
+      handleClose: closeModal,
+      reviewId,
+      placeId,
+      name,
+      defaultInputs: {
+        rating,
+        keyword,
+        detail,
+      },
+    });
+  };
   const onClickDeleteMenu = (reviewId) => {
     openModal(ReviewDeleteModal, {
       handleClose: closeModal,
@@ -55,7 +67,12 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
               {review.UNO_USER.ISWRITER && (
                 <DropdownMenu
                   handlers={[
-                    onClickEditMenu,
+                    () =>
+                      onClickEditMenu(review.REVIEW_ID, {
+                        rating: review.RATING,
+                        detail: review.TEXT,
+                        keyword: review.KEYWORDS.map((keyword) => keyword.id),
+                      }),
                     () => onClickDeleteMenu(review.REVIEW_ID),
                   ]}
                 />

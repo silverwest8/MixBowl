@@ -31,13 +31,15 @@ const Message = styled.p`
   top: 50px;
   right: 10px;
   display: flex;
-  align-items: center;
   gap: 0.5rem;
   border-radius: 12px;
   max-width: 326px;
   width: 90vw;
   padding: 1rem 1.25rem;
-  z-index: 200;
+  z-index: 2000;
+  svg {
+    margin-top: 0.1rem;
+  }
   &.success {
     background-color: ${({ theme }) => theme.color.green};
   }

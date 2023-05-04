@@ -7,71 +7,94 @@ import ImageUpload from "../common/ImageUpload";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { imageListState } from "../../store/image";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postReview } from "../../api/cocktailbar";
+import { editReview, postReview } from "../../api/cocktailbar";
 import { toastState } from "../../store/toast";
 
 const KEYWORDS = [
   {
     id: 1,
     icon: "👍",
-    keyword: "술이 맛있어요",
+    value: "술이 맛있어요",
   },
   {
     id: 2,
     icon: "🍹",
-    keyword: "술이 다양해요",
+    value: "술이 다양해요",
   },
   {
     id: 3,
     icon: "🍸",
-    keyword: "혼술하기 좋아요",
+    value: "혼술하기 좋아요",
   },
   {
     id: 4,
     icon: "🙌",
-    keyword: "메뉴가 다양해요",
+    value: "메뉴가 다양해요",
   },
   {
     id: 5,
     icon: "🍽️",
-    keyword: "음식이 맛있어요",
+    value: "음식이 맛있어요",
   },
   {
     id: 6,
     icon: "🌃",
-    keyword: "분위기가 좋아요",
+    value: "분위기가 좋아요",
   },
   {
     id: 7,
     icon: "😀",
-    keyword: "직원이 친절해요",
+    value: "직원이 친절해요",
   },
   {
     id: 8,
     icon: "🗣️",
-    keyword: "대화하기 좋아요",
+    value: "대화하기 좋아요",
   },
-  { id: 9, icon: "💵", keyword: "가성비가 좋아요" },
+  { id: 9, icon: "💵", value: "가성비가 좋아요" },
 ];
 
-const ReviewModal = ({ handleClose, name, placeId }) => {
-  const [inputs, setInputs] = useState({
-    rating: 0,
-    keyword: [],
-    detail: "",
-  });
+const ReviewModal = ({
+  handleClose,
+  name,
+  placeId,
+  reviewId,
+  defaultInputs,
+}) => {
+  const [inputs, setInputs] = useState(
+    defaultInputs || {
+      rating: 0,
+      keyword: [],
+      detail: "",
+    }
+  );
   const { rating, keyword, detail } = inputs;
   const { urls, files } = useRecoilValue(imageListState);
   const [detailMsg, setDetailMsg] = useState("");
   const [ratingMsg, setRatingMsg] = useState("");
   const setToastState = useSetRecoilState(toastState);
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const { mutate: mutatePost } = useMutation({
     mutationFn: postReview,
     onError: (e) => {
       setToastState({
         show: true,
         message: "리뷰 등록에 실패했습니다. 다시 시도해주세요.",
+        type: "error",
+      });
+      console.log(e);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["cocktail bar review", placeId]);
+      handleClose();
+    },
+  });
+  const { mutate: mutateEdit } = useMutation({
+    mutationFn: editReview,
+    onError: (e) => {
+      setToastState({
+        show: true,
+        message: "리뷰 수정에 실패했습니다. 다시 시도해주세요.",
         type: "error",
       });
       console.log(e);
@@ -115,20 +138,31 @@ const ReviewModal = ({ handleClose, name, placeId }) => {
       setRatingMsg("");
       return;
     }
-    mutate({
-      placeId,
-      rating,
-      keyword,
-      detail,
-      files,
-    });
+    if (reviewId) {
+      mutateEdit({
+        placeId,
+        rating,
+        keyword,
+        detail,
+        files,
+        reviewId,
+      });
+    } else {
+      mutatePost({
+        placeId,
+        rating,
+        keyword,
+        detail,
+        files,
+      });
+    }
   };
   return (
     <Modal
       handleClose={handleClose}
       onCancel={handleClose}
       onSubmit={onSubmit}
-      title="리뷰 작성"
+      title={reviewId ? "리뷰 수정" : "리뷰 작성"}
     >
       <RatingWrapper>
         <p className="place-name">{name}</p>
@@ -146,13 +180,14 @@ const ReviewModal = ({ handleClose, name, placeId }) => {
           <section>
             <h3>술/음식</h3>
             <div className="keyword-list">
-              {KEYWORDS.slice(0, 5).map(({ icon, keyword, id }) => (
+              {KEYWORDS.slice(0, 5).map(({ icon, value, id }) => (
                 <KeywordButton
-                  key={keyword}
+                  key={value}
                   icon={icon}
-                  keyword={keyword}
+                  keyword={value}
                   onChange={changeKeyword}
                   id={id}
+                  selected={keyword.includes(id)}
                 />
               ))}
             </div>
@@ -160,13 +195,14 @@ const ReviewModal = ({ handleClose, name, placeId }) => {
           <section>
             <h3>매장</h3>
             <div className="keyword-list">
-              {KEYWORDS.slice(5).map(({ icon, keyword, id }) => (
+              {KEYWORDS.slice(5).map(({ icon, value, id }) => (
                 <KeywordButton
-                  key={keyword}
+                  key={value}
                   icon={icon}
-                  keyword={keyword}
+                  keyword={value}
                   onChange={changeKeyword}
                   id={id}
+                  selected={keyword.includes(id)}
                 />
               ))}
             </div>
@@ -187,8 +223,8 @@ const ReviewModal = ({ handleClose, name, placeId }) => {
   );
 };
 
-const KeywordButton = ({ icon, keyword, onChange, id }) => {
-  const [select, setSelect] = useState(false);
+const KeywordButton = ({ icon, keyword, onChange, id, selected }) => {
+  const [select, setSelect] = useState(selected);
   return (
     <button
       onClick={() => {
