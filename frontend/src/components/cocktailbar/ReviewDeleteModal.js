@@ -19,6 +19,11 @@ const ReviewDeleteModal = ({ handleClose, reviewId, placeId }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["cocktail bar review", placeId]);
+      setToastState({
+        show: true,
+        message: "리뷰가 삭제되었습니다.",
+        type: "success",
+      });
       handleClose();
     },
   });

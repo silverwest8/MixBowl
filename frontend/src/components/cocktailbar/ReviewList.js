@@ -64,7 +64,7 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
                 <span>{review.UNO_USER.NICKNAME}</span>
                 <MemberBadge level={review.UNO_USER.LEVEL} />
               </div>
-              {review.UNO_USER.ISWRITER && (
+              {review.UNO_USER.ISWRITER && params.id && (
                 <DropdownMenu
                   handlers={[
                     () =>
