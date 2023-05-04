@@ -1,4 +1,3 @@
-import Title from "../components/common/Title";
 import Banner from "../components/home/Banner";
 import HomeAnswer from "../components/home/HomeAnswer";
 import HomeRecipe from "../components/home/HomeRecipe";
@@ -8,7 +7,6 @@ import HomeBulletin from "../components/home/HomeBulletin";
 const HomePage = () => {
   return (
     <main>
-      <Title title="칵테일 레시피" />
       <section>
         <Banner></Banner>
       </section>

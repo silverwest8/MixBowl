@@ -239,6 +239,29 @@ video {
   background-color: transparent !important;
 }
 
+.MuiRating-iconEmpty {
+  color: inherit !important;
+}
+
+.MuiRadio-root {
+  color: white !important;
+}
+
+.MuiRadio-root svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.MuiDialog-container > .MuiDialog-paper {
+  margin: 1rem !important;
+}
+
+@media screen and (max-width: 320px) {
+  .MuiDialog-container > .MuiDialog-paper {
+    margin: 1rem !important;
+    width: 100%;
+  }
+}
 /* Swiper */
 .swiper {
   height: 100%;
@@ -260,6 +283,3 @@ video {
   position: relative;
 }
 
-.MuiRating-iconEmpty {
-  color: inherit !important;
-}
