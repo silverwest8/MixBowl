@@ -17,6 +17,7 @@ import DetailRecipePage from "./pages/DetailRecipePage";
 import RecipeRoute from "./routes/RecipeRoute";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
+import NotFoundPage from "./pages/NotFoundPage";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -57,6 +58,7 @@ function App() {
                 </Route>
                 <Route path="community" element={<CommunityHomePage />} />
                 <Route path="community/posting" element={<PostingPage />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
