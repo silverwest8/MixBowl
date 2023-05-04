@@ -1,7 +1,7 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE extends Model {
+export default class ninja_recipe extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     CNO: {
@@ -28,7 +28,7 @@ export default class RECIPE extends Model {
     }
   }, {
     sequelize,
-    tableName: 'RECIPE',
+    tableName: 'ninja_recipe',
     timestamps: false,
     indexes: [
       {
