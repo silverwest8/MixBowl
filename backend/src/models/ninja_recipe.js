@@ -1,7 +1,7 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE extends Model {
+export default class ninja_recipe extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     CNO: {
@@ -14,21 +14,21 @@ export default class RECIPE extends Model {
       }
     },
     INGRED: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(80),
       allowNull: false,
       primaryKey: true
     },
     AMOUNT: {
       type: DataTypes.FLOAT,
-      allowNull: false
+      allowNull: true
     },
     UNIT: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'RECIPE',
+    tableName: 'ninja_recipe',
     timestamps: false,
     indexes: [
       {
