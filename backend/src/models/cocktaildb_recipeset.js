@@ -19,7 +19,7 @@ export default class cocktaildb_recipeset extends Model {
       primaryKey: true
     },
     AMOUNT: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.STRING(45),
       allowNull: true
     },
     UNIT: {

@@ -19,7 +19,7 @@ export default class RECIPE extends Model {
       primaryKey: true
     },
     AMOUNT: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.STRING(45),
       allowNull: false
     },
     UNIT: {

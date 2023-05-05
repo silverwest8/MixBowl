@@ -207,13 +207,14 @@ router.get('/cocktaildb/processing2', async (req, res) => {
 
 router.get('/cocktaildb/recipe', async (req, res) => {
   try {
-    // migration
+    /*
     const cocktaildb = await db.cocktaildbset.findAll();
     for (let i = 0; i < cocktaildb.length; i++) {
       // console.log(cocktaildb[i]);
       const find = await db.API_cocktaildb_en.findByPk(cocktaildb[i].CNO);
       console.log(find);
       for (let j = 1; j <= 10; j++) {
+        // migration
         if (find[`strIngredient${j}`] && find[`strMeasure${j}`]) {
           await db.cocktaildb_recipeset.create({
             CNO: cocktaildb[i].CNO,
@@ -222,6 +223,170 @@ router.get('/cocktaildb/recipe', async (req, res) => {
           });
         }
       }
+    }
+    */
+    const cocktaildb = await db.cocktaildb_recipeset.findAll({
+      where: { AMOUNT: null },
+      order: [['INGRED', 'DESC']],
+    });
+    for (let i = 0; i < cocktaildb.length; i++) {
+      const str = cocktaildb[i].UNIT.trim();
+      const list = str ? str.split(' ') : null;
+      // console.log(list);
+      if (!list || list.length != 2) {
+        console.log('HERE CHECK');
+        console.log(list);
+        console.log('\n');
+        continue;
+      }
+
+      /*
+      // 1. oz -> ml
+      if (list[1] == 'oz' && !isNaN(Number(list[0]))) {
+        console.log(list);
+        await db.cocktaildb_recipeset.update(
+          {
+            AMOUNT: Number(list[0]) * 30,
+            UNIT: 'ml',
+          },
+          {
+            where: {
+              CNO: cocktaildb[i].CNO,
+              INGRED: cocktaildb[i].INGRED,
+            },
+          }
+        );
+        console.log([list[0] * 30, 'ml']);
+      }
+      */
+
+      /*
+      // 2. cl -> ml
+      if ((list[1] == 'cl' || list[1] == 'cL') && !isNaN(Number(list[0]))) {
+        console.log(list);
+        await db.cocktaildb_recipeset.update(
+          {
+            AMOUNT: Number(list[0]) * 10,
+            UNIT: 'ml',
+          },
+          {
+            where: {
+              CNO: cocktaildb[i].CNO,
+              INGRED: cocktaildb[i].INGRED,
+            },
+          }
+        );
+        console.log([list[0] * 10, 'ml']);
+      }
+      */
+
+      /*
+      // 3. part, parts -> part
+      if (
+        (list[1] == 'part' || list[1] == 'parts') &&
+        !isNaN(Number(list[0]))
+      ) {
+        console.log(list);
+        await db.cocktaildb_recipeset.update(
+          {
+            AMOUNT: Number(list[0]),
+            UNIT: 'part',
+          },
+          {
+            where: {
+              CNO: cocktaildb[i].CNO,
+              INGRED: cocktaildb[i].INGRED,
+            },
+          }
+        );
+        console.log([list[0], 'part']);
+      }
+      */
+
+      /*
+      // 4. dash, dashes -> ml
+      if (
+        (list[1] == 'dash' || list[1] == 'dashes') &&
+        !isNaN(Number(list[0]))
+      ) {
+        console.log(list);
+        await db.cocktaildb_recipeset.update(
+          {
+            AMOUNT: Number(list[0]),
+            UNIT: 'ml',
+          },
+          {
+            where: {
+              CNO: cocktaildb[i].CNO,
+              INGRED: cocktaildb[i].INGRED,
+            },
+          }
+        );
+        console.log([list[0], 'ml']);
+      }
+      */
+
+      /*
+      // 4. ml -> ml
+      if (list[1] == 'ml' && !isNaN(Number(list[0]))) {
+        console.log(list);
+        await db.cocktaildb_recipeset.update(
+          {
+            AMOUNT: Number(list[0]),
+            UNIT: 'ml',
+          },
+          {
+            where: {
+              CNO: cocktaildb[i].CNO,
+              INGRED: cocktaildb[i].INGRED,
+            },
+          }
+        );
+        console.log([list[0], 'ml']);
+        console.log('\n');
+      }
+      */
+
+      /*
+      // 5. drop -> 0.2ml 인데 그냥 방울로 함
+      if (
+        (list[1] == 'drop' || list[1] == 'drops') &&
+        !isNaN(Number(list[0]))
+      ) {
+        console.log(list);
+        await db.cocktaildb_recipeset.update(
+          {
+            AMOUNT: Number(list[0]),
+            UNIT: '방울',
+          },
+          {
+            where: {
+              CNO: cocktaildb[i].CNO,
+              INGRED: cocktaildb[i].INGRED,
+            },
+          }
+        );
+        console.log([list[0], '방울']);
+      }
+      */
+      // 6. tsp -> 5ml
+      if (list[1] == 'tsp' && !isNaN(Number(list[0]))) {
+        console.log(list);
+        await db.cocktaildb_recipeset.update(
+          {
+            AMOUNT: Number(list[0]) * 5,
+            UNIT: 'ml',
+          },
+          {
+            where: {
+              CNO: cocktaildb[i].CNO,
+              INGRED: cocktaildb[i].INGRED,
+            },
+          }
+        );
+        console.log([Number(list[0]) * 5, 'ml']);
+      }
+      // sho(shots) == jigger == 45ml
     }
 
     return res
