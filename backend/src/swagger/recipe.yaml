@@ -67,7 +67,7 @@ paths:
       tags:
         - recipes
       summary: 칵테일 레시피 수정
-      description: ''
+      description: PUT 메소드로는 이미지 전송이 안돼서 POST로 합니다
       operationId: updateRecipe
       parameters:
         - in: path

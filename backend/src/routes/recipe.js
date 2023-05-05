@@ -1,13 +1,11 @@
 'use strict';
 
 import express from 'express';
-import axios from 'axios';
 import { db } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import fs from 'fs';
-import ninjaset from '../models/ninjaset';
 dotenv.config();
 const router = express.Router();
 
@@ -66,9 +64,12 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
     const data = JSON.parse(req.body.data);
     console.log(data);
     console.log(req.file);
+
+    // name, alcoholic, instruction, image path 저장F
     const cocktail = await db.COCKTAIL.create({
       UNO: req.user.UNO,
       NAME: data.name,
+      ALCOHOLIC: data.alcoholic,
       INSTRUCTION: data.instruction,
       IMAGE_PATH: req.file.path,
     });
@@ -80,7 +81,17 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
       }
     }
 
-    // main, sub ingredient 저장
+    // ingredient 저장
+    for (let i = 0; i < data.ingred.length; i++) {
+      if (data.ingred[i] != null) {
+        await db.INGREDIENT.create({
+          CNO: cocktail.CNO,
+          NAME: data.ingred[i].name,
+          AMOUNT: data.ingred[i].amount,
+          UNIT: data.ingred[i].unit,
+        });
+      }
+    }
 
     res.status(200).json({ success: true, message: 'Recipe post 성공' });
   } catch (error) {
@@ -97,15 +108,14 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
     let data = {
       name: '',
       color: [],
-      main: [],
-      sub: [],
+      ingred: [],
       instruction: '',
     };
 
     // cocktail get
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId, {
-      attributes: ['CNO', 'NAME', 'INSTRUCTION'],
+      attributes: ['CNO', 'NAME', 'ALCOHOLIC', 'INSTRUCTION'],
       include: [
         {
           model: db.COLOR,
@@ -114,15 +124,37 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
           where: { CNO: cocktailId },
           required: false,
         },
+        {
+          model: db.INGREDIENT,
+          as: 'INGREDIENTs',
+          attributes: ['NAME', 'AMOUNT', 'UNIT'],
+          where: { CNO: cocktailId },
+          required: false,
+        },
       ],
+      order: [[{ model: db.INGREDIENT, as: 'INGREDIENTs' }, 'AMOUNT', 'DESC']],
     });
-    console.log(cocktail);
+    const color = cocktail.COLORs;
+    const ingredient = cocktail.INGREDIENTs;
     data.name = cocktail.NAME;
+    data.alcoholic = cocktail.ALCOHOLIC;
     data.instruction = cocktail.INSTRUCTION;
-    for (let i = 0; i < cocktail.COLORs.length; i++) {
-      data.color.push(cocktail.COLORs[i].COLOR);
+
+    // color
+    for (let i = 0; i < color.length; i++) {
+      data.color.push(color[i].COLOR);
     }
-    // main, sub ingredient get
+
+    // ingredient
+    console.log(ingredient);
+    for (let i = 0; i < ingredient.length; i++) {
+      const temp = {
+        name: ingredient[i].NAME,
+        amount: ingredient[i].AMOUNT,
+        unit: ingredient[i].UNIT,
+      };
+      data.ingred.push(temp);
+    }
     return res
       .status(200)
       .json({ success: true, message: 'Recipe get 성공', data });
@@ -155,33 +187,67 @@ router.post(
             where: { CNO: cocktailId },
             required: false,
           },
+          {
+            model: db.INGREDIENT,
+            as: 'INGREDIENTs',
+            attributes: ['NAME'],
+            where: { CNO: cocktailId },
+            required: false,
+          },
         ],
       });
+      const color = cocktail.COLORs;
+      const ingredient = cocktail.INGREDIENTs;
       console.log(cocktail.IMAGE_PATH);
+
+      // 이전 이미지 삭제
       if (cocktail.IMAGE_PATH) {
         const oldFilePath = `./${cocktail.IMAGE_PATH}`;
         console.log(oldFilePath);
         fs.unlinkSync(oldFilePath);
       }
+
+      // 정보 update
       await cocktail.update({
         NAME: data.name,
         INSTRUCTION: data.instruction,
         IMAGE_PATH: req.file ? req.file.path : null,
       });
-      // color는 개수 달라질 수 있으므로 삭제 후 저장
-      for (let i = 0; i < cocktail.COLORs.length; i++) {
-        console.log(cocktail.COLORs[i].COLOR);
+
+      // color, ingredient는 개수 달라질 수 있으므로 삭제 후 저장
+      // 삭제(color)
+      for (let i = 0; i < color.length; i++) {
+        console.log(color[i].COLOR);
         await db.COLOR.destroy({
-          where: { CNO: cocktailId, COLOR: cocktail.COLORs[i].COLOR },
+          where: { CNO: cocktailId, COLOR: color[i].COLOR },
         });
       }
+      // 삭제(ingredient)
+      for (let i = 0; i < ingredient.length; i++) {
+        console.log(ingredient[i].NAME);
+        await db.INGREDIENT.destroy({
+          where: { CNO: cocktailId, NAME: ingredient[i].NAME },
+        });
+      }
+
+      // 추가(color)
       for (let i = 0; i < data.color.length; i++) {
         if (data.color[i] != null) {
           await db.COLOR.create({ CNO: cocktail.CNO, COLOR: data.color[i] });
         }
       }
-
-      // main, sub ingredient 변경
+      // 추가(ingredient)
+      for (let i = 0; i < data.ingred.length; i++) {
+        console.log(data.ingred[i]);
+        if (data.ingred[i] != null) {
+          await db.INGREDIENT.create({
+            CNO: cocktail.CNO,
+            NAME: data.ingred[i].name,
+            AMOUNT: data.ingred[i].amount,
+            UNIT: data.ingred[i].unit,
+          });
+        }
+      }
 
       res.status(200).json({ success: true, message: 'Cocktail update 성공' });
     } catch (error) {
@@ -202,10 +268,9 @@ router.delete('/:cocktailId', async (req, res) => {
     const oldFilePath = `./${cocktail.IMAGE_PATH}`;
     console.log(oldFilePath);
     fs.unlinkSync(oldFilePath);
-    // color 삭제(아마 자동)
-    // main, sub ingredient 삭제(아마 자동)
     console.log(cocktail);
     await cocktail.destroy();
+    // color, ingredient - CASCADE TRIGGER로 자동 삭제
 
     res.status(200).json({ success: true, message: 'Cocktail delete 성공' });
   } catch (error) {
@@ -264,7 +329,7 @@ router.get('/list/filter', checkAccess, async (req, res) => {
       list.push(temp);
     }
 
-    // main, sub ingredient get
+    // ingredient get
     return res
       .status(200)
       .json({ success: true, message: 'Cocktail list get 성공', list });
@@ -291,7 +356,7 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
     }
 
     // color get
-    // main, sub ingredient get
+    // ingredient get
     return res
       .status(200)
       .json({ success: true, message: 'Cocktail detail get 성공', list });
@@ -318,7 +383,7 @@ router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
     }
 
     // color get
-    // main, sub ingredient get
+    // ingredient get
     return res
       .status(200)
       .json({ success: true, message: 'Cocktail detail get 성공', list });
