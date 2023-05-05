@@ -1,12 +1,12 @@
 'use strict';
 
 import express from 'express';
+import axios from 'axios';
 import { db } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import fs from 'fs';
-import { Sequelize, col } from 'sequelize';
 dotenv.config();
 const router = express.Router();
 
@@ -65,12 +65,9 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
     const data = JSON.parse(req.body.data);
     console.log(data);
     console.log(req.file);
-
-    // name, alcoholic, instruction, image path 저장F
     const cocktail = await db.COCKTAIL.create({
       UNO: req.user.UNO,
       NAME: data.name,
-      ALCOHOLIC: data.alcoholic,
       INSTRUCTION: data.instruction,
       IMAGE_PATH: req.file.path,
     });
@@ -82,17 +79,7 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
       }
     }
 
-    // ingredient 저장
-    for (let i = 0; i < data.ingred.length; i++) {
-      if (data.ingred[i] != null) {
-        await db.INGREDIENT.create({
-          CNO: cocktail.CNO,
-          NAME: data.ingred[i].name,
-          AMOUNT: data.ingred[i].amount,
-          UNIT: data.ingred[i].unit,
-        });
-      }
-    }
+    // main, sub ingredient 저장
 
     res.status(200).json({ success: true, message: 'Recipe post 성공' });
   } catch (error) {
@@ -109,14 +96,15 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
     let data = {
       name: '',
       color: [],
-      ingred: [],
+      main: [],
+      sub: [],
       instruction: '',
     };
 
     // cocktail get
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId, {
-      attributes: ['CNO', 'NAME', 'ALCOHOLIC', 'INSTRUCTION'],
+      attributes: ['CNO', 'NAME', 'INSTRUCTION'],
       include: [
         {
           model: db.COLOR,
@@ -125,37 +113,15 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
           where: { CNO: cocktailId },
           required: false,
         },
-        {
-          model: db.INGREDIENT,
-          as: 'INGREDIENTs',
-          attributes: ['NAME', 'AMOUNT', 'UNIT'],
-          where: { CNO: cocktailId },
-          required: false,
-        },
       ],
-      order: [[{ model: db.INGREDIENT, as: 'INGREDIENTs' }, 'AMOUNT', 'DESC']],
     });
-    const color = cocktail.COLORs;
-    const ingredient = cocktail.INGREDIENTs;
+    console.log(cocktail);
     data.name = cocktail.NAME;
-    data.alcoholic = cocktail.ALCOHOLIC;
     data.instruction = cocktail.INSTRUCTION;
-
-    // color
-    for (let i = 0; i < color.length; i++) {
-      data.color.push(color[i].COLOR);
+    for (let i = 0; i < cocktail.COLORs.length; i++) {
+      data.color.push(cocktail.COLORs[i].COLOR);
     }
-
-    // ingredient
-    console.log(ingredient);
-    for (let i = 0; i < ingredient.length; i++) {
-      const temp = {
-        name: ingredient[i].NAME,
-        amount: ingredient[i].AMOUNT,
-        unit: ingredient[i].UNIT,
-      };
-      data.ingred.push(temp);
-    }
+    // main, sub ingredient get
     return res
       .status(200)
       .json({ success: true, message: 'Recipe get 성공', data });
@@ -188,67 +154,33 @@ router.post(
             where: { CNO: cocktailId },
             required: false,
           },
-          {
-            model: db.INGREDIENT,
-            as: 'INGREDIENTs',
-            attributes: ['NAME'],
-            where: { CNO: cocktailId },
-            required: false,
-          },
         ],
       });
-      const color = cocktail.COLORs;
-      const ingredient = cocktail.INGREDIENTs;
       console.log(cocktail.IMAGE_PATH);
-
-      // 이전 이미지 삭제
       if (cocktail.IMAGE_PATH) {
         const oldFilePath = `./${cocktail.IMAGE_PATH}`;
         console.log(oldFilePath);
         fs.unlinkSync(oldFilePath);
       }
-
-      // 정보 update
       await cocktail.update({
         NAME: data.name,
         INSTRUCTION: data.instruction,
         IMAGE_PATH: req.file ? req.file.path : null,
       });
-
-      // color, ingredient는 개수 달라질 수 있으므로 삭제 후 저장
-      // 삭제(color)
-      for (let i = 0; i < color.length; i++) {
-        console.log(color[i].COLOR);
+      // color는 개수 달라질 수 있으므로 삭제 후 저장
+      for (let i = 0; i < cocktail.COLORs.length; i++) {
+        console.log(cocktail.COLORs[i].COLOR);
         await db.COLOR.destroy({
-          where: { CNO: cocktailId, COLOR: color[i].COLOR },
+          where: { CNO: cocktailId, COLOR: cocktail.COLORs[i].COLOR },
         });
       }
-      // 삭제(ingredient)
-      for (let i = 0; i < ingredient.length; i++) {
-        console.log(ingredient[i].NAME);
-        await db.INGREDIENT.destroy({
-          where: { CNO: cocktailId, NAME: ingredient[i].NAME },
-        });
-      }
-
-      // 추가(color)
       for (let i = 0; i < data.color.length; i++) {
         if (data.color[i] != null) {
           await db.COLOR.create({ CNO: cocktail.CNO, COLOR: data.color[i] });
         }
       }
-      // 추가(ingredient)
-      for (let i = 0; i < data.ingred.length; i++) {
-        console.log(data.ingred[i]);
-        if (data.ingred[i] != null) {
-          await db.INGREDIENT.create({
-            CNO: cocktail.CNO,
-            NAME: data.ingred[i].name,
-            AMOUNT: data.ingred[i].amount,
-            UNIT: data.ingred[i].unit,
-          });
-        }
-      }
+
+      // main, sub ingredient 변경
 
       res.status(200).json({ success: true, message: 'Cocktail update 성공' });
     } catch (error) {
@@ -269,9 +201,10 @@ router.delete('/:cocktailId', async (req, res) => {
     const oldFilePath = `./${cocktail.IMAGE_PATH}`;
     console.log(oldFilePath);
     fs.unlinkSync(oldFilePath);
+    // color 삭제(아마 자동)
+    // main, sub ingredient 삭제(아마 자동)
     console.log(cocktail);
     await cocktail.destroy();
-    // color, ingredient - CASCADE TRIGGER로 자동 삭제
 
     res.status(200).json({ success: true, message: 'Cocktail delete 성공' });
   } catch (error) {
@@ -286,23 +219,15 @@ router.get('/list/filter', checkAccess, async (req, res) => {
   try {
     const max = req.query.max;
     const min = req.query.min;
-    console.log(req.query.color);
-    const color = req.query.color
-      ? JSON.parse(`{"color": ${req.query.color}}`).color
-      : null; // json string parse?
+    const color = req.query.color; // json string parse?
     const search = req.query.search;
     const sort = req.query.sort;
     console.log(max, min, color, search, sort);
     let list = [];
-    let colorOption = [];
-    for (let i = 0; i < color.length; i++) {
-      colorOption.push({ COLOR: color[i] });
-    }
-    console.log(colorOption);
     const cocktail = await db.COCKTAIL.findAll({
-      attributes: ['CNO', 'NAME', [Sequelize.fn('COUNT', '*'), 'LIKE']],
-      having: {
-        [Sequelize.Op.or]: colorOption,
+      attributes: ['CNO', 'NAME'],
+      where: {
+        //
       },
       include: [
         {
@@ -311,36 +236,34 @@ router.get('/list/filter', checkAccess, async (req, res) => {
           attributes: ['UNO', 'NICKNAME', 'LEVEL'],
           required: false,
         },
-        {
-          model: db.COCKTAIL_LIKE,
-          as: 'COCKTAIL_LIKEs',
-          required: false,
-        },
-        {
-          model: db.COLOR,
-          as: 'COLORs',
-          required: false,
-        },
       ],
-      group: ['CNO'],
-      order: [sort == 'new' ? ['createdAt', 'DESC'] : ['LIKE', 'DESC']],
     });
+    // console.log(cocktail);
     for (let i = 0; i < cocktail.length; i++) {
       let temp = {
         id: cocktail[i].CNO,
         name: cocktail[i].NAME,
-        like: cocktail[i].dataValues.LIKE,
-        post: await db.POST.count({ where: cocktail[i].CNO }),
+        like: 0,
+        post: 0,
         USER: {
           nickname: cocktail[i].UNO_USER.NICKNAME,
           level: cocktail[i].UNO_USER.LEVEL,
-          iswriter: req.user.UNO == cocktail[i].UNO_USER.UNO ? true : false,
+          iswriter: false,
         },
       };
+      const like = await db.COCKTAIL_LIKE.findAndCountAll({
+        where: cocktail[i].CNO,
+      });
+      temp.like = like.count;
+      const post = await db.POST.findAndCountAll({ where: cocktail[i].CNO });
+      temp.post = post.count;
+      if (req.user.UNO == cocktail[i].UNO_USER.UNO) {
+        temp.USER.iswriter = true;
+      }
       list.push(temp);
     }
 
-    // ingredient get
+    // main, sub ingredient get
     return res
       .status(200)
       .json({ success: true, message: 'Cocktail list get 성공', list });
@@ -354,72 +277,23 @@ router.get('/list/filter', checkAccess, async (req, res) => {
 
 router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
   try {
-    let data = {
-      name: '',
-      color: [],
-      ingred: [],
-      instruction: '',
-    };
     const cocktailId = req.params.cocktailId;
-    const cocktail = await db.COCKTAIL.findByPk(cocktailId, {
-      attributes: ['CNO', 'NAME', 'ALCOHOLIC', 'INSTRUCTION', 'createdAt'],
-      include: [
-        {
-          model: db.COLOR,
-          as: 'COLORs',
-          attributes: ['COLOR'],
-          where: { CNO: cocktailId },
-          required: false,
-        },
-        {
-          model: db.INGREDIENT,
-          as: 'INGREDIENTs',
-          attributes: ['NAME', 'AMOUNT', 'UNIT'],
-          where: { CNO: cocktailId },
-          required: false,
-        },
-        {
-          model: db.USER,
-          as: 'UNO_USER',
-          attributes: ['UNO', 'NICKNAME', 'LEVEL'],
-          required: false,
-        },
-      ],
-      order: [[{ model: db.INGREDIENT, as: 'INGREDIENTs' }, 'AMOUNT', 'DESC']],
-    });
-    const color = cocktail.COLORs;
-    const ingredient = cocktail.INGREDIENTs;
-    data.date = cocktail.createdAt;
-    data.name = cocktail.NAME;
-    data.alcoholic = cocktail.ALCOHOLIC;
-    data.instruction = cocktail.INSTRUCTION;
-    data.USER = {
-      nickname: cocktail.UNO_USER.NICKNAME,
-      level: cocktail.UNO_USER.LEVEL,
-      iswriter: req.user.UNO == cocktail.UNO_USER.UNO ? true : false,
-    };
-    // color
-    console.log(color);
-    for (let i = 0; i < color.length; i++) {
-      data.color.push(color[i].COLOR);
-    }
+    const cocktail = await db.COCKTAIL.findByPk(cocktailId);
 
-    // ingredient
-    console.log(ingredient);
-    for (let i = 0; i < ingredient.length; i++) {
-      const temp = {
-        name: ingredient[i].NAME,
-        amount: ingredient[i].AMOUNT,
-        unit: ingredient[i].UNIT,
-      };
-      data.ingred.push(temp);
+    for (let i = 0; i < cocktail.length; i++) {
+      const like = await db.COCKTAIL_LIKE.findAndCountAll({
+        where: cocktail[i].CNO,
+      });
+      console.log(like.count);
+      const post = await db.POST.findAndCountAll({ where: cocktail[i].CNO });
+      console.log(post.count);
     }
 
     // color get
-    // ingredient get
+    // main, sub ingredient get
     return res
       .status(200)
-      .json({ success: true, message: 'Cocktail detail get 성공', data });
+      .json({ success: true, message: 'Cocktail detail get 성공', list });
   } catch (error) {
     console.log(error);
     return res
@@ -430,28 +304,23 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
 
 router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
   try {
-    let data = {};
-    let list = [];
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
 
-    const like = await db.COCKTAIL_LIKE.findAndCountAll({
-      where: cocktail.CNO,
-    });
-    console.log(like.count);
-    data.like = like.count;
-
-    const post = await db.POST.findAndCountAll({ where: cocktail.CNO });
-    console.log(post.count);
-    data.post = post.count;
-
-    data.list = post;
+    for (let i = 0; i < cocktail.length; i++) {
+      const like = await db.COCKTAIL_LIKE.findAndCountAll({
+        where: cocktail[i].CNO,
+      });
+      console.log(like.count);
+      const post = await db.POST.findAndCountAll({ where: cocktail[i].CNO });
+      console.log(post.count);
+    }
 
     // color get
-    // ingredient get
+    // main, sub ingredient get
     return res
       .status(200)
-      .json({ success: true, message: 'Cocktail detail get 성공', data });
+      .json({ success: true, message: 'Cocktail detail get 성공', list });
   } catch (error) {
     console.log(error);
     return res
@@ -479,32 +348,305 @@ router.get('/image/:cocktailId', async (req, res) => {
   }
 });
 
-router.post('/like/:cocktailId', async (req, res) => {
+//  ----- 이 아래는 데이터 가공을 위해 쓴 코드 - 배포 시 지울 예정 ----- //
+
+router.get('/testAPIs', async (req, res) => {
   try {
-    const cocktailId = req.params.cocktailId;
-    await db.COCKTAIL_LIKE.create({ CNO: cocktailId, UNO: req.user.UNO });
+    const { data } = await axios.get(
+      'https://www.thecocktaildb.com/api/json/v1/1/search.php',
+      {
+        params: {
+          f: req.query.f,
+        },
+        headers: {
+          Authorization: '1',
+        },
+      }
+    );
+    if (data.drinks != null) {
+      for (let i = 0; i < data.drinks.length; i++) {
+        console.log(data.drinks[i]);
+        const recipe = await db.API_cocktaildb_en.findByPk(
+          Number(data.drinks[i].idDrink)
+        );
+        await recipe.update(data.drinks[i]);
+      }
+    }
+    res.status(200).json(data);
   } catch (error) {
     console.log(error);
     return res
       .status(400)
-      .json({ success: false, message: 'Recipe Like 실패', error });
+      .json({ success: false, message: 'Cocktaildb API 조회 실패', error });
   }
 });
 
-router.post('/report/:cocktailId', async (req, res) => {
+router.get('/testAPIsAll', async (req, res) => {
   try {
-    const cocktailId = req.params.cocktailId;
-    const report = req.body.report;
-    await db.COCKTAIL_REPORT.create({
-      CNO: cocktailId,
-      UNO: req.user.UNO,
-      REPORT: report,
-    });
+    for (
+      let i = req.query.f.charCodeAt(0);
+      i < req.query.f.charCodeAt(0) + 26;
+      i++
+    ) {
+      const { data } = await axios.get(
+        'https://www.thecocktaildb.com/api/json/v1/1/search.php',
+        {
+          params: {
+            f: String.fromCharCode(i),
+          },
+          headers: {
+            Authorization: '1',
+          },
+        }
+      );
+      if (data.drinks != null) {
+        for (let i = 0; i < data.drinks.length; i++) {
+          console.log(data.drinks[i]);
+          const recipe = await API_cocktaildb_en.findByPk(
+            Number(data.drinks[i].idDrink)
+          );
+          await recipe.update(data.drinks[i]);
+        }
+      }
+    }
+    res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);
     return res
       .status(400)
-      .json({ success: false, message: 'Recipe Report 실패', error });
+      .json({ success: false, message: 'Cocktaildb API 조회 실패', error });
+  }
+});
+
+router.get('/testAPIs/findById', async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      'https://www.thecocktaildb.com/api/json/v1/1/lookup.php',
+      {
+        params: {
+          i: req.query.i,
+        },
+        headers: {
+          Authorization: '1',
+        },
+      }
+    );
+    if (data.drinks != null) {
+      await API_cocktaildb_en.findByPk(data.drinks[0].idDrink);
+    }
+    res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Cocktaildb API id 조회 실패', error });
+  }
+});
+
+router.get('/testAPIs/ninja', async (req, res) => {
+  try {
+    const ingredient = await INGREDIENT.findAll();
+    for (let i = 0; i < ingredient.length; i++) {
+      const { data } = await axios.get(
+        'https://api.api-ninjas.com/v1/cocktail',
+        {
+          params: {
+            // [req.query.param]: req.query.content, // name or ingredients
+            ingredients: ingredient[i].NAME,
+          },
+          headers: {
+            'X-Api-Key': process.env.NINJA_API_KEY,
+          },
+        }
+      );
+      console.log(data.length);
+      for (let j = 0; j < data.length; j++) {
+        const [row, created] = await API_ninja_en.findOrCreate({
+          where: { NAME: data[j].name },
+        });
+        row.update({
+          INSTRUCTION: data[j].instructions,
+          INGREDIENT1: data[j].ingredients[0],
+          INGREDIENT2: data[j].ingredients[1],
+          INGREDIENT3: data[j].ingredients[2],
+          INGREDIENT4: data[j].ingredients[3],
+          INGREDIENT5: data[j].ingredients[4],
+          INGREDIENT6: data[j].ingredients[5],
+          INGREDIENT7: data[j].ingredients[6],
+          INGREDIENT8: data[j].ingredients[7],
+          INGREDIENT9: data[j].ingredients[8],
+          INGREDIENT10: data[j].ingredients[9],
+        });
+      }
+    }
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Ninja API id 조회 실패', error });
+  }
+});
+
+router.get('/data/migration', async (req, res) => {
+  try {
+    const DB = await API_cocktaildb_en.findAll();
+    DB.forEach(async (element) => {
+      console.log(element);
+      await COCKTAIL.create({
+        CNO: element.idDrink,
+        UNO: 1,
+        NAME: element.strDrink,
+        ALCOHOLIC: element.strAlcoholic,
+        GLASS: element.strGlass,
+        INSTRUCTION: element.strInstructions,
+        IMAGE_PATH: element.strDrinkThumb,
+      });
+    });
+
+    res.status(200).json({ success: true });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Cocktaildb API migration 실패',
+      error,
+    });
+  }
+});
+
+router.get('/data/ingredient', async (req, res) => {
+  try {
+    for (let i = 1; i <= 15; i++) {
+      const DB = await API_cocktaildb_en.findAll({
+        attributes: [`strIngredient${i}`],
+        group: [`strIngredient${i}`],
+      });
+      DB.forEach(async (element) => {
+        try {
+          if (element[`strIngredient${i}`] != null) {
+            console.log(element[`strIngredient${i}`]);
+            await INGREDIENT.findOrCreate({
+              where: { NAME: element[`strIngredient${i}`] },
+            });
+          }
+        } catch (error) {
+          console.log(error);
+          return res.status(400).json({
+            success: false,
+            message: 'Cocktaildb API ingredient building 실패',
+            error,
+          });
+        }
+      });
+    }
+    res.status(200).json({ success: true });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Cocktaildb API migration 실패',
+      error,
+    });
+  }
+});
+
+router.get('/data/processing', async (req, res) => {
+  try {
+    // const searchWord = '1 2/3';
+    // for (let i = 1; i <= 10; i++) {
+    //   const DB = await API_ninja_en.findAll({
+    //     attributes: ['ID', `INGREDIENT${i}`],
+    //     where: {
+    //       [`INGREDIENT${i}`]: { [Sequelize.Op.like]: '%' + searchWord + '%' },
+    //     },
+    //   });
+    //   for (let j = 0; j < DB.length; j++) {
+    //     console.log(DB[j].dataValues);
+    //     if (DB[j][`INGREDIENT${i}`].substring(0, 5) == '1 2/3') {
+    //       console.log('일치');
+    //       const temp = await API_ninja_en.findByPk(DB[j].ID);
+    //       temp.update({
+    //         [`INGREDIENT${i}`]: '1.66' + DB[j][`INGREDIENT${i}`].substring(5),
+    //       });
+    //       console.log('change');
+    //       console.log('1.66' + DB[j][`INGREDIENT${i}`].substring(5));
+    //     }
+    //   }
+    //   console.log(DB.length);
+    // }
+    // ----------------------------------
+    // const searchWord = '(6 parts)';
+    // for (let i = 1; i <= 10; i++) {
+    //   const DB = await API_ninja_en.findAll({
+    //     attributes: ['ID', `INGREDIENT${i}`],
+    //     where: {
+    //       [`INGREDIENT${i}`]: { [Sequelize.Op.like]: '%' + searchWord + '%' },
+    //     },
+    //   });
+    //   for (let j = 0; j < DB.length; j++) {
+    //     console.log(DB[j].dataValues);
+    //     let idx = DB[j][`INGREDIENT${i}`].indexOf('(6 parts)');
+    //     console.log('일치');
+    //     const temp = await API_ninja_en.findByPk(DB[j].ID);
+    //     temp.update({
+    //       [`INGREDIENT${i}`]:
+    //         DB[j][`INGREDIENT${i}`].substring(0, idx) +
+    //         DB[j][`INGREDIENT${i}`].substring(idx + 10),
+    //     });
+    //     console.log('change');
+    //     console.log(
+    //       DB[j][`INGREDIENT${i}`].substring(0, idx) +
+    //         DB[j][`INGREDIENT${i}`].substring(idx + 10)
+    //     );
+    //   }
+    //   console.log(DB.length);
+    // }
+    for (let i = 1; i <= 10; i++) {
+      const DB = await API_ninja_en.findAll({
+        attributes: ['ID', `INGREDIENT${i}`],
+      });
+      for (let j = 0; j < DB.length; j++) {
+        const str = DB[j][`INGREDIENT${i}`];
+        // if (str) console.log(DB[j].dataValues);
+        const space1 = str ? str.indexOf(' ') : null;
+        const space2 = str ? str.indexOf(' ', space1 + 1) : null;
+
+        const temp1 = str ? str.split(' ', 2) : null;
+        // if (temp1) console.log(temp1);
+        const list = [
+          temp1 ? temp1[0] : null,
+          temp1 ? temp1[1] : null,
+          str ? str.substring(space2 + 1) : null,
+        ];
+        if (str) console.log(list);
+        // let idx = str.indexOf('(6 parts)');
+        // console.log('일치');
+        // const temp = await API_ninja_en.findByPk(DB[j].ID);
+        // temp.update({
+        //   [`INGREDIENT${i}`]:
+        //     str.substring(0, idx) +
+        //     str.substring(idx + 10),
+        // });
+        // console.log('change');
+        // console.log(
+        //   str.substring(0, idx) +
+        //     str.substring(idx + 10)
+        // );
+      }
+      console.log(DB.length);
+    }
+    res.status(200).json({ success: true });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Cocktaildb API processing 실패',
+      error,
+    });
   }
 });
 

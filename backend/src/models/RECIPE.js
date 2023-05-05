@@ -4,7 +4,7 @@ const { Model, Sequelize } = _sequelize;
 export default class RECIPE extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    CNO: {
+    RNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -13,18 +13,22 @@ export default class RECIPE extends Model {
         key: 'CNO'
       }
     },
-    INGRED: {
-      type: DataTypes.STRING(45),
+    INO: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'INGREDIENT',
+        key: 'INO'
+      }
     },
-    AMOUNT: {
-      type: DataTypes.STRING(45),
-      allowNull: false
+    VOLUME: {
+      type: DataTypes.FLOAT,
+      allowNull: true
     },
     UNIT: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: true
     }
   }, {
     sequelize,
@@ -36,8 +40,15 @@ export default class RECIPE extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "CNO" },
-          { name: "INGRED" },
+          { name: "RNO" },
+          { name: "INO" },
+        ]
+      },
+      {
+        name: "INO_idx",
+        using: "BTREE",
+        fields: [
+          { name: "INO" },
         ]
       },
     ]
