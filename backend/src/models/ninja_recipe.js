@@ -7,16 +7,14 @@ export default class ninja_recipe extends Model {
     CNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
       references: {
-        model: 'COCKTAIL',
+        model: 'ninjaset',
         key: 'CNO'
       }
     },
     INGRED: {
       type: DataTypes.STRING(80),
-      allowNull: false,
-      primaryKey: true
+      allowNull: false
     },
     AMOUNT: {
       type: DataTypes.STRING(45),
@@ -32,12 +30,10 @@ export default class ninja_recipe extends Model {
     timestamps: false,
     indexes: [
       {
-        name: "PRIMARY",
-        unique: true,
+        name: "CNO4_idx",
         using: "BTREE",
         fields: [
           { name: "CNO" },
-          { name: "INGRED" },
         ]
       },
     ]

@@ -9,7 +9,7 @@ export default class cocktaildb_recipeset extends Model {
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'COCKTAIL',
+        model: 'cocktaildbset',
         key: 'CNO'
       }
     },
@@ -38,6 +38,13 @@ export default class cocktaildb_recipeset extends Model {
         fields: [
           { name: "CNO" },
           { name: "INGRED" },
+        ]
+      },
+      {
+        name: "CNO3_idx",
+        using: "BTREE",
+        fields: [
+          { name: "CNO" },
         ]
       },
     ]

@@ -65,14 +65,12 @@ export default function initModels(sequelize) {
   COCKTAIL.hasMany(COCKTAIL_REPORT, { as: "COCKTAIL_REPORTs", foreignKey: "CNO"});
   COLOR.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
   COCKTAIL.hasMany(COLOR, { as: "COLORs", foreignKey: "CNO"});
+  INGREDIENT.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
+  COCKTAIL.hasMany(INGREDIENT, { as: "INGREDIENTs", foreignKey: "CNO"});
   POST.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
   COCKTAIL.hasMany(POST, { as: "POSTs", foreignKey: "CNO"});
   RECIPE.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
   COCKTAIL.hasMany(RECIPE, { as: "RECIPEs", foreignKey: "CNO"});
-  cocktaildb_recipeset.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
-  COCKTAIL.hasMany(cocktaildb_recipeset, { as: "cocktaildb_recipesets", foreignKey: "CNO"});
-  ninja_recipe.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
-  COCKTAIL.hasMany(ninja_recipe, { as: "ninja_recipes", foreignKey: "CNO"});
   REVIEW.belongsTo(PLACE, { as: "PLACE", foreignKey: "PLACE_ID"});
   PLACE.hasMany(REVIEW, { as: "REVIEWs", foreignKey: "PLACE_ID"});
   POST_LIKE.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
@@ -107,6 +105,10 @@ export default function initModels(sequelize) {
   USER.hasMany(ninja, { as: "ninjas", foreignKey: "UNO"});
   ninjaset.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(ninjaset, { as: "ninjasets", foreignKey: "UNO"});
+  cocktaildb_recipeset.belongsTo(cocktaildbset, { as: "CNO_cocktaildbset", foreignKey: "CNO"});
+  cocktaildbset.hasMany(cocktaildb_recipeset, { as: "cocktaildb_recipesets", foreignKey: "CNO"});
+  ninja_recipe.belongsTo(ninjaset, { as: "CNO_ninjaset", foreignKey: "CNO"});
+  ninjaset.hasMany(ninja_recipe, { as: "ninja_recipes", foreignKey: "CNO"});
 
   return {
     API_cocktaildb_en,
