@@ -4,6 +4,7 @@ import express from 'express';
 import { db } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
 import dotenv from 'dotenv';
+import axios from 'axios';
 import multer from 'multer';
 import fs from 'fs';
 import { Sequelize, col } from 'sequelize';
@@ -465,12 +466,19 @@ router.get('/image/:cocktailId', async (req, res) => {
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
     console.log(cocktail.IMAGE_PATH);
-    fs.readFile(cocktail.IMAGE_PATH, (err, data) => {
-      if (err) throw Error;
-      res.writeHead(200, { 'Context-Type': 'image/jpg' }); //보낼 헤더를 만듬
-      res.write(data); //본문을 만들고
-      return res.end(); //클라이언트에게 응답을 전송한다
-    });
+    if (Number(cocktailId) < 11000) {
+      fs.readFile(cocktail.IMAGE_PATH, (err, data) => {
+        if (err) throw Error;
+        res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
+        res.write(data); //본문을 만들고
+        return res.end(); //클라이언트에게 응답을 전송한다
+      });
+    } else {
+      const { data } = await axios.get(cocktail.IMAGE_PATH);
+      res.writeHead(200, { 'Content-Type': 'image/jpg' });
+      res.write(data);
+      return res.end();
+    }
   } catch (error) {
     console.log(error);
     return res
