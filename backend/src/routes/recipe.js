@@ -467,12 +467,10 @@ router.get('/image/:cocktailId', checkAccess, async (req, res) => {
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
     console.log(cocktail.IMAGE_PATH);
     if (Number(cocktailId) < 11000) {
-      fs.readFile(cocktail.IMAGE_PATH, (err, data) => {
-        if (err) throw Error(err);
-        res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
-        res.write(data); //본문을 만들고
-        return res.end(); //클라이언트에게 응답을 전송한다
-      });
+      fs.readFileSync(cocktail.IMAGE_PATH)
+      res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
+      res.write(data); //본문을 만들고
+      return res.end(); //클라이언트에게 응답을 전송한다
     } else {
       const { data } = await axios.get(cocktail.IMAGE_PATH);
       res.writeHead(200, { 'Content-Type': 'image/jpg' });
