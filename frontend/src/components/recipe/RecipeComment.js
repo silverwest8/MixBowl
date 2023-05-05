@@ -39,13 +39,14 @@ const CommentModal = ({ handleClose }) => {
     <Modal
       handleClose={handleClose}
       onCancel={handleClose}
-      title="댓글작성"
+      title="댓글 작성"
       onSubmit={onSubmit}
     >
       <Msg>{errorMsg && <p className="errmessage">{errorMsg}</p>}</Msg>
       <Textarea
         onChange={handleMsg}
-        rows={4}
+        rows={3}
+        cols={40}
         name="detail"
         messageType="error"
         placeholder="레시피에 대한 댓글을 남겨주세요."
@@ -147,7 +148,7 @@ const Comment = styled.div`
 `;
 
 const Msg = styled.div`
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: ${({ theme }) => theme.color.red};
   margin-bottom: 0.25rem;
 `;
