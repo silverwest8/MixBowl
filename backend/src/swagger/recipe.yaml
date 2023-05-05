@@ -142,8 +142,8 @@ paths:
         - in: query
           name: sort
           type: string
-          description: 정렬기준
-          example: like, newest
+          description: 정렬기준(기본-추천순이고 sort query로 new를 줬을 때만 최신순입니다)
+          example: new
       responses:
         '200':
           description: ''

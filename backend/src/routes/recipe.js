@@ -6,6 +6,7 @@ import checkAccess from '../middleware/checkAccessToken';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import fs from 'fs';
+import { Sequelize, col } from 'sequelize';
 dotenv.config();
 const router = express.Router();
 
@@ -285,15 +286,23 @@ router.get('/list/filter', checkAccess, async (req, res) => {
   try {
     const max = req.query.max;
     const min = req.query.min;
-    const color = req.query.color; // json string parse?
+    console.log(req.query.color);
+    const color = req.query.color
+      ? JSON.parse(`{"color": ${req.query.color}}`).color
+      : null; // json string parse?
     const search = req.query.search;
     const sort = req.query.sort;
     console.log(max, min, color, search, sort);
     let list = [];
+    let colorOption = [];
+    for (let i = 0; i < color.length; i++) {
+      colorOption.push({ COLOR: color[i] });
+    }
+    console.log(colorOption);
     const cocktail = await db.COCKTAIL.findAll({
-      attributes: ['CNO', 'NAME'],
-      where: {
-        //
+      attributes: ['CNO', 'NAME', [Sequelize.fn('COUNT', '*'), 'LIKE']],
+      having: {
+        [Sequelize.Op.or]: colorOption,
       },
       include: [
         {
@@ -302,30 +311,32 @@ router.get('/list/filter', checkAccess, async (req, res) => {
           attributes: ['UNO', 'NICKNAME', 'LEVEL'],
           required: false,
         },
+        {
+          model: db.COCKTAIL_LIKE,
+          as: 'COCKTAIL_LIKEs',
+          required: false,
+        },
+        {
+          model: db.COLOR,
+          as: 'COLORs',
+          required: false,
+        },
       ],
+      group: ['CNO'],
+      order: [sort == 'new' ? ['createdAt', 'DESC'] : ['LIKE', 'DESC']],
     });
-    // console.log(cocktail);
     for (let i = 0; i < cocktail.length; i++) {
       let temp = {
         id: cocktail[i].CNO,
         name: cocktail[i].NAME,
-        like: 0,
-        post: 0,
+        like: cocktail[i].dataValues.LIKE,
+        post: await db.POST.count({ where: cocktail[i].CNO }),
         USER: {
           nickname: cocktail[i].UNO_USER.NICKNAME,
           level: cocktail[i].UNO_USER.LEVEL,
-          iswriter: false,
+          iswriter: req.user.UNO == cocktail[i].UNO_USER.UNO ? true : false,
         },
       };
-      const like = await db.COCKTAIL_LIKE.findAndCountAll({
-        where: cocktail[i].CNO,
-      });
-      temp.like = like.count;
-      const post = await db.POST.findAndCountAll({ where: cocktail[i].CNO });
-      temp.post = post.count;
-      if (req.user.UNO == cocktail[i].UNO_USER.UNO) {
-        temp.USER.iswriter = true;
-      }
       list.push(temp);
     }
 
