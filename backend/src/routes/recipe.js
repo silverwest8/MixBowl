@@ -354,23 +354,72 @@ router.get('/list/filter', checkAccess, async (req, res) => {
 
 router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
   try {
+    let data = {
+      name: '',
+      color: [],
+      ingred: [],
+      instruction: '',
+    };
     const cocktailId = req.params.cocktailId;
-    const cocktail = await db.COCKTAIL.findByPk(cocktailId);
+    const cocktail = await db.COCKTAIL.findByPk(cocktailId, {
+      attributes: ['CNO', 'NAME', 'ALCOHOLIC', 'INSTRUCTION', 'createdAt'],
+      include: [
+        {
+          model: db.COLOR,
+          as: 'COLORs',
+          attributes: ['COLOR'],
+          where: { CNO: cocktailId },
+          required: false,
+        },
+        {
+          model: db.INGREDIENT,
+          as: 'INGREDIENTs',
+          attributes: ['NAME', 'AMOUNT', 'UNIT'],
+          where: { CNO: cocktailId },
+          required: false,
+        },
+        {
+          model: db.USER,
+          as: 'UNO_USER',
+          attributes: ['UNO', 'NICKNAME', 'LEVEL'],
+          required: false,
+        },
+      ],
+      order: [[{ model: db.INGREDIENT, as: 'INGREDIENTs' }, 'AMOUNT', 'DESC']],
+    });
+    const color = cocktail.COLORs;
+    const ingredient = cocktail.INGREDIENTs;
+    data.date = cocktail.createdAt;
+    data.name = cocktail.NAME;
+    data.alcoholic = cocktail.ALCOHOLIC;
+    data.instruction = cocktail.INSTRUCTION;
+    data.USER = {
+      nickname: cocktail.UNO_USER.NICKNAME,
+      level: cocktail.UNO_USER.LEVEL,
+      iswriter: req.user.UNO == cocktail.UNO_USER.UNO ? true : false,
+    };
+    // color
+    console.log(color);
+    for (let i = 0; i < color.length; i++) {
+      data.color.push(color[i].COLOR);
+    }
 
-    for (let i = 0; i < cocktail.length; i++) {
-      const like = await db.COCKTAIL_LIKE.findAndCountAll({
-        where: cocktail[i].CNO,
-      });
-      console.log(like.count);
-      const post = await db.POST.findAndCountAll({ where: cocktail[i].CNO });
-      console.log(post.count);
+    // ingredient
+    console.log(ingredient);
+    for (let i = 0; i < ingredient.length; i++) {
+      const temp = {
+        name: ingredient[i].NAME,
+        amount: ingredient[i].AMOUNT,
+        unit: ingredient[i].UNIT,
+      };
+      data.ingred.push(temp);
     }
 
     // color get
     // ingredient get
     return res
       .status(200)
-      .json({ success: true, message: 'Cocktail detail get 성공', list });
+      .json({ success: true, message: 'Cocktail detail get 성공', data });
   } catch (error) {
     console.log(error);
     return res
@@ -381,23 +430,28 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
 
 router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
   try {
+    let data = {};
+    let list = [];
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
 
-    for (let i = 0; i < cocktail.length; i++) {
-      const like = await db.COCKTAIL_LIKE.findAndCountAll({
-        where: cocktail[i].CNO,
-      });
-      console.log(like.count);
-      const post = await db.POST.findAndCountAll({ where: cocktail[i].CNO });
-      console.log(post.count);
-    }
+    const like = await db.COCKTAIL_LIKE.findAndCountAll({
+      where: cocktail.CNO,
+    });
+    console.log(like.count);
+    data.like = like.count;
+
+    const post = await db.POST.findAndCountAll({ where: cocktail.CNO });
+    console.log(post.count);
+    data.post = post.count;
+
+    data.list = post;
 
     // color get
     // ingredient get
     return res
       .status(200)
-      .json({ success: true, message: 'Cocktail detail get 성공', list });
+      .json({ success: true, message: 'Cocktail detail get 성공', data });
   } catch (error) {
     console.log(error);
     return res
