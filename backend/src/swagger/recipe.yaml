@@ -67,7 +67,7 @@ paths:
       tags:
         - recipes
       summary: 칵테일 레시피 수정
-      description: ''
+      description: PUT 메소드로는 이미지 전송이 안돼서 POST로 합니다
       operationId: updateRecipe
       parameters:
         - in: path
@@ -142,8 +142,8 @@ paths:
         - in: query
           name: sort
           type: string
-          description: 정렬기준
-          example: like, newest
+          description: 정렬기준(기본-추천순이고 sort query로 new를 줬을 때만 최신순입니다)
+          example: new
       responses:
         '200':
           description: ''
@@ -233,6 +233,70 @@ paths:
               schema:
                 type: string
                 format: binary
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/like/{cocktailId}:
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 좋아요
+      description: ''
+      operationId: LikeCocktail
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 11000
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/report/{cocktailId}:
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 신고
+      description: ''
+      operationId: ReportCocktail
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 11000
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              properties:
+                report:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
         '400':
           description: ''
           content:
