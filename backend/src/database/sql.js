@@ -187,7 +187,7 @@ const sql = {
     }
     // const { rating, detail, keyword } = data;
   },
-  deleteReview: async(req)=>{
+  deleteReview: async (req) => {
     const unum = req.decoded.unum;
     console.log(unum);
     const reviewId = req.params.reviewId;
@@ -199,9 +199,7 @@ const sql = {
     }
     if (review !== null) {
       try {
-        await REVIEW.destroy(
-          { where: { REVIEW_ID: reviewId } }
-        );
+        await REVIEW.destroy({ where: { REVIEW_ID: reviewId } });
         await KEYWORD.destroy({
           where: {
             REVIEW_ID: reviewId,
@@ -219,18 +217,35 @@ const sql = {
         REVIEW_ID: reviewId,
       },
     });
-    images.forEach(img=>{
-      fs.unlink(img.PATH,err=>{
-        if(err) throw err;
+    images.forEach((img) => {
+      fs.unlink(img.PATH, (err) => {
+        if (err) throw err;
         console.log('delete success');
-      })
-    }) 
+      });
+    });
     await IMAGE.destroy({
-      where:{
-        REVIEW_ID:reviewId
-      }
-    })
+      where: {
+        REVIEW_ID: reviewId,
+      },
+    });
     return next();
+  },
+  getImagePath: async (req) => {
+    try {
+      const imgPathArr = [];
+      const reviewId = req.params.reviewId;
+      const images = await IMAGE.findAll({
+        where: {
+          REVIEW_ID: reviewId,
+        },
+      });
+      images.forEach((img) => {
+        imgPathArr.push(img.PATH);
+      });
+      return imgPathArr;
+    } catch (error) {
+      console.log(error.message);
+    }
   },
 };
 

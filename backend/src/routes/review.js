@@ -272,6 +272,20 @@ router.get('/:place_id', checkAccess, async (req, res) => {
       .json({ success: false, message: '칵테일 바 리뷰 조회 실패', error });
   }
 });
+
+router.get('/images/:reviewId', checkAccess, async (req, res) => {
+  try {
+    const imgPathArr = await sql.getImagePath(req);
+    res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
+    imgPathArr.forEach((path) => {
+      let data = fs.readFileSync(path);
+      res.write(data);
+    });
+    return res.end(); //클라이언트에게 응답을 전송한다
+  } catch (error) {
+    console.log(error.message);
+  }
+});
 // 파일 업로드를 위해 사용되는 multipart/form-data 를 front에서 사용할것
 
 //multer 미들웨어 파일 제한 값 (Doc 공격으로부터 서버를 보호하는데 도움이 된다.)
@@ -340,23 +354,24 @@ router.post(
   sql.deleteImage,
   upload.array('files', 5),
   async (req, res) => {
-    try{
-    const review = await sql.changeReview(req);
-    await sql.postImage(req,review);
-    res.json({success: true, message: 'Change Review Success'})
-    }
-    catch(error){
+    try {
+      const review = await sql.changeReview(req);
+      await sql.postImage(req, review);
+      res.json({ success: true, message: 'Change Review Success' });
+    } catch (error) {
       console.log(error.message);
     }
   }
 );
 
-router.delete('/:reviewId', checkAccess, sql.deleteImage,async (req, res) => {
+router.delete('/:reviewId', checkAccess, sql.deleteImage, async (req, res) => {
   console.log('hi');
-  try{
+  try {
     await sql.deleteReview(req);
-    return res.status(200).json({ success: true, message: 'Delete Review Success' });
-  }catch(error){
+    return res
+      .status(200)
+      .json({ success: true, message: 'Delete Review Success' });
+  } catch (error) {
     console.log(error.message);
   }
 });
