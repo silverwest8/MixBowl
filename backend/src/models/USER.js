@@ -12,11 +12,13 @@ export default class USER extends Model {
     },
     NICKNAME: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: false,
+      unique: "NICKNAME_UNIQUE"
     },
     EMAIL: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: false,
+      unique: "EMAIL_UNIQUE"
     },
     PASSWORD: {
       type: DataTypes.STRING(45),
@@ -43,6 +45,22 @@ export default class USER extends Model {
         using: "BTREE",
         fields: [
           { name: "UNO" },
+        ]
+      },
+      {
+        name: "NICKNAME_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "NICKNAME" },
+        ]
+      },
+      {
+        name: "EMAIL_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "EMAIL" },
         ]
       },
     ]

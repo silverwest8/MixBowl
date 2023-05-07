@@ -112,6 +112,7 @@ const RecommendationSection = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
+  margin-top: 1rem;
   > div:first-child {
     margin-bottom: 0.5rem;
   }

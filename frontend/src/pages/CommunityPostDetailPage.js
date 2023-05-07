@@ -1,6 +1,6 @@
 // import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Title from "../components/common/Title";
 import { FaThumbsUp } from "react-icons/fa";
@@ -13,6 +13,7 @@ import AnswerItem from "../components/community/AnswerItem";
 
 const postData = [
   {
+    // TODO: 이미지 처리
     id: 0,
     title:
       "제목 예시입니다. 만약 제목 길이가 아주 길다면 어떻게 될지 한 번 보도록 하겠습니다. 이런 식으로 길어진다면 글자수 제한을 해야 되겠죠.",
@@ -257,7 +258,9 @@ const CommunityPostDetailPage = () => {
         <EntireSection>
           <TopSection>
             <TopMost>
-              <MdArrowBackIosNew className="icon" />
+              <Link to={"/community/board"}>
+                <MdArrowBackIosNew className="icon" />
+              </Link>
               <span>{post.category}</span>
             </TopMost>
             <Username>

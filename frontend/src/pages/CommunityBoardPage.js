@@ -3,13 +3,13 @@ import SearchBar from "../components/common/SearchBar";
 import styled from "styled-components";
 import FreeListItem from "../components/community/FreeListItem";
 import { Link } from "react-router-dom";
-import { FaFire, FaComments } from "react-icons/fa";
 import Title from "../components/common/Title";
 import { HiPencilAlt } from "react-icons/hi";
-import { MdArrowForwardIos } from "react-icons/md";
+import { MdArrowBackIosNew } from "react-icons/md";
 
 const dummyData = [
   {
+    // TODO: 이미지 처리
     id: 0,
     title:
       "제목 예시입니다. 만약 제목 길이가 아주 길다면 어떻게 될지 한 번 보도록 하겠습니다. 이런 식으로 길어진다면 글자수 제한을 해야 되겠죠.",
@@ -37,6 +37,7 @@ const dummyData = [
   },
   {
     id: 2,
+    // qna는 title 입력값을 아예 안 받을 것인지?
     maintext:
       "질문글 예시입니다. 이런식으로 질문이 bold체로 다 들어가야 되겠죠. 질문의 경우 title이 길어지는 것으로 할까요 아니면 본문을 굵게 표현하는 것으로 할까요?",
     category: "질문과 답변",
@@ -45,6 +46,43 @@ const dummyData = [
     liked: true,
     likes: 1,
     comments: 0,
+    date: "2일 전",
+  },
+  {
+    id: 3,
+    title: "칵테일 추천글 예시",
+    category: "칵테일 추천",
+    username: "recommend",
+    userlevel: 4,
+    likes: 3,
+    comments: 100,
+    date: "5달 전",
+    maintext:
+      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
+  },
+  {
+    id: 4,
+    title: "칵테일 리뷰 예시",
+    category: "칵테일 리뷰",
+    username: "recommend",
+    userlevel: 4,
+    likes: 3,
+    comments: 100,
+    date: "1년 전",
+    maintext:
+      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
+  },
+  {
+    id: 5,
+    // qna는 title 입력값을 아예 안 받을 것인지?
+    maintext:
+      "질문글 예시입니다. 답변이 있을 때와 없을 떄에 따라서 상단에 표시되는지가 달라질 것입니다",
+    category: "질문과 답변",
+    username: "한글",
+    userlevel: 1,
+    liked: true,
+    likes: 0,
+    comments: 1,
     date: "2일 전",
   },
 ];
@@ -88,7 +126,7 @@ const MainSection = styled.div`
     padding-top: 1rem;
   }
   width: 60vw;
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 800px) {
     width: 80vw;
   }
 `;
@@ -96,15 +134,36 @@ const TopSection = styled.div`
   display: flex;
   flex-direction: column;
   width: 60vw;
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 800px) {
     width: 80vw;
   }
   > div:first-child {
     display: flex;
+    > span {
+      font-size: 2rem;
+      flex: 1 0 auto;
+      display: flex;
+      align-items: center;
+      .icon {
+        margin-right: 1rem;
+        &:hover {
+          color: ${({ theme }) => theme.color.primaryGold};
+        }
+      }
+    }
+    > div:last-child {
+      min-width: 15rem;
+      max-width: 30vw;
+    }
   }
   > div:last-child {
     display: flex;
     margin: 3rem 0 0.5rem 0;
+    justify-content: center;
+    align-items: center;
+    @media screen and (max-width: 500px) {
+      flex-direction: column;
+    }
   }
 `;
 
@@ -117,9 +176,6 @@ const Button = styled.button`
   margin: 0rem 1rem 0.5rem 0;
   &:hover {
     background-color: ${({ theme }) => theme.color.secondGold};
-  }
-  @media screen and (max-width: 500px) {
-    /* width: 20vw; */
   }
 `;
 
@@ -177,18 +233,25 @@ const CommunityBoardPage = () => {
       <Background>
         <TopSection>
           <div>
-            <span>전체</span>
+            <span>
+              <MdArrowBackIosNew className="icon" />
+              전체
+            </span>
             <SearchBar
               placeholder="관심있는 내용을 검색해보세요!"
               showSearchButton={true}
             />
           </div>
           <div>
-            <Button>전체</Button>
-            <Button>칵테일 추천</Button>
-            <Button>질문과 답변</Button>
-            <Button>칵테일 리뷰</Button>
-            <Button>자유게시판</Button>
+            <div>
+              <Button>전체</Button>
+              <Button>칵테일 추천</Button>
+              <Button>질문과 답변</Button>
+            </div>
+            <div>
+              <Button>칵테일 리뷰</Button>
+              <Button>자유 게시판</Button>
+            </div>
           </div>
         </TopSection>
         <MainSection>

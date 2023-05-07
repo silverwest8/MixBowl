@@ -2,26 +2,11 @@ import styled from "styled-components";
 import { FaChevronLeft, FaStar } from "react-icons/fa";
 import { useQueries } from "@tanstack/react-query";
 import ReviewList from "./ReviewList";
-import axios from "axios";
-import { getAccessToken } from "../../utils/token";
 import { useSetRecoilState } from "recoil";
 import { mapState } from "../../store/map";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-const getCocktailBar = async ({ queryKey }) => {
-  const token = getAccessToken();
-  axios.defaults.headers.common.Authorization = token;
-  const { data } = await axios.get(`/api/review/getBar/${queryKey[1]}`);
-  return data;
-};
-
-const getReview = async ({ queryKey }) => {
-  const token = getAccessToken();
-  axios.defaults.headers.common.Authorization = token;
-  const { data } = await axios.get(`/api/review/getReview/${queryKey[1]}`);
-  return data;
-};
+import { getCocktailBar, getReview } from "../../api/cocktailbar";
 
 const CocktailbarDetail = ({ id }) => {
   const navigate = useNavigate();
@@ -74,7 +59,7 @@ const CocktailbarDetail = ({ id }) => {
           {detailData.data.AVG_RATING && (
             <div className="rating">
               <FaStar />
-              <span>{detailData.data.AVG_RATING}</span>
+              <span>{Number(detailData.data.AVG_RATING).toFixed(2)}</span>
             </div>
           )}
         </Header>

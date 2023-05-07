@@ -7,6 +7,8 @@ import { useStaySignedIn } from "./hooks/useStaySignedIn";
 import Layout from "./components/layout/Layout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import CocktailBarPage from "./pages/CocktailBarPage";
+import CommunityHomePage from "./pages/CommunityHomePage";
 import RegisterPage from "./pages/RegisterPage";
 import RecipePage from "./pages/RecipePage";
 import WriteRecipePage from "./pages/WriteRecipePage";
@@ -14,9 +16,7 @@ import DetailRecipePage from "./pages/DetailRecipePage";
 import RecipeRoute from "./routes/RecipeRoute";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
-import CocktailBarPage from "./pages/CocktailBarPage";
 import CommunityPostDetailPage from "./pages/CommunityPostDetailPage";
-import CommunityHomePage from "./pages/CommunityHomePage";
 import CommunityPostingPage from "./pages/CommunityPostingPage";
 import CommunityBoardPage from "./pages/CommunityBoardPage";
 

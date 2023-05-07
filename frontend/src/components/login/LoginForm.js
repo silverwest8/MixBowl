@@ -50,7 +50,10 @@ const LoginForm = ({ handleClose }) => {
       password: "",
     });
     try {
-      const { data } = await axios.post("/api/user/login", { email, password });
+      const { data } = await axios.post("/api/users/login", {
+        email,
+        password,
+      });
       if (data.success) {
         setAuthState({
           isLoggedin: true,
