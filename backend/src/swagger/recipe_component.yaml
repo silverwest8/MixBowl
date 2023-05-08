@@ -27,6 +27,7 @@ components:
                 example: 45
               unit:
                 type: string
+<<<<<<< HEAD
                 example: ml
         sub:
           type: array
@@ -42,6 +43,29 @@ components:
               unit:
                 type: string
                 example: 조각
+=======
+          example:
+            - name: 사파이어 진
+              amount: 45
+              unit: ml
+            - name: 드라이 베르무스
+              amount: 30
+              unit: ml
+            - name: 그린 올리브
+              amount: 2
+              unit: 개
+            - name: 레몬 껍질
+              amount: 1
+              unit: 조각
+            - name: 조각얼음
+              amount: $
+              unit: '#'
+          minItems: 2
+          maxItems: 10
+        alcoholic:
+          type: integer
+          example: 0
+>>>>>>> 3575c7d97d952013adee2f4b996a7042d0c25f0a
         instruction:
           type: string
           example: |
@@ -87,6 +111,7 @@ components:
                     example: 45
                   unit:
                     type: string
+<<<<<<< HEAD
                     example: ml
             sub:
               type: array
@@ -102,6 +127,29 @@ components:
                   unit:
                     type: string
                     example: 조각
+=======
+              example:
+                - name: 사파이어 진
+                  amount: 45
+                  unit: ml
+                - name: 드라이 베르무스
+                  amount: 30
+                  unit: ml
+                - name: 그린 올리브
+                  amount: 2
+                  unit: 개
+                - name: 레몬 껍질
+                  amount: 1
+                  unit: 조각
+                - name: 조각얼음
+                  amount: $
+                  unit: '#'
+              minItems: 2
+              maxItems: 10
+            alcoholic:
+              type: integer
+              example: 0
+>>>>>>> 3575c7d97d952013adee2f4b996a7042d0c25f0a
             instruction:
               type: string
               example: |
@@ -136,6 +184,7 @@ components:
                 example: 45
               unit:
                 type: string
+<<<<<<< HEAD
                 example: ml
         sub:
           type: array
@@ -151,6 +200,29 @@ components:
               unit:
                 type: string
                 example: 조각
+=======
+          example:
+            - name: 사파이어 진
+              amount: 45
+              unit: ml
+            - name: 드라이 베르무스
+              amount: 30
+              unit: ml
+            - name: 그린 올리브
+              amount: 2
+              unit: 개
+            - name: 레몬 껍질
+              amount: 1
+              unit: 조각
+            - name: 조각얼음
+              amount: $
+              unit: '#'
+          minItems: 2
+          maxItems: 10
+        alcoholic:
+          type: integer
+          example: 0
+>>>>>>> 3575c7d97d952013adee2f4b996a7042d0c25f0a
         instruction:
           type: string
           example: |
@@ -239,6 +311,7 @@ components:
                     example: 45
                   unit:
                     type: string
+<<<<<<< HEAD
                     example: ml
             sub:
               type: array
@@ -254,6 +327,29 @@ components:
                   unit:
                     type: string
                     example: 조각
+=======
+              example:
+                - name: 사파이어 진
+                  amount: 45
+                  unit: ml
+                - name: 드라이 베르무스
+                  amount: 30
+                  unit: ml
+                - name: 그린 올리브
+                  amount: 2
+                  unit: 개
+                - name: 레몬 껍질
+                  amount: 1
+                  unit: 조각
+                - name: 조각얼음
+                  amount: $
+                  unit: '#'
+              minItems: 2
+              maxItems: 10
+            alcoholic:
+              type: integer
+              example: 0
+>>>>>>> 3575c7d97d952013adee2f4b996a7042d0c25f0a
             instruction:
               type: string
               example: |
