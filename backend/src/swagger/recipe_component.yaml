@@ -44,8 +44,8 @@ components:
           minItems: 2
           maxItems: 10
         alcoholic:
-          type: string
-          example: 보통
+          type: integer
+          example: 0
         instruction:
           type: string
           example: |
@@ -108,8 +108,8 @@ components:
               minItems: 2
               maxItems: 10
             alcoholic:
-              type: string
-              example: 보통
+              type: integer
+              example: 0
             instruction:
               type: string
               example: |
@@ -161,8 +161,8 @@ components:
           minItems: 2
           maxItems: 10
         alcoholic:
-          type: string
-          example: 보통
+          type: integer
+          example: 0
         instruction:
           type: string
           example: |
@@ -265,8 +265,8 @@ components:
               minItems: 2
               maxItems: 10
             alcoholic:
-              type: string
-              example: 보통
+              type: integer
+              example: 0
             instruction:
               type: string
               example: |
