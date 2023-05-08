@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 const RecipeBtn = () => {
   const { openModal, closeModal } = useModal();
-  const [{ min, max }, setAlcohol] = useRecoilState(alcoholState);
+  const [{ alcohol }, setAlcohol] = useRecoilState(alcoholState);
   const [
     {
       red,
@@ -45,14 +45,15 @@ const RecipeBtn = () => {
       no: true,
     });
     setAlcohol({
-      min: 0,
-      max: 0,
+      alcohol: "",
     });
   }, []);
 
+  console.log(alcohol);
+
   return (
     <ButtonBox>
-      {min === 0 && max === 0 ? (
+      {alcohol === "" ? (
         <Button
           onClick={() =>
             openModal(RecipeAlcohol, {
@@ -70,7 +71,7 @@ const RecipeBtn = () => {
             })
           }
         >
-          {min}~{max}
+          {alcohol}
         </Button>
       )}
 

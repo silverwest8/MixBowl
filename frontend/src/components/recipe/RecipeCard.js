@@ -23,10 +23,10 @@ const RecipeCard = () => {
 
   const GetRecipe = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/RecipeList");
-      setRecipe(res.data);
+      const { data } = await axios.get("/api/");
+      console.log(data);
     } catch (error) {
-      return error.message;
+      console.log("error");
     }
   };
 
