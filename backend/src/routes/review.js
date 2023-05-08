@@ -272,7 +272,7 @@ router.get('/:place_id', checkAccess, async (req, res) => {
       .json({ success: false, message: '칵테일 바 리뷰 조회 실패', error });
   }
 });
-
+//이미지 정보 가져오기
 router.get('/images/:reviewId', checkAccess, async (req, res) => {
   try {
     const imgPathArr = await sql.getImagePath(req);
@@ -354,6 +354,25 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   }
 });
 
+//리뷰 수정하기 위한 페이지 보여주기
+router.get('/one/:reviewId', checkAccess, async (req, res) => {
+  try {
+    const prevReview = await sql.getReview(req);
+    prevReview.success = true;
+    prevReview.message = 'Successfuly loaded previous review data';
+    console.log(prevReview);
+    return res.status(200).send(prevReview);
+  } catch (error) {
+    console.log(error.message);
+    return res.status(400).send({
+      success: false,
+      message: 'fail to load previous review',
+      error: error.message,
+    });
+  }
+});
+
+//리뷰 수정
 router.post(
   '/:reviewId',
   checkAccess,

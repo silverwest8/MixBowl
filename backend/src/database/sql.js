@@ -101,6 +101,28 @@ const sql = {
       };
     }
   },
+
+  getReview: async (req) => {
+    const reviewId = req.params.reviewId;
+    try {
+      const review = await REVIEW.findByPk(reviewId);
+      const { TEXT, RATING } = review.dataValues;
+      const keyword = await KEYWORD.findAll({
+        where: { REVIEW_ID: reviewId },
+      });
+      const keyword_arr = [];
+      keyword.forEach((key) => {
+        keyword_arr.push(key.dataValues.KEYWORD);
+      });
+      return {
+        rating: RATING,
+        keyword: keyword_arr,
+        detail: TEXT,
+      };
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   postReview: async (req) => {
     const unum = req.decoded.unum;
     console.log(req.body.data);
