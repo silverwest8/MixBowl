@@ -838,4 +838,174 @@ router.get('/ninja/unit', async (req, res) => {
   }
 });
 
+router.get('/color', async (req, res) => {
+  try {
+    const color = [
+      'Clear',
+      'Blue',
+      'Orange',
+      'Red',
+      'Brown',
+      'Clear',
+      'Green',
+      'Blue',
+      'Clear',
+      'Red',
+      'Yellow',
+      'Green',
+      'Brown',
+      'Red',
+      'Red',
+      'Blue/Green',
+      'Red/Brown',
+      'Brown',
+      'Yellow',
+      'White',
+      'Clear',
+      'Green',
+      'Red',
+      'Clear',
+      'Pink',
+      'Red',
+      'Green',
+      'Pink',
+      'White',
+      'Orange',
+      'Brown',
+      'Clear',
+      'Brown',
+      'Green',
+      'Clear',
+      'Orange',
+      'Brown',
+      'Red/Orange',
+      'Brown',
+      'Pink',
+      'Clear',
+      'Clear',
+      'Red',
+      'Clear/Pink',
+      'Clear/Yellow',
+      'Brown',
+      'Pink',
+      'Yellow',
+      'Red',
+      'Yellow',
+      'Green',
+      'Brown',
+      'Brown',
+      'Red',
+      'Clear',
+      'Clear',
+      'Pink',
+      'Red',
+      'Red',
+      'Green',
+      'Brown',
+      'Green',
+      'Clear',
+      'Pink',
+      'Brown',
+      'Orange',
+      'Orange',
+      'Orange',
+      'Clear',
+      'Orange',
+      'White/Yellow',
+      'Pink',
+      'Pink',
+      'Yellow/Green',
+      'Red',
+      'Yellow',
+      'Red',
+      'Red',
+      'White',
+      'Brown',
+      'Yellow/Brown',
+      'Clear/Pink',
+      'Orange',
+      'Pink',
+      'Clear/Brown',
+      'Orange/Yellow',
+      'Red',
+      'Green',
+      'Clear/Yellow',
+      'Clear',
+      'Clear',
+      'Brown',
+      'Yellow',
+      'Red',
+    ];
+    // 1 빨강\n2 주황\n3 노랑\n4 초록\n5 파랑\n6 보라\n7 분홍\n8 검정\n9 갈색\n10 회색\n11 흰색\n12 무색
+    const cocktail = await db.COCKTAIL.findAll();
+    console.log(color.length);
+    console.log(cocktail.length);
+    for (let i = 0; i < cocktail.length - 1; i++) {
+      const colorname = color[i].split('/');
+      for (let j = 0; j < colorname.length; j++) {
+        let colornum = 0;
+        switch (colorname[j]) {
+          case 'Red':
+            colornum = 1;
+            break;
+          case 'Orange':
+            colornum = 2;
+            break;
+          case 'Yellow':
+            colornum = 3;
+            break;
+          case 'Green':
+            colornum = 4;
+            break;
+          case 'Blue':
+            colornum = 5;
+            break;
+          case 'Purple':
+            colornum = 6;
+            break;
+          case 'Pink':
+            colornum = 7;
+            break;
+          case 'Black':
+            colornum = 8;
+            break;
+          case 'Brown':
+            colornum = 9;
+            break;
+          case 'Gray':
+            colornum = 10;
+            break;
+          case 'White':
+            colornum = 11;
+            break;
+          case 'Clear':
+            colornum = 12;
+            break;
+          default:
+            break;
+        }
+        console.log({
+          CNO: cocktail[i].CNO,
+          COLOR: colornum,
+          COLORSTRING: colorname[j],
+        });
+        await db.COLOR.create({
+          CNO: cocktail[i].CNO,
+          COLOR: colornum,
+          COLORSTRING: colorname[j],
+        });
+      }
+    }
+
+    return res.status(200).json({ success: true, message: 'Color data 성공' });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Color data 실패',
+      error,
+    });
+  }
+});
+
 export default router;
