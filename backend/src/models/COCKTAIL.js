@@ -24,9 +24,9 @@ export default class COCKTAIL extends Model {
       unique: "NAME_UNIQUE"
     },
     ALCOHOLIC: {
-      type: DataTypes.STRING(45),
-      allowNull: true,
-      comment: "1- 0~ 5(낮음), 2 - 6~15(보통), 3 - 그 이상(높음)"
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      comment: "0- 0~ 5(낮음), 1 - 6~15(보통), 2 - 그 이상(높음)"
     },
     INSTRUCTION: {
       type: DataTypes.TEXT,
