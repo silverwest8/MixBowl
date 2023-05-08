@@ -276,14 +276,20 @@ router.get('/:place_id', checkAccess, async (req, res) => {
 router.get('/images/:reviewId', checkAccess, async (req, res) => {
   try {
     const imgPathArr = await sql.getImagePath(req);
-    res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
+    const imgBuffers = [];
     imgPathArr.forEach((path) => {
       let data = fs.readFileSync(path);
-      res.write(data);
+      imgBuffers.push(data);
     });
+    const concatBuffer = Buffer.concat(imgBuffers);
+    res.writeHead(200, { 'Content-Type': 'image/jpeg' }); //보낼 헤더를 만듬
+    res.write(concatBuffer);
+    console.log(concatBuffer);
     return res.end(); //클라이언트에게 응답을 전송한다
   } catch (error) {
-    console.log(error.message);
+    return res
+      .status(400)
+      .json({ success: false, message: '이미지 조회 실패', error });
   }
 });
 // 파일 업로드를 위해 사용되는 multipart/form-data 를 front에서 사용할것
