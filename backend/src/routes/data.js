@@ -3,6 +3,7 @@
 import express from 'express';
 import axios from 'axios';
 import { db } from '../models';
+import { Sequelize } from 'sequelize';
 const router = express.Router();
 
 router.get('/cocktaildb', async (req, res) => {
@@ -1003,6 +1004,201 @@ router.get('/color', async (req, res) => {
     return res.status(400).json({
       success: false,
       message: 'Color data 실패',
+      error,
+    });
+  }
+});
+
+router.get('/ABV', async (req, res) => {
+  try {
+    const low = [
+      'Afterglow',
+      'Apple Martini',
+      'Chi-Chi',
+      'Corpse Reviver',
+      'Crab Malice Cocktail',
+      'Cream Soda',
+      'Cuban Sunset',
+      'Derby',
+      'French Connection',
+      'French Martini',
+      'Greyhound',
+      "Horse's Neck",
+      'Juan Collins',
+      'Lemon Drop',
+      'Lime Rickey',
+      'Orangeade',
+      'Paddington',
+      'Paloma',
+      'Paradise',
+      'Pink Lady',
+      'Pink Moon',
+      'Pisco Sour',
+      "Planter's Punch",
+      'Queen Mary',
+      'Queens',
+      'Tequila Sunrise',
+      'Vesper Martini',
+    ];
+    let medium = [
+      '20th Century',
+      'Agua de Sevilla',
+      'Alexander',
+      'Angel Face',
+      'Aviation',
+      'Battle of New Orleans',
+      "Bee's Knees",
+      'Bijou',
+      'Blackthorn',
+      'Bloody Mary',
+      'Boulevardier',
+      'Bourbon Lancer',
+      'Brass Monkey',
+      'Churchill',
+      'Cooperstown Cocktail',
+      'Cosmopolitan',
+      'Cradle of Life',
+      'Damn the Weather',
+      'Dirty Martini',
+      'Dry Martini',
+      'El Presidente',
+      'Espresso Martini',
+      'French Martini',
+      'Gimlet',
+      'Gin Tonic',
+      'Ginza Mary',
+      'Hot Toddy',
+      'Jack Rose',
+      'Kremlin Colonel',
+      'Long Island Iced Tea',
+      'Manhattan',
+      'Martinez',
+      'Martini',
+      'Martini Cocktail',
+      'Matador',
+      'Michelada',
+      'Mint Julep',
+      'Missouri Mule',
+      'Mojito',
+      'Mojito Blanco',
+      'Monkey Gland',
+      'Old Fashioned',
+      'Painkiller',
+      'Piña Colada',
+      'Pisco Sour',
+      'Pornstar Martini',
+      'Ramos Gin Fizz',
+      'Rob Roy',
+      'Rum Swizzle',
+      'Salty Dog',
+      'Sidecar',
+      'Singapore Sling',
+      'Suffering Bastard',
+      'The Bitter End',
+      'The Last Word',
+      'Tom Collins',
+      'Vesper',
+      'Vieux Carré',
+      'Whiskey Sour',
+      'Zombie',
+    ];
+    let high = [
+      'Adios Motherfucker',
+      'Black Russian',
+      'Death in the Afternoon',
+      'Flaming Volcano',
+    ];
+    // 1- 0~ 5(낮음), 2 - 6~15(보통), 3 - 그 이상(높음)
+    console.log('LOW - ', low.length);
+    for (let i = 0; i < low.length; i++) {
+      const lows = await db.COCKTAIL.findOne({ where: { NAME: low[i] } });
+      console.log('i : %d / CNO: %d / NAME : %s', i, lows.CNO, lows.NAME);
+      await db.COCKTAIL.update(
+        { ALCOHOLIC: 0 },
+        {
+          where: {
+            NAME: low[i],
+          },
+        }
+      );
+    }
+
+    console.log('MEDIUM - ', medium.length);
+    for (let i = 0; i < medium.length; i++) {
+      const mediums = await db.COCKTAIL.findOne({ where: { NAME: medium[i] } });
+      console.log('i : %d / CNO: %d / NAME : %s', i, mediums.CNO, mediums.NAME);
+      await db.COCKTAIL.update(
+        { ALCOHOLIC: 1 },
+        {
+          where: {
+            NAME: medium[i],
+          },
+        }
+      );
+    }
+
+    console.log('HIGH - ', high.length);
+    for (let i = 0; i < high.length; i++) {
+      const highs = await db.COCKTAIL.findOne({ where: { NAME: high[i] } });
+      console.log('i : %d / CNO: %d / NAME : %s', i, highs.CNO, highs.NAME);
+      await db.COCKTAIL.update(
+        { ALCOHOLIC: 2 },
+        {
+          where: {
+            NAME: high[i],
+          },
+        }
+      );
+    }
+
+    return res.status(200).json({ success: true, message: 'ABV data 성공' });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'ABV data 실패',
+      error,
+    });
+  }
+});
+
+router.get('/imagepath', async (req, res) => {
+  try {
+    const cocktails = await db.COCKTAIL.findAll({
+      where: {
+        CNO: { [Sequelize.Op.lt]: 80 },
+      },
+    });
+    console.log(cocktails.length);
+    for (let i = 0; i < cocktails.length; i++) {
+      console.log(
+        `uploads/cocktailImage/${cocktails[i].NAME.split(' ').join('')}_${
+          cocktails[i].CNO
+        }.png`
+      );
+      await db.COCKTAIL.update(
+        {
+          IMAGE_PATH: `uploads/cocktailImage/${cocktails[i].NAME.split(
+            ' '
+          ).join('')}_${cocktails[i].CNO}.png`,
+        },
+        {
+          where: {
+            CNO: cocktails[i].CNO,
+          },
+        }
+      );
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: 'Ninja API recipe 성공' });
+    // res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Ninja API recipe 실패',
       error,
     });
   }
