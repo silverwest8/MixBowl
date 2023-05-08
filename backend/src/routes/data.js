@@ -938,10 +938,16 @@ router.get('/color', async (req, res) => {
       'Red',
     ];
     // 1 빨강\n2 주황\n3 노랑\n4 초록\n5 파랑\n6 보라\n7 분홍\n8 검정\n9 갈색\n10 회색\n11 흰색\n12 무색
-    const cocktail = await db.COCKTAIL.findAll();
+    const cocktail = await db.COCKTAIL.findAll({
+      order: [
+        ['NAME', 'ASC'],
+        ['CNO', 'ASC'],
+      ],
+    });
     console.log(color.length);
     console.log(cocktail.length);
-    for (let i = 0; i < cocktail.length - 1; i++) {
+    let count = 0;
+    for (let i = 0; i < cocktail.length; i++) {
       const colorname = color[i].split('/');
       for (let j = 0; j < colorname.length; j++) {
         let colornum = 0;
@@ -988,15 +994,15 @@ router.get('/color', async (req, res) => {
         console.log({
           CNO: cocktail[i].CNO,
           COLOR: colornum,
-          COLORSTRING: colorname[j],
         });
+        count++;
         await db.COLOR.create({
           CNO: cocktail[i].CNO,
           COLOR: colornum,
-          COLORSTRING: colorname[j],
         });
       }
     }
+    console.log('count:', count);
 
     return res.status(200).json({ success: true, message: 'Color data 성공' });
   } catch (error) {
