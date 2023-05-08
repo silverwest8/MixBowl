@@ -1,13 +1,14 @@
 'use strict';
 
 import express from 'express';
-import { db } from '../models';
+import { db, sequelize } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
 import dotenv from 'dotenv';
 import axios from 'axios';
 import multer from 'multer';
 import fs from 'fs';
-import { Sequelize, col } from 'sequelize';
+import { Sequelize } from 'sequelize';
+
 dotenv.config();
 const router = express.Router();
 
@@ -283,65 +284,103 @@ router.delete('/:cocktailId', async (req, res) => {
   }
 });
 
-router.get('/list/filter', checkAccess, async (req, res) => {
+router.get('/list/filter/:page', checkAccess, async (req, res) => {
   try {
-    const max = req.query.max;
-    const min = req.query.min;
-    console.log(req.query.color);
+    const page = Number(req.params.page);
+    const offset = 20 * (page - 1);
+    const limit = 20;
     const color = req.query.color
       ? JSON.parse(`{"color": ${req.query.color}}`).color
-      : null; // json string parse?
+      : null;
+    const alcoholic = req.query.alcoholic
+      ? JSON.parse(`{"alcoholic": ${req.query.alcoholic}}`).alcoholic
+      : null;
     const search = req.query.search;
-    const sort = req.query.sort;
-    console.log(max, min, color, search, sort);
+    const sort = req.query.sort == 'new' ? 'createdAt' : 'LIKECOUNT';
+    // console.log(alcoholic, color, search, sort);
     let list = [];
-    let colorOption = [];
-    for (let i = 0; i < color.length; i++) {
-      colorOption.push({ COLOR: color[i] });
-    }
-    console.log(colorOption);
-    const cocktail = await db.COCKTAIL.findAll({
-      attributes: ['CNO', 'NAME', [Sequelize.fn('COUNT', '*'), 'LIKE']],
-      having: {
-        [Sequelize.Op.or]: colorOption,
-      },
+    const cocktailfilter = await db.COCKTAIL.findAll({
+      attributes: ['CNO', 'NAME', 'INSTRUCTION', 'ALCOHOLIC'],
       include: [
-        {
-          model: db.USER,
-          as: 'UNO_USER',
-          attributes: ['UNO', 'NICKNAME', 'LEVEL'],
-          required: false,
-        },
-        {
-          model: db.COCKTAIL_LIKE,
-          as: 'COCKTAIL_LIKEs',
-          required: false,
-        },
         {
           model: db.COLOR,
           as: 'COLORs',
-          required: false,
+          where: {
+            COLOR: {
+              [Sequelize.Op.or]: color,
+            },
+          },
+          required: true,
+        },
+        {
+          model: db.INGREDIENT,
+          as: 'INGREDIENTs',
+          attributes: ['NAME'],
+          where: {
+            NAME: { [Sequelize.Op.like]: `%${search}%` },
+          },
+          required: true,
         },
       ],
-      group: ['CNO'],
-      order: [sort == 'new' ? ['createdAt', 'DESC'] : ['LIKE', 'DESC']],
+      where: {
+        [Sequelize.Op.or]: [
+          {
+            NAME: {
+              [Sequelize.Op.like]: `%${search}%`,
+            },
+          },
+          {
+            INSTRUCTION: {
+              [Sequelize.Op.like]: `%${search}%`,
+            },
+          },
+          {
+            ALCOHOLIC: {
+              [Sequelize.Op.or]: alcoholic,
+            },
+          },
+        ],
+      },
     });
-    for (let i = 0; i < cocktail.length; i++) {
+    let filter = [];
+    for (let i = 0; i < cocktailfilter.length; i++) {
+      filter.push(`COCKTAIL.CNO = ${cocktailfilter[i].CNO}`);
+    }
+    const finalfilter = filter.join(' OR ');
+    // console.log(finalfilter);
+    const sortquery = `SELECT COCKTAIL.CNO, COCKTAIL.UNO, COCKTAIL.NAME, COUNT(COCKTAIL_LIKE.UNO) AS LIKECOUNT, COCKTAIL.createdAt
+      FROM (
+        SELECT *
+        FROM COCKTAIL AS COCKTAIL
+        WHERE (${finalfilter})
+      )
+      AS COCKTAIL
+      LEFT JOIN COCKTAIL_LIKE AS COCKTAIL_LIKE
+      ON COCKTAIL.CNO = COCKTAIL_LIKE.CNO
+      GROUP BY CNO
+      ORDER BY ${sort} DESC
+      LIMIT ${offset}, ${limit};`;
+    // console.log(sortquery);
+    const result = await sequelize.query(sortquery, {
+      type: Sequelize.QueryTypes.SELECT,
+    });
+    for (let i = 0; i < result.length; i++) {
+      // console.log(result[i]);
+      const user = await db.USER.findByPk(result[i].UNO);
       let temp = {
-        id: cocktail[i].CNO,
-        name: cocktail[i].NAME,
-        like: cocktail[i].dataValues.LIKE,
-        post: await db.POST.count({ where: cocktail[i].CNO }),
+        id: result[i].CNO,
+        name: result[i].NAME,
+        like: result[i].LIKECOUNT,
+        post: await db.POST.count({ where: result[i].CNO }),
         USER: {
-          nickname: cocktail[i].UNO_USER.NICKNAME,
-          level: cocktail[i].UNO_USER.LEVEL,
-          iswriter: req.user.UNO == cocktail[i].UNO_USER.UNO ? true : false,
+          nickname: user.NICKNAME,
+          level: user.LEVEL,
+          iswriter: req.user.UNO == user.UNO ? true : false,
         },
       };
       list.push(temp);
     }
 
-    // ingredient get
     return res
       .status(200)
       .json({ success: true, message: 'Cocktail list get 성공', list });
