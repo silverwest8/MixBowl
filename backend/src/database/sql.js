@@ -169,6 +169,22 @@ const sql = {
       console.log(error.message);
     }
   },
+  getImageId: async (reviewId) => {
+    const idArr = [];
+    try {
+      const images = await IMAGE.findAll({
+        where: {
+          REVIEW_ID: reviewId,
+        },
+      });
+      images.forEach((img) => {
+        idArr.push(img.IMAGE_ID);
+      });
+      return idArr;
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   changeReview: async (req) => {
     const unum = req.decoded.unum;
     console.log(unum);
@@ -252,19 +268,10 @@ const sql = {
     });
     return next();
   },
-  getImagePath: async (req) => {
+  getImagePath: async (imageId) => {
     try {
-      const imgPathArr = [];
-      const reviewId = req.params.reviewId;
-      const images = await IMAGE.findAll({
-        where: {
-          REVIEW_ID: reviewId,
-        },
-      });
-      images.forEach((img) => {
-        imgPathArr.push(img.PATH);
-      });
-      return imgPathArr;
+      const image = await IMAGE.findByPk(imageId);
+      return image.PATH;
     } catch (error) {
       console.log(error.message);
     }
