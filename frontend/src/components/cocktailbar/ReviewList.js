@@ -6,6 +6,7 @@ import { FaPen } from "react-icons/fa";
 import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
 import ReviewDeleteModal from "./ReviewDeleteModal";
+import axios from "axios";
 
 const ReviewList = ({ cnt, reviewList, name, placeId }) => {
   const params = useParams();
@@ -29,6 +30,12 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
       reviewId,
       placeId,
     });
+  };
+  // 리뷰 텍스트 클릭하면 작동
+  // 크롬 네트워크 탭 커두고 해야 이미지 확인 가능
+  const getImages = async (id) => {
+    const { data } = await axios.get(`/api/reviews/images/${id}`);
+    console.log(data);
   };
   return (!params.id && cnt !== 0) || params.id ? (
     <div>
@@ -78,7 +85,9 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
                 />
               )}
             </div>
-            <p>&ldquo;{review.TEXT}&rdquo;</p>
+            <p onClick={() => getImages(review.REVIEW_ID)}>
+              &ldquo;{review.TEXT}&rdquo;
+            </p>
             <span className="date">
               {review.createdAt.split("T")[0].replaceAll("-", ".")}
             </span>
