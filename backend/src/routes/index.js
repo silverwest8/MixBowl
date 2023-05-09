@@ -7,10 +7,12 @@ import main from './main';
 import user from './user';
 import recipe from './recipe';
 import review from './review';
+import admin from "./admin";
 
 router.use('/', main);
-router.use('/user', user);
-router.use('/recipe', recipe);
-router.use('/review', review);
+router.use('/users', user);
+router.use('/recipes', recipe);
+router.use('/reviews', review);
+router.use('/admin', admin);
 
 export default router;
