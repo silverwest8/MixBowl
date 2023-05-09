@@ -1,43 +1,39 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE extends Model {
+export default class ninja_recipe extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     CNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
       references: {
-        model: 'COCKTAIL',
+        model: 'ninjaset',
         key: 'CNO'
       }
     },
     INGRED: {
-      type: DataTypes.STRING(45),
-      allowNull: false,
-      primaryKey: true
+      type: DataTypes.STRING(80),
+      allowNull: false
     },
     AMOUNT: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: true
     },
     UNIT: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'RECIPE',
+    tableName: 'ninja_recipe',
     timestamps: false,
     indexes: [
       {
-        name: "PRIMARY",
-        unique: true,
+        name: "CNO4_idx",
         using: "BTREE",
         fields: [
           { name: "CNO" },
-          { name: "INGRED" },
         ]
       },
     ]

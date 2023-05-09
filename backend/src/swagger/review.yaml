@@ -5,7 +5,7 @@ paths:
       tags:
         - reviews
       summary: 리뷰 작성
-      description: ""
+      description: ''
       operationId: createReview
       requestBody:
         required: true
@@ -41,25 +41,25 @@ paths:
                 image:
                   type: integer
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Success"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /reviews/{reviewId}:
     get:
       tags:
-        - reviews 
-      summary: 리뷰 데이터 가져오기
-      description: ""
+        - review
+      summary: 특정 칵테일 바 리뷰 조회
+      description: ''
       operationId: getReview
       parameters:
         - in: path
@@ -70,26 +70,25 @@ paths:
             type: string
           required: true
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getReview"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/getReview'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
-
+                $ref: '#/components/schemas/Fail'
 
   /reviews/{reviewId}:
     post:
       tags:
         - review
       summary: 리뷰 수정 (post로 수정하기로 결정)
-      description: ""
+      description: ''
       operationId: updateReview
 
       requestBody:
@@ -126,54 +125,54 @@ paths:
                 image:
                   type: integer
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Success"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
     delete:
       tags:
         - reviews
       summary: 리뷰 삭제
-      description: ""
+      description: ''
       operationId: deleteReview
       parameters:
         - in: cookie
           name: refresh_token
           schema:
-            $ref: "#/components/schemas/Cookie"
+            $ref: '#/components/schemas/Cookie'
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Success"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /reviews/barlist:
     get:
       tags:
         - reviews
       summary: 칵테일 바 리스트 조회
-      description: ""
+      description: ''
       operationId: getList
       parameters:
         - in: query
           name: query
-          description: ""
+          description: ''
           example: 수원 칵테일바
           schema:
             type: string
@@ -201,27 +200,75 @@ paths:
           description: 정렬기준
           schema:
             type: string
-            enum: ["accuracy", "distance"]
+            enum: ['accuracy', 'distance']
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getReviewList"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/getReviewList'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
-
+                $ref: '#/components/schemas/Fail'
+  /reviews/one/{reviewId}:
+    get:
+      tags:
+        - review
+      sumary: 칵테일 바 리뷰 단건 조회 및 수정페이지
+      description: ''
+      oprationId: get One Bar Review
+      parameters:
+        - in: path
+          name: reviewId
+          description: 리뷰 ID
+          example: 68
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rating:
+                    type: Float
+                  keyword:
+                    type: array
+                    items:
+                      type: integer
+                    maxItem: 3
+                    minItem: 1
+                    example: [3, 4, 5]
+                    description: 키워드 종류를 쉼표로 구분하여 전송
+                  detail:
+                    type: text
+                    example: 너무 맛있고 분위기가 좋아요
+                    description: 리뷰 세부 내용 담아서 전송
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: text
+                    example: Successfuly loaded previous review data
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
   /reviews/bar/{placeId}:
     get:
       tags:
         - reviews
       summary: 칵테일 바 단건 조회
-      description: ""
+      description: ''
       operationId: getBar
       parameters:
         - in: path
@@ -232,47 +279,45 @@ paths:
             type: string
           required: true
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getBar"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/getBar'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
-
-
-  /reviews/bar/reviewlist/{placeId}:
+                $ref: '#/components/schemas/Fail'
+  /reviews/images/{reviewId}:
     get:
       tags:
-        - reviews
-      summary: 특정 칵테일 바 리뷰 조회
-      description: ""
-      operationId: getReviewFromBar
+        - review
+      summary: review 리스트 페이지에서 review별 이미지 가져오기
+      description: ''
+      operationId: getImageOnList
       parameters:
         - in: path
-          name: placeId
-          description: 장소 ID
-          example: 1389819741
+          name: reviewId
+          description: 리뷰ID
+          example: 68
           schema:
             type: string
           required: true
       responses:
-        "200":
-          description: ""
+        '200':
+          description:
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getReview"
-        "400":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fail"
-
-
+                $ref: '#/components/schemas/Fail'

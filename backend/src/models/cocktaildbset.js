@@ -1,7 +1,7 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class COCKTAIL extends Model {
+export default class cocktaildbset extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     CNO: {
@@ -12,25 +12,16 @@ export default class COCKTAIL extends Model {
     },
     UNO: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'USER',
-        key: 'UNO'
-      }
+      allowNull: false
     },
     NAME: {
       type: DataTypes.STRING(45),
       allowNull: false,
       unique: "NAME_UNIQUE"
     },
-    ALCOHOLIC: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      comment: "0- 0~ 5(낮음), 1 - 6~15(보통), 2 - 그 이상(높음)"
-    },
     INSTRUCTION: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: true
     },
     IMAGE_PATH: {
       type: DataTypes.TEXT,
@@ -39,10 +30,18 @@ export default class COCKTAIL extends Model {
     GLASS: {
       type: DataTypes.STRING(45),
       allowNull: true
+    },
+    ALCOHOLIC: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
+    COLOR: {
+      type: DataTypes.STRING(45),
+      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'COCKTAIL',
+    tableName: 'cocktaildbset',
     timestamps: true,
     indexes: [
       {

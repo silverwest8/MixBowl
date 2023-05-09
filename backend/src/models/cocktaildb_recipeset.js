@@ -1,7 +1,7 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE extends Model {
+export default class cocktaildb_recipeset extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     CNO: {
@@ -9,7 +9,7 @@ export default class RECIPE extends Model {
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'COCKTAIL',
+        model: 'cocktaildbset',
         key: 'CNO'
       }
     },
@@ -20,7 +20,7 @@ export default class RECIPE extends Model {
     },
     AMOUNT: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: true
     },
     UNIT: {
       type: DataTypes.STRING(45),
@@ -28,7 +28,7 @@ export default class RECIPE extends Model {
     }
   }, {
     sequelize,
-    tableName: 'RECIPE',
+    tableName: 'cocktaildb_recipeset',
     timestamps: false,
     indexes: [
       {
@@ -38,6 +38,13 @@ export default class RECIPE extends Model {
         fields: [
           { name: "CNO" },
           { name: "INGRED" },
+        ]
+      },
+      {
+        name: "CNO3_idx",
+        using: "BTREE",
+        fields: [
+          { name: "CNO" },
         ]
       },
     ]

@@ -4,19 +4,27 @@ const { Model, Sequelize } = _sequelize;
 export default class INGREDIENT extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    INO: {
-      autoIncrement: true,
+    CNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'COCKTAIL',
+        key: 'CNO'
+      }
     },
     NAME: {
       type: DataTypes.STRING(45),
+      allowNull: false,
+      primaryKey: true
+    },
+    AMOUNT: {
+      type: DataTypes.STRING(45),
       allowNull: false
     },
-    ABV: {
-      type: DataTypes.FLOAT,
-      allowNull: true
+    UNIT: {
+      type: DataTypes.STRING(45),
+      allowNull: false
     }
   }, {
     sequelize,
@@ -28,7 +36,8 @@ export default class INGREDIENT extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "INO" },
+          { name: "CNO" },
+          { name: "NAME" },
         ]
       },
     ]
