@@ -111,7 +111,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /recipes/list/filter:
+  /recipes/list/filter/{page}:
     get:
       tags:
         - recipes
@@ -119,21 +119,22 @@ paths:
       description: ''
       operationId: getRecipeList
       parameters:
-        - in: query
-          name: max
+        - in: path
+          name: page
           type: integer
-          description: 최대 도수
-          example: 20
+          description: page number
+          example: 1
+          required: true
         - in: query
-          name: min
-          type: integer
-          description: 최소 도수
-          example: 3
+          name: alcoholic
+          type: string
+          description: 알콜수준, 0-낮음, 1-보통, 2-높음
+          example: "[0,1,2]"
         - in: query
           name: color
           type: string
-          description: 색상, 최대 몇개?, 1-빨강 2-주황 3-노랑 4-초록 5-파랑 6-보라 7-분홍 8-검정 9-갈색 10-회색 11-흰색 12-무색
-          example: 1
+          description: 색상, 최대3개, 1-빨강 2-주황 3-노랑 4-초록 5-파랑 6-보라 7-분홍 8-검정 9-갈색 10-회색 11-흰색 12-무색
+          example: "[1,2,3]"
         - in: query
           name: search
           type: string
@@ -142,7 +143,7 @@ paths:
         - in: query
           name: sort
           type: string
-          description: 정렬기준(기본-추천순이고 sort query로 new를 줬을 때만 최신순입니다)
+          description: 정렬기준(일단은 기본-추천순이고 sort query로 new를 줬을 때만 최신순입니다)
           example: new
       responses:
         '200':
