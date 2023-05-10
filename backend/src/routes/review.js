@@ -274,6 +274,9 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
     data.total_cnt = review.length;
     data.list = Object.assign(review);
     for (let i = 0; i < review.length; i++) {
+      await sql.getImageId(data.list[i].REVIEW_ID).then((arr) => {
+        data.list[i].dataValues.imgIdArr = arr; //imgId삽입
+      });
       if (req.user.UNO == data.list[i].UNO_USER.UNO) {
         data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = true;
       } else {
@@ -293,20 +296,16 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
   }
 });
 //이미지 정보 가져오기
-router.get('/images/:reviewId', checkAccess, async (req, res) => {
+router.get('/image/one', checkAccess, async (req, res) => {
   try {
-    const imgPathArr = await sql.getImagePath(req);
-    const imgBuffers = [];
-    imgPathArr.forEach((path) => {
-      let data = fs.readFileSync(path);
-      imgBuffers.push(data);
-    });
-    const concatBuffer = Buffer.concat(imgBuffers);
-    res.writeHead(200, { 'Content-Type': 'image/jpeg' }); //보낼 헤더를 만듬
-    res.write(concatBuffer);
-    console.log(concatBuffer);
-    return res.end(); //클라이언트에게 응답을 전송한다
+    const imageId = req.query.imageId;
+    const imgPath = await sql.getImagePath(imageId);
+    const data = fs.readFileSync(imgPath);
+    res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+    res.write(data);
+    return res.end();
   } catch (error) {
+    console.log(error.message);
     return res
       .status(400)
       .json({ success: false, message: '이미지 조회 실패', error });

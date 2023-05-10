@@ -291,21 +291,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-  /reviews/images/{reviewId}:
+  /reviews/image/one?imageId={imageId}:
     get:
       tags:
         - review
-      summary: review 리스트 페이지에서 review별 이미지 가져오기
+      summary: review 리스트 페이지에서 imageId별 이미지 가져오기
       description: ''
-      operationId: getImageOnList
+      operationId: getImageById
       parameters:
-        - in: path
-          name: reviewId
-          description: 리뷰ID
+        - name: imageId
+          in: query
+          type: integer
           example: 68
-          schema:
-            type: string
-          required: true
       responses:
         '200':
           description:
