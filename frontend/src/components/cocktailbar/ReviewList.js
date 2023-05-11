@@ -1,17 +1,28 @@
 import DropdownMenu from "../common/DropdownMenu";
 import MemberBadge from "../common/MemberBadge";
 import ReviewModal from "./ReviewModal";
+import ImageSliderModal from "../common/ImageSliderModal";
 import { useModal } from "../../hooks/useModal";
 import { FaPen } from "react-icons/fa";
 import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
 import ReviewDeleteModal from "./ReviewDeleteModal";
-import axios from "axios";
+import { convertURLtoFile, getReviewImageUrl } from "../../utils/image";
 
 const ReviewList = ({ cnt, reviewList, name, placeId }) => {
   const params = useParams();
   const { openModal, closeModal } = useModal();
-  const onClickEditMenu = (reviewId, { rating, keyword, detail }) => {
+  const onClickEditMenu = async (
+    reviewId,
+    { rating, keyword, detail, imageIds }
+  ) => {
+    const files = [];
+    for (let i = 0; i < imageIds.length; i++) {
+      const file = await convertURLtoFile(
+        `/api/reviews/image/one?imageId=${imageIds[i]}`
+      );
+      files.push({ id: i + 1, file });
+    }
     openModal(ReviewModal, {
       handleClose: closeModal,
       reviewId,
@@ -22,6 +33,7 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
         keyword,
         detail,
       },
+      defaultFiles: files,
     });
   };
   const onClickDeleteMenu = (reviewId) => {
@@ -31,11 +43,12 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
       placeId,
     });
   };
-  // 리뷰 텍스트 클릭하면 작동
-  // 크롬 네트워크 탭 커두고 해야 이미지 확인 가능
-  const getImages = async (id) => {
-    const { data } = await axios.get(`/api/reviews/images/${id}`);
-    console.log(data);
+  const onClickImage = ({ images, initialImageIndex }) => {
+    openModal(ImageSliderModal, {
+      handleClose: closeModal,
+      images,
+      initialImageIndex,
+    });
   };
   return (!params.id && cnt !== 0) || params.id ? (
     <div>
@@ -79,15 +92,36 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
                         rating: review.RATING,
                         detail: review.TEXT,
                         keyword: review.KEYWORDS.map((keyword) => keyword.id),
+                        imageIds: review.imgIdArr,
                       }),
                     () => onClickDeleteMenu(review.REVIEW_ID),
                   ]}
                 />
               )}
             </div>
-            <p onClick={() => getImages(review.REVIEW_ID)}>
-              &ldquo;{review.TEXT}&rdquo;
-            </p>
+            <p>&ldquo;{review.TEXT}&rdquo;</p>
+            <div className="image-list">
+              {review.imgIdArr.slice(0, 3).map((imageId, index) => (
+                <div
+                  key={imageId}
+                  onClick={() =>
+                    onClickImage({
+                      images: review.imgIdArr.map((imageId) =>
+                        getReviewImageUrl(imageId)
+                      ),
+                      initialImageIndex: index,
+                    })
+                  }
+                >
+                  <img src={getReviewImageUrl(imageId)} />
+                  {index === 2 && review.imgIdArr.length - index - 1 > 0 && (
+                    <div className="box">
+                      + {review.imgIdArr.length - index - 1}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
             <span className="date">
               {review.createdAt.split("T")[0].replaceAll("-", ".")}
             </span>
@@ -170,6 +204,39 @@ const List = styled.div`
     .date {
       color: ${({ theme }) => theme.color.lightGray};
       align-self: flex-end;
+    }
+    .image-list {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      margin-bottom: 0.5rem;
+      & > div {
+        position: relative;
+        width: calc(16.25rem / 3);
+        height: calc(16.25rem / 3);
+        border-radius: 10px;
+        cursor: pointer;
+        & > img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: inherit;
+        }
+        & > .box {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.7);
+          border-radius: inherit;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 1rem;
+          color: ${({ theme }) => theme.color.primaryGold};
+        }
+      }
     }
   }
 `;

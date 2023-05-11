@@ -5,7 +5,7 @@ import Rating from "@mui/material/Rating";
 import styled from "styled-components";
 import ImageUpload from "../common/ImageUpload";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { imageListState } from "../../store/image";
+import { imageFileListState } from "../../store/imageFile";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { editReview, postReview } from "../../api/cocktailbar";
 import { toastState } from "../../store/toast";
@@ -60,6 +60,7 @@ const ReviewModal = ({
   placeId,
   reviewId,
   defaultInputs,
+  defaultFiles,
 }) => {
   const [inputs, setInputs] = useState(
     defaultInputs || {
@@ -69,7 +70,7 @@ const ReviewModal = ({
     }
   );
   const { rating, keyword, detail } = inputs;
-  const { urls, files } = useRecoilValue(imageListState);
+  const files = useRecoilValue(imageFileListState);
   const [detailMsg, setDetailMsg] = useState("");
   const [ratingMsg, setRatingMsg] = useState("");
   const setToastState = useSetRecoilState(toastState);
@@ -222,13 +223,13 @@ const ReviewModal = ({
       <Textarea
         value={detail}
         name="detail"
-        cols={8}
+        rows={8}
         onChange={onChange}
         message={detailMsg}
         messageType="error"
         placeholder="칵테일 가게에서 느낀 점을 자유롭게 작성해주세요."
       />
-      <ImageUpload />
+      <ImageUpload defaultFiles={defaultFiles} />
     </Modal>
   );
 };
