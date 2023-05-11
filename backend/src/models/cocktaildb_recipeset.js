@@ -40,6 +40,7 @@ export default class cocktaildb_recipeset extends Model {
           { name: "INGRED" },
         ]
       },
+
       {
         name: "CNO3_idx",
         using: "BTREE",
