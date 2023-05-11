@@ -16,6 +16,7 @@ import {
 
 const RecipeCard = () => {
   const [recipe, setRecipe] = useState([]);
+  const [image, setImage] = useState(null);
   const colorNum = [];
   const alcoholNum = [];
   let sortInit = false;
@@ -31,7 +32,6 @@ const RecipeCard = () => {
     alcoholFilter();
     sort = sortFilter();
     try {
-      console.log(search);
       let url = `/api/recipes/list/filter/1?alcoholic=[${alcohol}]&color=[${color}]&search=${search}`;
       if (sort) {
         url += "&sort=new";
@@ -39,12 +39,30 @@ const RecipeCard = () => {
       const { data } = await axios.get(url);
       setRecipe(data.list);
     } catch (error) {
-      console.log("error");
+      console.log("empty or error");
+      setRecipe([]);
+    }
+  };
+
+  const getImage = async (cocktailId) => {
+    try {
+      const response = await axios.get(`/api/recipes/image/${cocktailId}`, {
+        responseType: "blob",
+      });
+
+      const blobData = response.data;
+      const imageUrl = URL.createObjectURL(blobData);
+
+      console.log(imageUrl);
+      setImage(imageUrl);
+    } catch (error) {
+      console.log(error);
     }
   };
 
   useEffect(() => {
     GetRecipe(colorNum, alcoholNum, sortInit);
+    getImage(11000);
   }, [search, color, alcohol, sort]);
 
   useEffect(() => {
@@ -79,6 +97,7 @@ const RecipeCard = () => {
 
   return (
     <MiddleBox>
+      {image && <img src={image} style={{ width: "500px", height: "500px" }} />}
       <CardBox>
         <div className="arr">
           <RecipeDrop />

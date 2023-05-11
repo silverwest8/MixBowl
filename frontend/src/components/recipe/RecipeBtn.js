@@ -49,8 +49,6 @@ const RecipeBtn = () => {
     });
   }, []);
 
-  console.log(alcohol);
-
   return (
     <ButtonBox>
       {alcohol === "" ? (
