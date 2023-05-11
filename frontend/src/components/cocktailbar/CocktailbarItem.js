@@ -26,7 +26,7 @@ const CocktailBarItem = ({ item }) => {
         cnt={item.review.review_cnt}
         reviewList={item.review.review_list}
         name={item.kakao_data.place_name}
-        id={item.kakao_data.id}
+        placeId={item.kakao_data.id}
       />
     </Section>
   );
