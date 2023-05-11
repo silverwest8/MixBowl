@@ -65,9 +65,9 @@ const RecipeCard = () => {
   };
 
   const alcoholFilter = () => {
-    if (alcohol.alcohol === "낮음") alcoholNum.push(1);
-    if (alcohol.alcohol === "중간") alcoholNum.push(2);
-    if (alcohol.alcohol === "높음") alcoholNum.push(3);
+    if (alcohol.alcohol === "낮음") alcoholNum.push(0);
+    if (alcohol.alcohol === "중간") alcoholNum.push(1);
+    if (alcohol.alcohol === "높음") alcoholNum.push(2);
   };
 
   const sortFilter = () => {

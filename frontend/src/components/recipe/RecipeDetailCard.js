@@ -5,18 +5,44 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { FaThumbsUp } from "react-icons/fa";
 import RecipeEditDelete from "./RecipeEditDelete";
+import ReportModal from "../common/ReportModal";
+import { useModal } from "../../hooks/useModal";
+
+const ReportRecipeModal = ({ handleClose }) => {
+  const onSubmit = () => {
+    console.log("제출");
+    handleClose();
+  };
+
+  return <ReportModal handleClose={handleClose} onSubmit={onSubmit} />;
+};
+
+const alcoholFilter = (recipe) => {
+  if (recipe.alcoholic === 0) {
+    return "낮음";
+  }
+  if (recipe.alcoholic === 1) {
+    return "중간";
+  }
+  if (recipe.alcoholic === 2) {
+    return "높음";
+  }
+};
 
 const RecipeDetailCard = () => {
-  const [Recipe, setRecipe] = useState([]);
-  const [Like, setLike] = useState(Recipe.rec);
+  const [recipe, setRecipe] = useState([]);
+  const [Like, setLike] = useState(recipe.rec);
   const [LikeCheck, setLikeCheck] = useState(false);
+  const alcohol = alcoholFilter(recipe);
   const params = useParams();
   const id = params.id;
+  const { openModal, closeModal } = useModal();
 
   const GetRecipe = async () => {
     try {
-      const res = await axios.get(`http://localhost:4000/RecipeList?rno=${id}`);
-      setRecipe(res.data[0]);
+      const { data } = await axios.get(`/api/recipes/detail/${id}`);
+      setRecipe(data.data);
+      console.log(data.data);
     } catch (error) {
       return error.message;
     }
@@ -27,69 +53,85 @@ const RecipeDetailCard = () => {
   }, []);
 
   useEffect(() => {
-    if (Recipe.rec) {
-      setLike(Recipe.rec);
+    if (recipe.rec) {
+      setLike(recipe.rec);
     }
-  }, [Recipe]);
+  }, [recipe]);
+
+  if (!recipe || !recipe.USER) {
+    return null;
+  }
 
   return (
     <>
       <TopBox>
         <RecipeBox>
-          <img src={Recipe.image_path}></img>
+          <img src={recipe.image_path}></img>
           <TextBox>
             <div>
               <h1>
-                {Recipe.name}
-                {Recipe.uname ? <RecipeEditDelete /> : "신고버튼"}
+                {recipe.name}
+                {recipe.iswriter ? (
+                  <RecipeEditDelete />
+                ) : (
+                  <CallButton
+                    onClick={() => {
+                      openModal(ReportRecipeModal, {
+                        handleClose: closeModal,
+                      });
+                    }}
+                  >
+                    신고
+                  </CallButton>
+                )}
               </h1>
               <User>
-                @{Recipe.uname}
-                <MemberBadge level={Recipe.level} />
+                @{recipe.USER.nickname}
+                <MemberBadge level={recipe.USER.level} />
               </User>
-              <p>{Recipe.day}</p>
+              <p>{recipe.date.slice(0, 10)}</p>
             </div>
             <div className="color">
               <p>
-                <span>도수</span> {Recipe.alcohol}
+                <span>도수</span> {alcohol}
               </p>
-              {Recipe.color && (
+              {recipe.color && (
                 <p>
                   <span>색상</span>
-                  {Recipe.color.includes("red") ? (
+                  {recipe.color.includes(1) ? (
                     <Circle bgColor="#FF0000"></Circle>
                   ) : null}
-                  {Recipe.color.includes("pink") ? (
-                    <Circle bgColor="#FF41D5"></Circle>
-                  ) : null}
-                  {Recipe.color.includes("orange") ? (
+                  {recipe.color.includes(2) ? (
                     <Circle bgColor="#FF9900"></Circle>
                   ) : null}
-                  {Recipe.color.includes("black") ? (
-                    <Circle bgColor="#000000"></Circle>
-                  ) : null}
-                  {Recipe.color.includes("yellow") ? (
+                  {recipe.color.includes(3) ? (
                     <Circle bgColor="#FFC700"></Circle>
                   ) : null}
-                  {Recipe.color.includes("brown") ? (
-                    <Circle bgColor="#532503"></Circle>
-                  ) : null}
-                  {Recipe.color.includes("green") ? (
+                  {recipe.color.includes(4) ? (
                     <Circle bgColor="#04D100"></Circle>
                   ) : null}
-                  {Recipe.color.includes("grey") ? (
-                    <Circle bgColor="#787878"></Circle>
-                  ) : null}
-                  {Recipe.color.includes("blue") ? (
+                  {recipe.color.includes(5) ? (
                     <Circle bgColor="#0066FF"></Circle>
                   ) : null}
-                  {Recipe.color.includes("white") ? (
-                    <Circle bgColor="#FFFFFF"></Circle>
-                  ) : null}
-                  {Recipe.color.includes("purple") ? (
+                  {recipe.color.includes(6) ? (
                     <Circle bgColor="#AD00FF"></Circle>
                   ) : null}
-                  {Recipe.color.includes("transparent") ? (
+                  {recipe.color.includes(7) ? (
+                    <Circle bgColor="#FF41D5"></Circle>
+                  ) : null}
+                  {recipe.color.includes(8) ? (
+                    <Circle bgColor="#000000"></Circle>
+                  ) : null}
+                  {recipe.color.includes(9) ? (
+                    <Circle bgColor="#532503"></Circle>
+                  ) : null}
+                  {recipe.color.includes(10) ? (
+                    <Circle bgColor="#787878"></Circle>
+                  ) : null}
+                  {recipe.color.includes(11) ? (
+                    <Circle bgColor="#FFFFFF"></Circle>
+                  ) : null}
+                  {recipe.color.includes(12) ? (
                     <Circle bgColor="#3E3E3E"></Circle>
                   ) : null}
                 </p>
@@ -100,19 +142,20 @@ const RecipeDetailCard = () => {
         <Material>
           <div>
             <span>재료 목록</span>
-            {Recipe.additem &&
-              Recipe.additem.map((item) => {
-                return (
-                  <p key={item.addlength}>
-                    {item.addname}
-                    {item.addamount}
-                    {item.addunit}
-                  </p>
-                );
-              })}
+            <div>
+              {recipe.ingred &&
+                recipe.ingred.map((item, index) => {
+                  return (
+                    <p key={index}>
+                      {item.name} {item.amount} {item.unit}
+                    </p>
+                  );
+                })}
+            </div>
           </div>
           <div>
-            <Explain>{Recipe.explain}</Explain>
+            <span>레시피</span>
+            <Explain>{recipe.instruction}</Explain>
           </div>
         </Material>
       </TopBox>
@@ -170,6 +213,9 @@ const TextBox = styled.div`
       margin-left: 1rem;
       display: flex;
     }
+    button {
+      font-size: 0.8rem;
+    }
   }
   p {
     display: flex;
@@ -226,7 +272,9 @@ const Material = styled.div`
   flex-direction: column;
   justify-content: center;
   div {
+    flex-direction: column;
     margin-top: 1rem;
+    margin-bottom: 0.5rem;
     display: flex;
     flex-wrap: wrap;
     span {
@@ -241,6 +289,7 @@ const TopBox = styled.div`
   margin: auto;
   display: flex;
   flex-direction: column;
+  padding-left:1rem;
   }
   @media screen and (max-width: 840px) {
     width: 70vw;
@@ -287,6 +336,17 @@ const Circle = styled.div`
 
 const Explain = styled.div`
   white-space: pre-wrap;
+`;
+
+const CallButton = styled.button`
+  width: 3rem;
+  border: 1px solid ${({ theme }) => theme.color.primaryGold};
+  border-radius: 0.5rem;
+  color: ${({ theme }) => theme.color.primaryGold};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 `;
 
 export default RecipeDetailCard;
