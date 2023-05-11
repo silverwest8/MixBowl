@@ -4,11 +4,15 @@ import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { FaThumbsUp } from "react-icons/fa";
+import RecipeEditDelete from "./RecipeEditDelete";
 
 const RecipeDetailCard = () => {
   const [Recipe, setRecipe] = useState([]);
+  const [Like, setLike] = useState(Recipe.rec);
+  const [LikeCheck, setLikeCheck] = useState(false);
   const params = useParams();
   const id = params.id;
+
   const GetRecipe = async () => {
     try {
       const res = await axios.get(`http://localhost:4000/RecipeList?rno=${id}`);
@@ -22,48 +26,126 @@ const RecipeDetailCard = () => {
     GetRecipe();
   }, []);
 
+  useEffect(() => {
+    if (Recipe.rec) {
+      setLike(Recipe.rec);
+    }
+  }, [Recipe]);
+
   return (
     <>
       <TopBox>
         <RecipeBox>
           <img src={Recipe.image_path}></img>
           <TextBox>
-            <h1>{Recipe.name}</h1>
-            <p>
-              @{Recipe.uname} <MemberBadge level={Recipe.level} />
-            </p>
-            <p>{Recipe.day}</p>
-            <p>
-              <span>도수</span> {Recipe.alcohol}도
-            </p>
-            <p>
-              <span>색상</span> {Recipe.color}
-            </p>
+            <div>
+              <h1>
+                {Recipe.name}
+                {Recipe.uname ? <RecipeEditDelete /> : "신고버튼"}
+              </h1>
+              <User>
+                @{Recipe.uname}
+                <MemberBadge level={Recipe.level} />
+              </User>
+              <p>{Recipe.day}</p>
+            </div>
+            <div className="color">
+              <p>
+                <span>도수</span> {Recipe.alcohol}
+              </p>
+              {Recipe.color && (
+                <p>
+                  <span>색상</span>
+                  {Recipe.color.includes("red") ? (
+                    <Circle bgColor="#FF0000"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("pink") ? (
+                    <Circle bgColor="#FF41D5"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("orange") ? (
+                    <Circle bgColor="#FF9900"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("black") ? (
+                    <Circle bgColor="#000000"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("yellow") ? (
+                    <Circle bgColor="#FFC700"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("brown") ? (
+                    <Circle bgColor="#532503"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("green") ? (
+                    <Circle bgColor="#04D100"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("grey") ? (
+                    <Circle bgColor="#787878"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("blue") ? (
+                    <Circle bgColor="#0066FF"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("white") ? (
+                    <Circle bgColor="#FFFFFF"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("purple") ? (
+                    <Circle bgColor="#AD00FF"></Circle>
+                  ) : null}
+                  {Recipe.color.includes("transparent") ? (
+                    <Circle bgColor="#3E3E3E"></Circle>
+                  ) : null}
+                </p>
+              )}
+            </div>
           </TextBox>
         </RecipeBox>
         <Material>
-          <p>
-            <span>필수 재료</span> {Recipe.main}
-          </p>
-          <p>
-            <span>부재료</span> {Recipe.sub}
-          </p>
+          <div>
+            <span>재료 목록</span>
+            {Recipe.additem &&
+              Recipe.additem.map((item) => {
+                return (
+                  <p key={item.addlength}>
+                    {item.addname}
+                    {item.addamount}
+                    {item.addunit}
+                  </p>
+                );
+              })}
+          </div>
+          <div>
+            <Explain>{Recipe.explain}</Explain>
+          </div>
         </Material>
-        <MaterialHow>
-          <p>{Recipe.how}</p>
-        </MaterialHow>
+      </TopBox>
+      <MidBox>
         <RecBox>
-          <FaThumbsUp></FaThumbsUp>
-          {Recipe.rec}
+          <button>
+            <FaThumbsUp
+              onClick={() => {
+                LikeCheck === false ? setLike(Like + 1) : setLike(Like - 1);
+                setLikeCheck(!LikeCheck);
+              }}
+              style={{
+                color: LikeCheck === true ? "#E9AA33" : "white",
+                fontSize: "2rem",
+              }}
+            ></FaThumbsUp>
+          </button>
+          <p
+            style={{
+              color: LikeCheck === true ? "#E9AA33" : "white",
+              marginTop: "0.5rem",
+            }}
+          >
+            {Like}
+          </p>
         </RecBox>
         <HorizonLine></HorizonLine>
-      </TopBox>
+      </MidBox>
     </>
   );
 };
 
-const TextBox = styled.div`
-  margin-left: 2rem;
+const User = styled.p`
   p {
     display: flex;
     span {
@@ -76,14 +158,47 @@ const TextBox = styled.div`
   }
 `;
 
+const TextBox = styled.div`
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  h1 {
+    display: flex;
+    justify-content: space-between;
+    div {
+      margin-left: 1rem;
+      display: flex;
+    }
+  }
+  p {
+    display: flex;
+    span {
+      margin-right: 0.75rem;
+      color: ${({ theme }) => theme.color.primaryGold};
+    }
+    div {
+      margin-right: 0.5rem;
+    }
+  }
+  @media screen and (min-width: 429px) {
+    margin-left: 2rem;
+  }
+  @media screen and (max-width: 428px) {
+    margin-top: 0.5rem;
+    .color {
+      margin-top: 1rem;
+    }
+  }
+`;
+
 const RecipeBox = styled.div`
   display: flex;
-  justify-content: center;
   margin-top: 3rem;
   img {
     height: 12.5rem;
-    width: 16.25rem;
-    border: 2px solid ${({ theme }) => theme.color.primaryGold};
+    width: 12.25rem;
+    border: 1px solid ${({ theme }) => theme.color.primaryGold};
     border-radius: 0.75rem;
   }
   h1 {
@@ -94,25 +209,26 @@ const RecipeBox = styled.div`
     font-size: 0.875rem;
     margin-top: 0.5rem;
   }
-`;
-
-const Material = styled.div`
-  margin-top: 2rem;
-  p {
-    margin-top: 1rem;
-    span {
-      margin-right: 0.75rem;
-      color: ${({ theme }) => theme.color.primaryGold};
+  @media screen and (max-width: 428px) {
+    flex-direction: column;
+    img {
+      height: 50vw;
+      width: 100vw;
+      margin: auto;
+      object-fit: cover;
     }
   }
 `;
 
-const MaterialHow = styled.div`
-  width: 70%;
-  margin-top: 2rem;
-  text-align: center;
-  p {
+const Material = styled.div`
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  div {
     margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
     span {
       margin-right: 0.75rem;
       color: ${({ theme }) => theme.color.primaryGold};
@@ -121,26 +237,56 @@ const MaterialHow = styled.div`
 `;
 
 const TopBox = styled.div`
-  width: 80%;
+  width: 50vw;
   margin: auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  }
+  @media screen and (max-width: 840px) {
+    width: 70vw;
+  }
+`;
+
+const MidBox = styled.div`
+  width: 50vw;
+  margin: auto;
+  margin-top: 2rem;
+  div {
+    display: flex;
+    justify-content: flex-end;
+  }
+  @media screen and (max-width: 840px) {
+    width: 70vw;
+  }
 `;
 
 const RecBox = styled.div`
   display: flex;
-  position: relative;
-  right: 0px;
-  bottom 0px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  p {
+    margin-left: 0.5rem;
+  }
 `;
 
 const HorizonLine = styled.div`
-  width: 60%;
   border: 0.1rem solid #e9aa33;
   line-height: 0.1em;
   margin: auto;
-  margin-top: 2rem;
+  margin-top: 0.5rem;
+`;
+
+const Circle = styled.div`
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background-color: ${(props) => props.bgColor};
+  border: 1px solid ${({ theme }) => theme.color.primaryGold};
+`;
+
+const Explain = styled.div`
+  white-space: pre-wrap;
 `;
 
 export default RecipeDetailCard;

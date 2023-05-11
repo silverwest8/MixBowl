@@ -5,45 +5,108 @@ import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import RecipeDrop from "./RecipeDrop";
+import { useRecoilValue, useResetRecoilState } from "recoil";
+import {
+  alcoholState,
+  sortState,
+  colorState,
+  AddRecipeState,
+} from "../../store/recipe";
 
 const RecipeCard = () => {
-  const [Recipe, setRecipe] = useState([]);
+  const [recipe, setRecipe] = useState([]);
+  const colorNum = [];
+  const alcoholNum = [];
+  let sortInit = false;
+  const color = useRecoilValue(colorState);
+  const alcohol = useRecoilValue(alcoholState);
+  const sort = useRecoilValue(sortState);
+  const addRecipeState = useResetRecoilState(AddRecipeState);
+  const token = localStorage.getItem("access_token");
 
-  const GetRecipe = async () => {
+  const GetRecipe = async (color, alcohol, sort) => {
+    colorFilter();
+    alcoholFilter();
+    sort = sortFilter();
     try {
-      const res = await axios.get("http://localhost:4000/RecipeList");
-      setRecipe(res.data);
+      let url = `/api/recipes/list/filter/1?alcoholic=[${alcohol}]&color=[${color}]&search=gin`;
+      if (sort) {
+        url += "&sort=new";
+      }
+      const { data } = await axios.get(url);
+      setRecipe(data.list);
+      console.log(data);
     } catch (error) {
-      return error.message;
+      console.log("error");
     }
   };
 
   useEffect(() => {
-    GetRecipe();
+    GetRecipe(colorNum, alcoholNum, sortInit);
+  }, [color, alcohol, sort]);
+
+  useEffect(() => {
+    addRecipeState();
   }, []);
+
+  const colorFilter = () => {
+    if (color.red) colorNum.push(1);
+    if (color.orange) colorNum.push(2);
+    if (color.yellow) colorNum.push(3);
+    if (color.green) colorNum.push(4);
+    if (color.blue) colorNum.push(5);
+    if (color.purple) colorNum.push(6);
+    if (color.pink) colorNum.push(7);
+    if (color.black) colorNum.push(8);
+    if (color.brown) colorNum.push(9);
+    if (color.grey) colorNum.push(10);
+    if (color.white) colorNum.push(11);
+    if (color.transparent) colorNum.push(12);
+  };
+
+  const alcoholFilter = () => {
+    if (alcohol.alcohol === "낮음") alcoholNum.push(1);
+    if (alcohol.alcohol === "중간") alcoholNum.push(2);
+    if (alcohol.alcohol === "높음") alcoholNum.push(3);
+  };
+
+  const sortFilter = () => {
+    if (sort.latest) sortInit = true;
+    return sortInit;
+  };
 
   return (
     <MiddleBox>
-      <RecipeDrop />
       <CardBox>
-        {Recipe.map((index) => (
-          <RecipeBox key={Recipe.rno}>
-            <Link to={`/recipe/${index.rno}`}>
-              <img src={index.image_path}></img>
-              <h1>{index.name}</h1>
-            </Link>
+        <div className="arr">
+          <RecipeDrop />
+        </div>
+        {recipe.map((item) => (
+          <RecipeBox key={item.id}>
+            {token ? (
+              <Link to={`/recipe/${item.id}`}>
+                <img src={item.image_path}></img>
+                <h1>{item.name}</h1>
+              </Link>
+            ) : (
+              <>
+                <img src={item.image_path}></img>
+                <h1>{item.name}</h1>
+              </>
+            )}
+
             <TextBox>
               <p>
-                @{index.uname} <MemberBadge level={index.level} />
+                @{item.USER.nickname} <MemberBadge level={item.USER.level} />
               </p>
               <div>
                 <p className="ThumbsUp">
                   <FaThumbsUp></FaThumbsUp>
-                  {index.like}
+                  {item.like}
                 </p>
                 <p className="Comment">
                   <FaCommentDots></FaCommentDots>
-                  {index.comment}
+                  {item.post}
                 </p>
               </div>
             </TextBox>
@@ -76,6 +139,13 @@ const CardBox = styled.div`
   margin-bottom: 2rem;
   justify-items: center;
 
+  .arr {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: end;
+    margin-right: 1rem;
+  }
+
   @media screen and (max-width: 928px) {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -85,9 +155,8 @@ const CardBox = styled.div`
     grid-template-columns: 1fr 1fr;
   }
   @media screen and (max-width: 350px) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
   }
 `;
 
