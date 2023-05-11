@@ -14,14 +14,14 @@ export default (req, res, next) => {
     //유효시간 만료
     if (error.name === 'TokenExpiredError') {
       return res.status(419).json({
-        ok: false,
+        success: false,
         message: '토큰이 만료되었습니다.'
       });
     }
     //비밀키 일치 오류
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
-        ok: false,
+        success: false,
         message: '유효하지 않은 토큰입니다'
       });
     }

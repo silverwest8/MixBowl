@@ -1,0 +1,90 @@
+# components for user
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: 12345
+    Signup:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+        nickname:
+          type: string
+          example: mynickname
+        password:
+          type: string
+          example: 12345
+    Nickname:
+      type: object
+      properties:
+        checkname:
+          type: string
+          example: mynickname
+    Email:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+    AuthNum:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+        code:
+          type: string
+          example: 12345
+    SuccessDupCheck:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        duplicate:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: duplecate == false => 사용가능
+    FailDupCheck:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        duplicate:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: duplecate == true => 사용불가
+    BartenderCheck:
+      type: object
+      properties:
+        success:
+          type: boolean
+        bartender:
+          type: boolean
+        message:
+          type: string
+          example: bartender == true => 인증 완료
+    BarOwnerCheck:
+      type: object
+      properties:
+        success:
+          type: boolean
+        baronnwer:
+          type: boolean
+        message:
+          type: string
+          example: baronnwer == true => 인증 완료
