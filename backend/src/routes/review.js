@@ -16,6 +16,42 @@ import sql from '../database/sql';
 dotenv.config();
 const router = express.Router();
 
+const KEYWORD_VALUE = [
+  {
+    id: 1,
+    value: "술이 맛있어요",
+  },
+  {
+    id: 2,
+    value: "술이 다양해요",
+  },
+  {
+    id: 3,
+    value: "혼술하기 좋아요",
+  },
+  {
+    id: 4,
+    value: "메뉴가 다양해요",
+  },
+  {
+    id: 5,
+    value: "음식이 맛있어요",
+  },
+  {
+    id: 6,
+    value: "분위기가 좋아요",
+  },
+  {
+    id: 7,
+    value: "직원이 친절해요",
+  },
+  {
+    id: 8,
+    value: "대화하기 좋아요",
+  },
+  { id: 9,  value: "가성비가 좋아요" },
+];
+
 async function getKeyword(placeId) {
   let keywordlist = [null, null, null];
   const keyword = await KEYWORD.findAll({
@@ -35,39 +71,18 @@ async function getKeyword(placeId) {
     order: [[Sequelize.literal('COUNT'), 'DESC']],
     limit: 3,
   });
-  keyword.forEach((keyword, idx) => {
-    switch (keyword.KEYWORD) {
-      case 1:
-        keywordlist[idx] = '술이 맛있어요';
-        break;
-      case 2:
-        keywordlist[idx] = '술이 다양해요';
-        break;
-      case 3:
-        keywordlist[idx] = '혼술하기 좋아요';
-        break;
-      case 4:
-        keywordlist[idx] = '분위기가 좋아요';
-        break;
-      case 5:
-        keywordlist[idx] = '직원이 친절해요';
-        break;
-      case 6:
-        keywordlist[idx] = '대화하기 좋아요';
-        break;
-      case 7:
-        keywordlist[idx] = '가성비가 좋아요';
-        break;
-      case 8:
-        keywordlist[idx] = '메뉴가 다양해요';
-        break;
-      case 9:
-        keywordlist[idx] = '음식이 맛있어요';
-        break;
-      default:
-        keywordlist[idx] = null;
+  keyword.forEach((keyword) => keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1].value));
+  return keywordlist;
+}
+
+async function getKeywordByReviewId(reviewId) {
+  const keywordlist = [];
+  const keyword = await KEYWORD.findAll({
+    where: {
+      REVIEW_ID: reviewId
     }
   });
+  keyword.forEach((keyword) => keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1]));
   return keywordlist;
 }
 
@@ -169,6 +184,9 @@ router.get('/barlist', checkAccess, async (req, res) => {
           temp.review.review_cnt = review_num.length;
           temp.review.review_list = Object.assign(reviewList);
           for (let i = 0; i < reviewList.length; i++) {
+            await sql.getImageId(temp.review.review_list[i].REVIEW_ID).then((arr) => {
+              temp.review.review_list[i].dataValues.imgIdArr = arr; //imgId삽입
+            });
             if (req.user.UNO == temp.review.review_list[i].UNO_USER.UNO) {
               temp.review.review_list[
                 i
@@ -263,6 +281,7 @@ router.get('/:place_id', checkAccess, async (req, res) => {
       } else {
         data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = false;
       }
+      data.list[i].dataValues.KEYWORDS = await getKeywordByReviewId(data.list[i].dataValues.REVIEW_ID);
     }
     data.keyword = await getKeyword(place_id);
     return res
@@ -276,7 +295,7 @@ router.get('/:place_id', checkAccess, async (req, res) => {
   }
 });
 //이미지 정보 가져오기
-router.get('/image/one', checkAccess, async (req, res) => {
+router.get('/image/one', async (req, res) => {
   try {
     const imageId = req.query.imageId;
     const imgPath = await sql.getImagePath(imageId);
