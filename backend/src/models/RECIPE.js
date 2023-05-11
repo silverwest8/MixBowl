@@ -13,13 +13,13 @@ export default class RECIPE extends Model {
         key: 'CNO'
       }
     },
-    INGRED: {
+    NAME: {
       type: DataTypes.STRING(45),
       allowNull: false,
       primaryKey: true
     },
     AMOUNT: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.STRING(45),
       allowNull: false
     },
     UNIT: {
@@ -37,7 +37,7 @@ export default class RECIPE extends Model {
         using: "BTREE",
         fields: [
           { name: "CNO" },
-          { name: "INGRED" },
+          { name: "NAME" },
         ]
       },
     ]

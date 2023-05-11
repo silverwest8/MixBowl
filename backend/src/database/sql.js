@@ -100,6 +100,28 @@ const sql = {
       };
     }
   },
+
+  getReview: async (req) => {
+    const reviewId = req.params.reviewId;
+    try {
+      const review = await REVIEW.findByPk(reviewId);
+      const { TEXT, RATING } = review.dataValues;
+      const keyword = await KEYWORD.findAll({
+        where: { REVIEW_ID: reviewId },
+      });
+      const keyword_arr = [];
+      keyword.forEach((key) => {
+        keyword_arr.push(key.dataValues.KEYWORD);
+      });
+      return {
+        rating: RATING,
+        keyword: keyword_arr,
+        detail: TEXT,
+      };
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   postReview: async (req) => {
     const unum = req.decoded.unum;
     console.log(req.body.data);
@@ -146,6 +168,22 @@ const sql = {
       console.log(error.message);
     }
   },
+  getImageId: async (reviewId) => {
+    const idArr = [];
+    try {
+      const images = await IMAGE.findAll({
+        where: {
+          REVIEW_ID: reviewId,
+        },
+      });
+      images.forEach((img) => {
+        idArr.push(img.IMAGE_ID);
+      });
+      return idArr;
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   changeReview: async (req) => {
     const unum = req.decoded.unum;
     console.log(unum);
@@ -186,7 +224,7 @@ const sql = {
     }
     // const { rating, detail, keyword } = data;
   },
-  deleteReview: async(req)=>{
+  deleteReview: async (req) => {
     const unum = req.decoded.unum;
     console.log(unum);
     const reviewId = req.params.reviewId;
@@ -198,9 +236,7 @@ const sql = {
     }
     if (review !== null) {
       try {
-        await REVIEW.destroy(
-          { where: { REVIEW_ID: reviewId } }
-        );
+        await REVIEW.destroy({ where: { REVIEW_ID: reviewId } });
         await KEYWORD.destroy({
           where: {
             REVIEW_ID: reviewId,
@@ -218,18 +254,26 @@ const sql = {
         REVIEW_ID: reviewId,
       },
     });
-    images.forEach(img=>{
-      fs.unlink(img.PATH,err=>{
-        if(err) throw err;
+    images.forEach((img) => {
+      fs.unlink(img.PATH, (err) => {
+        if (err) throw err;
         console.log('delete success');
-      })
-    }) 
+      });
+    });
     await IMAGE.destroy({
-      where:{
-        REVIEW_ID:reviewId
-      }
-    })
+      where: {
+        REVIEW_ID: reviewId,
+      },
+    });
     return next();
+  },
+  getImagePath: async (imageId) => {
+    try {
+      const image = await IMAGE.findByPk(imageId);
+      return image.PATH;
+    } catch (error) {
+      console.log(error.message);
+    }
   },
 };
 

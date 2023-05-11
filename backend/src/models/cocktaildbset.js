@@ -12,11 +12,7 @@ export default class cocktaildbset extends Model {
     },
     UNO: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'USER',
-        key: 'UNO'
-      }
+      allowNull: false
     },
     NAME: {
       type: DataTypes.STRING(45),

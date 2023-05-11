@@ -9,7 +9,7 @@ export default class cocktaildb_recipeset extends Model {
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'COCKTAIL',
+        model: 'cocktaildbset',
         key: 'CNO'
       }
     },
@@ -19,7 +19,7 @@ export default class cocktaildb_recipeset extends Model {
       primaryKey: true
     },
     AMOUNT: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.STRING(45),
       allowNull: true
     },
     UNIT: {
@@ -38,6 +38,14 @@ export default class cocktaildb_recipeset extends Model {
         fields: [
           { name: "CNO" },
           { name: "INGRED" },
+        ]
+      },
+
+      {
+        name: "CNO3_idx",
+        using: "BTREE",
+        fields: [
+          { name: "CNO" },
         ]
       },
     ]

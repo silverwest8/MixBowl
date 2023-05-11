@@ -2,14 +2,12 @@ import _sequelize from "sequelize";
 const DataTypes = _sequelize.DataTypes;
 import _API_cocktaildb_en from  "./API_cocktaildb_en.js";
 import _API_ninja_en from  "./API_ninja_en.js";
-import _API_ninja_en_save from  "./API_ninja_en_save.js";
 import _AUTH_CODE from  "./AUTH_CODE.js";
 import _COCKTAIL from  "./COCKTAIL.js";
 import _COCKTAIL_LIKE from  "./COCKTAIL_LIKE.js";
 import _COCKTAIL_REPORT from  "./COCKTAIL_REPORT.js";
 import _COLOR from  "./COLOR.js";
 import _IMAGE from  "./IMAGE.js";
-import _INGREDIENT from  "./INGREDIENT.js";
 import _KEYWORD from  "./KEYWORD.js";
 import _PLACE from  "./PLACE.js";
 import _POST from  "./POST.js";
@@ -21,21 +19,18 @@ import _REVIEW from  "./REVIEW.js";
 import _USER from  "./USER.js";
 import _cocktaildb_recipeset from  "./cocktaildb_recipeset.js";
 import _cocktaildbset from  "./cocktaildbset.js";
-import _ninja from  "./ninja.js";
 import _ninja_recipe from  "./ninja_recipe.js";
 import _ninjaset from  "./ninjaset.js";
 
 export default function initModels(sequelize) {
   const API_cocktaildb_en = _API_cocktaildb_en.init(sequelize, DataTypes);
   const API_ninja_en = _API_ninja_en.init(sequelize, DataTypes);
-  const API_ninja_en_save = _API_ninja_en_save.init(sequelize, DataTypes);
   const AUTH_CODE = _AUTH_CODE.init(sequelize, DataTypes);
   const COCKTAIL = _COCKTAIL.init(sequelize, DataTypes);
   const COCKTAIL_LIKE = _COCKTAIL_LIKE.init(sequelize, DataTypes);
   const COCKTAIL_REPORT = _COCKTAIL_REPORT.init(sequelize, DataTypes);
   const COLOR = _COLOR.init(sequelize, DataTypes);
   const IMAGE = _IMAGE.init(sequelize, DataTypes);
-  const INGREDIENT = _INGREDIENT.init(sequelize, DataTypes);
   const KEYWORD = _KEYWORD.init(sequelize, DataTypes);
   const PLACE = _PLACE.init(sequelize, DataTypes);
   const POST = _POST.init(sequelize, DataTypes);
@@ -47,7 +42,6 @@ export default function initModels(sequelize) {
   const USER = _USER.init(sequelize, DataTypes);
   const cocktaildb_recipeset = _cocktaildb_recipeset.init(sequelize, DataTypes);
   const cocktaildbset = _cocktaildbset.init(sequelize, DataTypes);
-  const ninja = _ninja.init(sequelize, DataTypes);
   const ninja_recipe = _ninja_recipe.init(sequelize, DataTypes);
   const ninjaset = _ninjaset.init(sequelize, DataTypes);
 
@@ -69,10 +63,6 @@ export default function initModels(sequelize) {
   COCKTAIL.hasMany(POST, { as: "POSTs", foreignKey: "CNO"});
   RECIPE.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
   COCKTAIL.hasMany(RECIPE, { as: "RECIPEs", foreignKey: "CNO"});
-  cocktaildb_recipeset.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
-  COCKTAIL.hasMany(cocktaildb_recipeset, { as: "cocktaildb_recipesets", foreignKey: "CNO"});
-  ninja_recipe.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
-  COCKTAIL.hasMany(ninja_recipe, { as: "ninja_recipes", foreignKey: "CNO"});
   REVIEW.belongsTo(PLACE, { as: "PLACE", foreignKey: "PLACE_ID"});
   PLACE.hasMany(REVIEW, { as: "REVIEWs", foreignKey: "PLACE_ID"});
   POST_LIKE.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
@@ -101,24 +91,20 @@ export default function initModels(sequelize) {
   USER.hasMany(POST_REPORT, { as: "POST_REPORTs", foreignKey: "UNO"});
   REVIEW.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(REVIEW, { as: "REVIEWs", foreignKey: "UNO"});
-  cocktaildbset.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
-  USER.hasMany(cocktaildbset, { as: "cocktaildbsets", foreignKey: "UNO"});
-  ninja.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
-  USER.hasMany(ninja, { as: "ninjas", foreignKey: "UNO"});
-  ninjaset.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
-  USER.hasMany(ninjaset, { as: "ninjasets", foreignKey: "UNO"});
+  cocktaildb_recipeset.belongsTo(cocktaildbset, { as: "CNO_cocktaildbset", foreignKey: "CNO"});
+  cocktaildbset.hasMany(cocktaildb_recipeset, { as: "cocktaildb_recipesets", foreignKey: "CNO"});
+  ninja_recipe.belongsTo(ninjaset, { as: "CNO_ninjaset", foreignKey: "CNO"});
+  ninjaset.hasMany(ninja_recipe, { as: "ninja_recipes", foreignKey: "CNO"});
 
   return {
     API_cocktaildb_en,
     API_ninja_en,
-    API_ninja_en_save,
     AUTH_CODE,
     COCKTAIL,
     COCKTAIL_LIKE,
     COCKTAIL_REPORT,
     COLOR,
     IMAGE,
-    INGREDIENT,
     KEYWORD,
     PLACE,
     POST,
@@ -130,7 +116,6 @@ export default function initModels(sequelize) {
     USER,
     cocktaildb_recipeset,
     cocktaildbset,
-    ninja,
     ninja_recipe,
     ninjaset,
   };

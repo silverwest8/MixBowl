@@ -12,11 +12,13 @@ import CommunityHomePage from "./pages/CommunityHomePage";
 import PostingPage from "./pages/PostingPage";
 import RegisterPage from "./pages/RegisterPage";
 import RecipePage from "./pages/RecipePage";
-import WriteRecipePage from "./pages/WriteRecipePage";
+import RecipeWritePage from "./pages/RecipeWritePage";
 import DetailRecipePage from "./pages/DetailRecipePage";
+import RecipeEditPage from "./pages/RecipeEditPage";
 import RecipeRoute from "./routes/RecipeRoute";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
+import NotFoundPage from "./pages/NotFoundPage";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -47,7 +49,8 @@ function App() {
                 <Route element={<RecipeRoute />}>
                   <Route path="recipe" element={<RecipePage />} />
                   <Route path="/recipe/:id" element={<DetailRecipePage />} />
-                  <Route path="/writerecipe" element={<WriteRecipePage />} />
+                  <Route path="/recipe/:id/edit" element={<RecipeEditPage />} />
+                  <Route path="/recipe/write" element={<RecipeWritePage />} />
                 </Route>
                 <Route path="mypage" element={<HomePage />} />
                 <Route path="login" element={<LoginPage />} />
@@ -57,6 +60,7 @@ function App() {
                 </Route>
                 <Route path="community" element={<CommunityHomePage />} />
                 <Route path="community/posting" element={<PostingPage />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
           </BrowserRouter>

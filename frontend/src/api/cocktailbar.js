@@ -30,3 +30,75 @@ export const getCocktailBarList = async ({ queryKey }) => {
     return data;
   } else return null;
 };
+
+export const postReview = async ({
+  rating,
+  detail,
+  keyword,
+  files,
+  placeId,
+}) => {
+  const formData = new FormData();
+  formData.append(
+    "data",
+    JSON.stringify({
+      rating: Number(rating),
+      detail,
+      keyword,
+      placeId,
+    })
+  );
+  for (let i = 0; i < files.length; i++) {
+    formData.append("files", files[i].file);
+  }
+  /* form data 확인 */
+  const values = formData.values();
+  for (const pair of values) {
+    console.log(pair);
+  }
+  const { data } = await axios.post("/api/reviews", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return data;
+};
+
+export const deleteReview = async (id) => {
+  const { data } = await axios.delete(`/api/reviews/${id}`);
+  return data;
+};
+
+export const editReview = async ({
+  reviewId,
+  rating,
+  detail,
+  keyword,
+  files,
+  placeId,
+}) => {
+  const formData = new FormData();
+  formData.append(
+    "data",
+    JSON.stringify({
+      rating: Number(rating),
+      detail,
+      keyword,
+      placeId,
+    })
+  );
+  for (let i = 0; i < files.length; i++) {
+    formData.append("files", files[i].file);
+  }
+  /* form data 확인 */
+  const values = formData.values();
+  for (const pair of values) {
+    console.log(pair);
+  }
+  const { data } = await axios.post(`/api/reviews/${reviewId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return data;
+};

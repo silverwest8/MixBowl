@@ -11,37 +11,41 @@ components:
           type: array
           items:
             type: integer
-          example: [1, 2, 3]
+          example: [2, 3]
           minItems: 1
           maxItems: 3
-        main:
+        ingred:
           type: array
           items:
             type: object
             properties:
               name:
                 type: string
-                example: 봄베이 사파이어 진
               amount:
-                type: integer
-                example: 45
+                type: string
               unit:
                 type: string
-                example: ml
-        sub:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-                example: 레몬 껍질
-              amount:
-                type: integer
-                example: 1
-              unit:
-                type: string
-                example: 조각
+          example:
+            - name: 사파이어 진
+              amount: 45
+              unit: ml
+            - name: 드라이 베르무스
+              amount: 30
+              unit: ml
+            - name: 그린 올리브
+              amount: 2
+              unit: 개
+            - name: 레몬 껍질
+              amount: 1
+              unit: 조각
+            - name: 조각얼음
+              amount: $
+              unit: '#'
+          minItems: 2
+          maxItems: 10
+        alcoholic:
+          type: integer
+          example: 0
         instruction:
           type: string
           example: |
@@ -74,34 +78,38 @@ components:
               example: [1, 2, 3]
               minItems: 1
               maxItems: 3
-            main:
+            ingred:
               type: array
               items:
                 type: object
                 properties:
                   name:
                     type: string
-                    example: 봄베이 사파이어 진
                   amount:
                     type: integer
-                    example: 45
                   unit:
                     type: string
-                    example: ml
-            sub:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: 레몬 껍질
-                  amount:
-                    type: integer
-                    example: 1
-                  unit:
-                    type: string
-                    example: 조각
+              example:
+                - name: 사파이어 진
+                  amount: 45
+                  unit: ml
+                - name: 드라이 베르무스
+                  amount: 30
+                  unit: ml
+                - name: 그린 올리브
+                  amount: 2
+                  unit: 개
+                - name: 레몬 껍질
+                  amount: 1
+                  unit: 조각
+                - name: 조각얼음
+                  amount: $
+                  unit: '#'
+              minItems: 2
+              maxItems: 10
+            alcoholic:
+              type: integer
+              example: 0
             instruction:
               type: string
               example: |
@@ -123,34 +131,38 @@ components:
           example: [1, 2, 3]
           minItems: 1
           maxItems: 3
-        main:
+        ingred:
           type: array
           items:
             type: object
             properties:
               name:
                 type: string
-                example: 봄베이 사파이어 진
               amount:
                 type: integer
-                example: 45
               unit:
                 type: string
-                example: ml
-        sub:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-                example: 레몬 껍질
-              amount:
-                type: integer
-                example: 1
-              unit:
-                type: string
-                example: 조각
+          example:
+            - name: 사파이어 진
+              amount: 45
+              unit: ml
+            - name: 드라이 베르무스
+              amount: 30
+              unit: ml
+            - name: 그린 올리브
+              amount: 2
+              unit: 개
+            - name: 레몬 껍질
+              amount: 1
+              unit: 조각
+            - name: 조각얼음
+              amount: $
+              unit: '#'
+          minItems: 2
+          maxItems: 10
+        alcoholic:
+          type: integer
+          example: 0
         instruction:
           type: string
           example: |
@@ -169,7 +181,7 @@ components:
           type: boolean
         message:
           type: string
-          example: 칵테일 레시피 디테일 조회 성공
+          example: 칵테일 레시피 목록 조회 성공
         list:
           type: array
           items:
@@ -210,15 +222,12 @@ components:
         data:
           type: object
           properties:
-            name:
-              type: string
-              example: 드라이마티니
             date:
               type: string
               example: 2023.05.02
-            ABV:
-              type: integer
-              example: 17
+            name:
+              type: string
+              example: 드라이마티니
             color:
               type: array
               items:
@@ -226,34 +235,38 @@ components:
               example: [1, 2, 3]
               minItems: 1
               maxItems: 3
-            main:
+            ingred:
               type: array
               items:
                 type: object
                 properties:
                   name:
                     type: string
-                    example: 봄베이 사파이어 진
                   amount:
                     type: integer
-                    example: 45
                   unit:
                     type: string
-                    example: ml
-            sub:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: 레몬 껍질
-                  amount:
-                    type: integer
-                    example: 1
-                  unit:
-                    type: string
-                    example: 조각
+              example:
+                - name: 사파이어 진
+                  amount: 45
+                  unit: ml
+                - name: 드라이 베르무스
+                  amount: 30
+                  unit: ml
+                - name: 그린 올리브
+                  amount: 2
+                  unit: 개
+                - name: 레몬 껍질
+                  amount: 1
+                  unit: 조각
+                - name: 조각얼음
+                  amount: $
+                  unit: '#'
+              minItems: 2
+              maxItems: 10
+            alcoholic:
+              type: integer
+              example: 0
             instruction:
               type: string
               example: |
