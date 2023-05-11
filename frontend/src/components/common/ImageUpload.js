@@ -34,8 +34,13 @@ const ImageUpload = ({ defaultFiles }) => {
     ref.current?.click();
   };
   useEffect(() => {
-    if (defaultFiles) setImageFileListState(defaultFiles);
-    console.log(defaultFiles);
+    if (defaultFiles)
+      setImageFileListState(
+        defaultFiles.map((file, index) => ({
+          id: defaultFiles.length - index,
+          file,
+        }))
+      );
     return () => {
       setImageFileListState([]);
     };
@@ -45,7 +50,7 @@ const ImageUpload = ({ defaultFiles }) => {
       <div className="header">
         <h3>이미지 첨부</h3>
         <span>{files.length} / 5</span>
-        {message && <p>{message}</p>}
+        {message && <p className="message">{message}</p>}
       </div>
       <div className="selection-wrapper">
         {files.length !== 0 && (
@@ -82,6 +87,10 @@ const Section = styled.section`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  .message {
+    font-size: 0.75rem;
+    color: ${({ theme }) => theme.color.red};
+  }
   .header {
     display: flex;
     align-items: center;

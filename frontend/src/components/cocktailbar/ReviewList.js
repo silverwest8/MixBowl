@@ -21,7 +21,7 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
       const file = await convertURLtoFile(
         `/api/reviews/image/one?imageId=${imageIds[i]}`
       );
-      files.push({ id: i + 1, file });
+      files.push(file);
     }
     openModal(ReviewModal, {
       handleClose: closeModal,
