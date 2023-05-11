@@ -11,9 +11,19 @@ const FreeListItem = ({ data }) => {
         <div>
           <h4>{data.title}</h4>
         </div>
-        <div className="category">{data.category}</div>
+        <div className="category">
+          {data.category === "qna"
+            ? "질문과 답변"
+            : data.category === "free"
+            ? "자유 게시글"
+            : data.category === "review"
+            ? "칵테일 리뷰"
+            : data.category === "recommendation"
+            ? "칵테일 추천"
+            : ""}
+        </div>
       </TopSection>
-      <MainText className={data.category === "질문과 답변" ? "question" : ""}>
+      <MainText className={data.category === "qna" ? "question" : ""}>
         {data.maintext}
       </MainText>
       <BottomSection>
@@ -21,7 +31,16 @@ const FreeListItem = ({ data }) => {
           <FaThumbsUp className={data.liked ? "icon liked" : "icon"} />
           {data.likes}
           <FaCommentDots className="icon comment" />
-          {data.comments}
+          <span className="shown">
+            {data.category === "qna" && data.comments === 0
+              ? "지금 답변을 기다리고 있어요"
+              : data.comments}
+          </span>
+          <span className="hidden">
+            {data.category === "qna" && data.comments === 0
+              ? "답변 필요"
+              : data.comments}
+          </span>
         </ReactionContainer>
         <div className="userinfo">
           {data.date}
@@ -97,6 +116,7 @@ const ReactionContainer = styled.div`
   flex-direction: row;
   align-items: center;
   font-size: 0.9rem;
+  color: ${({ theme }) => theme.color.gray};
   .icon {
     margin-right: 0.2rem;
   }
@@ -105,6 +125,17 @@ const ReactionContainer = styled.div`
   }
   .comment {
     margin-left: 0.7rem;
+  }
+  .hidden {
+    display: none;
+  }
+  @media screen and (max-width: 400px) {
+    .shown {
+      display: none;
+    }
+    .hidden {
+      display: inline;
+    }
   }
 `;
 

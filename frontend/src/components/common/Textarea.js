@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { FaCheckCircle, FaTimes, FaCheck } from "react-icons/fa";
+import { FaCheckCircle, FaCheck } from "react-icons/fa";
 
 const Textarea = ({
   value,
@@ -12,7 +12,7 @@ const Textarea = ({
   messageType,
 }) => {
   return (
-    <div>
+    <Wrapper>
       <InputBox>
         <textarea
           name={name}
@@ -29,16 +29,20 @@ const Textarea = ({
           {messageType === "success" ? (
             <FaCheckCircle />
           ) : messageType === "error" ? (
-            <FaTimes />
+            "*"
           ) : (
             <FaCheck />
           )}
           {message}
         </Message>
       )}
-    </div>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  width: 100%;
+`;
 
 const InputBox = styled.div`
   display: flex;

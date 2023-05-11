@@ -2,10 +2,11 @@ import SearchBar from "../components/common/SearchBar";
 // import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
 import FreeListItem from "../components/community/FreeListItem";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Title from "../components/common/Title";
 import { HiPencilAlt } from "react-icons/hi";
 import { MdArrowBackIosNew } from "react-icons/md";
+import { useState } from "react";
 
 const dummyData = [
   {
@@ -13,7 +14,7 @@ const dummyData = [
     id: 0,
     title:
       "제목 예시입니다. 만약 제목 길이가 아주 길다면 어떻게 될지 한 번 보도록 하겠습니다. 이런 식으로 길어진다면 글자수 제한을 해야 되겠죠.",
-    category: "자유게시판",
+    category: "free",
     username: "user01",
     userlevel: 3,
     liked: true,
@@ -25,7 +26,7 @@ const dummyData = [
   {
     id: 1,
     title: "두 번째 제목 예시",
-    category: "자유게시판",
+    category: "free",
     username: "username10",
     userlevel: 2,
     likes: 0,
@@ -40,7 +41,7 @@ const dummyData = [
     // qna는 title 입력값을 아예 안 받을 것인지?
     maintext:
       "질문글 예시입니다. 이런식으로 질문이 bold체로 다 들어가야 되겠죠. 질문의 경우 title이 길어지는 것으로 할까요 아니면 본문을 굵게 표현하는 것으로 할까요?",
-    category: "질문과 답변",
+    category: "qna",
     username: "한글닉네임열글자라면",
     userlevel: 1,
     liked: true,
@@ -51,7 +52,7 @@ const dummyData = [
   {
     id: 3,
     title: "칵테일 추천글 예시",
-    category: "칵테일 추천",
+    category: "recommendation",
     username: "recommend",
     userlevel: 4,
     likes: 3,
@@ -63,7 +64,7 @@ const dummyData = [
   {
     id: 4,
     title: "칵테일 리뷰 예시",
-    category: "칵테일 리뷰",
+    category: "review",
     username: "recommend",
     userlevel: 4,
     likes: 3,
@@ -77,7 +78,7 @@ const dummyData = [
     // qna는 title 입력값을 아예 안 받을 것인지?
     maintext:
       "질문글 예시입니다. 답변이 있을 때와 없을 떄에 따라서 상단에 표시되는지가 달라질 것입니다",
-    category: "질문과 답변",
+    category: "qna",
     username: "한글",
     userlevel: 1,
     liked: true,
@@ -93,7 +94,7 @@ const Background = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 7rem 10rem;
+  padding: 3rem 10rem;
   height: 100%;
   .icon {
     margin-right: 0.6rem;
@@ -139,6 +140,9 @@ const TopSection = styled.div`
   }
   > div:first-child {
     display: flex;
+    @media screen and (max-width: 800px) {
+      flex-direction: column;
+    }
     > span {
       font-size: 2rem;
       flex: 1 0 auto;
@@ -154,6 +158,12 @@ const TopSection = styled.div`
     > div:last-child {
       min-width: 15rem;
       max-width: 30vw;
+      @media screen and (max-width: 800px) {
+        width: 100%;
+        margin-top: 1rem;
+        min-width: none;
+        max-width: none;
+      }
     }
   }
   > div:last-child {
@@ -221,6 +231,58 @@ const WritingButton = styled(Link)`
 `;
 
 const CommunityBoardPage = () => {
+  const navigate = useNavigate();
+  const [input, setInput] = useState("");
+  const searchParams = new URLSearchParams(useLocation().search);
+  const [menu, setMenu] = useState(
+    searchParams.get("category")?.replaceAll('"', "") === "qna"
+      ? "질문과 답변"
+      : searchParams.get("category")?.replaceAll('"', "") === "recommendation"
+      ? "칵테일 추천"
+      : searchParams.get("category")?.replaceAll('"', "") === "free"
+      ? "자유"
+      : searchParams.get("category")?.replaceAll('"', "") === "review"
+      ? "칵테일 리뷰"
+      : "전체"
+  );
+  const onChange = (e) => setInput(e.target.value);
+  const onSearch = () => {
+    navigate(`/community/board?search=${input}`);
+    setMenu(`"${input}" 검색 결과`);
+  };
+  const onClear = () => {
+    setInput("");
+    navigate(`/community/board`, { replace: true });
+  };
+  const setTabQna = () => {
+    setMenu("질문과 답변");
+    navigate(`/community/board?category=qna`);
+    console.log("menu is ", menu);
+  };
+  const setTabRecommendation = () => {
+    setMenu("칵테일 추천");
+    navigate(`/community/board?category=recommendation`);
+  };
+  const setTabReview = () => {
+    setMenu("칵테일 리뷰");
+    navigate(`/community/board?category=review`);
+  };
+  const setTabFree = () => {
+    setMenu("자유");
+    navigate(`/community/board?category=free`);
+  };
+  const setTabEntire = () => {
+    setMenu("전체");
+    navigate(`/community/board?category=all`);
+  };
+  const categoryFunction = (e) => {
+    if (searchParams.get("category")?.replaceAll('"', "") !== "all") {
+      return (
+        e.props.data.category ===
+        searchParams.get("category")?.replaceAll('"', "")
+      );
+    } else return true;
+  };
   return (
     <main
       style={{
@@ -234,31 +296,36 @@ const CommunityBoardPage = () => {
         <TopSection>
           <div>
             <span>
-              <MdArrowBackIosNew className="icon" />
-              전체
+              <Link to={"/community"}>
+                <MdArrowBackIosNew className="icon" />
+              </Link>
+              {menu}
             </span>
             <SearchBar
               placeholder="관심있는 내용을 검색해보세요!"
               showSearchButton={true}
+              onChange={onChange}
+              onSearch={onSearch}
+              onClear={onClear}
             />
           </div>
           <div>
             <div>
-              <Button>전체</Button>
-              <Button>칵테일 추천</Button>
-              <Button>질문과 답변</Button>
+              <Button onClick={setTabEntire}>전체</Button>
+              <Button onClick={setTabRecommendation}>칵테일 추천</Button>
+              <Button onClick={setTabQna}>질문과 답변</Button>
             </div>
             <div>
-              <Button>칵테일 리뷰</Button>
-              <Button>자유 게시판</Button>
+              <Button onClick={setTabReview}>칵테일 리뷰</Button>
+              <Button onClick={setTabFree}>자유 게시판</Button>
             </div>
           </div>
         </TopSection>
         <MainSection>
           <section>
-            {dummyData.map((el) => (
-              <FreeListItem data={el} key={el.id} />
-            ))}
+            {dummyData
+              .map((el) => <FreeListItem data={el} key={el.id} />)
+              .filter(categoryFunction)}
           </section>
         </MainSection>
         <WritingButton to="/community/posting">

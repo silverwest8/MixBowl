@@ -2,11 +2,13 @@ import SearchBar from "../components/common/SearchBar";
 // import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
 import FreeListItem from "../components/community/FreeListItem";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaFire, FaComments } from "react-icons/fa";
 import Title from "../components/common/Title";
 import { HiPencilAlt } from "react-icons/hi";
 import { MdArrowForwardIos } from "react-icons/md";
+import { useState } from "react";
+
 import BoardShortListItem from "../components/community/BoardShortListItem";
 
 const dummyData = [
@@ -307,6 +309,18 @@ const WritingButton = styled(Link)`
 `;
 
 const CommunityHomePage = () => {
+  const navigate = useNavigate();
+  const params = useParams();
+  const [input, setInput] = useState("");
+  const onChange = (e) => setInput(e.target.value);
+  const onSearch = () => {
+    navigate(`/community/board?search=${input}`);
+  };
+  const onClear = () => {
+    params.delete("query");
+    setInput("");
+    navigate(`/community/board${params.toString()}`, { replace: true });
+  };
   return (
     <main
       style={{
@@ -339,7 +353,10 @@ const CommunityHomePage = () => {
             </h1>
             <SearchBar
               placeholder="관심있는 내용을 검색해보세요!"
-              showSearchButton={true}
+              showCloseButton={false}
+              onChange={onChange}
+              onSearch={onSearch}
+              onClear={onClear}
             />
           </section>
           <div className="grid-container">

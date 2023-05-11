@@ -10,6 +10,10 @@ import { MdArrowBackIosNew } from "react-icons/md";
 import Textarea from "../components/common/Textarea";
 import CommentItem from "../components/community/CommentItem";
 import AnswerItem from "../components/community/AnswerItem";
+import ReportModal from "../components/common/ReportModal";
+import { useModal } from "../hooks/useModal";
+import { toastState } from "../store/toast";
+import { useSetRecoilState } from "recoil";
 
 const postData = [
   {
@@ -17,7 +21,7 @@ const postData = [
     id: 0,
     title:
       "제목 예시입니다. 만약 제목 길이가 아주 길다면 어떻게 될지 한 번 보도록 하겠습니다. 이런 식으로 길어진다면 글자수 제한을 해야 되겠죠.",
-    category: "자유게시판",
+    category: "free",
     username: "user01",
     userlevel: 3,
     liked: true,
@@ -45,7 +49,7 @@ const postData = [
   {
     id: 1,
     title: "두 번째 제목 예시",
-    category: "자유게시판",
+    category: "free",
     username: "username10",
     userlevel: 2,
     likes: 0,
@@ -60,11 +64,98 @@ const postData = [
     title: "",
     content:
       "질문글 예시입니다. 이런식으로 질문이 bold체로 다 들어가야 되겠죠. 질문의 경우 title이 길어지는 것으로 할까요 아니면 본문을 굵게 표현하는 것으로 할까요?",
-    category: "질문과 답변",
+    category: "qna",
     username: "한글닉네임열글자라면",
     userlevel: 1,
     liked: true,
     likes: 1,
+    comments: [
+      {
+        id: 0,
+        username: "댓글이름",
+        date: "1일 전",
+        userlevel: 2,
+        content: "댓글 예시는 이런 식으로",
+      },
+      {
+        id: 1,
+        username: "namelikeit",
+        date: "1시간 전",
+        userlevel: 3,
+        content:
+          "댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. ",
+      },
+    ],
+    date: "2일 전",
+  },
+  {
+    id: 3,
+    title: "칵테일 추천글 예시",
+    category: "recommendation",
+    username: "recommend",
+    userlevel: 4,
+    likes: 3,
+    liked: false,
+    date: "5달 전",
+    comments: [
+      {
+        id: 0,
+        username: "댓글이름",
+        date: "1일 전",
+        userlevel: 2,
+        content: "댓글 예시는 이런 식으로",
+      },
+      {
+        id: 1,
+        username: "namelikeit",
+        date: "1시간 전",
+        userlevel: 3,
+        content:
+          "댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. ",
+      },
+    ],
+    content:
+      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
+  },
+  {
+    id: 4,
+    title: "칵테일 리뷰 예시",
+    category: "review",
+    username: "recommend",
+    userlevel: 4,
+    likes: 3,
+    liked: false,
+    comments: [
+      {
+        id: 0,
+        username: "댓글이름",
+        date: "1일 전",
+        userlevel: 2,
+        content: "댓글 예시는 이런 식으로",
+      },
+      {
+        id: 1,
+        username: "namelikeit",
+        date: "1시간 전",
+        userlevel: 3,
+        content:
+          "댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. ",
+      },
+    ],
+    date: "1년 전",
+    content:
+      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
+  },
+  {
+    id: 5,
+    // qna는 title 입력값을 아예 안 받을 것인지?
+    content:
+      "질문글 예시입니다. 답변이 있을 때와 없을 떄에 따라서 상단에 표시되는지가 달라질 것입니다",
+    category: "qna",
+    username: "한글",
+    userlevel: 1,
+    liked: true,
+    likes: 0,
     comments: [
       {
         id: 0,
@@ -92,7 +183,7 @@ const Background = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 7rem 10rem;
+  padding: 4rem 10rem;
   height: 100%;
   .icon {
     margin-right: 0.6rem;
@@ -124,6 +215,21 @@ const TopSection = styled.div`
   margin-bottom: 2rem;
   .none {
     display: none;
+  }
+`;
+const ReportButton = styled.div`
+  flex: 1 0 auto;
+  margin-left: 1rem;
+  padding: 0.2rem 1rem;
+  border: 1px solid ${({ theme }) => theme.color.primaryGold};
+  border-radius: 5px;
+  font-size: 0.75rem;
+  max-height: 1.5rem;
+  max-width: 3.5rem;
+  color: ${({ theme }) => theme.color.primaryGold};
+  &:hover {
+    color: white;
+    background-color: ${({ theme }) => theme.color.primaryGold};
   }
 `;
 
@@ -206,6 +312,7 @@ const CommunityPostDetailPage = () => {
   const [post, setPost] = useState([]);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const { openModal, closeModal } = useModal();
 
   const GetPost = async () => {
     try {
@@ -241,6 +348,20 @@ const CommunityPostDetailPage = () => {
     setLiked(!liked);
     console.log("like is ", liked);
   };
+  const setToastState = useSetRecoilState(toastState);
+  const submitReport = () => {
+    // TODO
+    // report 수 증가?
+    setTimeout(() => {
+      setToastState({
+        show: true,
+        message: "신고가 완료되었습니다.",
+        type: "success",
+        ms: 1000,
+      });
+    }, 300);
+    closeModal();
+  };
 
   useEffect(() => {
     GetPost();
@@ -258,20 +379,42 @@ const CommunityPostDetailPage = () => {
         <EntireSection>
           <TopSection>
             <TopMost>
-              <Link to={"/community/board"}>
+              <Link to={"/community/board?category=all"}>
                 <MdArrowBackIosNew className="icon" />
               </Link>
-              <span>{post.category}</span>
+              <span>
+                {post.category === "qna"
+                  ? "질문과 답변"
+                  : post.category === "free"
+                  ? "자유 게시글"
+                  : post.category === "review"
+                  ? "칵테일 리뷰"
+                  : post.category === "recommendation"
+                  ? "칵테일 추천"
+                  : ""}
+              </span>
             </TopMost>
             <Username>
               <span>{post.username}</span>
               <MemberBadge level={post.userlevel} />
             </Username>
-            <TitleContainer
-              className={post.category === "질문과 답변" ? "none" : ""}
-            >
+            <TitleContainer className={post.category === "qna" ? "none" : ""}>
               <span>{post.title}</span>
-              <DropdownMenu />
+              {/* TODO: 로그인 시 달라지게, 지금은 임시로 넣어둠 */}
+              {post.content ? (
+                <ReportButton
+                  onClick={() =>
+                    openModal(ReportModal, {
+                      handleClose: closeModal,
+                      onSubmit: submitReport,
+                    })
+                  }
+                >
+                  신고
+                </ReportButton>
+              ) : (
+                <DropdownMenu />
+              )}
             </TitleContainer>
           </TopSection>
           <MainSection>
@@ -299,7 +442,7 @@ const CommunityPostDetailPage = () => {
                 </CommentButton>
               }
             />
-            {post.category === "질문과 답변" ? (
+            {post.category === "qna" ? (
               <ul>
                 {post.comments &&
                   post.comments.map((el) => (
