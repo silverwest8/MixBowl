@@ -84,10 +84,10 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
       }
     }
 
-    // ingredient 저장
+    // recipes 저장
     for (let i = 0; i < data.ingred.length; i++) {
       if (data.ingred[i] != null) {
-        await db.INGREDIENT.create({
+        await db.RECIPE.create({
           CNO: cocktail.CNO,
           NAME: data.ingred[i].name,
           AMOUNT: data.ingred[i].amount,
@@ -128,17 +128,17 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
           required: false,
         },
         {
-          model: db.INGREDIENT,
-          as: 'INGREDIENTs',
+          model: db.RECIPE,
+          as: 'RECIPEs',
           attributes: ['NAME', 'AMOUNT', 'UNIT'],
           where: { CNO: cocktailId },
           required: false,
         },
       ],
-      order: [[{ model: db.INGREDIENT, as: 'INGREDIENTs' }, 'AMOUNT', 'DESC']],
+      order: [[{ model: db.RECIPE, as: 'RECIPEs' }, 'AMOUNT', 'DESC']],
     });
     const color = cocktail.COLORs;
-    const ingredient = cocktail.INGREDIENTs;
+    const recipe = cocktail.RECIPEs;
     data.name = cocktail.NAME;
     data.alcoholic = cocktail.ALCOHOLIC;
     data.instruction = cocktail.INSTRUCTION;
@@ -148,13 +148,13 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
       data.color.push(color[i].COLOR);
     }
 
-    // ingredient
-    console.log(ingredient);
-    for (let i = 0; i < ingredient.length; i++) {
+    // recipe
+    console.log(recipe);
+    for (let i = 0; i < recipe.length; i++) {
       const temp = {
-        name: ingredient[i].NAME,
-        amount: ingredient[i].AMOUNT,
-        unit: ingredient[i].UNIT,
+        name: recipe[i].NAME,
+        amount: recipe[i].AMOUNT,
+        unit: recipe[i].UNIT,
       };
       data.ingred.push(temp);
     }
@@ -191,8 +191,8 @@ router.post(
             required: false,
           },
           {
-            model: db.INGREDIENT,
-            as: 'INGREDIENTs',
+            model: db.RECIPE,
+            as: 'RECIPEs',
             attributes: ['NAME'],
             where: { CNO: cocktailId },
             required: false,
@@ -200,7 +200,7 @@ router.post(
         ],
       });
       const color = cocktail.COLORs;
-      const ingredient = cocktail.INGREDIENTs;
+      const recipe = cocktail.RECIPEs;
       console.log(cocktail.IMAGE_PATH);
 
       // 이전 이미지 삭제
@@ -217,7 +217,7 @@ router.post(
         IMAGE_PATH: req.file ? req.file.path : null,
       });
 
-      // color, ingredient는 개수 달라질 수 있으므로 삭제 후 저장
+      // color, recipe 개수 달라질 수 있으므로 삭제 후 저장
       // 삭제(color)
       for (let i = 0; i < color.length; i++) {
         console.log(color[i].COLOR);
@@ -225,11 +225,11 @@ router.post(
           where: { CNO: cocktailId, COLOR: color[i].COLOR },
         });
       }
-      // 삭제(ingredient)
-      for (let i = 0; i < ingredient.length; i++) {
-        console.log(ingredient[i].NAME);
-        await db.INGREDIENT.destroy({
-          where: { CNO: cocktailId, NAME: ingredient[i].NAME },
+      // 삭제(recipe)
+      for (let i = 0; i < recipe.length; i++) {
+        console.log(recipe[i].NAME);
+        await db.RECIPE.destroy({
+          where: { CNO: cocktailId, NAME: recipe[i].NAME },
         });
       }
 
@@ -239,11 +239,11 @@ router.post(
           await db.COLOR.create({ CNO: cocktail.CNO, COLOR: data.color[i] });
         }
       }
-      // 추가(ingredient)
+      // 추가(recipe)
       for (let i = 0; i < data.ingred.length; i++) {
         console.log(data.ingred[i]);
         if (data.ingred[i] != null) {
-          await db.INGREDIENT.create({
+          await db.RECIPE.create({
             CNO: cocktail.CNO,
             NAME: data.ingred[i].name,
             AMOUNT: data.ingred[i].amount,
@@ -273,7 +273,7 @@ router.delete('/:cocktailId', async (req, res) => {
     fs.unlinkSync(oldFilePath);
     console.log(cocktail);
     await cocktail.destroy();
-    // color, ingredient - CASCADE TRIGGER로 자동 삭제
+    // color, recipe - CASCADE TRIGGER로 자동 삭제
 
     res.status(200).json({ success: true, message: 'Cocktail delete 성공' });
   } catch (error) {
@@ -313,8 +313,8 @@ router.get('/list/filter/:page', checkAccess, async (req, res) => {
           required: true,
         },
         {
-          model: db.INGREDIENT,
-          as: 'INGREDIENTs',
+          model: db.RECIPE,
+          as: 'RECIPEs',
           attributes: ['NAME'],
           where: {
             NAME: { [Sequelize.Op.like]: `%${search}%` },
@@ -352,7 +352,7 @@ router.get('/list/filter/:page', checkAccess, async (req, res) => {
       FROM (
         SELECT *
         FROM COCKTAIL AS COCKTAIL
-        WHERE (${finalfilter})
+        ${filter.length ? `WHERE (${finalfilter})` : ''}
       )
       AS COCKTAIL
       LEFT JOIN COCKTAIL_LIKE AS COCKTAIL_LIKE
@@ -380,6 +380,7 @@ router.get('/list/filter/:page', checkAccess, async (req, res) => {
       };
       list.push(temp);
     }
+    console.log(list.length);
 
     return res
       .status(200)
@@ -412,8 +413,8 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
           required: false,
         },
         {
-          model: db.INGREDIENT,
-          as: 'INGREDIENTs',
+          model: db.RECIPE,
+          as: 'RECIPEs',
           attributes: ['NAME', 'AMOUNT', 'UNIT'],
           where: { CNO: cocktailId },
           required: false,
@@ -425,10 +426,10 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
           required: false,
         },
       ],
-      order: [[{ model: db.INGREDIENT, as: 'INGREDIENTs' }, 'AMOUNT', 'DESC']],
+      order: [[{ model: db.RECIPE, as: 'RECIPEs' }, 'AMOUNT', 'DESC']],
     });
     const color = cocktail.COLORs;
-    const ingredient = cocktail.INGREDIENTs;
+    const recipe = cocktail.RECIPEs;
     data.date = cocktail.createdAt;
     data.name = cocktail.NAME;
     data.alcoholic = cocktail.ALCOHOLIC;
@@ -444,19 +445,19 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
       data.color.push(color[i].COLOR);
     }
 
-    // ingredient
-    console.log(ingredient);
-    for (let i = 0; i < ingredient.length; i++) {
+    // recipe
+    console.log(recipe);
+    for (let i = 0; i < recipe.length; i++) {
       const temp = {
-        name: ingredient[i].NAME,
-        amount: ingredient[i].AMOUNT,
-        unit: ingredient[i].UNIT,
+        name: recipe[i].NAME,
+        amount: recipe[i].AMOUNT,
+        unit: recipe[i].UNIT,
       };
       data.ingred.push(temp);
     }
 
     // color get
-    // ingredient get
+    // recipe get
     return res
       .status(200)
       .json({ success: true, message: 'Cocktail detail get 성공', data });
@@ -487,8 +488,6 @@ router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
 
     data.list = post;
 
-    // color get
-    // ingredient get
     return res
       .status(200)
       .json({ success: true, message: 'Cocktail detail get 성공', data });
@@ -504,17 +503,18 @@ router.get('/image/:cocktailId', async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
-    console.log(cocktail.IMAGE_PATH);
     if (Number(cocktailId) < 11000 || cocktailId > 178368) {
       const data = fs.readFileSync(cocktail.IMAGE_PATH);
       res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
       res.write(data); //본문을 만들고
       return res.end(); //클라이언트에게 응답을 전송한다
     } else {
-      const { data } = await axios.get(cocktail.IMAGE_PATH);
-      res.writeHead(200, { 'Content-Type': 'image/jpg' });
-      res.write(data);
-      return res.end();
+      const { data } = await axios.get(cocktail.IMAGE_PATH, {
+        responseType: 'arraybuffer',
+      });
+      const imageBuffer = Buffer.from(data, 'binary');
+      res.set('Content-Type', 'image/jpeg');
+      return res.status(200).send(imageBuffer);
     }
   } catch (error) {
     console.log(error);

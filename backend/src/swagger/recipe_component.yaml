@@ -181,7 +181,7 @@ components:
           type: boolean
         message:
           type: string
-          example: 칵테일 레시피 디테일 조회 성공
+          example: 칵테일 레시피 목록 조회 성공
         list:
           type: array
           items:
