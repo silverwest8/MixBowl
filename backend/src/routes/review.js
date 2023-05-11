@@ -2,6 +2,7 @@
 
 import express from 'express';
 import multer from 'multer';
+import fs from 'fs';
 import checkAccess from '../middleware/checkAccessToken';
 import axios from 'axios';
 import PLACE from '../models/PLACE';
@@ -14,6 +15,42 @@ import sql from '../database/sql';
 import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
+
+const KEYWORD_VALUE = [
+  {
+    id: 1,
+    value: "술이 맛있어요",
+  },
+  {
+    id: 2,
+    value: "술이 다양해요",
+  },
+  {
+    id: 3,
+    value: "혼술하기 좋아요",
+  },
+  {
+    id: 4,
+    value: "메뉴가 다양해요",
+  },
+  {
+    id: 5,
+    value: "음식이 맛있어요",
+  },
+  {
+    id: 6,
+    value: "분위기가 좋아요",
+  },
+  {
+    id: 7,
+    value: "직원이 친절해요",
+  },
+  {
+    id: 8,
+    value: "대화하기 좋아요",
+  },
+  { id: 9,  value: "가성비가 좋아요" },
+];
 
 async function getKeyword(placeId) {
   let keywordlist = [null, null, null];
@@ -35,41 +72,21 @@ async function getKeyword(placeId) {
     order: [[Sequelize.literal('COUNT'), 'DESC']],
     limit: 3,
   });
-  keyword.forEach((keyword, idx) => {
-    switch (keyword.KEYWORD) {
-      case 1:
-        keywordlist[idx] = '술이 맛있어요';
-        break;
-      case 2:
-        keywordlist[idx] = '술이 다양해요';
-        break;
-      case 3:
-        keywordlist[idx] = '혼술하기 좋아요';
-        break;
-      case 4:
-        keywordlist[idx] = '분위기가 좋아요';
-        break;
-      case 5:
-        keywordlist[idx] = '직원이 친절해요';
-        break;
-      case 6:
-        keywordlist[idx] = '대화하기 좋아요';
-        break;
-      case 7:
-        keywordlist[idx] = '가성비가 좋아요';
-        break;
-      case 8:
-        keywordlist[idx] = '메뉴가 다양해요';
-        break;
-      case 9:
-        keywordlist[idx] = '음식이 맛있어요';
-        break;
-      default:
-        keywordlist[idx] = null;
-    }
-  });
+  keyword.forEach((keyword) => keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1].value));
   return keywordlist;
 }
+
+async function getKeywordByReviewId(reviewId) {
+  const keywordlist = [];
+  const keyword = await KEYWORD.findAll({
+    where: {
+      REVIEW_ID: reviewId
+    }
+  });
+  keyword.forEach((keyword) => keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1]));
+  return keywordlist;
+}
+
 
 router.get('/barlist', checkAccess, async (req, res) => {
   // Example
@@ -170,6 +187,9 @@ router.get('/barlist', checkAccess, async (req, res) => {
           temp.review.review_cnt = review_num.length;
           temp.review.review_list = Object.assign(reviewList);
           for (let i = 0; i < reviewList.length; i++) {
+            await sql.getImageId(temp.review.review_list[i].REVIEW_ID).then((arr) => {
+              temp.review.review_list[i].dataValues.imgIdArr = arr; //imgId삽입
+            });
             if (req.user.UNO == temp.review.review_list[i].UNO_USER.UNO) {
               temp.review.review_list[
                 i
@@ -257,11 +277,15 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
     data.total_cnt = review.length;
     data.list = Object.assign(review);
     for (let i = 0; i < review.length; i++) {
+      await sql.getImageId(data.list[i].REVIEW_ID).then((arr) => {
+        data.list[i].dataValues.imgIdArr = arr; //imgId삽입
+      });
       if (req.user.UNO == data.list[i].UNO_USER.UNO) {
         data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = true;
       } else {
         data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = false;
       }
+      data.list[i].dataValues.KEYWORDS = await getKeywordByReviewId(data.list[i].dataValues.REVIEW_ID);
     }
     data.keyword = await getKeyword(place_id);
     return res
@@ -272,6 +296,22 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
     return res
       .status(400)
       .json({ success: false, message: '칵테일 바 리뷰 조회 실패', error });
+  }
+});
+//이미지 정보 가져오기
+router.get('/image/one', async (req, res) => {
+  try {
+    const imageId = req.query.imageId;
+    const imgPath = await sql.getImagePath(imageId);
+    const data = fs.readFileSync(imgPath);
+    res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+    res.write(data);
+    return res.end();
+  } catch (error) {
+    console.log(error.message);
+    return res
+      .status(400)
+      .json({ success: false, message: '이미지 조회 실패', error });
   }
 });
 // 파일 업로드를 위해 사용되는 multipart/form-data 를 front에서 사용할것
@@ -330,16 +370,57 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   });
   try {
     await sql.postImage(req, review);
+    res.json({ success: true, message: 'Multipart Upload Ok & DB update OK' });
   } catch (error) {
     console.log(error.message);
   }
-  res.json({ success: true, message: 'Multipart Upload Ok & DB update OK' });
 });
 
-router.put('/:placeId', checkAccess, async (req, res) => {});
+//리뷰 수정하기 위한 페이지 보여주기
+router.get('/one/:reviewId', checkAccess, async (req, res) => {
+  try {
+    const prevReview = await sql.getReview(req);
+    prevReview.success = true;
+    prevReview.message = 'Successfuly loaded previous review data';
+    console.log(prevReview);
+    return res.status(200).send(prevReview);
+  } catch (error) {
+    console.log(error.message);
+    return res.status(400).send({
+      success: false,
+      message: 'fail to load previous review',
+      error: error.message,
+    });
+  }
+});
 
-router.delete('/placeId', checkAccess, async (req, res) => {
-  return res.status(200).json({ success: true, message: '리뷰 삭제 성공' });
+//리뷰 수정
+router.post(
+  '/:reviewId',
+  checkAccess,
+  sql.deleteImage,
+  upload.array('files', 5),
+  async (req, res) => {
+    try {
+      const review = await sql.changeReview(req);
+      await sql.postImage(req, review);
+      res.json({ success: true, message: 'Change Review Success' });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+);
+
+router.delete('/:reviewId', checkAccess, sql.deleteImage, async (req, res) => {
+  console.log('hi');
+  try {
+    await sql.deleteReview(req);
+    return res
+      .status(200)
+      .json({ success: true, message: 'Delete Review Success' });
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 
 //Error Handler

@@ -7,7 +7,7 @@ import { theme } from "../../styles/theme";
 
 const OPTIONS = ["수정", "삭제"];
 
-const DropdownMenu = ({ options }) => {
+const DropdownMenu = ({ options, handlers }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -55,11 +55,14 @@ const DropdownMenu = ({ options }) => {
           },
         }}
       >
-        {(options || OPTIONS).map((option) => (
+        {(options || OPTIONS).map((option, index) => (
           <MenuItem
             key={option}
             selected={option === "Pyxis"}
-            onClick={handleClose}
+            onClick={() => {
+              if (handlers && handlers[index]) handlers[index]();
+              handleClose();
+            }}
             sx={{
               justifyContent: "center",
               fontSize: "0.875rem",

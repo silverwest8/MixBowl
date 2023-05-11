@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import RecipeDrop from "./RecipeDrop";
 import { useRecoilValue, useResetRecoilState } from "recoil";
 import {
+  searchState,
   alcoholState,
   sortState,
   colorState,
@@ -18,6 +19,7 @@ const RecipeCard = () => {
   const colorNum = [];
   const alcoholNum = [];
   let sortInit = false;
+  const search = useRecoilValue(searchState);
   const color = useRecoilValue(colorState);
   const alcohol = useRecoilValue(alcoholState);
   const sort = useRecoilValue(sortState);
@@ -29,13 +31,13 @@ const RecipeCard = () => {
     alcoholFilter();
     sort = sortFilter();
     try {
-      let url = `/api/recipes/list/filter/1?alcoholic=[${alcohol}]&color=[${color}]&search=gin`;
+      console.log(search);
+      let url = `/api/recipes/list/filter/1?alcoholic=[${alcohol}]&color=[${color}]&search=${search}`;
       if (sort) {
         url += "&sort=new";
       }
       const { data } = await axios.get(url);
       setRecipe(data.list);
-      console.log(data);
     } catch (error) {
       console.log("error");
     }
@@ -43,7 +45,7 @@ const RecipeCard = () => {
 
   useEffect(() => {
     GetRecipe(colorNum, alcoholNum, sortInit);
-  }, [color, alcohol, sort]);
+  }, [search, color, alcohol, sort]);
 
   useEffect(() => {
     addRecipeState();
@@ -65,9 +67,9 @@ const RecipeCard = () => {
   };
 
   const alcoholFilter = () => {
-    if (alcohol.alcohol === "낮음") alcoholNum.push(1);
-    if (alcohol.alcohol === "중간") alcoholNum.push(2);
-    if (alcohol.alcohol === "높음") alcoholNum.push(3);
+    if (alcohol.alcohol === "낮음") alcoholNum.push(0);
+    if (alcohol.alcohol === "중간") alcoholNum.push(1);
+    if (alcohol.alcohol === "높음") alcoholNum.push(2);
   };
 
   const sortFilter = () => {

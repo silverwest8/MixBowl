@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FaPen } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
@@ -7,6 +7,8 @@ import Modal from "../common/Modal";
 import { useModal } from "../../hooks/useModal";
 import { useSetRecoilState } from "recoil";
 import { toastState } from "../../store/toast";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const CommentModal = ({ handleClose }) => {
   const [msg, setMsg] = useState("");
@@ -56,12 +58,30 @@ const CommentModal = ({ handleClose }) => {
 };
 
 const RecipeComment = () => {
+  const [comment, setComment] = useState([]);
   const { openModal, closeModal } = useModal();
+  const params = useParams();
+  const id = params.id;
+
+  const GetComment = async () => {
+    try {
+      const { data } = await axios.get(`/api/recipes/detail/review/${id}`);
+      setComment(data.data);
+      console.log(comment);
+    } catch (error) {
+      return error.message;
+    }
+  };
+
+  useEffect(() => {
+    GetComment();
+  }, []);
+
   return (
     <Comment>
       <TopBox>
         <p>
-          리뷰<span>(10)</span>
+          리뷰<span>({comment.post})</span>
         </p>
         <PostButton
           onClick={() => {
