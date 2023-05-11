@@ -76,7 +76,7 @@ const RecipeDetailCard = () => {
     <>
       <TopBox>
         <RecipeBox>
-          <img src={recipe.image_path}></img>
+          <img src={`http://localhost:3030/recipes/image/${id}`}></img>
           <TextBox>
             <div>
               <h1>
