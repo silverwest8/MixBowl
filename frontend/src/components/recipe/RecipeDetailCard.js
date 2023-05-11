@@ -48,6 +48,16 @@ const RecipeDetailCard = () => {
     }
   };
 
+  const GetLike = async () => {
+    try {
+      const { data } = await axios.get(`/api/recipes/detail/${id}`);
+      setRecipe(data.data);
+      console.log(data.data);
+    } catch (error) {
+      return error.message;
+    }
+  };
+
   useEffect(() => {
     GetRecipe();
   }, []);
@@ -289,7 +299,6 @@ const TopBox = styled.div`
   margin: auto;
   display: flex;
   flex-direction: column;
-  padding-left:1rem;
   }
   @media screen and (max-width: 840px) {
     width: 70vw;
