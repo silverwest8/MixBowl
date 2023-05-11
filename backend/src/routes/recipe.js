@@ -352,7 +352,7 @@ router.get('/list/filter/:page', checkAccess, async (req, res) => {
       FROM (
         SELECT *
         FROM COCKTAIL AS COCKTAIL
-        ${filter.length ? `WHERE (${finalfilter})` : ""}
+        ${filter.length ? `WHERE (${finalfilter})` : ''}
       )
       AS COCKTAIL
       LEFT JOIN COCKTAIL_LIKE AS COCKTAIL_LIKE
@@ -503,17 +503,18 @@ router.get('/image/:cocktailId', async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
-    console.log(cocktail.IMAGE_PATH);
     if (Number(cocktailId) < 11000 || cocktailId > 178368) {
       const data = fs.readFileSync(cocktail.IMAGE_PATH);
       res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
       res.write(data); //본문을 만들고
       return res.end(); //클라이언트에게 응답을 전송한다
     } else {
-      const { data } = await axios.get(cocktail.IMAGE_PATH);
-      res.writeHead(200, { 'Content-Type': 'image/jpg' });
-      res.write(data);
-      return res.end();
+      const { data } = await axios.get(cocktail.IMAGE_PATH, {
+        responseType: 'arraybuffer',
+      });
+      const imageBuffer = Buffer.from(data, 'binary');
+      res.set('Content-Type', 'image/jpeg');
+      return res.status(200).send(imageBuffer);
     }
   } catch (error) {
     console.log(error);
