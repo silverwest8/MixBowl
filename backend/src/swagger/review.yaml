@@ -83,7 +83,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /reviews/{reviewId}:
     post:
       tags:
         - review
