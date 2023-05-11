@@ -187,6 +187,9 @@ router.get('/barlist', checkAccess, async (req, res) => {
           temp.review.review_cnt = review_num.length;
           temp.review.review_list = Object.assign(reviewList);
           for (let i = 0; i < reviewList.length; i++) {
+            await sql.getImageId(temp.review.review_list[i].REVIEW_ID).then((arr) => {
+              temp.review.review_list[i].dataValues.imgIdArr = arr; //imgId삽입
+            });
             if (req.user.UNO == temp.review.review_list[i].UNO_USER.UNO) {
               temp.review.review_list[
                 i
@@ -296,7 +299,7 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
   }
 });
 //이미지 정보 가져오기
-router.get('/image/one', checkAccess, async (req, res) => {
+router.get('/image/one', async (req, res) => {
   try {
     const imageId = req.query.imageId;
     const imgPath = await sql.getImagePath(imageId);
