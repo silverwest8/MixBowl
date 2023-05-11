@@ -500,7 +500,7 @@ router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/image/:cocktailId', checkAccess, async (req, res) => {
+router.get('/image/:cocktailId', async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);

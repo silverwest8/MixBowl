@@ -32,6 +32,7 @@ const RecipeCard = () => {
     alcoholFilter();
     sort = sortFilter();
     try {
+      axios.defaults.headers.common.Authorization = token;
       let url = `/api/recipes/list/filter/1?alcoholic=[${alcohol}]&color=[${color}]&search=${search}`;
       if (sort) {
         url += "&sort=new";
@@ -46,6 +47,7 @@ const RecipeCard = () => {
 
   const getImage = async (cocktailId) => {
     try {
+      axios.defaults.headers.common.Authorization = token;
       const response = await axios.get(`/api/recipes/image/${cocktailId}`, {
         responseType: "blob",
       });
@@ -106,7 +108,9 @@ const RecipeCard = () => {
           <RecipeBox key={item.id}>
             {token ? (
               <Link to={`/recipe/${item.id}`}>
-                <img src={item.image_path}></img>
+                <img
+                  src={`http://localhost:3030/recipes/image/${item.id}`}
+                ></img>
                 <h1>{item.name}</h1>
               </Link>
             ) : (
