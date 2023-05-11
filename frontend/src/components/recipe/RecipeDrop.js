@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useSetRecoilState } from "recoil";
-import { arrState } from "../../store/recipe";
+import { sortState } from "../../store/recipe";
 import { useState, useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
@@ -13,7 +13,7 @@ const OPTIONS = ["최신순", "추천순"];
 const RecipeDrop = ({ options }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const setArr = useSetRecoilState(arrState);
+  const setArr = useSetRecoilState(sortState);
   const token = localStorage.getItem("access_token");
 
   const handleClick = (event) => {
@@ -43,8 +43,8 @@ const RecipeDrop = ({ options }) => {
 
   useEffect(() => {
     setArr({
-      latest: true,
-      recommendation: false,
+      latest: false,
+      recommendation: true,
     });
   }, []);
 

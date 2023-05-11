@@ -26,11 +26,11 @@ export const alcoholState = atom({
   },
 });
 
-export const arrState = atom({
-  key: "arrState",
+export const sortState = atom({
+  key: "sortState",
   default: {
-    latest: true,
-    recommendation: false,
+    latest: false,
+    recommendation: true,
   },
 });
 
