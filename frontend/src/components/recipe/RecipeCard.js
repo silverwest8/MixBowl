@@ -45,26 +45,8 @@ const RecipeCard = () => {
     }
   };
 
-  const getImage = async (cocktailId) => {
-    try {
-      axios.defaults.headers.common.Authorization = token;
-      const response = await axios.get(`/api/recipes/image/${cocktailId}`, {
-        responseType: "blob",
-      });
-
-      const blobData = response.data;
-      const imageUrl = URL.createObjectURL(blobData);
-
-      console.log(imageUrl);
-      setImage(imageUrl);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     GetRecipe(colorNum, alcoholNum, sortInit);
-    getImage(11000);
   }, [search, color, alcohol, sort]);
 
   useEffect(() => {
@@ -99,7 +81,6 @@ const RecipeCard = () => {
 
   return (
     <MiddleBox>
-      {image && <img src={image} style={{ width: "500px", height: "500px" }} />}
       <CardBox>
         <div className="arr">
           <RecipeDrop />
@@ -108,9 +89,7 @@ const RecipeCard = () => {
           <RecipeBox key={item.id}>
             {token ? (
               <Link to={`/recipe/${item.id}`}>
-                <img
-                  src={`http://localhost:3030/recipes/image/${item.id}`}
-                ></img>
+                <img src={`/api/recipes/image/${item.id}`}></img>
                 <h1>{item.name}</h1>
               </Link>
             ) : (

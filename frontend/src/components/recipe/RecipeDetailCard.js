@@ -76,12 +76,12 @@ const RecipeDetailCard = () => {
     <>
       <TopBox>
         <RecipeBox>
-          <img src={recipe.image_path}></img>
+          <img src={`/api/recipes/image/${id}`}></img>
           <TextBox>
             <div>
               <h1>
                 {recipe.name}
-                {recipe.iswriter ? (
+                {recipe.USER.iswriter ? (
                   <RecipeEditDelete />
                 ) : (
                   <CallButton
