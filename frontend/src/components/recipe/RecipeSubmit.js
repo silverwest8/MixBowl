@@ -1,18 +1,20 @@
 import styled from "styled-components";
 import { AddRecipeState, AddRecipeImgState } from "../../store/recipe";
-import { useNavigate } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useNavigate, useParams } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { toastState } from "../../store/toast";
-import { postRecipe } from "../../api/recipeapi";
+import { postRecipe, editRecipe } from "../../api/recipeapi";
 
-const RecipeSubmit = () => {
+const RecipeSubmit = ({ actionType }) => {
   const navigate = useNavigate();
   const colorNum = [];
   let alcoholNum = 0;
   const { addName, addColor, addItem, addAlcohol, addExplain } =
     useRecoilValue(AddRecipeState);
   const setToastState = useSetRecoilState(toastState);
-  const recipeImg = useRecoilValue(AddRecipeImgState);
+  const [recipeImg, setRecipeImg] = useRecoilState(AddRecipeImgState);
+  const params = useParams();
+  const id = params.id;
 
   const handleSubmit = () => {
     if (addName === "") {
@@ -52,7 +54,7 @@ const RecipeSubmit = () => {
         type: "error",
         ms: 2000,
       });
-    } else {
+    } else if (actionType === "post") {
       colorFilter();
       alcoholFilter();
       const ingred = addItem.map((item) => ({
@@ -82,7 +84,41 @@ const RecipeSubmit = () => {
         type: "success",
         ms: 3000,
       });
+      setRecipeImg("");
       navigate(-1);
+    } else if (actionType === "edit") {
+      colorFilter();
+      alcoholFilter();
+      const ingred = addItem.map((item) => ({
+        name: item.addName,
+        amount: item.addAmount,
+        unit: item.addUnit,
+      }));
+
+      editRecipe({
+        recipeId: id,
+        name: addName,
+        color: colorNum,
+        ingred: ingred,
+        alcoholic: alcoholNum,
+        instruction: addExplain,
+        image: [recipeImg],
+      })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+      setToastState({
+        show: true,
+        message: "수정이 완료되었습니다.",
+        type: "success",
+        ms: 3000,
+      });
+      setRecipeImg("");
+      navigate(-2);
     }
   };
 
