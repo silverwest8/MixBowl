@@ -2,7 +2,7 @@ import Title from "../components/common/Title";
 import RecipeTitleImgColor from "../components/recipe/RecipeTitleImgColor";
 import RecipeExplain from "../components/recipe/RecipeExplain";
 import RecipeSubmit from "../components/recipe/RecipeSubmit";
-import { AddRecipeState } from "../store/recipe";
+import { AddRecipeState, AddRecipeImgState } from "../store/recipe";
 import { useSetRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -14,15 +14,15 @@ const RecipeEditPage = () => {
   const id = params.id;
   const GetRecipe = async () => {
     try {
-      const res = await axios.get(`http://localhost:4000/RecipeList?rno=${id}`);
-      setRecipe(res.data[0]);
+      const { data } = await axios.get(`/api/recipes/${id}`);
+      setRecipe(data.data);
     } catch (error) {
       return error.message;
     }
   };
 
   const setItem = useSetRecoilState(AddRecipeState);
-  const setAddImg = useSetRecoilState(AddRecipeState);
+  const setImg = useSetRecoilState(AddRecipeImgState);
   const setAddName = useSetRecoilState(AddRecipeState);
   const setAddColor = useSetRecoilState(AddRecipeState);
   const setAddAlcohol = useSetRecoilState(AddRecipeState);
@@ -33,23 +33,20 @@ const RecipeEditPage = () => {
   }, []);
 
   setItem((prev) => {
-    if (Recipe.additem) {
+    if (Recipe.ingred) {
       return {
         ...prev,
-        addItem: Recipe.additem.map((item) => ({
-          addLength: item.addlength,
-          addName: item.addname,
-          addAmount: item.addamount,
-          addUnit: item.addunit,
+        addItem: Recipe.ingred.map((item) => ({
+          addName: item.name,
+          addAmount: item.amount,
+          addUnit: item.unit,
         })),
       };
     }
     return prev;
   });
 
-  console.log(Recipe.item);
-
-  setAddImg((prev) => ({
+  setImg((prev) => ({
     ...prev,
     addImg: Recipe.image_path,
   }));
@@ -73,6 +70,8 @@ const RecipeEditPage = () => {
     ...prev,
     addExplain: Recipe.explain,
   }));
+
+  console.log(Recipe);
 
   return (
     <main>

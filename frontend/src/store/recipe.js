@@ -63,3 +63,8 @@ export const AddRecipeState = atom({
     addExplain: "",
   },
 });
+
+export const AddRecipeImgState = atom({
+  key: "AddRecipeImgState",
+  default: "",
+});

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Input from "../common/Input";
-import { AddRecipeState } from "../../store/recipe";
+import { AddRecipeState, AddRecipeImgState } from "../../store/recipe";
 import { useState, useRef, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -11,6 +11,7 @@ const RecipeTitleImgColor = ({ Title, Color }) => {
   const [{ addImg }, setAddImg] = useRecoilState(AddRecipeState);
   const [{ addName }, setAddName] = useRecoilState(AddRecipeState);
   const [{ addColor }, setAddColor] = useRecoilState(AddRecipeState);
+  const setImg = useSetRecoilState(AddRecipeImgState);
   const [coloritem, setColoritem] = useState({
     red: false,
     pink: false,
@@ -45,10 +46,12 @@ const RecipeTitleImgColor = ({ Title, Color }) => {
       ...prevAddImg,
       addImg: "",
     }));
+    setImg("");
   };
 
   const handleImg = (e) => {
     const file = fileInput.current.files[0];
+    setImg(file);
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {

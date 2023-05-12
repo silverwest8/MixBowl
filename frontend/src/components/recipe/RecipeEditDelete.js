@@ -9,6 +9,7 @@ import Modal from "../common/Modal";
 import { useNavigate, useParams } from "react-router-dom";
 import { toastState } from "../../store/toast";
 import { useSetRecoilState } from "recoil";
+import { deleteReipe } from "../../api/recipeapi";
 const OPTIONS = ["수정", "삭제"];
 
 const RecipeEditDelete = ({ options }) => {
@@ -50,7 +51,7 @@ const RecipeEditDelete = ({ options }) => {
   };
 
   const handleConform = () => {
-    console.log("레시피삭제시");
+    deleteReipe(id);
     ToastMessageDelete();
     closeModal();
     navigate(-1);
