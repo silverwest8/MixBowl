@@ -1,87 +1,62 @@
 import { BiPlusCircle, BiMinusCircle } from "react-icons/bi";
 import { useRecoilState } from "recoil";
-import { imageListState } from "../../store/image";
+import { imageFileListState } from "../../store/imageFile";
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 
-const ImageUpload = () => {
+const ImageUpload = ({ defaultFiles }) => {
   const ref = useRef(null);
-  const [{ urls, files }, setImageListState] = useRecoilState(imageListState);
+  const [files, setImageFileListState] = useRecoilState(imageFileListState);
   const [message, setMessage] = useState("");
   const addImageFile = (e) => {
-    if (urls.length + files.length === 5) {
+    if (files.length === 5) {
       setMessage("* 이미지는 5개까지 첨부 가능합니다.");
       return;
     }
-    setImageListState((state) => ({
-      urls: state.urls,
-      files: [
-        {
-          id: state.files.length === 0 ? 0 : state.files[0].id + 1,
-          file: e.target.files[0],
-        },
-        ...state.files,
-      ],
-    }));
+    setImageFileListState((files) => [
+      {
+        id: files.length === 0 ? 0 : files[0].id + 1,
+        file: e.target.files[0],
+      },
+      ...files,
+    ]);
     e.target.value = "";
   };
-  const removeImage = (type, id) => {
-    if (type === "url") {
-      setImageListState((state) => ({
-        urls: state.urls.filter((item) => item.id !== id),
-        files: state.files,
-      }));
-    } else {
-      setImageListState((state) => ({
-        urls: state.urls,
-        files: state.files.filter((item) => item.id !== id),
-      }));
-    }
+  const removeImage = (id) => {
+    setImageFileListState((files) => files.filter((item) => item.id !== id));
     setMessage("");
   };
   const openFileInput = () => {
-    if (urls.length + files.length === 5) {
+    if (files.length === 5) {
       setMessage("* 이미지는 5개까지 첨부 가능합니다.");
       return;
     }
     ref.current?.click();
   };
   useEffect(() => {
+    if (defaultFiles)
+      setImageFileListState(
+        defaultFiles.map((file, index) => ({
+          id: defaultFiles.length - index,
+          file,
+        }))
+      );
     return () => {
-      setImageListState({
-        urls: [],
-        files: [],
-      });
+      setImageFileListState([]);
     };
   }, []);
-  useEffect(() => {
-    console.log(files);
-  }, [files]);
   return (
     <Section>
       <div className="header">
         <h3>이미지 첨부</h3>
-        <span>{urls.length + files.length} / 5</span>
-        {message && <p>{message}</p>}
+        <span>{files.length} / 5</span>
+        {message && <p className="message">{message}</p>}
       </div>
       <div className="selection-wrapper">
-        {urls.length + files.length !== 0 && (
+        {files.length !== 0 && (
           <div className="image-list">
-            {urls.map((item) => (
-              <ImageWrapper
-                key={item.id}
-                onClick={() => removeImage("url", item.id)}
-              >
-                <img src={item.url} />
-                <div className="background" />
-                <BiMinusCircle />
-              </ImageWrapper>
-            ))}
             {files.map((item) => (
-              <ImageWrapper
-                key={item.id}
-                onClick={() => removeImage("file", item.id)}
-              >
+              <ImageWrapper key={item.id} onClick={() => removeImage(item.id)}>
                 <img src={URL.createObjectURL(item.file)} />
                 <div className="background" />
                 <BiMinusCircle />
@@ -112,6 +87,10 @@ const Section = styled.section`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  .message {
+    font-size: 0.75rem;
+    color: ${({ theme }) => theme.color.red};
+  }
   .header {
     display: flex;
     align-items: center;

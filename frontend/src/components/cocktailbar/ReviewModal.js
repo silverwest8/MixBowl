@@ -1,62 +1,120 @@
 import { useState } from "react";
-import axios from "axios";
 import Modal from "../common/Modal";
 import Textarea from "../common/Textarea";
 import Rating from "@mui/material/Rating";
 import styled from "styled-components";
 import ImageUpload from "../common/ImageUpload";
-import { useRecoilValue } from "recoil";
-import { imageListState } from "../../store/image";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { imageFileListState } from "../../store/imageFile";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { editReview, postReview } from "../../api/cocktailbar";
+import { toastState } from "../../store/toast";
 
 const KEYWORDS = [
   {
+    id: 1,
     icon: "👍",
-    keyword: "술이 맛있어요",
+    value: "술이 맛있어요",
   },
   {
+    id: 2,
     icon: "🍹",
-    keyword: "술이 다양해요",
+    value: "술이 다양해요",
   },
   {
+    id: 3,
     icon: "🍸",
-    keyword: "혼술하기 좋아요",
+    value: "혼술하기 좋아요",
   },
   {
-    icon: "",
-    keyword: "메뉴가 다양해요",
+    id: 4,
+    icon: "🙌",
+    value: "메뉴가 다양해요",
   },
   {
+    id: 5,
     icon: "🍽️",
-    keyword: "음식이 맛있어요",
+    value: "음식이 맛있어요",
   },
   {
+    id: 6,
     icon: "🌃",
-    keyword: "분위기가 좋아요",
+    value: "분위기가 좋아요",
   },
   {
+    id: 7,
     icon: "😀",
-    keyword: "직원이 친절해요",
+    value: "직원이 친절해요",
   },
   {
+    id: 8,
     icon: "🗣️",
-    keyword: "대화하기 좋아요",
+    value: "대화하기 좋아요",
   },
-  {
-    icon: "💵",
-    keyword: "가성비가 좋아요",
-  },
+  { id: 9, icon: "💵", value: "가성비가 좋아요" },
 ];
 
-const ReviewModal = ({ handleClose, name, id }) => {
-  const [inputs, setInputs] = useState({
-    rating: 0,
-    keyword: [],
-    detail: "",
-  });
+const ReviewModal = ({
+  handleClose,
+  name,
+  placeId,
+  reviewId,
+  defaultInputs,
+  defaultFiles,
+}) => {
+  const [inputs, setInputs] = useState(
+    defaultInputs || {
+      rating: 0,
+      keyword: [],
+      detail: "",
+    }
+  );
   const { rating, keyword, detail } = inputs;
-  const { urls, files } = useRecoilValue(imageListState);
+  const files = useRecoilValue(imageFileListState);
   const [detailMsg, setDetailMsg] = useState("");
   const [ratingMsg, setRatingMsg] = useState("");
+  const setToastState = useSetRecoilState(toastState);
+  const queryClient = useQueryClient();
+  const { mutate: mutatePost } = useMutation({
+    mutationFn: postReview,
+    onError: (e) => {
+      setToastState({
+        show: true,
+        message: "리뷰 등록에 실패했습니다. 다시 시도해주세요.",
+        type: "error",
+      });
+      console.log(e);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["cocktail bar review", placeId]);
+      setToastState({
+        show: true,
+        message: "리뷰가 등록되었습니다.",
+        type: "success",
+      });
+      handleClose();
+    },
+  });
+  const { mutate: mutateEdit } = useMutation({
+    mutationFn: editReview,
+    onError: (e) => {
+      setToastState({
+        show: true,
+        message: "리뷰 수정에 실패했습니다. 다시 시도해주세요.",
+        type: "error",
+      });
+      console.log(e);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["cocktail bar review", placeId]);
+      setToastState({
+        show: true,
+        message: "리뷰가 수정되었습니다.",
+        type: "success",
+      });
+      handleClose();
+    },
+  });
   const onChange = (e) => {
     const { name, value } = e.target;
     setInputs((state) => ({
@@ -64,17 +122,17 @@ const ReviewModal = ({ handleClose, name, id }) => {
       [name]: value,
     }));
   };
-  const changeKeyword = (text) => {
-    if (keyword.find((item) => item === text)) {
+  const changeKeyword = (id) => {
+    if (keyword.find((item) => item === id)) {
       setInputs((state) => ({
         ...state,
-        keyword: state.keyword.filter((item) => item !== text),
+        keyword: state.keyword.filter((item) => item !== id),
       }));
       return true;
     } else if (keyword.length < 3) {
       setInputs((state) => ({
         ...state,
-        keyword: state.keyword.concat([text]),
+        keyword: state.keyword.concat([id]),
       }));
       return true;
     }
@@ -91,46 +149,31 @@ const ReviewModal = ({ handleClose, name, id }) => {
       setRatingMsg("");
       return;
     }
-    // review POST API 호출하는 부분
-    try {
-      const formData = new FormData();
-      formData.append(
-        "req",
-        new Blob([
-          JSON.stringify({
-            rating: Number(rating),
-            detail,
-            keyword,
-          }),
-        ]),
-        { type: "application/json" }
-      );
-      for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i].file);
-      }
-      /* form data 확인 */
-      const values = formData.values();
-      for (const pair of values) {
-        console.log(pair);
-      }
-      const { data } = await axios.post(`/api/review/create/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    if (reviewId) {
+      mutateEdit({
+        placeId,
+        rating,
+        keyword,
+        detail,
+        files,
+        reviewId,
       });
-      /* TODO: 성공 로직 */
-      console.log(data);
-    } catch (e) {
-      console.log(e);
+    } else {
+      mutatePost({
+        placeId,
+        rating,
+        keyword,
+        detail,
+        files,
+      });
     }
-    // handleClose();
   };
   return (
     <Modal
       handleClose={handleClose}
       onCancel={handleClose}
       onSubmit={onSubmit}
-      title="리뷰 작성"
+      title={reviewId ? "리뷰 수정" : "리뷰 작성"}
     >
       <RatingWrapper>
         <p className="place-name">{name}</p>
@@ -148,12 +191,14 @@ const ReviewModal = ({ handleClose, name, id }) => {
           <section>
             <h3>술/음식</h3>
             <div className="keyword-list">
-              {KEYWORDS.slice(0, 5).map(({ icon, keyword }) => (
+              {KEYWORDS.slice(0, 5).map(({ icon, value, id }) => (
                 <KeywordButton
-                  key={keyword}
+                  key={value}
                   icon={icon}
-                  keyword={keyword}
+                  keyword={value}
                   onChange={changeKeyword}
+                  id={id}
+                  selected={keyword.includes(id)}
                 />
               ))}
             </div>
@@ -161,12 +206,14 @@ const ReviewModal = ({ handleClose, name, id }) => {
           <section>
             <h3>매장</h3>
             <div className="keyword-list">
-              {KEYWORDS.slice(5).map(({ icon, keyword }) => (
+              {KEYWORDS.slice(5).map(({ icon, value, id }) => (
                 <KeywordButton
-                  key={keyword}
+                  key={value}
                   icon={icon}
-                  keyword={keyword}
+                  keyword={value}
                   onChange={changeKeyword}
+                  id={id}
+                  selected={keyword.includes(id)}
                 />
               ))}
             </div>
@@ -176,23 +223,23 @@ const ReviewModal = ({ handleClose, name, id }) => {
       <Textarea
         value={detail}
         name="detail"
-        cols={8}
+        rows={8}
         onChange={onChange}
         message={detailMsg}
         messageType="error"
         placeholder="칵테일 가게에서 느낀 점을 자유롭게 작성해주세요."
       />
-      <ImageUpload />
+      <ImageUpload defaultFiles={defaultFiles} />
     </Modal>
   );
 };
 
-const KeywordButton = ({ icon, keyword, onChange }) => {
-  const [select, setSelect] = useState(false);
+const KeywordButton = ({ icon, keyword, onChange, id, selected }) => {
+  const [select, setSelect] = useState(selected);
   return (
     <button
       onClick={() => {
-        if (onChange(keyword)) {
+        if (onChange(id)) {
           setSelect((state) => !state);
         }
       }}
@@ -246,7 +293,7 @@ const KeywordWrapper = styled.div`
     margin-top: 0.625rem;
   }
   button {
-    border: 1px solid white;
+    border: 1px solid black;
     text-align: center;
     font-weight: 500;
     font-size: 0.875rem;
