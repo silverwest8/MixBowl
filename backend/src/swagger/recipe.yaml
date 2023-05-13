@@ -63,26 +63,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-    post:
-      tags:
-        - recipes
-      summary: 칵테일 레시피 수정
-      description: PUT 메소드로는 이미지 전송이 안돼서 POST로 합니다
-      operationId: updateRecipe
-      parameters:
-        - in: path
-          name: cocktailId
-          type: integer
-          example: 3
-          description: 변경하려는 레시피 id
-      requestBody:
-        required: true
-        description: ''
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/updateRecipe'
-
     delete:
       tags:
         - recipes
@@ -111,6 +91,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
+  /recipes/update/{cocktailId}:
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 수정
+      description: PUT 메소드로는 이미지 전송이 안돼서 POST로 합니다
+      operationId: updateRecipe
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          example: 3
+          description: 변경하려는 레시피 id
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateRecipe'
+
   /recipes/list/filter/{page}:
     get:
       tags:
@@ -129,12 +130,12 @@ paths:
           name: alcoholic
           type: string
           description: 알콜수준, 0-낮음, 1-보통, 2-높음
-          example: "[0,1,2]"
+          example: '[0,1,2]'
         - in: query
           name: color
           type: string
           description: 색상, 최대3개, 1-빨강 2-주황 3-노랑 4-초록 5-파랑 6-보라 7-분홍 8-검정 9-갈색 10-회색 11-흰색 12-무색
-          example: "[1,2,3]"
+          example: '[1,2,3]'
         - in: query
           name: search
           type: string
@@ -245,8 +246,8 @@ paths:
     post:
       tags:
         - recipes
-      summary: 칵테일 레시피 좋아요
-      description: ''
+      summary: 칵테일 레시피 좋아요/좋아요 취소
+      description: 이미 좋아요 했는지 자동으로 인식해서 좋아요 혹은 좋아요취소, Success시 like에 like 개수를 return합니다
       operationId: LikeCocktail
       parameters:
         - in: path
@@ -260,7 +261,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
+                $ref: '#/components/schemas/LikeUnlikeSuccess'
         '400':
           description: ''
           content:
