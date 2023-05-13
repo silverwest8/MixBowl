@@ -1,5 +1,12 @@
 import axios from "axios";
 
+export const reportRecipe = async (id, report) => {
+  const { data } = await axios.post(`/api/recipes/report/${id}`, {
+    report: report,
+  });
+  return data;
+};
+
 export const postRecipe = async ({
   name,
   color,

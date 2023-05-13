@@ -5,16 +5,25 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { FaThumbsUp } from "react-icons/fa";
 import RecipeEditDelete from "./RecipeEditDelete";
-import ReportModal from "../common/ReportModal";
+import RecipeReportModal from "./RecipeReportModal";
 import { useModal } from "../../hooks/useModal";
+import { useRecoilValue } from "recoil";
+import { RecipeRoportState } from "../../store/recipe";
+import { reportRecipe } from "../../api/recipeapi";
 
-const ReportRecipeModal = ({ handleClose }) => {
+const ReportRecipeModal = ({ handleClose, id }) => {
+  const reportNum = useRecoilValue(RecipeRoportState);
   const onSubmit = () => {
-    console.log("제출");
+    reportRecipe(id, reportNum)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     handleClose();
   };
-
-  return <ReportModal handleClose={handleClose} onSubmit={onSubmit} />;
+  return <RecipeReportModal handleClose={handleClose} onSubmit={onSubmit} />;
 };
 
 const alcoholFilter = (recipe) => {
@@ -31,24 +40,13 @@ const alcoholFilter = (recipe) => {
 
 const RecipeDetailCard = () => {
   const [recipe, setRecipe] = useState([]);
-  const [Like, setLike] = useState(recipe.rec);
+  const [Like, setLike] = useState(0);
   const [LikeCheck, setLikeCheck] = useState(false);
   const alcohol = alcoholFilter(recipe);
   const params = useParams();
   const id = params.id;
   const { openModal, closeModal } = useModal();
-
   const GetRecipe = async () => {
-    try {
-      const { data } = await axios.get(`/api/recipes/detail/${id}`);
-      setRecipe(data.data);
-      console.log(data.data);
-    } catch (error) {
-      return error.message;
-    }
-  };
-
-  const GetLike = async () => {
     try {
       const { data } = await axios.get(`/api/recipes/detail/${id}`);
       setRecipe(data.data);
@@ -61,12 +59,6 @@ const RecipeDetailCard = () => {
   useEffect(() => {
     GetRecipe();
   }, []);
-
-  useEffect(() => {
-    if (recipe.rec) {
-      setLike(recipe.rec);
-    }
-  }, [recipe]);
 
   if (!recipe || !recipe.USER) {
     return null;
@@ -88,6 +80,7 @@ const RecipeDetailCard = () => {
                     onClick={() => {
                       openModal(ReportRecipeModal, {
                         handleClose: closeModal,
+                        id: id,
                       });
                     }}
                   >

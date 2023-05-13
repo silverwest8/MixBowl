@@ -67,7 +67,6 @@ const RecipeComment = () => {
     try {
       const { data } = await axios.get(`/api/recipes/detail/review/${id}`);
       setComment(data.data);
-      console.log(comment);
     } catch (error) {
       return error.message;
     }
@@ -81,7 +80,7 @@ const RecipeComment = () => {
     <Comment>
       <TopBox>
         <p>
-          리뷰<span>({comment.post})</span>
+          리뷰<span>({comment.list && comment.list.count})</span>
         </p>
         <PostButton
           onClick={() => {

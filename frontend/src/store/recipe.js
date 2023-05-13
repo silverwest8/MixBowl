@@ -68,3 +68,8 @@ export const AddRecipeImgState = atom({
   key: "AddRecipeImgState",
   default: "",
 });
+
+export const RecipeRoportState = atom({
+  key: "RecipeRoportState",
+  default: 0,
+});
