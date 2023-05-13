@@ -247,7 +247,7 @@ paths:
       tags:
         - recipes
       summary: 칵테일 레시피 좋아요/좋아요 취소
-      description: 이미 좋아요 했는지 자동으로 인식해서 좋아요 혹은 좋아요취소, Success시 like에 like 개수를 return합니다
+      description: 이미 좋아요 했는지 확인해서 좋아요 혹은 좋아요취소, Success시 liked에 좋아요인지/최소인지와 like에 like 개수를 return합니다
       operationId: LikeCocktail
       parameters:
         - in: path
@@ -274,7 +274,7 @@ paths:
       tags:
         - recipes
       summary: 칵테일 레시피 신고
-      description: ''
+      description: status 200에서 success-true이면 신고 성공, false이면 이미 신고한 상태
       operationId: ReportCocktail
       parameters:
         - in: path

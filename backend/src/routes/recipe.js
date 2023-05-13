@@ -451,7 +451,7 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
       nickname: cocktail.UNO_USER.NICKNAME,
       level: cocktail.UNO_USER.LEVEL,
       iswriter: req.user.UNO == cocktail.UNO_USER.UNO ? true : false,
-      liked: liked
+      liked: liked,
     };
     // color
     console.log(color);
@@ -557,6 +557,7 @@ router.post('/like/:cocktailId', checkAccess, async (req, res) => {
     return res.status(200).json({
       success: true,
       message: `Cocktail ${created ? 'Like' : 'Unlike'} 성공`,
+      liked: created ? true : false,
       like: count,
     });
   } catch (error) {
@@ -571,16 +572,30 @@ router.post('/report/:cocktailId', checkAccess, async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
     const report = req.body.report;
-    await db.COCKTAIL_REPORT.create({
-      CNO: cocktailId,
-      UNO: req.user.UNO,
-      REPORT: report,
+    const [result, created] = await db.COCKTAIL_REPORT.findOrCreate({
+      where: {
+        CNO: cocktailId,
+        UNO: req.user.UNO,
+      },
+      default: {
+        REPORT: report,
+      },
     });
+    if (created) {
+      return res.status(200).json({
+        success: true,
+        message: 'Cocktail Report 성공',
+      });
+    } else {
+      return res
+        .status(200)
+        .json({ success: false, message: 'Cocktail Report 중복' });
+    }
   } catch (error) {
     console.log(error);
     return res
       .status(400)
-      .json({ success: false, message: 'Recipe Report 실패', error });
+      .json({ success: false, message: 'Cocktail Report 실패', error });
   }
 });
 

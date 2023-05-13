@@ -336,6 +336,8 @@ components:
         message:
           type: string
           example: Operation success
+        liked:
+          type: boolean
         like:
           type: integer
           example: 3
