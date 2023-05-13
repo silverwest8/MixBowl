@@ -6,9 +6,9 @@ import { colorState, alcoholState } from "../../store/recipe";
 import { useRecoilState } from "recoil";
 import { useEffect } from "react";
 
-const RecipeButton = () => {
+const RecipeBtn = () => {
   const { openModal, closeModal } = useModal();
-  const [{ min, max }, setAlcohol] = useRecoilState(alcoholState);
+  const [{ alcohol }, setAlcohol] = useRecoilState(alcoholState);
   const [
     {
       red,
@@ -45,16 +45,14 @@ const RecipeButton = () => {
       no: true,
     });
     setAlcohol({
-      min: 0,
-      max: 0,
+      alcohol: "",
     });
   }, []);
 
   return (
     <ButtonBox>
-      {min === 0 && max === 0 ? (
+      {alcohol === "" ? (
         <Button
-          width="7rem"
           onClick={() =>
             openModal(RecipeAlcohol, {
               handleClose: closeModal,
@@ -65,14 +63,13 @@ const RecipeButton = () => {
         </Button>
       ) : (
         <Button
-          width="7rem"
           onClick={() =>
             openModal(RecipeAlcohol, {
               handleClose: closeModal,
             })
           }
         >
-          {min}~{max}
+          {alcohol}
         </Button>
       )}
 
@@ -90,7 +87,6 @@ const RecipeButton = () => {
         purple === false &&
         transparent === false) ? (
         <Button
-          width="7rem"
           onClick={() =>
             openModal(RecipeColor, {
               handleClose: closeModal,
@@ -101,7 +97,6 @@ const RecipeButton = () => {
         </Button>
       ) : (
         <Button
-          width="20rem"
           onClick={() =>
             openModal(RecipeColor, {
               handleClose: closeModal,
@@ -130,20 +125,21 @@ const ButtonBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
 `;
 
 const Button = styled.button`
-  width: ${(props) => props.width};
   height: 2.25rem;
   border: 1px solid ${({ theme }) => theme.color.secondGold};
   border-radius: 1.25rem;
-  margin-right: 1rem;
-  margin-left: 1rem;
   color: ${({ theme }) => theme.color.secondGold};
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  padding: 0 2rem;
 `;
 
 const Circle = styled.div`
@@ -154,4 +150,4 @@ const Circle = styled.div`
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
 `;
 
-export default RecipeButton;
+export default RecipeBtn;

@@ -5,6 +5,7 @@ const Textarea = ({
   value,
   name,
   rows,
+  cols,
   placeholder,
   Button,
   onChange,
@@ -18,6 +19,7 @@ const Textarea = ({
           name={name}
           value={value}
           rows={rows}
+          cols={cols}
           placeholder={placeholder}
           onChange={onChange}
           autoComplete="off"

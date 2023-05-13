@@ -19,37 +19,37 @@ const router = express.Router();
 const KEYWORD_VALUE = [
   {
     id: 1,
-    value: "술이 맛있어요",
+    value: '술이 맛있어요',
   },
   {
     id: 2,
-    value: "술이 다양해요",
+    value: '술이 다양해요',
   },
   {
     id: 3,
-    value: "혼술하기 좋아요",
+    value: '혼술하기 좋아요',
   },
   {
     id: 4,
-    value: "메뉴가 다양해요",
+    value: '메뉴가 다양해요',
   },
   {
     id: 5,
-    value: "음식이 맛있어요",
+    value: '음식이 맛있어요',
   },
   {
     id: 6,
-    value: "분위기가 좋아요",
+    value: '분위기가 좋아요',
   },
   {
     id: 7,
-    value: "직원이 친절해요",
+    value: '직원이 친절해요',
   },
   {
     id: 8,
-    value: "대화하기 좋아요",
+    value: '대화하기 좋아요',
   },
-  { id: 9,  value: "가성비가 좋아요" },
+  { id: 9, value: '가성비가 좋아요' },
 ];
 
 async function getKeyword(placeId) {
@@ -72,7 +72,9 @@ async function getKeyword(placeId) {
     order: [[Sequelize.literal('COUNT'), 'DESC']],
     limit: 3,
   });
-  keyword.forEach((keyword) => keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1].value));
+  keyword.forEach((keyword) =>
+    keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1].value)
+  );
   return keywordlist;
 }
 
@@ -80,13 +82,14 @@ async function getKeywordByReviewId(reviewId) {
   const keywordlist = [];
   const keyword = await KEYWORD.findAll({
     where: {
-      REVIEW_ID: reviewId
-    }
+      REVIEW_ID: reviewId,
+    },
   });
-  keyword.forEach((keyword) => keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1]));
+  keyword.forEach((keyword) =>
+    keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1])
+  );
   return keywordlist;
 }
-
 
 router.get('/barlist', checkAccess, async (req, res) => {
   // Example
@@ -187,9 +190,11 @@ router.get('/barlist', checkAccess, async (req, res) => {
           temp.review.review_cnt = review_num.length;
           temp.review.review_list = Object.assign(reviewList);
           for (let i = 0; i < reviewList.length; i++) {
-            await sql.getImageId(temp.review.review_list[i].REVIEW_ID).then((arr) => {
-              temp.review.review_list[i].dataValues.imgIdArr = arr; //imgId삽입
-            });
+            await sql
+              .getImageId(temp.review.review_list[i].REVIEW_ID)
+              .then((arr) => {
+                temp.review.review_list[i].dataValues.imgIdArr = arr; //imgId삽입
+              });
             if (req.user.UNO == temp.review.review_list[i].UNO_USER.UNO) {
               temp.review.review_list[
                 i
@@ -285,7 +290,9 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
       } else {
         data.list[i].dataValues.UNO_USER.dataValues.ISWRITER = false;
       }
-      data.list[i].dataValues.KEYWORDS = await getKeywordByReviewId(data.list[i].dataValues.REVIEW_ID);
+      data.list[i].dataValues.KEYWORDS = await getKeywordByReviewId(
+        data.list[i].dataValues.REVIEW_ID
+      );
     }
     data.keyword = await getKeyword(place_id);
     return res
