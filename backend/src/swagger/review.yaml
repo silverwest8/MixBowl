@@ -85,7 +85,7 @@ paths:
 
     post:
       tags:
-        - review
+        - reviews
       summary: 리뷰 수정 (post로 수정하기로 결정)
       description: ''
       operationId: updateReview
