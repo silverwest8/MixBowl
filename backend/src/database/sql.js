@@ -6,7 +6,9 @@ import USER from '../models/USER';
 import REVIEW from '../models/REVIEW';
 import IMAGE from '../models/IMAGE';
 import KEYWORD from '../models/KEYWORD';
+import POST from '../models/POST';
 import fs from 'fs';
+import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 dotenv.config(); //JWT 키불러오기
 
 const sql = {
@@ -149,12 +151,53 @@ const sql = {
       console.log(error.message);
     }
   },
+  postCommunity: async (req) => {
+    const unum = req.decoded.unum;
+    console.log(req.body.data);
+    const category = req.params.catrgory_id;
+    const data = JSON.parse(req.body.data);
+    console.log('data', data);
+    if (category === 1) {
+      const { title, content } = data;
+      try {
+        const post = await POST.create({
+          UNO: unum,
+          CATEGORY: category,
+          TITLE: title,
+          CONTENT: content,
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    try {
+      const review = await REVIEW.create({
+        UNO: unum,
+        PLACE_ID: placeId,
+        TEXT: detail,
+        RATING: rating,
+      });
+      console.log('keyword', keyword);
+      console.log('review', review);
+      console.log('reviewId', review.REVIEW_ID);
+      keyword.forEach(async (keyword) => {
+        await KEYWORD.create({
+          REVIEW_ID: review.REVIEW_ID,
+          KEYWORD: keyword,
+        });
+      });
+      return review;
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   postImage: async (req, db) => {
     try {
       const reviewId = db.REVIEW_ID;
       let categoryDb = 0; //review 참조
+      let communityId;
       if (typeof reviewId === undefined) {
-        const communityId = db.PNO;
+        communityId = db.PNO;
         categoryDb = 1; // community(Post) 참조
       }
       req.files.map(async (data) => {
@@ -163,6 +206,11 @@ const sql = {
           if (categoryDb === 0) {
             await IMAGE.create({
               REVIEW_ID: reviewId,
+              PATH: path,
+            });
+          } else if (cateogryDb === 1) {
+            await IMAGE_COMMUNITY.create({
+              PNO: communityId,
               PATH: path,
             });
           }
