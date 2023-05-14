@@ -1,14 +1,22 @@
 import styled from "styled-components";
 import { FaCommentDots, FaThumbsUp } from "react-icons/fa";
+import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
 
 const FreeListItem = ({ data }) => {
-  // TODO : 호버, 글 종류별로 변경
+  // TODO : 호버, 이미지처리
   return (
     <ItemContainer to={`/community/${data.id}`}>
       <TopSection>
         <div>
+          <span>
+            {data.recommended === true ? (
+              <BiHeartCircle className="recommend icon" />
+            ) : (
+              ""
+            )}
+          </span>
           <h4>{data.title}</h4>
         </div>
         <div className="category">
@@ -81,6 +89,14 @@ const TopSection = styled.div`
   justify-content: space-between;
   width: 100%;
   padding: 0 1rem;
+  > div {
+    display: flex;
+    align-items: center;
+    > span {
+      font-size: 1.5rem;
+      color: ${({ theme }) => theme.color.primaryGold};
+    }
+  }
   h4 {
     white-space: nowrap;
     overflow: hidden;

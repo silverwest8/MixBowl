@@ -67,6 +67,7 @@ const dummyData = [
     category: "review",
     username: "recommend",
     userlevel: 4,
+    recommended: false,
     likes: 3,
     comments: 100,
     date: "1년 전",
@@ -85,6 +86,19 @@ const dummyData = [
     likes: 0,
     comments: 1,
     date: "2일 전",
+  },
+  {
+    id: 6,
+    title: "칵테일 리뷰 예시 ",
+    category: "review",
+    username: "recommend",
+    recommended: true,
+    userlevel: 4,
+    likes: 3,
+    comments: 2,
+    date: "1년 전",
+    maintext:
+      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
   },
 ];
 
@@ -322,6 +336,7 @@ const CommunityBoardPage = () => {
           </div>
         </TopSection>
         <MainSection>
+          {/* TODO: 질문에 답변없을때 상단에 올리기 */}
           <section>
             {dummyData
               .map((el) => <FreeListItem data={el} key={el.id} />)
