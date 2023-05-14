@@ -51,7 +51,7 @@ export default function LoginForm() {
       setLoading(false);
       if (data.success) {
         const expires = new Date();
-        expires.setHours(new Date().getHours() + 23);
+        expires.setHours(expires.getHours() + 23);
         setCookie("token", data.accessToken, {
           secure: true,
           expires,
