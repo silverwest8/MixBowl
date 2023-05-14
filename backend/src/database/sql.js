@@ -149,16 +149,23 @@ const sql = {
       console.log(error.message);
     }
   },
-  postImage: async (req, review) => {
+  postImage: async (req, db) => {
     try {
-      const reviewId = review.REVIEW_ID;
+      const reviewId = db.REVIEW_ID;
+      let categoryDb = 0; //review 참조
+      if (typeof reviewId === undefined) {
+        const communityId = db.PNO;
+        categoryDb = 1; // community(Post) 참조
+      }
       req.files.map(async (data) => {
         let path = data.path;
         try {
-          await IMAGE.create({
-            REVIEW_ID: reviewId,
-            PATH: path,
-          });
+          if (categoryDb === 0) {
+            await IMAGE.create({
+              REVIEW_ID: reviewId,
+              PATH: path,
+            });
+          }
         } catch (error) {
           console.log(error.message);
         }

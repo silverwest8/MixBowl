@@ -1,9 +1,9 @@
-# reviews api for swagger
+# review api for swagger
 paths:
   /reviews:
     post:
       tags:
-        - reviews
+        - review
       summary: 리뷰 작성
       description: ''
       operationId: createReview
@@ -54,7 +54,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /reviews/{reviewId}:
+  /reviews/{placeId}:
     get:
       tags:
         - review
@@ -139,7 +139,7 @@ paths:
                 $ref: '#/components/schemas/Fail'
     delete:
       tags:
-        - reviews
+        - review
       summary: 리뷰 삭제
       description: ''
       operationId: deleteReview
@@ -165,7 +165,7 @@ paths:
   /reviews/barlist:
     get:
       tags:
-        - reviews
+        - review
       summary: 칵테일 바 리스트 조회
       description: ''
       operationId: getList
@@ -266,7 +266,7 @@ paths:
   /reviews/bar/{placeId}:
     get:
       tags:
-        - reviews
+        - review
       summary: 칵테일 바 단건 조회
       description: ''
       operationId: getBar

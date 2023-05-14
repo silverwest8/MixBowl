@@ -1,5 +1,6 @@
 import _sequelize from "sequelize";
 const DataTypes = _sequelize.DataTypes;
+import _ADMIN from  "./ADMIN.js";
 import _API_cocktaildb_en from  "./API_cocktaildb_en.js";
 import _API_ninja_en from  "./API_ninja_en.js";
 import _API_ninja_en_save from  "./API_ninja_en_save.js";
@@ -10,6 +11,7 @@ import _COCKTAIL_REPORT from  "./COCKTAIL_REPORT.js";
 import _COCKTAIL_SAVE from  "./COCKTAIL_SAVE.js";
 import _COLOR from  "./COLOR.js";
 import _IMAGE from  "./IMAGE.js";
+import _IMAGE_COMMUNITY from  "./IMAGE_COMMUNITY.js";
 import _INGREDIENT from  "./INGREDIENT.js";
 import _KEYWORD from  "./KEYWORD.js";
 import _PLACE from  "./PLACE.js";
@@ -26,6 +28,7 @@ import _ninja_recipe from  "./ninja_recipe.js";
 import _ninjaset from  "./ninjaset.js";
 
 export default function initModels(sequelize) {
+  const ADMIN = _ADMIN.init(sequelize, DataTypes);
   const API_cocktaildb_en = _API_cocktaildb_en.init(sequelize, DataTypes);
   const API_ninja_en = _API_ninja_en.init(sequelize, DataTypes);
   const API_ninja_en_save = _API_ninja_en_save.init(sequelize, DataTypes);
@@ -36,6 +39,7 @@ export default function initModels(sequelize) {
   const COCKTAIL_SAVE = _COCKTAIL_SAVE.init(sequelize, DataTypes);
   const COLOR = _COLOR.init(sequelize, DataTypes);
   const IMAGE = _IMAGE.init(sequelize, DataTypes);
+  const IMAGE_COMMUNITY = _IMAGE_COMMUNITY.init(sequelize, DataTypes);
   const INGREDIENT = _INGREDIENT.init(sequelize, DataTypes);
   const KEYWORD = _KEYWORD.init(sequelize, DataTypes);
   const PLACE = _PLACE.init(sequelize, DataTypes);
@@ -107,6 +111,7 @@ export default function initModels(sequelize) {
   ninjaset.hasMany(ninja_recipe, { as: "ninja_recipes", foreignKey: "CNO"});
 
   return {
+    ADMIN,
     API_cocktaildb_en,
     API_ninja_en,
     API_ninja_en_save,
@@ -117,6 +122,7 @@ export default function initModels(sequelize) {
     COCKTAIL_SAVE,
     COLOR,
     IMAGE,
+    IMAGE_COMMUNITY,
     INGREDIENT,
     KEYWORD,
     PLACE,

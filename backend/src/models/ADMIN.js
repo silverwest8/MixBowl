@@ -1,34 +1,27 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE extends Model {
+export default class ADMIN extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    CNO: {
+    UNO: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'COCKTAIL',
-        key: 'CNO'
-      }
-    },
-    NAME: {
-      type: DataTypes.STRING(45),
       allowNull: false,
       primaryKey: true
     },
-    AMOUNT: {
+    EMAIL: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: false,
+      unique: "EMAIL_UNIQUE"
     },
-    UNIT: {
+    PASSWORD: {
       type: DataTypes.STRING(45),
       allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'RECIPE',
+    tableName: 'ADMIN',
     timestamps: false,
     indexes: [
       {
@@ -36,8 +29,15 @@ export default class RECIPE extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "CNO" },
-          { name: "NAME" },
+          { name: "UNO" },
+        ]
+      },
+      {
+        name: "EMAIL_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "EMAIL" },
         ]
       },
     ]
