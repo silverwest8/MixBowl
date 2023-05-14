@@ -84,6 +84,7 @@ const RecipeCard = () => {
 
   useEffect(() => {
     remove();
+    fetchNextPage(1);
   }, [search, color, alcohol, sort]);
 
   useEffect(() => {
@@ -119,10 +120,10 @@ const RecipeCard = () => {
                 )}
 
                 <TextBox>
-                  <p>
-                    @{item.USER.nickname}{" "}
+                  <NickName>
+                    @{item.USER.nickname}
                     <MemberBadge level={item.USER.level} />
-                  </p>
+                  </NickName>
                   <div>
                     <p className="ThumbsUp">
                       <FaThumbsUp></FaThumbsUp>
@@ -143,17 +144,24 @@ const RecipeCard = () => {
   );
 };
 
+const NickName = styled.div`
+  display: flex;
+  font-size: 0.875rem;
+  margin-top: 0.3rem;
+`;
+
 const TextBox = styled.div`
   display: flex;
   justify-content: space-between;
-  & > div {
+  div {
     display: flex;
     align-items: center;
     gap: 0.4rem;
   }
   p {
-    display: flex;
-    align-items: center;
+    font-size: 0.875rem;
+    margin-top: 0.3rem;
+    gap: 0.2rem;
   }
 `;
 
@@ -198,11 +206,6 @@ const RecipeBox = styled.div`
   h1 {
     font-size: 1.25rem;
     margin-top: 0.5rem;
-  }
-  p {
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-    gap: 0.2rem;
   }
   .ThumbsUp {
     display: flex;

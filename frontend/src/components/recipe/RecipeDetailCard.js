@@ -46,8 +46,11 @@ const RecipeDetailCard = () => {
   const params = useParams();
   const id = params.id;
   const { openModal, closeModal } = useModal();
+  const token = localStorage.getItem("access_token");
+
   const GetRecipe = async () => {
     try {
+      axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/recipes/detail/${id}`);
       setRecipe(data.data);
       console.log(data.data);

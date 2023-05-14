@@ -241,7 +241,7 @@ const Minus = styled.div`
   flex-direction: column;
 `;
 
-const MinusButton = styled.button`
+const MinusButton = styled.div`
   font-size: 1.5rem;
   margin-left: 1rem;
   color: ${({ theme }) => theme.color.primaryGold};
