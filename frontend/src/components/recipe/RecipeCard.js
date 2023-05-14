@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { FaThumbsUp, FaCommentDots } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
@@ -13,10 +13,10 @@ import {
   colorState,
   AddRecipeState,
 } from "../../store/recipe";
+import { useInView } from "react-intersection-observer";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 const RecipeCard = () => {
-  const [recipe, setRecipe] = useState([]);
-  // const [image, setImage] = useState(null);
   const colorNum = [];
   const alcoholNum = [];
   let sortInit = false;
@@ -26,50 +26,7 @@ const RecipeCard = () => {
   const sort = useRecoilValue(sortState);
   const addRecipeState = useResetRecoilState(AddRecipeState);
   const token = localStorage.getItem("access_token");
-
-  const GetRecipe = async (color, alcohol, sort) => {
-    colorFilter();
-    alcoholFilter();
-    sort = sortFilter();
-    try {
-      axios.defaults.headers.common.Authorization = token;
-      let url = `/api/recipes/list/filter/1?alcoholic=[${alcohol}]&color=[${color}]&search=${search}`;
-      if (sort) {
-        url += "&sort=new";
-      }
-      const { data } = await axios.get(url);
-      setRecipe(data.list);
-    } catch (error) {
-      console.log("empty or error");
-      setRecipe([]);
-    }
-  };
-
-  // const getImage = async (cocktailId) => {
-  //   try {
-  //     axios.defaults.headers.common.Authorization = token;
-  //     const response = await axios.get(`/api/recipes/image/${cocktailId}`, {
-  //       responseType: "blob",
-  //     });
-
-  //     const blobData = response.data;
-  //     const imageUrl = URL.createObjectURL(blobData);
-
-  //     console.log(imageUrl);
-  //     setImage(imageUrl);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  useEffect(() => {
-    GetRecipe(colorNum, alcoholNum, sortInit);
-    // getImage(11000);
-  }, [search, color, alcohol, sort]);
-
-  useEffect(() => {
-    addRecipeState();
-  }, []);
+  const { ref, inView } = useInView();
 
   const colorFilter = () => {
     if (color.red) colorNum.push(1);
@@ -97,44 +54,91 @@ const RecipeCard = () => {
     return sortInit;
   };
 
+  const GetRecipe = async (page, color, alcohol, sort) => {
+    colorFilter();
+    alcoholFilter();
+    sort = sortFilter();
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      let url = `/api/recipes/list/filter/${page}?alcoholic=[${alcohol}]&color=[${color}]&search=${search}`;
+      if (sort) {
+        url += "&sort=new";
+      }
+      const { data } = await axios.get(url);
+      console.log(url);
+      return { page, list: data.list };
+    } catch (error) {
+      console.log("empty or error");
+    }
+  };
+
+  const { isSuccess, data, fetchNextPage, remove } = useInfiniteQuery(
+    ["page"],
+    ({ pageParam = 1 }) => GetRecipe(pageParam, colorNum, alcoholNum, sortInit),
+    {
+      getNextPageParam: (lastPage, allPosts) => {
+        return lastPage.page + 1;
+      },
+    }
+  );
+
+  useEffect(() => {
+    remove();
+  }, [search, color, alcohol, sort]);
+
+  useEffect(() => {
+    addRecipeState();
+  }, []);
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [inView]);
+
   return (
     <MiddleBox>
       <CardBox>
         <div className="arr">
           <RecipeDrop />
         </div>
-        {recipe.map((item) => (
-          <RecipeBox key={item.id}>
-            {token ? (
-              <Link to={`/recipe/${item.id}`}>
-                <img src={`/api/recipes/image/${item.id}`}></img>
-                <h1>{item.name}</h1>
-              </Link>
-            ) : (
-              <>
-                <img src={item.image_path}></img>
-                <h1>{item.name}</h1>
-              </>
-            )}
+        {isSuccess &&
+          data.pages.map((page) =>
+            page.list.map((item) => (
+              <RecipeBox key={item.id}>
+                {token ? (
+                  <Link to={`/recipe/${item.id}`}>
+                    <img src={`/api/recipes/image/${item.id}`}></img>
+                    <h1>{item.name}</h1>
+                  </Link>
+                ) : (
+                  <>
+                    <img src={item.image_path}></img>
+                    <h1>{item.name}</h1>
+                  </>
+                )}
 
-            <TextBox>
-              <p>
-                @{item.USER.nickname} <MemberBadge level={item.USER.level} />
-              </p>
-              <div>
-                <p className="ThumbsUp">
-                  <FaThumbsUp></FaThumbsUp>
-                  {item.like}
-                </p>
-                <p className="Comment">
-                  <FaCommentDots></FaCommentDots>
-                  {item.post}
-                </p>
-              </div>
-            </TextBox>
-          </RecipeBox>
-        ))}
+                <TextBox>
+                  <p>
+                    @{item.USER.nickname}{" "}
+                    <MemberBadge level={item.USER.level} />
+                  </p>
+                  <div>
+                    <p className="ThumbsUp">
+                      <FaThumbsUp></FaThumbsUp>
+                      {item.like}
+                    </p>
+                    <p className="Comment">
+                      <FaCommentDots></FaCommentDots>
+                      {item.post}
+                    </p>
+                  </div>
+                </TextBox>
+              </RecipeBox>
+            ))
+          )}
       </CardBox>
+      <div ref={ref}></div>
     </MiddleBox>
   );
 };
