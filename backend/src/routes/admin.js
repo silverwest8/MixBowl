@@ -3,7 +3,10 @@
 import express from 'express';
 import { db } from '../models';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 import checkAdmin from '../middleware/checkAdmin';
+
+dotenv.config();
 const router = express.Router();
 
 const REPORTS = [
@@ -40,7 +43,6 @@ router.post('/login', async (req, res) => {
     const admin = await db.ADMIN.findOne({
       where: { email: email, password: password },
     });
-    console.log(admin);
     if (admin) {
       const payload = {
         type: 'JWT',
@@ -51,7 +53,9 @@ router.post('/login', async (req, res) => {
         issuer: 'MixBowl',
       });
       return res.status(200).json({ success: true, accessToken });
-    } else new Error('아이디 혹은 비밀번호가 일치하지 않음');
+    } else {
+      return res.status(400).json({ success: false });
+    }
   } catch (error) {
     return res.status(400).json({ success: false, error });
   }
