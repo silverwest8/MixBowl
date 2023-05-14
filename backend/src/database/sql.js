@@ -7,6 +7,7 @@ import REVIEW from '../models/REVIEW';
 import IMAGE from '../models/IMAGE';
 import KEYWORD from '../models/KEYWORD';
 import POST from '../models/POST';
+import COCKTAIL from '../models/COCKTAIL';
 import fs from 'fs';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 dotenv.config(); //JWT 키불러오기
@@ -157,36 +158,41 @@ const sql = {
     const category = req.params.catrgory_id;
     const data = JSON.parse(req.body.data);
     console.log('data', data);
-    if (category === 1) {
-      const { title, content } = data;
-      try {
+    try {
+      if (category === '1') {
+        const { title, content } = data;
         const post = await POST.create({
           UNO: unum,
           CATEGORY: category,
           TITLE: title,
           CONTENT: content,
         });
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
-    try {
-      const review = await REVIEW.create({
-        UNO: unum,
-        PLACE_ID: placeId,
-        TEXT: detail,
-        RATING: rating,
-      });
-      console.log('keyword', keyword);
-      console.log('review', review);
-      console.log('reviewId', review.REVIEW_ID);
-      keyword.forEach(async (keyword) => {
-        await KEYWORD.create({
-          REVIEW_ID: review.REVIEW_ID,
-          KEYWORD: keyword,
+      } else if (category === '2') {
+        const { content } = data;
+        const post = await POST.create({
+          UNO: unum,
+          CATEGORY: category,
+          CONTENT: content,
         });
-      });
-      return review;
+      } else if (cateogry === '3') {
+        const { title, content } = data;
+        const post = await POST.create({
+          UNO: unum,
+          CATEGORY: category,
+          TITLE: title,
+          CONTENT: content,
+        });
+      } else if (category === '4') {
+        const { title, content } = data;
+        const post = await POST.create({
+          UNO: unum,
+          CATEGORY: category,
+          TITLE: title,
+          CONTENT: content,
+        });
+      } else {
+        throw new Error('invalid category');
+      }
     } catch (error) {
       console.log(error.message);
     }
@@ -222,6 +228,12 @@ const sql = {
     } catch (error) {
       console.log(error.message);
     }
+  },
+  getCocktails: async () => {
+    const cocktails = await COCKTAIL.findAll({
+      attributes: ['NAME'],
+    });
+    return cocktails;
   },
   getImageId: async (reviewId) => {
     const idArr = [];

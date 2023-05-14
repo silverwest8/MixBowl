@@ -2,7 +2,7 @@
 
 import express from 'express';
 import dotenv from 'dotenv';
-import { sql } from '../models';
+import sql from '../database/sql';
 import checkAccess from '../middleware/checkAccessToken';
 import multer from 'multer';
 import fs from 'fs';
@@ -72,5 +72,29 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
+  }
+});
+
+router.get('/cocktails', async (req, res) => {
+  try {
+    const cocktailNames = [];
+
+    await sql.getCocktails().then((value) => {
+      for (let i = 0; i < value.length; i++) {
+        cocktailNames.push(value[i].NAME);
+      }
+    });
+    console.log(cocktailNames);
+    res.json({
+      success: true,
+      message: 'get All Cocktails in cocktail DB',
+      data: cocktailNames,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.json({
+      success: false,
+      message: "can't get cocktails in cocktail DB",
+    });
   }
 });

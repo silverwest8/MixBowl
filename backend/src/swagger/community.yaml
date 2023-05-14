@@ -48,6 +48,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
+  /communities/cocktails:
+    get:
+      tags:
+        - communities
+      summary: 검색을 위한 칵테일 목록 가져오기
+      description: 칵테일 추천 글에서 칵테일 이름들을 API를 클라이언트에게 전송하여 제목에 쓸수 있도록
+      operationId: getCocktails
+      parameters:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Operation Success
+                  data:
+                    type: array
+                    items:
+                      type: String
+                    example:
+                      ['blahblah_cocktail', 'blah_cocktail', 'some_cocktail']
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
 
   /communities/{postId}:
     put:
