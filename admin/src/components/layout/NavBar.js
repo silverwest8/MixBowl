@@ -1,22 +1,18 @@
-'use client';
+import { Button } from "@tremor/react";
+import { deleteCookie } from "cookies-next";
+import { usePathname } from "next/navigation";
 
-import { usePathname } from 'next/navigation';
-import { Button } from '@tremor/react';
-import Cookies from 'js-cookie';
-
-const navigation = [
-  { name: '콘텐츠 관리', href: '/' }
-];
+const navigation = [{ name: "콘텐츠 관리", href: "/" }];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
-export default function Navbar() {
+export default function NavBar() {
   const pathname = usePathname();
   function logout() {
-    Cookies.remove('token')
-    window.location.reload()
+    deleteCookie("token");
+    window.location.reload();
   }
   return (
     <nav className="bg-white shadow-sm">
@@ -31,11 +27,11 @@ export default function Navbar() {
                   href={item.href}
                   className={classNames(
                     pathname === item.href
-                      ? 'border-slate-500 text-gray-900'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                    'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
+                      ? "border-slate-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                    "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                   )}
-                  aria-current={pathname === item.href ? 'page' : undefined}
+                  aria-current={pathname === item.href ? "page" : undefined}
                 >
                   {item.name}
                 </a>
@@ -46,7 +42,7 @@ export default function Navbar() {
             <Button
               size="xs"
               variant="secondary"
-              className='text-black border-black hover:bg-inherit'
+              className="text-black border-black hover:bg-inherit"
               onClick={logout}
             >
               로그아웃

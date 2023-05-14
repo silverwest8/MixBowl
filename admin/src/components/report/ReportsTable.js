@@ -6,10 +6,9 @@ import {
   TableBody,
   TableCell,
   Text,
-} from '@tremor/react';
+} from "@tremor/react";
 
-
-export default async function ReportsTable({ reports }) {
+export default function ReportsTable({ reports }) {
   return (
     <Table>
       <TableHead>
@@ -29,7 +28,10 @@ export default async function ReportsTable({ reports }) {
               <Text>{value}</Text>
             </TableCell>
             <TableCell>
-              <Text>{user.nickname}<br/>({user.email})</Text>
+              <Text>
+                {user.nickname}
+                <br />({user.email})
+              </Text>
             </TableCell>
           </TableRow>
         ))}

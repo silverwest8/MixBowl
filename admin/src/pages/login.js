@@ -1,5 +1,5 @@
-import { Card } from '@tremor/react';
-import LoginForm from './form';
+import { Card } from "@tremor/react";
+import LoginForm from "@/components/auth/LoginForm";
 
 export default function LoginPage() {
   return (
@@ -13,3 +13,7 @@ export default function LoginPage() {
     </main>
   );
 }
+
+LoginPage.getLayout = function getLayout(page) {
+  return page;
+};

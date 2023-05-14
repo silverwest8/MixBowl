@@ -1,18 +1,17 @@
-'use client';
-
-import { TextInput, Button } from '@tremor/react';
-import { useState } from 'react';
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import { TextInput, Button } from "@tremor/react";
+import { useState } from "react";
+import axios from "axios";
+import { setCookie } from "cookies-next";
+import Router from "next/router";
 
 export default function LoginForm() {
   const [inputs, setInputs] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [message, setMessage] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [success, setSuccess] = useState();
   const [loading, setLoading] = useState(false);
@@ -20,42 +19,45 @@ export default function LoginForm() {
   const onChange = (e) => {
     setInputs((state) => ({
       ...state,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (email === '') {
+    if (email === "") {
       setMessage((state) => ({
         ...state,
-        email: '* 이메일을 입력하세요.'
+        email: "* 이메일을 입력하세요.",
       }));
       return;
     }
-    if (password === '') {
+    if (password === "") {
       setMessage({
-        email: '',
-        password: '* 비밀번호를 입력하세요.'
+        email: "",
+        password: "* 비밀번호를 입력하세요.",
       });
       return;
     }
     setMessage({
-      email: '',
-      password: ''
+      email: "",
+      password: "",
     });
     setLoading(true);
     try {
-      const { data } = await axios.post('/api/admin/login', {
+      const { data } = await axios.post("/api/admin/login", {
         email,
-        password
+        password,
       });
       setLoading(false);
       if (data.success) {
-        Cookies.set('token', data.accessToken, {
-          secure: true
+        const expires = new Date();
+        expires.setHours(new Date().getHours() + 23);
+        setCookie("token", data.accessToken, {
+          secure: true,
+          expires,
         });
         setSuccess(true);
-        window.location.reload();
+        Router.push("/");
       } else {
         setSuccess(false);
       }
