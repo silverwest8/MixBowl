@@ -8,7 +8,7 @@ import {
   Text,
 } from "@tremor/react";
 
-export default function ReportsTable({ reports }) {
+export default function ReportTable({ reports }) {
   return (
     <Table>
       <TableHead>

@@ -1,10 +1,11 @@
 import { Title, Card } from "@tremor/react";
 import { withAuth } from "@/lib/getServerSidePropsWrapper";
 import Filter from "@/components/report/Filter";
-import ReportsTable from "@/components/report/ReportsTable";
+import ReportTable from "@/components/report/ReportTable";
 import DeleteButton from "@/components/report/DeleteButton";
 import Link from "next/link";
 import axios from "axios";
+import ReportChart from "@/components/report/ReportChart";
 
 export default function Home({ data }) {
   return (
@@ -25,7 +26,8 @@ export default function Home({ data }) {
               </Title>
               <DeleteButton id={id} />
             </div>
-            <ReportsTable reports={reports} />
+            <ReportTable reports={reports} />
+            <ReportChart reports={reports} />
           </Card>
         ))}
       </div>
