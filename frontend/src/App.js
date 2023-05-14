@@ -9,6 +9,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
+import MyPage from "./pages/MyPage";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -41,6 +42,7 @@ function App() {
                   <Route path="mypage" element={<HomePage />} />
                   <Route path="login" element={<LoginPage />} />
                   <Route path="register" element={<HomePage />} />
+                  <Route path="mypage" element={<MyPage />} />
                 </Route>
               </Routes>
             </BrowserRouter>
