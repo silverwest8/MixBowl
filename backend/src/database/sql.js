@@ -8,6 +8,7 @@ import IMAGE from '../models/IMAGE';
 import KEYWORD from '../models/KEYWORD';
 import POST from '../models/POST';
 import COCKTAIL from '../models/COCKTAIL';
+import POST_LIKE from '../models/POST_LIKE';
 import fs from 'fs';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 dotenv.config(); //JWT 키불러오기
@@ -207,6 +208,33 @@ const sql = {
       console.log(error.message);
     }
   },
+  makePostLike: async (uno, pno) => {
+    try {
+      await POST_LIKE.create({
+        UNO: uno,
+        PNO: pno,
+      });
+      return 1;
+    } catch (error) {
+      if (error.message === 'Validation error') {
+        return 2;
+      }
+      console.log(error.message);
+      return 3;
+    }
+  },
+  deletePostLike: async (uno, pno) => {
+    try {
+      await POST_LIKE.destroy({
+        where: { UNO: uno, PNO: pno },
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  postCommunityReply: async (req) => {},
+
+  getCommunityPost: async (req) => {},
   postImage: async (req, db) => {
     try {
       const reviewId = db.REVIEW_ID;

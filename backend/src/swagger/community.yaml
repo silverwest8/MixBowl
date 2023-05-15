@@ -84,6 +84,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
+  /communities/like/{pno}:
+    post:
+      tags:
+        - communities
+      summary: 커뮤니티 게시글 좋아요
+      description: 좋아요 누를 때마다 +1 다시 누르면 -1
+      operatinoId: likePost
+      parameters:
+        - in: path
+          name: pno
+          description: 포스트 숫자 (PK)
+          type: integer
+          example: 15
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
 
   /communities/{postId}:
     put:
@@ -196,13 +223,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /communities/getPostList/{category_name}:
+  /communities/PostList/{category_name}:
     get:
       tags:
         - communities
       summary: 전체 글, 카테고리별 글 조회
       description: 'query로 검색 필터링 생각중입니다'
-      operationId: getReview
+      operationId: getCommunityPost
       parameters:
         - in: path
           name: category_name

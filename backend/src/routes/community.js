@@ -51,9 +51,31 @@ const upload = multer({
   fileFilter: fileFilter, // 이미지 업로드 필터링 설정
 });
 
+router.post('/like/:pno', checkAccess, async (req, res) => {
+  const uno = req.decoded.unum;
+  const pno = req.params.pno;
+  console.log(uno, pno);
+  try {
+    const isPostLike = await sql.makePostLike(uno, pno);
+    if (isPostLike === 3) {
+      //db 접근 자체 못하는 오류
+      throw new Error("We can't make Post Like DB");
+    } else if (isPostLike === 2) {
+      //db에 이미 좋아요 기록이 있는경우 -> 좋아요 취소
+      await sql.deletePostLike(uno, pno);
+    }
+    res.json({
+      success: true,
+      message: 'Like or Dislike Updated successfully',
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+});
 router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   try {
     const post = await sql.postCommunity(req);
+
     console.log(post);
     //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
     req.files.map(async (data) => {
@@ -75,6 +97,8 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
     console.log(error.message);
   }
 });
+
+router.get('/');
 
 router.get('/cocktails', async (req, res) => {
   try {
