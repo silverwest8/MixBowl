@@ -155,11 +155,12 @@ const sql = {
   postCommunity: async (req) => {
     const unum = req.decoded.unum;
     console.log(req.body.data);
-    const category = req.params.catrgory_id;
+    const category = req.query.category;
     const data = JSON.parse(req.body.data);
     console.log('data', data);
     try {
       if (category === '1') {
+        //칵테일 추천
         const { title, content } = data;
         const post = await POST.create({
           UNO: unum,
@@ -167,22 +168,30 @@ const sql = {
           TITLE: title,
           CONTENT: content,
         });
+        return post;
       } else if (category === '2') {
+        //질문과 답변
         const { content } = data;
         const post = await POST.create({
           UNO: unum,
           CATEGORY: category,
           CONTENT: content,
         });
-      } else if (cateogry === '3') {
-        const { title, content } = data;
+        return post;
+      } else if (category === '3') {
+        //칵테일 리뷰 -> 제목 = 타이틀
+        const { title, content, like, cno } = data;
         const post = await POST.create({
           UNO: unum,
           CATEGORY: category,
           TITLE: title,
           CONTENT: content,
+          CNO: cno,
+          LIKE: like,
         });
+        return post;
       } else if (category === '4') {
+        //자유게시판
         const { title, content } = data;
         const post = await POST.create({
           UNO: unum,
@@ -190,6 +199,7 @@ const sql = {
           TITLE: title,
           CONTENT: content,
         });
+        return post;
       } else {
         throw new Error('invalid category');
       }
@@ -202,7 +212,7 @@ const sql = {
       const reviewId = db.REVIEW_ID;
       let categoryDb = 0; //review 참조
       let communityId;
-      if (typeof reviewId === undefined) {
+      if (typeof reviewId === 'undefined') {
         communityId = db.PNO;
         categoryDb = 1; // community(Post) 참조
       }
@@ -214,7 +224,7 @@ const sql = {
               REVIEW_ID: reviewId,
               PATH: path,
             });
-          } else if (cateogryDb === 1) {
+          } else if (categoryDb === 1) {
             await IMAGE_COMMUNITY.create({
               PNO: communityId,
               PATH: path,
@@ -231,7 +241,7 @@ const sql = {
   },
   getCocktails: async () => {
     const cocktails = await COCKTAIL.findAll({
-      attributes: ['NAME'],
+      attributes: ['NAME', 'CNO'],
     });
     return cocktails;
   },

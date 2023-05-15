@@ -1,5 +1,5 @@
 paths:
-  /communities:
+  /communities?category={category}:
     post:
       tags:
         - communities
@@ -7,9 +7,10 @@ paths:
       description: 1 - 칵테일 추천 || 2 - 질문과 답변 || 3 - 칵테일 리뷰 || 4 - 자유
       operationId: createPost
       parameters:
-        - in: path
-          name: category_id
+        - in: query
+          name: category
           description: 카테고리 ID
+          type: integer
           example: 1
           required: true
       requestBody:
@@ -20,9 +21,6 @@ paths:
             schema:
               type: object
               properties:
-                category_id:
-                  type: integer
-                  example: 1
                 title:
                   type: string
                   example: 1-이 칵테일을 추천합니다 / 2-질문글은 제목이 없습니다 / 3-이 칵테일을 리뷰합니다(이 경우에만 like를 씁니다) / 4-자유글입니다
@@ -33,8 +31,8 @@ paths:
                   type: text
                   example: multipart/form-data 형식으로 form태그인가?로 최대 5개까지 올려주세요. 이거는 req에 따로 포함하지 않고 form태그로 파일만 올려주시면됩니다
                 like:
-                  type: boolean
-                  example: true
+                  type: integer
+                  example: 0
       responses:
         '200':
           description: ''
@@ -53,7 +51,7 @@ paths:
       tags:
         - communities
       summary: 검색을 위한 칵테일 목록 가져오기
-      description: 칵테일 추천 글에서 칵테일 이름들을 API를 클라이언트에게 전송하여 제목에 쓸수 있도록
+      description: 칵테일 추천 글에서 칵테일 이름들을 API를 클라이언트에게 전송하여 제목에 쓸수 있도록 +'/'를 이용하여 CNO도 보냅니다.
       operationId: getCocktails
       parameters:
       responses:
@@ -75,7 +73,11 @@ paths:
                     items:
                       type: String
                     example:
-                      ['blahblah_cocktail', 'blah_cocktail', 'some_cocktail']
+                      [
+                        'blahblah_cocktail/CNO',
+                        'blah_cocktail/CNO',
+                        'some_cocktail/CNO',
+                      ]
         '400':
           description: ''
           content:
@@ -112,8 +114,8 @@ paths:
                   type: text
                   example: multipart/form-data 형식으로 form태그인가?로 최대 5개까지 올려주세요. 이거는 req에 따로 포함하지 않고 form태그로 파일만 올려주시면됩니다
                 like:
-                  type: boolean
-                  example: true
+                  type: integer
+                  example: 0
 
     delete:
       tags:

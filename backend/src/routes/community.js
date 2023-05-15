@@ -52,19 +52,20 @@ const upload = multer({
 });
 
 router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
-  const post = await sql.postCommunity(req);
-  //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
-  req.files.map(async (data) => {
-    console.log('폼에 정의된 필드명 : ', data.fieldname);
-    console.log('사용자가 업로드한 파일 명 : ', data.originalname);
-    console.log('파일의 엔코딩 타입 : ', data.encoding);
-    console.log('파일의 Mime 타입 : ', data.mimetype);
-    console.log('파일이 저장된 폴더 : ', data.destination);
-    console.log('destinatin에 저장된 파일 명 : ', data.filename);
-    console.log('업로드된 파일의 전체 경로 ', data.path);
-    console.log('파일의 바이트(byte 사이즈)', data.size);
-  });
   try {
+    const post = await sql.postCommunity(req);
+    console.log(post);
+    //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
+    req.files.map(async (data) => {
+      console.log('폼에 정의된 필드명 : ', data.fieldname);
+      console.log('사용자가 업로드한 파일 명 : ', data.originalname);
+      console.log('파일의 엔코딩 타입 : ', data.encoding);
+      console.log('파일의 Mime 타입 : ', data.mimetype);
+      console.log('파일이 저장된 폴더 : ', data.destination);
+      console.log('destinatin에 저장된 파일 명 : ', data.filename);
+      console.log('업로드된 파일의 전체 경로 ', data.path);
+      console.log('파일의 바이트(byte 사이즈)', data.size);
+    });
     await sql.postImage(req, post);
     res.json({
       success: true,
@@ -78,10 +79,10 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
 router.get('/cocktails', async (req, res) => {
   try {
     const cocktailNames = [];
-
     await sql.getCocktails().then((value) => {
+      console.log(value);
       for (let i = 0; i < value.length; i++) {
-        cocktailNames.push(value[i].NAME);
+        cocktailNames.push(value[i].NAME + '/' + value[i].CNO);
       }
     });
     console.log(cocktailNames);
