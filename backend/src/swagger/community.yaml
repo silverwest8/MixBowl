@@ -113,6 +113,32 @@ paths:
                 $ref: '#/components/schemas/Fail'
 
   /communities/{postId}:
+    get:
+      tags:
+        - communities
+      summary: 커뮤니티 한개의 게시글 가져오기
+      description:
+      operationId: getOnePost
+      parameters:
+        - in: path
+          name: postId
+          description: 포스트 고유 번호
+          type: integer
+          example: 15
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
     put:
       tags:
         - communities

@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import sql from '../database/sql';
 import checkAccess from '../middleware/checkAccessToken';
 import multer from 'multer';
+import POST from '../models/POST';
 import fs from 'fs';
 dotenv.config();
 
@@ -98,8 +99,61 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   }
 });
 
-router.get('/');
-
+router.get('/:postId', async (req, res) => {
+  const pno = req.params.postId;
+  const postData = await POST.findByPk(pno);
+  switch (postData.CATEGORY) {
+    //postId 로 이미지 찾을 수 있음
+    case 1:
+      return res.send({
+        title: postData.TITLE,
+        like: postData.LIKE,
+        content: postData.CONTENT,
+        postId: postData.PNO,
+      });
+      break;
+    case 2:
+      return res.send({
+        like: postData.LIKE,
+        content: postData.CONTENT,
+        postId: postData.PNO,
+      });
+      break;
+    case 3:
+      return res.send({
+        title: postData.TITLE,
+        like: postData.LIKE,
+        content: postData.CONTENT,
+        cno: postData.CNO,
+        postId: postData.PNO,
+      });
+      break;
+    case 4:
+      return res.send({
+        title: postData.TITLE,
+        like: postData.LIKE,
+        content: postData.CONTENT,
+        postId: postData.PNO,
+      });
+      break;
+  }
+});
+router.get('/image', async (req, res) => {
+  //이미지 하나 요청
+  try {
+    const imageId = req.query.imageId;
+    const imgPath = await sql.getImagePath(imageId);
+    const data = fs.readFileSync(imgPath);
+    res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+    res.write(data);
+    return res.end();
+  } catch (error) {
+    console.log(error.message);
+    return res
+      .status(400)
+      .json({ success: false, message: '이미지 조회 실패', error });
+  }
+});
 router.get('/cocktails', async (req, res) => {
   try {
     const cocktailNames = [];

@@ -375,6 +375,10 @@ const sql = {
   getImagePath: async (imageId) => {
     try {
       const image = await IMAGE.findByPk(imageId);
+      if (image === 'undefined') {
+        const image_communty = await IMAGE_COMMUNITY.findByPk(imageId);
+        return image_community.PATH;
+      }
       return image.PATH;
     } catch (error) {
       console.log(error.message);
