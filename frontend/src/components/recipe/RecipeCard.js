@@ -101,6 +101,7 @@ const RecipeCard = () => {
     <MiddleBox>
       <CardBox>
         <div className="arr">
+          <p>{sort.latest === true ? "최신순" : "추천순"}</p>
           <RecipeDrop />
         </div>
         {isSuccess &&
@@ -178,6 +179,11 @@ const CardBox = styled.div`
     grid-row: 1;
     justify-self: end;
     margin-right: 1rem;
+    display: flex;
+    p {
+      margin-right: 0.5rem;
+      color: ${({ theme }) => theme.color.primaryGold};
+    }
   }
 
   @media screen and (max-width: 928px) {

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { FaThumbsUp } from "react-icons/fa";
+import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa";
 import RecipeEditDelete from "./RecipeEditDelete";
 import RecipeReportModal from "./RecipeReportModal";
 import { useModal } from "../../hooks/useModal";
@@ -98,11 +98,11 @@ const RecipeDetailCard = () => {
               <p>{recipe.date.slice(0, 10)}</p>
             </div>
             <div className="color">
-              <p>
-                <span>도수</span> {alcohol}
-              </p>
+              <ColorBox>
+                <span>도수</span> <span className="alcohol">{alcohol}</span>
+              </ColorBox>
               {recipe.color && (
-                <p>
+                <ColorBox>
                   <span>색상</span>
                   {recipe.color.includes(1) ? (
                     <Circle bgColor="#FF0000"></Circle>
@@ -140,7 +140,7 @@ const RecipeDetailCard = () => {
                   {recipe.color.includes(12) ? (
                     <Circle bgColor="#3E3E3E"></Circle>
                   ) : null}
-                </p>
+                </ColorBox>
               )}
             </div>
           </TextBox>
@@ -168,20 +168,33 @@ const RecipeDetailCard = () => {
       <MidBox>
         <RecBox>
           <button>
-            <FaThumbsUp
-              onClick={() => {
-                LikeCheck === false ? setLike(Like + 1) : setLike(Like - 1);
-                setLikeCheck(!LikeCheck);
-              }}
-              style={{
-                color: LikeCheck === true ? "#E9AA33" : "white",
-                fontSize: "2rem",
-              }}
-            ></FaThumbsUp>
+            {LikeCheck === true ? (
+              <FaThumbsUp
+                onClick={() => {
+                  setLike(Like - 1);
+                  setLikeCheck(false);
+                }}
+                style={{
+                  color: "#E9AA33",
+                  fontSize: "2rem",
+                }}
+              ></FaThumbsUp>
+            ) : (
+              <FaRegThumbsUp
+                onClick={() => {
+                  setLike(Like + 1);
+                  setLikeCheck(true);
+                }}
+                style={{
+                  color: "#E9AA33",
+                  fontSize: "2rem",
+                }}
+              ></FaRegThumbsUp>
+            )}
           </button>
           <p
             style={{
-              color: LikeCheck === true ? "#E9AA33" : "white",
+              color: "#E9AA33",
               marginTop: "0.5rem",
             }}
           >
@@ -194,16 +207,20 @@ const RecipeDetailCard = () => {
   );
 };
 
-const User = styled.p`
-  p {
-    display: flex;
-    span {
-      margin-right: 0.75rem;
-      color: ${({ theme }) => theme.color.primaryGold};
-    }
-  }
-  div {
-    margin-left: 0.5rem;
+const User = styled.div`
+  display: flex;
+  margin-top: 0.3rem;
+  gap: 0.4rem;
+  align-items: center;
+`;
+const ColorBox = styled.div`
+  display: flex;
+  margin-top: 0.3rem;
+  gap: 0.6rem;
+  align-items: center;
+  color: ${({ theme }) => theme.color.primaryGold};
+  .alcohol {
+    color: white;
   }
 `;
 
