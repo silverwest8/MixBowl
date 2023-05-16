@@ -29,7 +29,7 @@ const RecipeComment = () => {
         <p>
           리뷰<span>({comment.list && comment.list.count})</span>
         </p>
-        <Link to="/community">
+        <Link to="/community/posting">
           <PostButton>
             <FaPen className="pen"></FaPen>작성하기
           </PostButton>
