@@ -525,6 +525,13 @@ router.get('/image/:cocktailId', async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
+    // 이미지 없으면 로고 이미지 보내줌
+    if (!cocktail.IMAGE_PATH) {
+      const data = fs.readFileSync("uploads/cocktailImage/logo.png");
+      res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
+      res.write(data);
+      return res.end();
+    }
     if (Number(cocktailId) < 11000 || cocktailId > 178368) {
       const data = fs.readFileSync(cocktail.IMAGE_PATH);
       res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
