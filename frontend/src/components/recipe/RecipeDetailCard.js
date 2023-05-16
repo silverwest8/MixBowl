@@ -9,10 +9,11 @@ import RecipeReportModal from "./RecipeReportModal";
 import { useModal } from "../../hooks/useModal";
 import { useRecoilValue } from "recoil";
 import { RecipeRoportState } from "../../store/recipe";
-import { reportRecipe } from "../../api/recipeapi";
+import { reportRecipe, likteRecipe } from "../../api/recipeapi";
 
 const ReportRecipeModal = ({ handleClose, id }) => {
   const reportNum = useRecoilValue(RecipeRoportState);
+
   const onSubmit = () => {
     reportRecipe(id, reportNum)
       .then((response) => {
@@ -40,8 +41,6 @@ const alcoholFilter = (recipe) => {
 
 const RecipeDetailCard = () => {
   const [recipe, setRecipe] = useState([]);
-  const [Like, setLike] = useState(0);
-  const [LikeCheck, setLikeCheck] = useState(false);
   const alcohol = alcoholFilter(recipe);
   const params = useParams();
   const id = params.id;
@@ -168,11 +167,24 @@ const RecipeDetailCard = () => {
       <MidBox>
         <RecBox>
           <button>
-            {LikeCheck === true ? (
+            {recipe.USER.liked === true ? (
               <FaThumbsUp
                 onClick={() => {
-                  setLike(Like - 1);
-                  setLikeCheck(false);
+                  likteRecipe(id, true, recipe.like - 1)
+                    .then((response) => {
+                      console.log(response);
+                      setRecipe((prevRecipe) => ({
+                        ...prevRecipe,
+                        USER: {
+                          ...prevRecipe.USER,
+                          liked: false,
+                        },
+                        like: prevRecipe.like - 1,
+                      }));
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
                 }}
                 style={{
                   color: "#E9AA33",
@@ -182,8 +194,21 @@ const RecipeDetailCard = () => {
             ) : (
               <FaRegThumbsUp
                 onClick={() => {
-                  setLike(Like + 1);
-                  setLikeCheck(true);
+                  likteRecipe(id, false, recipe.like + 1)
+                    .then((response) => {
+                      console.log(response);
+                      setRecipe((prevRecipe) => ({
+                        ...prevRecipe,
+                        USER: {
+                          ...prevRecipe.USER,
+                          liked: true,
+                        },
+                        like: prevRecipe.like + 1,
+                      }));
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
                 }}
                 style={{
                   color: "#E9AA33",
@@ -198,7 +223,7 @@ const RecipeDetailCard = () => {
               marginTop: "0.5rem",
             }}
           >
-            {Like}
+            {recipe.like}
           </p>
         </RecBox>
         <HorizonLine></HorizonLine>
