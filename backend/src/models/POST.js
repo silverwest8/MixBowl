@@ -37,6 +37,11 @@ export default class POST extends Model {
       allowNull: true,
       comment: "1 - 칵테일 추천 -> 제목있음 || 2 - 질문과 답변 -> 제목 없음 || 3 - 칵테일 리뷰 -> 제목으로 칵테일 이름 선택 || 4 - 자유 -> 제목있음"
     },
+    LIKE: {
+      type: DataTypes.TINYINT,
+      allowNull: true,
+      defaultValue: 0
+    },
     CONTENT: {
       type: DataTypes.TEXT,
       allowNull: false,

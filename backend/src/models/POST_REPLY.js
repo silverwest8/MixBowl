@@ -1,7 +1,7 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class POST_REPL extends Model {
+export default class POST_REPLY extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     PRNO: {
@@ -32,7 +32,7 @@ export default class POST_REPL extends Model {
     }
   }, {
     sequelize,
-    tableName: 'POST_REPL',
+    tableName: 'POST_REPLY',
     timestamps: true,
     indexes: [
       {

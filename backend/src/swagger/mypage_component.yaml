@@ -1,0 +1,116 @@
+# components for recipe
+
+components:
+  schemas:
+    getMyRecips:
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: Mypage recipes get 성공
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              cocktailId:
+                type: integer
+                example: 1
+              name:
+                type: string
+                example: 드라이마티니
+              like:
+                type: integer
+                example: 10
+              USER:
+                type: object
+                properties:
+                  nickname:
+                    type: string
+                    example: 알콜릭
+                  level:
+                    type: integer
+                    example: 2
+              
+    getMyPosts:
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: Mypage posts get 성공
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              postId:
+                type: integer
+                example: 1
+              category:
+                type: integer
+                example: 4
+              title:
+                type: string
+                example: 자유글 제목 예시
+              content:
+                type: string
+                example: 자유글 내용 예시1
+              like:
+                type: integer
+                example: 10
+              reply:
+                type: integer
+                example: 10
+              date:
+                type: string
+                example: 2023.05.02(열두시간 전 일케 하는건 시간남으면...)
+
+    getMyReplies:
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: Mypage replies get 성공
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              content:
+                type: string
+                example: 댓글입니다
+              title:
+                type: string
+                example: 글제목입니다
+              date:
+                type: string
+                example: 2023.05.02(열두시간 전 일케 하는건 시간남으면...)
+
+    getMyReviews:
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: Mypage reviews get 성공
+        list:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+                example: 성대 분위기 좋은 루프탑 top1\n선선한 바람 느끼면서 와인 맥주 칵테일 드실분들 가면 기분 진짜 좋아요\n\n야외테라스에 앉아 마시는 맥주란 ❣️💯\n감튀 진짜 맛있어요
+              place:
+                type: string
+                example: 비원
+              keyword:
+                type: array
+                items:
+                  type: integer
+                maxItem: 3
+                minItem: 3
+                example: [3, 4, 5]

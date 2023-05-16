@@ -1,34 +1,27 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class cocktaildb_recipeset extends Model {
+export default class ADMIN extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    CNO: {
+    UNO: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'cocktaildbset',
-        key: 'CNO'
-      }
-    },
-    INGRED: {
-      type: DataTypes.STRING(45),
       allowNull: false,
       primaryKey: true
     },
-    AMOUNT: {
+    EMAIL: {
       type: DataTypes.STRING(45),
-      allowNull: true
+      allowNull: false,
+      unique: "EMAIL_UNIQUE"
     },
-    UNIT: {
+    PASSWORD: {
       type: DataTypes.STRING(45),
       allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'cocktaildb_recipeset',
+    tableName: 'ADMIN',
     timestamps: false,
     indexes: [
       {
@@ -36,15 +29,15 @@ export default class cocktaildb_recipeset extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "CNO" },
-          { name: "INGRED" },
+          { name: "UNO" },
         ]
       },
       {
-        name: "CNO3_idx",
+        name: "EMAIL_UNIQUE",
+        unique: true,
         using: "BTREE",
         fields: [
-          { name: "CNO" },
+          { name: "EMAIL" },
         ]
       },
     ]

@@ -22,10 +22,9 @@ const sequelizeAuto = new Sequelize(
     //   'KEYWORD',
     //   'PLACE',
     //   'POST_LIKE',
-    //   'POST_REPL',
+    //   'POST_REPLY',
     //   'POST_REPORT',
     //   'POST',
-    //   'RECIPE_LIKE',
     //   'RECIPE',
     //   'REVIEW',
     //   'USER'

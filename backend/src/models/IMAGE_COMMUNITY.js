@@ -1,34 +1,30 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE_LIKE extends Model {
+export default class IMAGE_COMMUNITY extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    RLNO: {
+    IMAGE_ID: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    UNO: {
+    PNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'USER',
-        key: 'UNO'
+        model: 'POST',
+        key: 'PNO'
       }
     },
-    RNO: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'RECIPE',
-        key: 'RNO'
-      }
+    PATH: {
+      type: DataTypes.STRING(150),
+      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'RECIPE_LIKE',
+    tableName: 'IMAGE_COMMUNITY',
     timestamps: false,
     indexes: [
       {
@@ -36,28 +32,14 @@ export default class RECIPE_LIKE extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "RLNO" },
+          { name: "IMAGE_ID" },
         ]
       },
       {
-        name: "UNO_idx",
+        name: "PNO_idx",
         using: "BTREE",
         fields: [
-          { name: "UNO" },
-        ]
-      },
-      {
-        name: "RNO4",
-        using: "BTREE",
-        fields: [
-          { name: "RNO" },
-        ]
-      },
-      {
-        name: "RNO",
-        using: "BTREE",
-        fields: [
-          { name: "RNO" },
+          { name: "PNO" },
         ]
       },
     ]

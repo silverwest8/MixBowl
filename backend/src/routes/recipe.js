@@ -171,7 +171,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
 
 // update - Not supporting formdata at put method
 router.post(
-  '/:cocktailId',
+  'update/:cocktailId',
   checkAccess,
   upload.single('image'),
   async (req, res) => {
@@ -425,19 +425,33 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
           attributes: ['UNO', 'NICKNAME', 'LEVEL'],
           required: false,
         },
+        {
+          model: db.COCKTAIL_LIKE,
+          as: 'COCKTAIL_LIKEs',
+          required: false,
+        },
       ],
       order: [[{ model: db.RECIPE, as: 'RECIPEs' }, 'AMOUNT', 'DESC']],
     });
+    let liked = false;
+    console.log(cocktail.COCKTAIL_LIKEs);
+    for (let i = 0; i < cocktail.COCKTAIL_LIKEs.length; i++) {
+      if (cocktail.COCKTAIL_LIKEs[i].UNO == req.user.UNO) {
+        liked = true;
+      }
+    }
     const color = cocktail.COLORs;
     const recipe = cocktail.RECIPEs;
     data.date = cocktail.createdAt;
     data.name = cocktail.NAME;
     data.alcoholic = cocktail.ALCOHOLIC;
     data.instruction = cocktail.INSTRUCTION;
+    data.like = cocktail.COCKTAIL_LIKEs.length;
     data.USER = {
       nickname: cocktail.UNO_USER.NICKNAME,
       level: cocktail.UNO_USER.LEVEL,
       iswriter: req.user.UNO == cocktail.UNO_USER.UNO ? true : false,
+      liked: liked,
     };
     // color
     console.log(color);
@@ -456,6 +470,8 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
       data.ingred.push(temp);
     }
 
+    console.log(data);
+
     // color get
     // recipe get
     return res
@@ -472,30 +488,36 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
 router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
   try {
     let data = {};
-    let list = [];
     const cocktailId = req.params.cocktailId;
-    const cocktail = await db.COCKTAIL.findByPk(cocktailId);
 
-    const like = await db.COCKTAIL_LIKE.findAndCountAll({
-      where: cocktail.CNO,
+    const post = await db.POST.findAndCountAll({
+      where: {
+        CATEGORY: 3,
+        CNO: cocktailId,
+      },
+      attributes: ['CONTENT', 'createdAt'],
+      include: [
+        {
+          model: db.USER,
+          as: 'UNO_USER',
+          required: true,
+          attributes: ['NICKNAME', 'LEVEL']
+        }
+      ]
     });
-    console.log(like.count);
-    data.like = like.count;
-
-    const post = await db.POST.findAndCountAll({ where: cocktail.CNO });
     console.log(post.count);
-    data.post = post.count;
-
-    data.list = post;
+    console.log(post.rows);
+    data.count = post.count;
+    data.list = post.rows;
 
     return res
       .status(200)
-      .json({ success: true, message: 'Cocktail detail get 성공', data });
+      .json({ success: true, message: 'Cocktail review get 성공', data: data });
   } catch (error) {
     console.log(error);
     return res
       .status(400)
-      .json({ success: false, message: 'Cocktail detail get 실패', error });
+      .json({ success: false, message: 'Cocktail review get 실패', error });
   }
 });
 
@@ -503,6 +525,13 @@ router.get('/image/:cocktailId', async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
+    // 이미지 없으면 로고 이미지 보내줌
+    if (!cocktail.IMAGE_PATH) {
+      const data = fs.readFileSync("uploads/cocktailImage/logo.png");
+      res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
+      res.write(data);
+      return res.end();
+    }
     if (Number(cocktailId) < 11000 || cocktailId > 178368) {
       const data = fs.readFileSync(cocktail.IMAGE_PATH);
       res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
@@ -524,32 +553,62 @@ router.get('/image/:cocktailId', async (req, res) => {
   }
 });
 
-router.post('/like/:cocktailId', async (req, res) => {
+router.post('/like/:cocktailId', checkAccess, async (req, res) => {
   try {
     const cocktailId = req.params.cocktailId;
-    await db.COCKTAIL_LIKE.create({ CNO: cocktailId, UNO: req.user.UNO });
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(400)
-      .json({ success: false, message: 'Recipe Like 실패', error });
-  }
-});
+    const [like, created] = await db.COCKTAIL_LIKE.findOrCreate({
+      where: { CNO: cocktailId, UNO: req.user.UNO },
+    });
 
-router.post('/report/:cocktailId', async (req, res) => {
-  try {
-    const cocktailId = req.params.cocktailId;
-    const report = req.body.report;
-    await db.COCKTAIL_REPORT.create({
-      CNO: cocktailId,
-      UNO: req.user.UNO,
-      REPORT: report,
+    if (!created) {
+      await db.COCKTAIL_LIKE.destroy({
+        where: { CNO: cocktailId, UNO: req.user.UNO },
+      });
+    }
+    const count = await db.COCKTAIL_LIKE.count({ where: { CNO: cocktailId } });
+
+    return res.status(200).json({
+      success: true,
+      message: `Cocktail ${created ? 'Like' : 'Unlike'} 성공`,
+      liked: created ? true : false,
+      like: count,
     });
   } catch (error) {
     console.log(error);
     return res
       .status(400)
-      .json({ success: false, message: 'Recipe Report 실패', error });
+      .json({ success: false, message: 'Cocktail Like/Unlike 실패', error });
+  }
+});
+
+router.post('/report/:cocktailId', checkAccess, async (req, res) => {
+  try {
+    const cocktailId = req.params.cocktailId;
+    const report = req.body.report;
+    const [result, created] = await db.COCKTAIL_REPORT.findOrCreate({
+      where: {
+        CNO: cocktailId,
+        UNO: req.user.UNO,
+      },
+      default: {
+        REPORT: report,
+      },
+    });
+    if (created) {
+      return res.status(200).json({
+        success: true,
+        message: 'Cocktail Report 성공',
+      });
+    } else {
+      return res
+        .status(200)
+        .json({ success: false, message: 'Cocktail Report 중복' });
+    }
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Cocktail Report 실패', error });
   }
 });
 

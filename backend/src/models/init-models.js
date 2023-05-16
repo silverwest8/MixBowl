@@ -1,5 +1,6 @@
 import _sequelize from "sequelize";
 const DataTypes = _sequelize.DataTypes;
+import _ADMIN from  "./ADMIN.js";
 import _API_cocktaildb_en from  "./API_cocktaildb_en.js";
 import _API_ninja_en from  "./API_ninja_en.js";
 import _AUTH_CODE from  "./AUTH_CODE.js";
@@ -8,11 +9,12 @@ import _COCKTAIL_LIKE from  "./COCKTAIL_LIKE.js";
 import _COCKTAIL_REPORT from  "./COCKTAIL_REPORT.js";
 import _COLOR from  "./COLOR.js";
 import _IMAGE from  "./IMAGE.js";
+import _IMAGE_COMMUNITY from  "./IMAGE_COMMUNITY.js";
 import _KEYWORD from  "./KEYWORD.js";
 import _PLACE from  "./PLACE.js";
 import _POST from  "./POST.js";
 import _POST_LIKE from  "./POST_LIKE.js";
-import _POST_REPL from  "./POST_REPL.js";
+import _POST_REPLY from  "./POST_REPLY.js";
 import _POST_REPORT from  "./POST_REPORT.js";
 import _RECIPE from  "./RECIPE.js";
 import _REVIEW from  "./REVIEW.js";
@@ -23,6 +25,7 @@ import _ninja_recipe from  "./ninja_recipe.js";
 import _ninjaset from  "./ninjaset.js";
 
 export default function initModels(sequelize) {
+  const ADMIN = _ADMIN.init(sequelize, DataTypes);
   const API_cocktaildb_en = _API_cocktaildb_en.init(sequelize, DataTypes);
   const API_ninja_en = _API_ninja_en.init(sequelize, DataTypes);
   const AUTH_CODE = _AUTH_CODE.init(sequelize, DataTypes);
@@ -31,11 +34,12 @@ export default function initModels(sequelize) {
   const COCKTAIL_REPORT = _COCKTAIL_REPORT.init(sequelize, DataTypes);
   const COLOR = _COLOR.init(sequelize, DataTypes);
   const IMAGE = _IMAGE.init(sequelize, DataTypes);
+  const IMAGE_COMMUNITY = _IMAGE_COMMUNITY.init(sequelize, DataTypes);
   const KEYWORD = _KEYWORD.init(sequelize, DataTypes);
   const PLACE = _PLACE.init(sequelize, DataTypes);
   const POST = _POST.init(sequelize, DataTypes);
   const POST_LIKE = _POST_LIKE.init(sequelize, DataTypes);
-  const POST_REPL = _POST_REPL.init(sequelize, DataTypes);
+  const POST_REPLY = _POST_REPLY.init(sequelize, DataTypes);
   const POST_REPORT = _POST_REPORT.init(sequelize, DataTypes);
   const RECIPE = _RECIPE.init(sequelize, DataTypes);
   const REVIEW = _REVIEW.init(sequelize, DataTypes);
@@ -65,10 +69,12 @@ export default function initModels(sequelize) {
   COCKTAIL.hasMany(RECIPE, { as: "RECIPEs", foreignKey: "CNO"});
   REVIEW.belongsTo(PLACE, { as: "PLACE", foreignKey: "PLACE_ID"});
   PLACE.hasMany(REVIEW, { as: "REVIEWs", foreignKey: "PLACE_ID"});
+  IMAGE_COMMUNITY.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
+  POST.hasMany(IMAGE_COMMUNITY, { as: "IMAGE_COMMUNITies", foreignKey: "PNO"});
   POST_LIKE.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
   POST.hasMany(POST_LIKE, { as: "POST_LIKEs", foreignKey: "PNO"});
-  POST_REPL.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
-  POST.hasMany(POST_REPL, { as: "POST_REPLs", foreignKey: "PNO"});
+  POST_REPLY.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
+  POST.hasMany(POST_REPLY, { as: "POST_REPLies", foreignKey: "PNO"});
   POST_REPORT.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
   POST.hasMany(POST_REPORT, { as: "POST_REPORTs", foreignKey: "PNO"});
   IMAGE.belongsTo(REVIEW, { as: "REVIEW", foreignKey: "REVIEW_ID"});
@@ -85,8 +91,8 @@ export default function initModels(sequelize) {
   USER.hasMany(POST, { as: "POSTs", foreignKey: "UNO"});
   POST_LIKE.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(POST_LIKE, { as: "POST_LIKEs", foreignKey: "UNO"});
-  POST_REPL.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
-  USER.hasMany(POST_REPL, { as: "POST_REPLs", foreignKey: "UNO"});
+  POST_REPLY.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
+  USER.hasMany(POST_REPLY, { as: "POST_REPLies", foreignKey: "UNO"});
   POST_REPORT.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(POST_REPORT, { as: "POST_REPORTs", foreignKey: "UNO"});
   REVIEW.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
@@ -97,6 +103,7 @@ export default function initModels(sequelize) {
   ninjaset.hasMany(ninja_recipe, { as: "ninja_recipes", foreignKey: "CNO"});
 
   return {
+    ADMIN,
     API_cocktaildb_en,
     API_ninja_en,
     AUTH_CODE,
@@ -105,11 +112,12 @@ export default function initModels(sequelize) {
     COCKTAIL_REPORT,
     COLOR,
     IMAGE,
+    IMAGE_COMMUNITY,
     KEYWORD,
     PLACE,
     POST,
     POST_LIKE,
-    POST_REPL,
+    POST_REPLY,
     POST_REPORT,
     RECIPE,
     REVIEW,
