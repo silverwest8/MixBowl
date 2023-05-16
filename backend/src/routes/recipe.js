@@ -74,7 +74,7 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
       NAME: data.name,
       ALCOHOLIC: data.alcoholic,
       INSTRUCTION: data.instruction,
-      IMAGE_PATH: req.file.path,
+      IMAGE_PATH: req.file ? req.file.path : null,
     });
     console.log(cocktail.CNO);
     // color 저장
@@ -590,7 +590,7 @@ router.post('/report/:cocktailId', checkAccess, async (req, res) => {
         CNO: cocktailId,
         UNO: req.user.UNO,
       },
-      default: {
+      defaults: {
         REPORT: report,
       },
     });
