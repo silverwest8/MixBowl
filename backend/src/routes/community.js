@@ -7,6 +7,9 @@ import checkAccess from '../middleware/checkAccessToken';
 import multer from 'multer';
 import POST from '../models/POST';
 import fs from 'fs';
+import { Sequelize } from 'sequelize';
+import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
+import POST_LIKE from '../models/POST_LIKE';
 dotenv.config();
 
 const router = express.Router();
@@ -102,38 +105,55 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
 router.get('/:postId', async (req, res) => {
   const pno = req.params.postId;
   const postData = await POST.findByPk(pno);
+  const likePost = await POST_LIKE.findAll({
+    attributes: [[Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
+  });
+  const likes = likePost[0].dataValues.LIKES;
+  const imageIdArr = [];
+  const imagesPromise = await IMAGE_COMMUNITY.findAll({
+    where: {
+      PNO: pno,
+    },
+  });
+  imagesPromise.forEach((val) => imageIdArr.push(val.IMAGE_ID));
   switch (postData.CATEGORY) {
     //postId 로 이미지 찾을 수 있음
     case 1:
       return res.send({
+        success: true,
         title: postData.TITLE,
-        like: postData.LIKE,
+        like: likes,
         content: postData.CONTENT,
         postId: postData.PNO,
+        images: imageIdArr,
       });
       break;
     case 2:
       return res.send({
-        like: postData.LIKE,
+        like: likes,
         content: postData.CONTENT,
         postId: postData.PNO,
+        images: imageIdArr,
       });
       break;
     case 3:
       return res.send({
         title: postData.TITLE,
-        like: postData.LIKE,
+        cocktailLike: postData.LIKE,
+        like: likes,
         content: postData.CONTENT,
         cno: postData.CNO,
         postId: postData.PNO,
+        images: imageIdArr,
       });
       break;
     case 4:
       return res.send({
         title: postData.TITLE,
-        like: postData.LIKE,
+        like: likes,
         content: postData.CONTENT,
         postId: postData.PNO,
+        images: imageIdArr,
       });
       break;
   }
