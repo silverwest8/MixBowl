@@ -13,7 +13,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getReviewList'
+                $ref: '#/components/schemas/getMyRecips'
         '400':
           description: ''
           content:
@@ -34,28 +34,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  rating:
-                    type: Float
-                  keyword:
-                    type: array
-                    items:
-                      type: integer
-                    maxItem: 3
-                    minItem: 1
-                    example: [3, 4, 5]
-                    description: 키워드 종류를 쉼표로 구분하여 전송
-                  detail:
-                    type: text
-                    example: 너무 맛있고 분위기가 좋아요
-                    description: 리뷰 세부 내용 담아서 전송
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: text
-                    example: Successfuly loaded previous review data
+                $ref: '#/components/schemas/getMyPosts'
+               
         '400':
           description: ''
           content:
@@ -76,7 +56,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getBar'
+                $ref: '#/components/schemas/getMyReplies'
         '400':
           description: ''
           content:
@@ -93,13 +73,11 @@ paths:
       operationId: getMyReviews
       responses:
         '200':
-          description:
+          description: ''
           content:
-            image/jpeg:
+            application/json:
               schema:
-                type: string
-                format: binary
-
+                $ref: '#/components/schemas/getMyReviews'
         '400':
           description: ''
           content:
