@@ -12,7 +12,11 @@ export default class IMAGE_COMMUNITY extends Model {
     },
     PNO: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'POST',
+        key: 'PNO'
+      }
     },
     PATH: {
       type: DataTypes.STRING(150),
@@ -29,6 +33,13 @@ export default class IMAGE_COMMUNITY extends Model {
         using: "BTREE",
         fields: [
           { name: "IMAGE_ID" },
+        ]
+      },
+      {
+        name: "PNO_idx",
+        using: "BTREE",
+        fields: [
+          { name: "PNO" },
         ]
       },
     ]
