@@ -488,30 +488,36 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
 router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
   try {
     let data = {};
-    let list = [];
     const cocktailId = req.params.cocktailId;
-    const cocktail = await db.COCKTAIL.findByPk(cocktailId);
 
-    const like = await db.COCKTAIL_LIKE.findAndCountAll({
-      where: cocktail.CNO,
+    const post = await db.POST.findAndCountAll({
+      where: {
+        CATEGORY: 3,
+        CNO: cocktailId,
+      },
+      attributes: ['CONTENT', 'createdAt'],
+      include: [
+        {
+          model: db.USER,
+          as: 'UNO_USER',
+          required: true,
+          attributes: ['NICKNAME', 'LEVEL']
+        }
+      ]
     });
-    console.log(like.count);
-    data.like = like.count;
-
-    const post = await db.POST.findAndCountAll({ where: cocktail.CNO });
     console.log(post.count);
-    data.post = post.count;
-
-    data.list = post;
+    console.log(post.rows);
+    data.count = post.count;
+    data.list = post.rows;
 
     return res
       .status(200)
-      .json({ success: true, message: 'Cocktail detail get 성공', data });
+      .json({ success: true, message: 'Cocktail review get 성공', data: data });
   } catch (error) {
     console.log(error);
     return res
       .status(400)
-      .json({ success: false, message: 'Cocktail detail get 실패', error });
+      .json({ success: false, message: 'Cocktail review get 실패', error });
   }
 });
 

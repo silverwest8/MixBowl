@@ -325,9 +325,6 @@ components:
                   level:
                     type: integer
                     example: 2
-                  iswriter:
-                    type: boolean
-                    example: true
 
     LikeUnlikeSuccess:
       properties:
