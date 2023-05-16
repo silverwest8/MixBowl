@@ -217,7 +217,7 @@ paths:
     get:
       tags:
         - reviews
-      sumary: 칵테일 바 리뷰 단건 조회 및 수정페이지
+      summary: 칵테일 바 리뷰 단건 조회 및 수정페이지
       description: ''
       oprationId: get One Bar Review
       parameters:

@@ -25,7 +25,6 @@ const sequelizeAuto = new Sequelize(
     //   'POST_REPL',
     //   'POST_REPORT',
     //   'POST',
-    //   'RECIPE_LIKE',
     //   'RECIPE',
     //   'REVIEW',
     //   'USER'

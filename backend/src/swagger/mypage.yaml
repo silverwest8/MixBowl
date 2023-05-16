@@ -1,0 +1,108 @@
+# review api for swagger
+paths:
+  /mypages/recipes:
+    get:
+      tags:
+        - mypages
+      summary: 내가 추천한 레시피
+      description: ''
+      operationId: getMyRecips
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getReviewList'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /mypages/posts:
+    get:
+      tags:
+        - mypages
+      summary: 내가 쓴 게시물
+      description: ''
+      oprationId: getMyPosts
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rating:
+                    type: Float
+                  keyword:
+                    type: array
+                    items:
+                      type: integer
+                    maxItem: 3
+                    minItem: 1
+                    example: [3, 4, 5]
+                    description: 키워드 종류를 쉼표로 구분하여 전송
+                  detail:
+                    type: text
+                    example: 너무 맛있고 분위기가 좋아요
+                    description: 리뷰 세부 내용 담아서 전송
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: text
+                    example: Successfuly loaded previous review data
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /mypages/replies:
+    get:
+      tags:
+        - mypages
+      summary: 내가 쓴 댓글
+      description: ''
+      operationId: getMyRecpies
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getBar'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /mypages/reviews:
+    get:
+      tags:
+        - mypages
+      summary: 내가 쓴 칵테일 바 리뷰
+      description: ''
+      operationId: getMyReviews
+      responses:
+        '200':
+          description:
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
