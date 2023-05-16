@@ -14,7 +14,7 @@ import _KEYWORD from  "./KEYWORD.js";
 import _PLACE from  "./PLACE.js";
 import _POST from  "./POST.js";
 import _POST_LIKE from  "./POST_LIKE.js";
-import _POST_REPL from  "./POST_REPL.js";
+import _POST_REPLY from  "./POST_REPLY.js";
 import _POST_REPORT from  "./POST_REPORT.js";
 import _RECIPE from  "./RECIPE.js";
 import _REVIEW from  "./REVIEW.js";
@@ -39,7 +39,7 @@ export default function initModels(sequelize) {
   const PLACE = _PLACE.init(sequelize, DataTypes);
   const POST = _POST.init(sequelize, DataTypes);
   const POST_LIKE = _POST_LIKE.init(sequelize, DataTypes);
-  const POST_REPL = _POST_REPL.init(sequelize, DataTypes);
+  const POST_REPLY = _POST_REPLY.init(sequelize, DataTypes);
   const POST_REPORT = _POST_REPORT.init(sequelize, DataTypes);
   const RECIPE = _RECIPE.init(sequelize, DataTypes);
   const REVIEW = _REVIEW.init(sequelize, DataTypes);
@@ -73,8 +73,8 @@ export default function initModels(sequelize) {
   POST.hasMany(IMAGE_COMMUNITY, { as: "IMAGE_COMMUNITies", foreignKey: "PNO"});
   POST_LIKE.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
   POST.hasMany(POST_LIKE, { as: "POST_LIKEs", foreignKey: "PNO"});
-  POST_REPL.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
-  POST.hasMany(POST_REPL, { as: "POST_REPLs", foreignKey: "PNO"});
+  POST_REPLY.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
+  POST.hasMany(POST_REPLY, { as: "POST_REPLies", foreignKey: "PNO"});
   POST_REPORT.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
   POST.hasMany(POST_REPORT, { as: "POST_REPORTs", foreignKey: "PNO"});
   IMAGE.belongsTo(REVIEW, { as: "REVIEW", foreignKey: "REVIEW_ID"});
@@ -91,8 +91,8 @@ export default function initModels(sequelize) {
   USER.hasMany(POST, { as: "POSTs", foreignKey: "UNO"});
   POST_LIKE.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(POST_LIKE, { as: "POST_LIKEs", foreignKey: "UNO"});
-  POST_REPL.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
-  USER.hasMany(POST_REPL, { as: "POST_REPLs", foreignKey: "UNO"});
+  POST_REPLY.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
+  USER.hasMany(POST_REPLY, { as: "POST_REPLies", foreignKey: "UNO"});
   POST_REPORT.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(POST_REPORT, { as: "POST_REPORTs", foreignKey: "UNO"});
   REVIEW.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
@@ -117,7 +117,7 @@ export default function initModels(sequelize) {
     PLACE,
     POST,
     POST_LIKE,
-    POST_REPL,
+    POST_REPLY,
     POST_REPORT,
     RECIPE,
     REVIEW,

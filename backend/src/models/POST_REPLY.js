@@ -1,10 +1,10 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class RECIPE_LIKE extends Model {
+export default class POST_REPLY extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    RLNO: {
+    PRNO: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -18,25 +18,36 @@ export default class RECIPE_LIKE extends Model {
         key: 'UNO'
       }
     },
-    RNO: {
+    PNO: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'RECIPE',
-        key: 'RNO'
+        model: 'POST',
+        key: 'PNO'
       }
+    },
+    CONTENT: {
+      type: DataTypes.TEXT,
+      allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'RECIPE_LIKE',
-    timestamps: false,
+    tableName: 'POST_REPLY',
+    timestamps: true,
     indexes: [
       {
         name: "PRIMARY",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "RLNO" },
+          { name: "PRNO" },
+        ]
+      },
+      {
+        name: "PNO_idx",
+        using: "BTREE",
+        fields: [
+          { name: "PNO" },
         ]
       },
       {
@@ -44,20 +55,6 @@ export default class RECIPE_LIKE extends Model {
         using: "BTREE",
         fields: [
           { name: "UNO" },
-        ]
-      },
-      {
-        name: "RNO4",
-        using: "BTREE",
-        fields: [
-          { name: "RNO" },
-        ]
-      },
-      {
-        name: "RNO",
-        using: "BTREE",
-        fields: [
-          { name: "RNO" },
         ]
       },
     ]

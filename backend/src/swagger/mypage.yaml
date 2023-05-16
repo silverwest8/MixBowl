@@ -1,0 +1,86 @@
+# review api for swagger
+paths:
+  /mypages/recipes:
+    get:
+      tags:
+        - mypages
+      summary: 내가 추천한 레시피
+      description: ''
+      operationId: getMyRecips
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMyRecips'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /mypages/posts:
+    get:
+      tags:
+        - mypages
+      summary: 내가 쓴 게시물
+      description: ''
+      oprationId: getMyPosts
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMyPosts'
+               
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /mypages/replies:
+    get:
+      tags:
+        - mypages
+      summary: 내가 쓴 댓글
+      description: ''
+      operationId: getMyRecpies
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMyReplies'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /mypages/reviews:
+    get:
+      tags:
+        - mypages
+      summary: 내가 쓴 칵테일 바 리뷰
+      description: ''
+      operationId: getMyReviews
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMyReviews'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
