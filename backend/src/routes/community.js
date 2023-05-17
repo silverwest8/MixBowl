@@ -158,11 +158,11 @@ router.get('/:postId', async (req, res) => {
       break;
   }
 });
-router.get('/image', async (req, res) => {
+router.get('/one/image', async (req, res) => {
   //이미지 하나 요청
   try {
     const imageId = req.query.imageId;
-    const imgPath = await sql.getImagePath(imageId);
+    const imgPath = await sql.getImagePath(imageId, 'community');
     const data = fs.readFileSync(imgPath);
     res.writeHead(200, { 'Content-Type': 'image/jpeg' });
     res.write(data);

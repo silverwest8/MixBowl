@@ -372,14 +372,15 @@ const sql = {
     });
     return next();
   },
-  getImagePath: async (imageId) => {
+  getImagePath: async (imageId, category) => {
     try {
-      const image = await IMAGE.findByPk(imageId);
-      if (image === 'undefined') {
+      if (category === 'review') {
+        const image = await IMAGE.findByPk(imageId);
+        return image.PATH;
+      } else if (category === 'community') {
         const image_communty = await IMAGE_COMMUNITY.findByPk(imageId);
-        return image_community.PATH;
+        return image_communty.PATH;
       }
-      return image.PATH;
     } catch (error) {
       console.log(error.message);
     }

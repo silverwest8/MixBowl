@@ -84,7 +84,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-  /communities/image?imageId={imageId}:
+  /communities/one/image?imageId={imageId}:
     get:
       tags:
         - communities

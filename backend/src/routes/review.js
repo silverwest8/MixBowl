@@ -309,7 +309,7 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
 router.get('/image/one', async (req, res) => {
   try {
     const imageId = req.query.imageId;
-    const imgPath = await sql.getImagePath(imageId);
+    const imgPath = await sql.getImagePath(imageId, 'review');
     const data = fs.readFileSync(imgPath);
     res.writeHead(200, { 'Content-Type': 'image/jpeg' });
     res.write(data);
