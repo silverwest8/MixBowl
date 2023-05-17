@@ -174,7 +174,23 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   }
 });
 
-router.get('/list/all', async (req, res) => {});
+router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
+  try {
+    const page = Number(req.query.page);
+    const offset = 10 * (page - 1);
+    const limit = 10;
+    const list = [];
+    const posts = await POST.findAll({
+      order: [['createdAt', 'DESC']],
+      limit: limit,
+      offset: offset,
+    });
+    posts.forEach((val) => list.push(val.dataValues));
+    console.log(list);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
 router.get('/one/image', async (req, res) => {
   //이미지 하나 요청
   try {

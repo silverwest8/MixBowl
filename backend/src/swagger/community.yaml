@@ -239,7 +239,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    property1:
+                      type: string
+                    property2:
+                      type: integer
+                    property3:
+                      type: boolean
+                  example:
+                    - property1: value1
+                      property2: 123
+                      property3: true
+                    - property1: value2
+                      property2: 456
+                      property3: false
         '400':
           description: ''
           content:
@@ -256,11 +272,11 @@ paths:
       operationId: getCommunityPost
       parameters:
         - in: query
-          name: search
-          description: 검색키워드
-          example: 피치크러쉬
+          name: page
+          description: 불러올 데이터 수 page (1 page 당 10개, 1부터 시작)
+          example: 2
           schema:
-            type: string
+            type: integer
       responses:
         '200':
           description: ''
