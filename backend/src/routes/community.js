@@ -10,6 +10,7 @@ import fs from 'fs';
 import { Sequelize } from 'sequelize';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 import POST_LIKE from '../models/POST_LIKE';
+import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 dotenv.config();
 
 const router = express.Router();
@@ -102,9 +103,10 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   }
 });
 
-router.get('/:postId', async (req, res) => {
+router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
   const postData = await POST.findByPk(pno);
+  let isWriter = false;
   const likePost = await POST_LIKE.findAll({
     attributes: [[Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
   });
@@ -115,6 +117,12 @@ router.get('/:postId', async (req, res) => {
       PNO: pno,
     },
   });
+  if (req.user !== undefined) {
+    //로그인 한 상태일 때,
+    if (req.user.UNO === postData.UNO) {
+      isWriter = true;
+    }
+  }
   imagesPromise.forEach((val) => imageIdArr.push(val.IMAGE_ID));
   switch (postData.CATEGORY) {
     //postId 로 이미지 찾을 수 있음
@@ -126,18 +134,22 @@ router.get('/:postId', async (req, res) => {
         content: postData.CONTENT,
         postId: postData.PNO,
         images: imageIdArr,
+        isWriter: isWriter,
       });
       break;
     case 2:
       return res.send({
+        success: true,
         like: likes,
         content: postData.CONTENT,
         postId: postData.PNO,
         images: imageIdArr,
+        isWriter: isWriter,
       });
       break;
     case 3:
       return res.send({
+        success: true,
         title: postData.TITLE,
         cocktailLike: postData.LIKE,
         like: likes,
@@ -145,19 +157,24 @@ router.get('/:postId', async (req, res) => {
         cno: postData.CNO,
         postId: postData.PNO,
         images: imageIdArr,
+        isWriter: isWriter,
       });
       break;
     case 4:
       return res.send({
+        success: true,
         title: postData.TITLE,
         like: likes,
         content: postData.CONTENT,
         postId: postData.PNO,
         images: imageIdArr,
+        isWriter: isWriter,
       });
       break;
   }
 });
+
+router.get('/list/all', async (req, res) => {});
 router.get('/one/image', async (req, res) => {
   //이미지 하나 요청
   try {

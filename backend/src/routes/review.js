@@ -13,6 +13,7 @@ import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
 import sql from '../database/sql';
 import dotenv from 'dotenv';
+import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 dotenv.config();
 const router = express.Router();
 
@@ -255,6 +256,10 @@ router.get('/bar/:placeId', checkAccess, async (req, res) => {
       .status(400)
       .json({ success: false, message: '칵테일 바 단건 조회 실패', error });
   }
+});
+
+router.get('/checkToken', checkTokenYesAndNo, async (req, res) => {
+  console.log('checkandno');
 });
 
 router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
