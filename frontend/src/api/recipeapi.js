@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const reportRecipe = async (id, report) => {
   const { data } = await axios.post(`/api/recipes/report/${id}`, {
-    report: report,
+    report,
   });
 
   return data;
@@ -10,8 +10,8 @@ export const reportRecipe = async (id, report) => {
 
 export const likteRecipe = async (id, liked, like) => {
   const { data } = await axios.post(`/api/recipes/like/${id}`, {
-    liked: liked,
-    like: like,
+    liked,
+    like,
   });
 
   return data;
@@ -84,11 +84,15 @@ export const editRecipe = async ({
   for (const pair of values) {
     console.log(pair);
   }
-  const { data } = await axios.post(`/api/recipes/${recipeId}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const { data } = await axios.post(
+    `/api/recipes/update/${recipeId}`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
   return data;
 };
 
