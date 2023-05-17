@@ -68,6 +68,26 @@ components:
         message:
           type: string
           example: duplecate == true => 사용불가
+
+    BartenderReq:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 신동수
+        birth:
+          type: string
+          example: 990922
+        qualification:
+          type: string
+          example: 21403011530N
+        issueDate:
+          type: string
+          example: 20210927
+        lcsMngNo:
+          type: string
+          example: 2002293543
+
     BartenderCheck:
       type: object
       properties:
@@ -77,7 +97,8 @@ components:
           type: boolean
         message:
           type: string
-          example: bartender == true => 인증 완료
+          example: bartender == true => 인증 완료 | false => 인증 실패
+
     BarOwnerCheck:
       type: object
       properties:

@@ -317,14 +317,17 @@ paths:
       tags:
         - users
       summary: 바텐더 확인
-      description: 일단 닉네임 보내는 걸로 했는데 다시 정해야 함.
+      description: birth -> 주민번호 앞 6자리 |
+        qualification -> 자격번호 |
+        issueDate -> 발급연월일 8자리 |
+        lcsNo -> 자격증내지번호
       operationId: checkBartender
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Nickname'
+              $ref: '#/components/schemas/BartenderReq'
       responses:
         '200':
           description: ''
