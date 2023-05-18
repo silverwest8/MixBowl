@@ -37,10 +37,13 @@ export const postRecipe = async ({
     })
   );
 
-  for (let i = 0; i < image.length; i++) {
-    formData.append("image", image[i]);
+  if (image && image.length > 0) {
+    for (let i = 0; i < image.length; i++) {
+      formData.append("image", image[i]);
+    }
   }
 
+  console.log(image);
   /* form data 확인 */
   const values = formData.values();
   for (const pair of values) {
@@ -75,10 +78,13 @@ export const editRecipe = async ({
     })
   );
 
-  for (let i = 0; i < image.length; i++) {
-    formData.append("image", image[i]);
+  if (image && image.length > 0) {
+    for (let i = 0; i < image.length; i++) {
+      formData.append("image", image[i]);
+    }
   }
 
+  console.log(image);
   /* form data 확인 */
   const values = formData.values();
   for (const pair of values) {

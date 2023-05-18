@@ -76,7 +76,7 @@ const RecipeCard = () => {
     ["page"],
     ({ pageParam = 1 }) => GetRecipe(pageParam, colorNum, alcoholNum, sortInit),
     {
-      getNextPageParam: (lastPage, allPosts) => {
+      getNextPageParam: (lastPage) => {
         return lastPage.page + 1;
       },
     }
