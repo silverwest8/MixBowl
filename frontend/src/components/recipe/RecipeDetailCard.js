@@ -7,17 +7,24 @@ import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa";
 import RecipeEditDelete from "./RecipeEditDelete";
 import RecipeReportModal from "./RecipeReportModal";
 import { useModal } from "../../hooks/useModal";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { RecipeRoportState } from "../../store/recipe";
 import { reportRecipe, likteRecipe } from "../../api/recipeapi";
+import { toastState } from "../../store/toast";
 
 const ReportRecipeModal = ({ handleClose, id }) => {
   const reportNum = useRecoilValue(RecipeRoportState);
-
+  const setToastState = useSetRecoilState(toastState);
   const onSubmit = () => {
     reportRecipe(id, reportNum)
       .then((response) => {
         console.log(response);
+        setToastState({
+          show: true,
+          message: "이미 신고한 게시물입니다.",
+          type: "error",
+          ms: 2000,
+        });
       })
       .catch((error) => {
         console.error(error);

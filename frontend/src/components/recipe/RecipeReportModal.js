@@ -6,6 +6,7 @@ import Radio from "@mui/material/Radio";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { RecipeRoportState } from "../../store/recipe";
+
 const REASONS = [
   "부적절한 표현, 욕설 또는 혐오 표현",
   "스팸 또는 사용자를 현혹하는 콘텐츠",
