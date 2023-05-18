@@ -301,6 +301,7 @@ const RecipeBox = styled.div`
     width: 12.25rem;
     border: 1px solid ${({ theme }) => theme.color.primaryGold};
     border-radius: 0.75rem;
+    object-fit: cover;
   }
   h1 {
     font-size: 1.5rem;

@@ -16,7 +16,6 @@ const OPTIONS = ["수정", "삭제"];
 const RecipeEditDelete = ({ options }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const [Delete, setDelete] = useState(false);
   const setToastState = useSetRecoilState(toastState);
   const { openModal, closeModal } = useModal();
   const navigate = useNavigate();
@@ -44,7 +43,7 @@ const RecipeEditDelete = ({ options }) => {
       navigate(`/recipe/${id}/edit`);
     }
     if (option === "삭제") {
-      setDelete(true);
+      openModal(DeleteModal, { handleClose: closeModal });
     }
     handleClose();
   };
@@ -57,7 +56,6 @@ const RecipeEditDelete = ({ options }) => {
   };
 
   const DeleteModal = ({ handleClose }) => {
-    setDelete(false);
     return (
       <Modal
         handleClose={handleClose}
@@ -126,9 +124,6 @@ const RecipeEditDelete = ({ options }) => {
           </MenuItem>
         ))}
       </Menu>
-      {Delete === true
-        ? openModal(DeleteModal, { handleClose: closeModal })
-        : null}
     </div>
   );
 };

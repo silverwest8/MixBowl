@@ -34,8 +34,8 @@ export const alcoholState = atom({
 export const sortState = atom({
   key: "sortState",
   default: {
-    latest: false,
-    recommendation: true,
+    latest: true,
+    recommendation: false,
   },
 });
 
