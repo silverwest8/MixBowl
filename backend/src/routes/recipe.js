@@ -74,7 +74,7 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
       NAME: data.name,
       ALCOHOLIC: data.alcoholic,
       INSTRUCTION: data.instruction,
-      IMAGE_PATH: req.file.path,
+      IMAGE_PATH: req.file ? req.file.path : null,
     });
     console.log(cocktail.CNO);
     // color 저장
@@ -171,7 +171,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
 
 // update - Not supporting formdata at put method
 router.post(
-  'update/:cocktailId',
+  '/update/:cocktailId',
   checkAccess,
   upload.single('image'),
   async (req, res) => {
@@ -297,7 +297,7 @@ router.get('/list/filter/:page', checkAccess, async (req, res) => {
       : null;
     const search = req.query.search;
     const sort = req.query.sort == 'new' ? 'createdAt' : 'LIKECOUNT';
-    // console.log(alcoholic, color, search, sort);
+    console.log(alcoholic, color, search, sort);
     let list = [];
     const cocktailfilter = await db.COCKTAIL.findAll({
       attributes: ['CNO', 'NAME', 'INSTRUCTION', 'ALCOHOLIC'],
@@ -590,7 +590,7 @@ router.post('/report/:cocktailId', checkAccess, async (req, res) => {
         CNO: cocktailId,
         UNO: req.user.UNO,
       },
-      default: {
+      defaults: {
         REPORT: report,
       },
     });

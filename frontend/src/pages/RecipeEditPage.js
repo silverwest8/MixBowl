@@ -111,21 +111,21 @@ const RecipeEditPage = () => {
         return prev;
       });
 
-      if (data.data.alcoholic === 1) {
+      if (data.data.alcoholic === 0) {
         setAddAlcohol((prev) => ({
           ...prev,
           addAlcohol: "낮음",
         }));
       }
 
-      if (data.data.alcoholic === 2) {
+      if (data.data.alcoholic === 1) {
         setAddAlcohol((prev) => ({
           ...prev,
           addAlcohol: "보통",
         }));
       }
 
-      if (data.data.alcoholic === 3) {
+      if (data.data.alcoholic === 2) {
         setAddAlcohol((prev) => ({
           ...prev,
           addAlcohol: "높음",
