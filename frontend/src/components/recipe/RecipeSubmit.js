@@ -68,7 +68,7 @@ const RecipeSubmit = ({ actionType }) => {
       postRecipe({
         name: addName,
         color: colorNum,
-        ingred: ingred,
+        ingred,
         alcoholic: alcoholNum,
         instruction: addExplain,
         image: [recipeImg],
@@ -101,24 +101,32 @@ const RecipeSubmit = ({ actionType }) => {
         recipeId: id,
         name: addName,
         color: colorNum,
-        ingred: ingred,
+        ingred,
         alcoholic: alcoholNum,
         instruction: addExplain,
         image: [recipeImg],
       })
         .then((response) => {
           console.log(response);
+          if (response.success) {
+            setToastState({
+              show: true,
+              message: "수정이 완료되었습니다.",
+              type: "success",
+              ms: 3000,
+            });
+          } else {
+            setToastState({
+              show: true,
+              message: "수정 실패.",
+              type: "error",
+              ms: 3000,
+            });
+          }
         })
         .catch((error) => {
           console.error(error);
         });
-
-      setToastState({
-        show: true,
-        message: "수정이 완료되었습니다.",
-        type: "success",
-        ms: 3000,
-      });
       setRecipeImg("");
       navigate(-2);
     }
