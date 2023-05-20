@@ -7,6 +7,7 @@ import _AUTH_CODE from  "./AUTH_CODE.js";
 import _COCKTAIL from  "./COCKTAIL.js";
 import _COCKTAIL_LIKE from  "./COCKTAIL_LIKE.js";
 import _COCKTAIL_REPORT from  "./COCKTAIL_REPORT.js";
+import _COCKTAIL_SAVE from  "./COCKTAIL_SAVE.js";
 import _COLOR from  "./COLOR.js";
 import _IMAGE from  "./IMAGE.js";
 import _INGREDIENT from  "./INGREDIENT.js";
@@ -19,6 +20,10 @@ import _POST_REPORT from  "./POST_REPORT.js";
 import _RECIPE from  "./RECIPE.js";
 import _REVIEW from  "./REVIEW.js";
 import _USER from  "./USER.js";
+import _cocktaildb_recipeset from  "./cocktaildb_recipeset.js";
+import _cocktaildbset from  "./cocktaildbset.js";
+import _ninja_recipe from  "./ninja_recipe.js";
+import _ninjaset from  "./ninjaset.js";
 
 export default function initModels(sequelize) {
   const API_cocktaildb_en = _API_cocktaildb_en.init(sequelize, DataTypes);
@@ -28,6 +33,7 @@ export default function initModels(sequelize) {
   const COCKTAIL = _COCKTAIL.init(sequelize, DataTypes);
   const COCKTAIL_LIKE = _COCKTAIL_LIKE.init(sequelize, DataTypes);
   const COCKTAIL_REPORT = _COCKTAIL_REPORT.init(sequelize, DataTypes);
+  const COCKTAIL_SAVE = _COCKTAIL_SAVE.init(sequelize, DataTypes);
   const COLOR = _COLOR.init(sequelize, DataTypes);
   const IMAGE = _IMAGE.init(sequelize, DataTypes);
   const INGREDIENT = _INGREDIENT.init(sequelize, DataTypes);
@@ -40,11 +46,13 @@ export default function initModels(sequelize) {
   const RECIPE = _RECIPE.init(sequelize, DataTypes);
   const REVIEW = _REVIEW.init(sequelize, DataTypes);
   const USER = _USER.init(sequelize, DataTypes);
+  const cocktaildb_recipeset = _cocktaildb_recipeset.init(sequelize, DataTypes);
+  const cocktaildbset = _cocktaildbset.init(sequelize, DataTypes);
+  const ninja_recipe = _ninja_recipe.init(sequelize, DataTypes);
+  const ninjaset = _ninjaset.init(sequelize, DataTypes);
 
-  COCKTAIL.belongsToMany(INGREDIENT, { as: 'INO_INGREDIENTs', through: RECIPE, foreignKey: "RNO", otherKey: "INO" });
   COCKTAIL.belongsToMany(USER, { as: 'UNO_USERs', through: COCKTAIL_LIKE, foreignKey: "CNO", otherKey: "UNO" });
   COCKTAIL.belongsToMany(USER, { as: 'UNO_USER_COCKTAIL_REPORTs', through: COCKTAIL_REPORT, foreignKey: "CNO", otherKey: "UNO" });
-  INGREDIENT.belongsToMany(COCKTAIL, { as: 'RNO_COCKTAILs', through: RECIPE, foreignKey: "INO", otherKey: "RNO" });
   POST.belongsToMany(USER, { as: 'UNO_USER_POST_LIKEs', through: POST_LIKE, foreignKey: "PNO", otherKey: "UNO" });
   POST.belongsToMany(USER, { as: 'UNO_USER_POST_REPORTs', through: POST_REPORT, foreignKey: "PNO", otherKey: "UNO" });
   USER.belongsToMany(COCKTAIL, { as: 'CNO_COCKTAILs', through: COCKTAIL_LIKE, foreignKey: "UNO", otherKey: "CNO" });
@@ -57,12 +65,12 @@ export default function initModels(sequelize) {
   COCKTAIL.hasMany(COCKTAIL_REPORT, { as: "COCKTAIL_REPORTs", foreignKey: "CNO"});
   COLOR.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
   COCKTAIL.hasMany(COLOR, { as: "COLORs", foreignKey: "CNO"});
+  INGREDIENT.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
+  COCKTAIL.hasMany(INGREDIENT, { as: "INGREDIENTs", foreignKey: "CNO"});
   POST.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
   COCKTAIL.hasMany(POST, { as: "POSTs", foreignKey: "CNO"});
-  RECIPE.belongsTo(COCKTAIL, { as: "RNO_COCKTAIL", foreignKey: "RNO"});
-  COCKTAIL.hasMany(RECIPE, { as: "RECIPEs", foreignKey: "RNO"});
-  RECIPE.belongsTo(INGREDIENT, { as: "INO_INGREDIENT", foreignKey: "INO"});
-  INGREDIENT.hasMany(RECIPE, { as: "RECIPEs", foreignKey: "INO"});
+  RECIPE.belongsTo(COCKTAIL, { as: "CNO_COCKTAIL", foreignKey: "CNO"});
+  COCKTAIL.hasMany(RECIPE, { as: "RECIPEs", foreignKey: "CNO"});
   REVIEW.belongsTo(PLACE, { as: "PLACE", foreignKey: "PLACE_ID"});
   PLACE.hasMany(REVIEW, { as: "REVIEWs", foreignKey: "PLACE_ID"});
   POST_LIKE.belongsTo(POST, { as: "PNO_POST", foreignKey: "PNO"});
@@ -81,6 +89,8 @@ export default function initModels(sequelize) {
   USER.hasMany(COCKTAIL_LIKE, { as: "COCKTAIL_LIKEs", foreignKey: "UNO"});
   COCKTAIL_REPORT.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(COCKTAIL_REPORT, { as: "COCKTAIL_REPORTs", foreignKey: "UNO"});
+  COCKTAIL_SAVE.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
+  USER.hasMany(COCKTAIL_SAVE, { as: "COCKTAIL_SAVEs", foreignKey: "UNO"});
   POST.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(POST, { as: "POSTs", foreignKey: "UNO"});
   POST_LIKE.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
@@ -91,6 +101,10 @@ export default function initModels(sequelize) {
   USER.hasMany(POST_REPORT, { as: "POST_REPORTs", foreignKey: "UNO"});
   REVIEW.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(REVIEW, { as: "REVIEWs", foreignKey: "UNO"});
+  cocktaildb_recipeset.belongsTo(cocktaildbset, { as: "CNO_cocktaildbset", foreignKey: "CNO"});
+  cocktaildbset.hasMany(cocktaildb_recipeset, { as: "cocktaildb_recipesets", foreignKey: "CNO"});
+  ninja_recipe.belongsTo(ninjaset, { as: "CNO_ninjaset", foreignKey: "CNO"});
+  ninjaset.hasMany(ninja_recipe, { as: "ninja_recipes", foreignKey: "CNO"});
 
   return {
     API_cocktaildb_en,
@@ -100,6 +114,7 @@ export default function initModels(sequelize) {
     COCKTAIL,
     COCKTAIL_LIKE,
     COCKTAIL_REPORT,
+    COCKTAIL_SAVE,
     COLOR,
     IMAGE,
     INGREDIENT,
@@ -112,5 +127,9 @@ export default function initModels(sequelize) {
     RECIPE,
     REVIEW,
     USER,
+    cocktaildb_recipeset,
+    cocktaildbset,
+    ninja_recipe,
+    ninjaset,
   };
 }
