@@ -75,19 +75,27 @@ const RecipeSubmit = ({ actionType }) => {
       })
         .then((response) => {
           console.log(response);
+          if (response.success) {
+            setToastState({
+              show: true,
+              message: "작성이 완료되었습니다.",
+              type: "success",
+              ms: 3000,
+            });
+            setRecipeImg("");
+            navigate(-1);
+          } else {
+            setToastState({
+              show: true,
+              message: "수정 실패.",
+              type: "error",
+              ms: 3000,
+            });
+          }
         })
         .catch((error) => {
           console.error(error);
         });
-
-      setToastState({
-        show: true,
-        message: "작성이 완료되었습니다.",
-        type: "success",
-        ms: 3000,
-      });
-      setRecipeImg("");
-      navigate(-1);
     } else if (actionType === "edit") {
       colorFilter();
       alcoholFilter();
@@ -115,10 +123,12 @@ const RecipeSubmit = ({ actionType }) => {
               type: "success",
               ms: 3000,
             });
+            setRecipeImg("");
+            navigate(-2);
           } else {
             setToastState({
               show: true,
-              message: "수정 실패.",
+              message: "수정 실패",
               type: "error",
               ms: 3000,
             });
@@ -126,9 +136,13 @@ const RecipeSubmit = ({ actionType }) => {
         })
         .catch((error) => {
           console.error(error);
+          setToastState({
+            show: true,
+            message: "수정 실패",
+            type: "error",
+            ms: 3000,
+          });
         });
-      setRecipeImg("");
-      navigate(-2);
     }
   };
 

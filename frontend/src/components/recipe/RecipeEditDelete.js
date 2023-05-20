@@ -49,10 +49,31 @@ const RecipeEditDelete = ({ options }) => {
   };
 
   const handleConform = () => {
-    deleteReipe(id);
-    ToastMessageDelete();
-    closeModal();
-    navigate(-1);
+    deleteReipe(id)
+      .then((response) => {
+        console.log(response);
+        if (response.success) {
+          ToastMessageDelete();
+          closeModal();
+          navigate(-1);
+        } else {
+          setToastState({
+            show: true,
+            message: "삭제 실패.",
+            type: "error",
+            ms: 3000,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        setToastState({
+          show: true,
+          message: "삭제 실패.",
+          type: "error",
+          ms: 3000,
+        });
+      });
   };
 
   const DeleteModal = ({ handleClose }) => {

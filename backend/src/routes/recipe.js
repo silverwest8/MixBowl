@@ -144,7 +144,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
     data.name = cocktail.NAME;
     data.alcoholic = cocktail.ALCOHOLIC;
     data.instruction = cocktail.INSTRUCTION;
-    data.image = cocktail.INAGE_PATH
+    data.image = cocktail.INAGE_PATH ? cocktail.INAGE_PATH : null
 
     // color
     for (let i = 0; i < color.length; i++) {
@@ -161,6 +161,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
       };
       data.ingred.push(temp);
     }
+    console.log(data);
     return res
       .status(200)
       .json({ success: true, message: 'Recipe get 성공', data });
@@ -272,8 +273,8 @@ router.delete('/:cocktailId', async (req, res) => {
 
     // file system에서 이미지파일 삭제
     if (cocktail.IMAGE_PATH) {
-      fs.unlinkSync(oldFilePath);
       const oldFilePath = `./${cocktail.IMAGE_PATH}`;
+      fs.unlinkSync(oldFilePath);
       console.log(oldFilePath);
     }
     await cocktail.destroy();
