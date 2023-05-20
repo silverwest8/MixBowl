@@ -1,18 +1,18 @@
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import sql from "../../database/sql";
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import sql from '../../database/sql';
 dotenv.config();
 
-export function sign(username) {
+export function sign(userNumber) {
   // Access 토큰 생성 코드
   const payload = {
-    type: "JWT",
-    nickname: username,
+    type: 'JWT',
+    unum: userNumber,
   };
 
   return jwt.sign(payload, process.env.SECRET_KEY, {
-    expiresIn: "1h",
-    issuer: "MixBowl",
+    expiresIn: '1h',
+    issuer: 'MixBowl',
   });
 }
 
@@ -22,12 +22,12 @@ export function accessVerify(token) {
   try {
     decoded = jwt.verify(token, process.env.SECRET_KEY);
     return {
-      ok: true,
-      nickname: decoded.nickname[0]["NICKNAME"],
+      success: true,
+      unum: decoded.unum,
     };
   } catch (error) {
     return {
-      ok: false,
+      success: false,
       message: error.message,
     };
   }
@@ -36,27 +36,18 @@ export function accessVerify(token) {
 export function refresh() {
   // Refresh 토큰 생성 코드
   return jwt.sign({}, process.env.SECRET_KEY, {
-    expiresIn: "14d",
-    issuer: "MixBowl",
+    expiresIn: '14d',
+    issuer: 'MixBowl',
   });
 }
 
 //토큰 header에 주고, db 내 refresh 토큰으로 확인
-export async function refreshVerify(token, username) {
+export async function refreshVerify(ref_token) {
   //Refresh 토큰 확인 코드
   //redis 도입하면 좋을듯
   try {
-    const refToken = await sql.getToken(username);
-    if (token === refToken) {
-      try {
-        jwt.verify(token, process.env.SECRET_KEY);
-        return true;
-      } catch (error) {
-        return false;
-      }
-    } else {
-      return false;
-    }
+    jwt.verify(ref_token, process.env.SECRET_KEY);
+    return true;
   } catch (error) {
     return false;
   }
@@ -70,41 +61,46 @@ export const refresh_new = async (req, res) => {
 
     const accessResult = accessVerify(access);
     const decodeAccess = jwt.decode(access);
+    console.log(decodeAccess.unum);
 
     if (decodeAccess === null) {
       res.status(401).send({
-        ok: false,
-        message: "No Authorization for Access Token",
+        success: false,
+        message: 'No Authorization for Access Token',
       });
-    }
+    } else {
+      const refreshResult = refreshVerify(refresh, decodeAccess.unum);
 
-    const refreshResult = refreshVerify(refresh, decodeAccess.nickname);
-
-    if (accessResult.ok === false && accessResult.message === "jwt expired") {
-      if (refreshResult.ok === false) {
-        res.status(401).send({
-          ok: false,
-          message: "No Authorization, MAKE A NEW LOGIN",
+      if (accessResult.success === false && accessResult.message === 'jwt expired') {
+        if (refreshResult.success === false) {
+          res.status(401).send({
+            success: false,
+            message: 'No Authorization, MAKE A NEW LOGIN',
+          });
+        } else {
+          //refresh token이 유효하므로, 새로운 access token 발급
+          const newAccessToken = sign(decodeAccess.unum);
+          res.status(200).send({
+            success: true,
+            accessToken: newAccessToken,
+          });
+        }
+      } else if (accessResult.message === 'invalid signature') {
+        res.status(403).send({
+          success: false,
+          message: 'Invalid Access Token',
         });
       } else {
-        //refresh token이 유효하므로, 새로운 access token 발급
-        const newAccessToken = sign(req.body.nickname);
-
-        res.stauts(200).send({
-          ok: true,
-          nickname: req.body.nickname,
+        res.status(202).send({
+          success: false,
+          message: 'Access Token is not expired',
         });
       }
-    } else {
-      res.status(400).send({
-        ok: false,
-        message: "Access Token is not expired",
-      });
     }
   } else {
     res.status(400).send({
-      ok: false,
-      message: "Access token and Refresh Token are needed for refresh",
+      success: false,
+      message: 'Access token and Refresh Token are needed for refresh',
     });
   }
 };

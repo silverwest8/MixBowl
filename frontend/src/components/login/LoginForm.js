@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { authState } from "../../store/auth";
+import { setToken } from "../../utils/token";
 import Input from "../common/Input";
 import styled from "styled-components";
+import axios from "axios";
+import { FaInfoCircle } from "react-icons/fa";
 
-const LoginForm = () => {
+const LoginForm = ({ handleClose }) => {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
@@ -15,6 +18,8 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
+  const [failMessage, setFailMessage] = useState("");
+  const [params] = useSearchParams();
   const navigate = useNavigate();
   const setAuthState = useSetRecoilState(authState);
   const onChange = (e) => {
@@ -42,13 +47,29 @@ const LoginForm = () => {
     }
     setMessages({
       email: "",
-      pasasword: "",
+      password: "",
     });
-    // TODO: 로그인 API 호출
-    setAuthState({
-      isLoggedin: true,
-    });
-    navigate("/");
+    try {
+      const { data } = await axios.post("/api/users/login", {
+        email,
+        password,
+      });
+      if (data.success) {
+        setAuthState({
+          isLoggedin: true,
+        });
+        setToken({
+          accessToken: data.tokens.token.accessToken,
+          refreshToken: data.tokens.token.refreshToken,
+        });
+        if (handleClose) handleClose();
+        navigate(params.get("return_url") ? params.get("return_url") : "/");
+      } else {
+        setFailMessage("아이디 또는 비밀번호를 확인해주세요.");
+      }
+    } catch {
+      setFailMessage("아이디 또는 비밀번호를 확인해주세요.");
+    }
   };
   return (
     <Form onSubmit={onSubmit}>
@@ -69,16 +90,17 @@ const LoginForm = () => {
         message={messages.password}
         messageType="error"
       />
+      {failMessage && (
+        <p className="fail-message">
+          <FaInfoCircle />
+          {failMessage}
+        </p>
+      )}
       <Button>로그인</Button>
-      <div className="link-wrapper">
-        <Link to="/login" className="find-pwd-link">
-          비밀번호를 잊으셨나요?
-        </Link>
-        <span />
-        <Link to="/register" className="register-link">
-          회원가입
-        </Link>
-      </div>
+      <Link className="link-wrapper" to="/register">
+        <span>아직 회원이 아니신가요?</span>
+        <span className="register">회원가입하기</span>
+      </Link>
     </Form>
   );
 };
@@ -90,19 +112,21 @@ const Form = styled.form`
   width: 100%;
   .link-wrapper {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     justify-content: center;
+    align-items: center;
     font-size: 0.875rem;
-    .find-pwd-link {
-      color: ${({ theme }) => theme.color.lightGray};
-    }
-    .register-link {
+    color: ${({ theme }) => theme.color.lightGray};
+    .register {
       color: ${({ theme }) => theme.color.secondGold};
     }
-    span {
-      width: 1px;
-      background-color: ${({ theme }) => theme.color.gray};
-    }
+  }
+  .fail-message {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: ${({ theme }) => theme.color.red};
   }
 `;
 

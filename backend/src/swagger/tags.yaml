@@ -1,11 +1,11 @@
 # Tags for Swagger
 
 tags:
-  - name: user
+  - name: users
     description: Operations about users
-  - name : recipe
+  - name: recipes
     description: Operation about recipes
-  - name : post
+  - name: communities
     description: Operation about community posting
-  - name : map
-    description: Operation about map  
+  - name: reviews
+    description: Operation about review

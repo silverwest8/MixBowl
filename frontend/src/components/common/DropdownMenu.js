@@ -13,8 +13,9 @@ const DropdownMenu = ({ options }) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = (e) => {
     setAnchorEl(null);
+    console.log(e);
   };
 
   return (
@@ -31,7 +32,11 @@ const DropdownMenu = ({ options }) => {
           padding: 0,
         }}
       >
-        <FaEllipsisV />
+        <FaEllipsisV
+          style={{
+            fontSize: "1rem",
+          }}
+        />
       </IconButton>
       <Menu
         id="long-menu"
@@ -44,8 +49,9 @@ const DropdownMenu = ({ options }) => {
         PaperProps={{
           style: {
             color: "white",
-            width: "6.875rem",
+            width: "6rem",
             borderRadius: "12px",
+
             backgroundColor: theme.color.darkGray,
           },
         }}
@@ -57,6 +63,7 @@ const DropdownMenu = ({ options }) => {
             onClick={handleClose}
             sx={{
               justifyContent: "center",
+              fontSize: "0.875rem",
               ":hover": {
                 color: theme.color.primaryGold,
               },

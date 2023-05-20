@@ -4,22 +4,32 @@ import { FaTimesCircle, FaSearch } from "react-icons/fa";
 const SearchBar = ({
   value,
   name,
-  placholder,
-  showSearchButton,
-  onClick,
+  placeholder,
+  showCloseButton,
+  onClear,
+  onSearch,
   onChange,
+  disabled,
 }) => {
+  const onKeyDown = (e) => {
+    if (e.keyCode === 13) onSearch();
+  };
   return (
     <SearchBarBox>
+      <FaSearch />
       <input
+        disabled={disabled !== undefined ? disabled : false}
         value={value}
         name={name}
-        placeholder={placholder}
+        placeholder={placeholder}
         onChange={onChange}
+        onKeyDown={onKeyDown}
       />
-      <button onClick={onClick}>
-        {showSearchButton ? <FaSearch /> : <FaTimesCircle />}
-      </button>
+      {showCloseButton && (
+        <button onClick={onClear}>
+          <FaTimesCircle />
+        </button>
+      )}
     </SearchBarBox>
   );
 };
@@ -27,18 +37,21 @@ const SearchBar = ({
 const SearchBarBox = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.7rem 1.25rem;
+  gap: 0.4rem;
+  padding: 0.5rem 0.875rem;
   border-radius: 50px;
+  width: 100%;
+  background-color: ${({ theme }) => theme.color.black};
   border: 2px solid ${({ theme }) => theme.color.primaryGold};
   & > input {
     flex-grow: 1;
+    font-size: 0.875rem;
   }
   & > input::placeholder {
     color: ${({ theme }) => theme.color.lightGray};
   }
   svg {
-    font-size: 1.25rem;
+    font-size: 1rem;
     color: ${({ theme }) => theme.color.primaryGold};
   }
 `;

@@ -1,0 +1,241 @@
+# recipes api for swagger
+
+paths:
+  /recipes:
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 작성
+      description: ''
+      operationId: createRecpie
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createRecipe'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/{cocktailId}:
+    get:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 가져오기(수정을 위해)
+      description: ''
+      operationId: getRecipe
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          example: 3
+          description: 가져올 레시피 id
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getRecipe'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 수정
+      description: ''
+      operationId: updateRecipe
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          example: 3
+          description: 변경하려는 레시피 id
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateRecipe'
+
+    delete:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 삭제
+      description: ''
+      operationId: deleteRecpie
+      parameters:
+        - in: path
+          name: cocktailId
+          description: 게시글 ID
+          example: 3
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/list/filter:
+    get:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 목록
+      description: ''
+      operationId: getRecipeList
+      parameters:
+        - in: query
+          name: max
+          type: integer
+          description: 최대 도수
+          example: 20
+        - in: query
+          name: min
+          type: integer
+          description: 최소 도수
+          example: 3
+        - in: query
+          name: color
+          type: string
+          description: 색상, 최대 몇개?, 1-빨강 2-주황 3-노랑 4-초록 5-파랑 6-보라 7-분홍 8-검정 9-갈색 10-회색 11-흰색 12-무색
+          example: 1
+        - in: query
+          name: search
+          type: string
+          description: 검색키워드
+          example: 진
+        - in: query
+          name: sort
+          type: string
+          description: 정렬기준
+          example: like, newest
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getRecipeList'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/detail/{cocktailId}:
+    get:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 상세
+      description: ''
+      operationId: GetRecipeDetail
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 10
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/recipeDetail'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/detail/review/{cocktailId}:
+    get:
+      tags:
+        - recipes
+      summary: 칵테일 레시피에 대한 리뷰 상세
+      description: ''
+      operationId: GetRecipeDetailReview
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 10
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/recipeDetailReview'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/image/{cocktailId}:
+    get:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 이미지
+      description: ''
+      operationId: GetRecipeImage
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 11000
+      responses:
+        '200':
+          description: ''
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
