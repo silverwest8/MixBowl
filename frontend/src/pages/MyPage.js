@@ -13,6 +13,8 @@ import WithdrawModal from "../components/mypage/WithdrawModal";
 import { useEffect, useState } from "react";
 import ReviewItem from "../components/mypage/ReviewItem";
 import LevelInfoModal from "../components/mypage/LevelInfoModal";
+import NameChangeModal from "../components/mypage/NameChangeModal";
+import VerifyingModal from "../components/mypage/VerifyingModal";
 
 const dummyData = {
   uname: "유저123",
@@ -340,7 +342,15 @@ const MyPage = () => {
             <div>
               <span>{dummyData.uname}</span>님의 마이페이지
             </div>
-            <FaPen className="icon" />
+            <FaPen
+              className="icon"
+              onClick={() => {
+                openModal(NameChangeModal, {
+                  handleClose: closeModal,
+                  username,
+                });
+              }}
+            />
           </TopSection>
           <LevelSection>
             <div>
