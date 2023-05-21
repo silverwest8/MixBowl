@@ -1,13 +1,11 @@
 'use strict';
 
 import express from 'express';
-import dotenv from 'dotenv';
 import sql from '../database/sql';
 import checkAccess from '../middleware/checkAccessToken';
 import multer from 'multer';
 import POST from '../models/POST';
 import fs from 'fs';
-dotenv.config();
 
 const router = express.Router();
 
@@ -111,14 +109,12 @@ router.get('/:postId', async (req, res) => {
         content: postData.CONTENT,
         postId: postData.PNO,
       });
-      break;
     case 2:
       return res.send({
         like: postData.LIKE,
         content: postData.CONTENT,
         postId: postData.PNO,
       });
-      break;
     case 3:
       return res.send({
         title: postData.TITLE,
@@ -127,7 +123,6 @@ router.get('/:postId', async (req, res) => {
         cno: postData.CNO,
         postId: postData.PNO,
       });
-      break;
     case 4:
       return res.send({
         title: postData.TITLE,
@@ -135,7 +130,6 @@ router.get('/:postId', async (req, res) => {
         content: postData.CONTENT,
         postId: postData.PNO,
       });
-      break;
   }
 });
 router.get('/image', async (req, res) => {

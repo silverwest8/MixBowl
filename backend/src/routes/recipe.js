@@ -3,14 +3,12 @@
 import express from 'express';
 import { db, sequelize } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
-import dotenv from 'dotenv';
 import axios from 'axios';
 import multer from 'multer';
 import fs from 'fs';
 import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
 
-dotenv.config();
 const router = express.Router();
 
 //multer 미들웨어 설정

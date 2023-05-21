@@ -1,6 +1,3 @@
-import mysql from 'mysql2';
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import * as jwt_module from '../routes/jwt/jwt-util';
 import USER from '../models/USER';
 import REVIEW from '../models/REVIEW';
@@ -11,7 +8,6 @@ import COCKTAIL from '../models/COCKTAIL';
 import POST_LIKE from '../models/POST_LIKE';
 import fs from 'fs';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
-dotenv.config(); //JWT 키불러오기
 
 const sql = {
   getUser: async () => {
