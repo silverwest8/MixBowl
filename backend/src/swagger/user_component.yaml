@@ -109,3 +109,27 @@ components:
         message:
           type: string
           example: baronnwer == true => 인증 완료
+
+    getUser:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 회원 정보 조회 성공
+        data:
+          type: object
+          properties:
+            UNO:
+              type: string
+              example: 6
+            NICKNAME:
+              type: string
+              example: cocktell
+            EMAIL:
+              type: string
+              example: cocktell@naver.com
+            LEVEL:
+              type: string
+              example: 5
