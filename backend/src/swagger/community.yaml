@@ -1,5 +1,5 @@
 paths:
-  /communities:
+  /communities?category={category}:
     post:
       tags:
         - communities
@@ -7,22 +7,20 @@ paths:
       description: 1 - 칵테일 추천 || 2 - 질문과 답변 || 3 - 칵테일 리뷰 || 4 - 자유
       operationId: createPost
       parameters:
-        - in: path
-          name: category_id
+        - in: query
+          name: category
           description: 카테고리 ID
+          type: integer
           example: 1
           required: true
       requestBody:
         required: true
-        description: category_id에 따른 예시를 하나에 모두 적었습니다. category_id가 3인 경우에만 like(칵테일 추천)를 씁니다.
+        description: category_id에 따른 예시를 하나에 모두 적었습니다. 그리고, stringify로 묶어주세요! review에서 어떻게 전송했는지 보시면 될것 같습니다. (이미지랑/일반 데이터랑 구분하기 위해서)
         content:
           application/json:
             schema:
               type: object
               properties:
-                category_id:
-                  type: integer
-                  example: 1
                 title:
                   type: string
                   example: 1-이 칵테일을 추천합니다 / 2-질문글은 제목이 없습니다 / 3-이 칵테일을 리뷰합니다(이 경우에만 like를 씁니다) / 4-자유글입니다
@@ -33,23 +31,114 @@ paths:
                   type: text
                   example: multipart/form-data 형식으로 form태그인가?로 최대 5개까지 올려주세요. 이거는 req에 따로 포함하지 않고 form태그로 파일만 올려주시면됩니다
                 like:
-                  type: boolean
-                  example: true
+                  type: integer
+                  example: 0
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Success"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
+  /communities/cocktails:
+    get:
+      tags:
+        - communities
+      summary: 검색을 위한 칵테일 목록 가져오기
+      description: 칵테일 추천 글에서 칵테일 이름들을 API를 클라이언트에게 전송하여 제목에 쓸수 있도록 +'/'를 이용하여 CNO도 보냅니다.
+      operationId: getCocktails
+      parameters:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Operation Success
+                  data:
+                    type: array
+                    items:
+                      type: String
+                    example:
+                      [
+                        'blahblah_cocktail/CNO',
+                        'blah_cocktail/CNO',
+                        'some_cocktail/CNO',
+                      ]
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+  /communities/like/{pno}:
+    post:
+      tags:
+        - communities
+      summary: 커뮤니티 게시글 좋아요
+      description: 좋아요 누를 때마다 +1 다시 누르면 -1
+      operatinoId: likePost
+      parameters:
+        - in: path
+          name: pno
+          description: 포스트 숫자 (PK)
+          type: integer
+          example: 15
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
 
   /communities/{postId}:
+    get:
+      tags:
+        - communities
+      summary: 커뮤니티 한개의 게시글 가져오기
+      description:
+      operationId: getOnePost
+      parameters:
+        - in: path
+          name: postId
+          description: 포스트 고유 번호
+          type: integer
+          example: 15
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
     put:
       tags:
         - communities
@@ -78,14 +167,14 @@ paths:
                   type: text
                   example: multipart/form-data 형식으로 form태그인가?로 최대 5개까지 올려주세요. 이거는 req에 따로 포함하지 않고 form태그로 파일만 올려주시면됩니다
                 like:
-                  type: boolean
-                  example: true
+                  type: integer
+                  example: 0
 
     delete:
       tags:
         - communities
       summary: 커뮤니티 글 삭제
-      description: ""
+      description: ''
       operationId: deletePost
       parameters:
         - in: path
@@ -96,18 +185,18 @@ paths:
             type: integer
           required: true
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Success"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /communities/getHotPost:
     get:
@@ -118,18 +207,18 @@ paths:
       operationId: communityGetHotPost
       parameters:
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getHotPost"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/getHotPost'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
   /communities/getNewPost/{category_name}:
     get:
@@ -147,26 +236,26 @@ paths:
             type: integer
           required: true
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getNewPost"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/getNewPost'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
-  /communities/getPostList/{category_name}:
+  /communities/PostList/{category_name}:
     get:
       tags:
         - communities
       summary: 전체 글, 카테고리별 글 조회
-      description: "query로 검색 필터링 생각중입니다"
-      operationId: getReview
+      description: 'query로 검색 필터링 생각중입니다'
+      operationId: getCommunityPost
       parameters:
         - in: path
           name: category_name
@@ -181,43 +270,43 @@ paths:
           schema:
             type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/communityGetTotal"
-        "400":
-          description: ""
+                $ref: '#/components/schemas/communityGetTotal'
+        '400':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Fail"
+                $ref: '#/components/schemas/Fail'
 
 /communities/getTotal:
-    get:
-      tags:
-        - communities
-      summary: 전체 글, 카테고리별 글 조회
-      description: "query로 검색 필터링 생각중입니다 - 근데 기능 중에 있나요?"
-      operationId: getReview
-      parameters:
-        - in: query
-          name: search
-          description: 검색키워드
-          example: 피치크러쉬
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/communityGetTotal"
-        "400":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fail"
+  get:
+    tags:
+      - communities
+    summary: 전체 글, 카테고리별 글 조회
+    description: 'query로 검색 필터링 생각중입니다 - 근데 기능 중에 있나요?'
+    operationId: getReview
+    parameters:
+      - in: query
+        name: search
+        description: 검색키워드
+        example: 피치크러쉬
+        schema:
+          type: string
+    responses:
+      '200':
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/communityGetTotal'
+      '400':
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fail'

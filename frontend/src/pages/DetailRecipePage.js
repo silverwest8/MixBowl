@@ -1,5 +1,6 @@
 import Title from "../components/common/Title";
 import RecipeDetailCard from "../components/recipe/RecipeDetailCard";
+import RecipeComment from "../components/recipe/RecipeComment";
 
 const DetailRecipePage = () => {
   return (
@@ -8,7 +9,9 @@ const DetailRecipePage = () => {
       <section>
         <RecipeDetailCard></RecipeDetailCard>
       </section>
-      <section>리뷰 작성하기 닉네임 리뷰리뷰</section>
+      <section>
+        <RecipeComment></RecipeComment>
+      </section>
     </main>
   );
 };

@@ -6,6 +6,9 @@ tags:
   - name: recipes
     description: Operation about recipes
   - name: communities
-    description: Operation about community posting
+    description: Operation about communities
   - name: reviews
-    description: Operation about review
+    description: Operation about reviews
+  - name: mypages
+    description: Operation about mypages
+

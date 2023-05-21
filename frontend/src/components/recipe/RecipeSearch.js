@@ -1,18 +1,19 @@
-import { useState } from "react";
 import styled from "styled-components";
 import SearchBar from "../common/SearchBar";
+import { useRecoilState } from "recoil";
+import { searchState } from "../../store/recipe";
 
 const RecipeSearch = (props) => {
-  const [searchValue, setSearchValue] = useState("");
+  const [search, setSearch] = useRecoilState(searchState);
 
   const handleInputChange = (e) => {
-    setSearchValue(e.target.value);
+    setSearch(e.target.value);
   };
 
   return (
     <SearchBox>
       <SearchBar
-        value={searchValue}
+        value={search}
         placeholder={props.placeholder}
         onChange={handleInputChange}
         showCloseButton={false}
