@@ -9,6 +9,9 @@ components:
         message:
           type: string
           example: Mypage recipes get 성공
+        count:
+          type: integer
+          example: 10
         list:
           type: array
           items:
@@ -40,6 +43,9 @@ components:
         message:
           type: string
           example: Mypage posts get 성공
+        count:
+          type: integer
+          example: 10
         list:
           type: array
           items:
@@ -53,10 +59,13 @@ components:
                 example: 4
               title:
                 type: string
-                example: 자유글 제목 예시
+                example: 제목입니다.(질문글을 제목이 없으며, 칵테일 리뷰글은 제목이 칵테일 이름입니다.)
               content:
                 type: string
-                example: 자유글 내용 예시1
+                example: 내용입니다.(질문글은 내용만 있습니다.)
+              cocktailId:
+                type: integer
+                example: 22
               like:
                 type: integer
                 example: 10
@@ -74,11 +83,17 @@ components:
         message:
           type: string
           example: Mypage replies get 성공
+        count:
+          type: integer
+          example: 10
         list:
           type: array
           items:
             type: object
             properties:
+              postId:
+                type: integer
+                example: 1
               content:
                 type: string
                 example: 댓글입니다
@@ -96,17 +111,23 @@ components:
         message:
           type: string
           example: Mypage reviews get 성공
+        count:
+          type: integer
+          example: 10
         list:
           type: array
           items:
             type: object
             properties:
+              placeId:
+                type: string
+                example: 1893975158
+              placeName:
+                type: string
+                example: 비원
               text:
                 type: string
                 example: 성대 분위기 좋은 루프탑 top1\n선선한 바람 느끼면서 와인 맥주 칵테일 드실분들 가면 기분 진짜 좋아요\n\n야외테라스에 앉아 마시는 맥주란 ❣️💯\n감튀 진짜 맛있어요
-              place:
-                type: string
-                example: 비원
               keyword:
                 type: array
                 items:

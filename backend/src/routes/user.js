@@ -7,6 +7,7 @@ import checkAccess from '../middleware/checkAccessToken';
 import { refresh_new } from './jwt/jwt-util';
 import dotenv from 'dotenv';
 import * as validation from '../validation/user';
+import { db } from '../models';
 import nodemailer from 'nodemailer';
 import axios from 'axios';
 import iconv from 'iconv-lite';
@@ -108,6 +109,7 @@ router.post('/sendauthmail', async (req, res) => {
       return res.json({ success: true, message: '인증메일이 발송되었습니다.' });
     });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({
       success: false,
       message: '인증번호메일 발송에 실패하였습니다.',
