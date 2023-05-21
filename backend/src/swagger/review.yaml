@@ -143,10 +143,10 @@ paths:
       description: ''
       operationId: deleteReview
       parameters:
-        - in: cookie
+        - in: header
           name: refresh_token
           schema:
-            $ref: '#/components/schemas/Cookie'
+            $ref: '#/components/schemas/Token'
       responses:
         '200':
           description: ''

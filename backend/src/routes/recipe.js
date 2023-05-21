@@ -291,9 +291,10 @@ router.delete('/:cocktailId', async (req, res) => {
 
 router.get('/list/filter/:page', checkAccess, async (req, res) => {
   try {
+    const unit = 20;
     const page = Number(req.params.page);
-    const offset = 20 * (page - 1);
-    const limit = 20;
+    const offset = unit * (page - 1);
+    const limit = unit;
     const color = req.query.color
       ? JSON.parse(`{"color": ${req.query.color}}`).color
       : null;
