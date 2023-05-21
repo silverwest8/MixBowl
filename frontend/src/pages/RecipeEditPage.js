@@ -52,7 +52,7 @@ const RecipeEditPage = () => {
     try {
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/recipes/${id}`);
-      console.log(data);
+
       const imageExists = data.data.image;
 
       setAddName((prev) => ({

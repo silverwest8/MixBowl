@@ -16,8 +16,6 @@ const RecipeSubmit = ({ actionType }) => {
   const params = useParams();
   const id = params.id;
 
-  console.log(recipeImg);
-
   const handleSubmit = () => {
     if (addName === "") {
       setToastState({
