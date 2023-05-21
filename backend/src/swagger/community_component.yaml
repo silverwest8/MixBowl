@@ -58,15 +58,15 @@ components:
           items:
             type: object
             properties:
-              cagetory_name:
-                type: string
-                example: 자유게시판
+              cagetory:
+                type: integer
+                example: 1
               title:
                 type: string
                 example: 제목입니다(질문답변 카테고리 - 사용X)
               content:
                 type: string
-                example: 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?  내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 
+                example: 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?  내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?
               like:
                 type: integer
                 example: 10

@@ -6,10 +6,11 @@ import sql from '../database/sql';
 import checkAccess from '../middleware/checkAccessToken';
 import multer from 'multer';
 import POST from '../models/POST';
+import USER from '../models/USER';
+import POST_LIKE from '../models/POST_LIKE';
 import fs from 'fs';
 import { Sequelize } from 'sequelize';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
-import POST_LIKE from '../models/POST_LIKE';
 import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 dotenv.config();
 
@@ -136,7 +137,6 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         images: imageIdArr,
         isWriter: isWriter,
       });
-      break;
     case 2:
       return res.send({
         success: true,
@@ -146,7 +146,6 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         images: imageIdArr,
         isWriter: isWriter,
       });
-      break;
     case 3:
       return res.send({
         success: true,
@@ -159,7 +158,6 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         images: imageIdArr,
         isWriter: isWriter,
       });
-      break;
     case 4:
       return res.send({
         success: true,
@@ -170,7 +168,6 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         images: imageIdArr,
         isWriter: isWriter,
       });
-      break;
   }
 });
 
@@ -185,7 +182,35 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
       limit: limit,
       offset: offset,
     });
-    posts.forEach((val) => list.push(val.dataValues));
+
+    for (const val of posts) {
+      const user = await USER.findByPk(val.dataValues.UNO);
+      const likePost = await POST_LIKE.findAll({
+        attributes: [
+          'PNO',
+          [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES'],
+        ],
+        where: {
+          PNO: val.dataValues.PNO,
+        },
+        group: ['PNO'],
+      });
+
+      delete val.dataValues.UNO;
+      val.dataValues.UNO_USER = {
+        NICKNAME: user.NICKNAME,
+        LEVEL: user.LEVEL,
+      };
+
+      if (likePost.length !== 0) {
+        val.dataValues.LIKE = likePost[0].dataValues.LIKES;
+      } else {
+        val.dataValues.LIKE = 0;
+      }
+
+      list.push(val.dataValues);
+    }
+
     console.log(list);
   } catch (error) {
     console.log(error.message);
