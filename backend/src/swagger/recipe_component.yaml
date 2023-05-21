@@ -118,6 +118,9 @@ components:
                 3. 칠링된 칵테일잔에 얼음을 버리고 스트레이너를 대고 얼음을 걸러내며 음료를 따른다.
                 4. 레몬 껍질 1조각을 잔 30cm 위에서 가볍게 즙을 짠 뒤 잔 주변에 한바퀴 문지른다.
                 5. 잔에 그린올리브를 넣어 장식한다.
+            image: 
+              type: string
+              example: uploads/cocktailImage/20230520033533_RecipeEdit.jpg - (null일 경우 이미지 없는 칵테일임)
 
     updateRecipe:
       properties:

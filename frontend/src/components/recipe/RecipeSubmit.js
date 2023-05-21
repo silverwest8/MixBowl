@@ -1,13 +1,22 @@
 import styled from "styled-components";
-import { AddRecipeState } from "../../store/recipe";
-import { useNavigate } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { AddRecipeState, AddRecipeImgState } from "../../store/recipe";
+import { useNavigate, useParams } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { toastState } from "../../store/toast";
+import { postRecipe, editRecipe } from "../../api/recipeapi";
 
-const RecipeSubmit = () => {
-  const { addImg, addName, addColor, addItem, addAlcohol, addExplain } =
+const RecipeSubmit = ({ actionType }) => {
+  const navigate = useNavigate();
+  const colorNum = [];
+  let alcoholNum = 0;
+  const { addName, addColor, addItem, addAlcohol, addExplain } =
     useRecoilValue(AddRecipeState);
   const setToastState = useSetRecoilState(toastState);
+  const [recipeImg, setRecipeImg] = useRecoilState(AddRecipeImgState);
+  const params = useParams();
+  const id = params.id;
+
+  console.log(recipeImg);
 
   const handleSubmit = () => {
     if (addName === "") {
@@ -47,24 +56,117 @@ const RecipeSubmit = () => {
         type: "error",
         ms: 2000,
       });
-    } else {
-      setToastState({
-        show: true,
-        message: "작성이 완료되었습니다.",
-        type: "success",
-        ms: 3000,
-      });
-      navigate(-1);
+    } else if (actionType === "post") {
+      colorFilter();
+      alcoholFilter();
+      const ingred = addItem.map((item) => ({
+        name: item.addName,
+        amount: item.addAmount,
+        unit: item.addUnit,
+      }));
+
+      postRecipe({
+        name: addName,
+        color: colorNum,
+        ingred,
+        alcoholic: alcoholNum,
+        instruction: addExplain,
+        image: [recipeImg],
+      })
+        .then((response) => {
+          console.log(response);
+          if (response.success) {
+            setToastState({
+              show: true,
+              message: "작성이 완료되었습니다.",
+              type: "success",
+              ms: 3000,
+            });
+            setRecipeImg("");
+            navigate(-1);
+          } else {
+            setToastState({
+              show: true,
+              message: "수정 실패.",
+              type: "error",
+              ms: 3000,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else if (actionType === "edit") {
+      colorFilter();
+      alcoholFilter();
+      const ingred = addItem.map((item) => ({
+        name: item.addName,
+        amount: item.addAmount,
+        unit: item.addUnit,
+      }));
+
+      editRecipe({
+        recipeId: id,
+        name: addName,
+        color: colorNum,
+        ingred,
+        alcoholic: alcoholNum,
+        instruction: addExplain,
+        image: [recipeImg],
+      })
+        .then((response) => {
+          console.log(response);
+          if (response.success) {
+            setToastState({
+              show: true,
+              message: "수정이 완료되었습니다.",
+              type: "success",
+              ms: 3000,
+            });
+            setRecipeImg("");
+            navigate(-2);
+          } else {
+            setToastState({
+              show: true,
+              message: "수정 실패",
+              type: "error",
+              ms: 3000,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          setToastState({
+            show: true,
+            message: "수정 실패",
+            type: "error",
+            ms: 3000,
+          });
+        });
     }
   };
-  console.log(addImg);
-  console.log(addName);
-  console.log(addColor);
-  console.log(addItem);
-  console.log(addAlcohol);
-  console.log(addExplain);
 
-  const navigate = useNavigate();
+  const colorFilter = () => {
+    if (addColor.includes("red")) colorNum.push(1);
+    if (addColor.includes("orange")) colorNum.push(2);
+    if (addColor.includes("yellow")) colorNum.push(3);
+    if (addColor.includes("green")) colorNum.push(4);
+    if (addColor.includes("blue")) colorNum.push(5);
+    if (addColor.includes("purple")) colorNum.push(6);
+    if (addColor.includes("pink")) colorNum.push(7);
+    if (addColor.includes("black")) colorNum.push(8);
+    if (addColor.includes("brown")) colorNum.push(9);
+    if (addColor.includes("grey")) colorNum.push(10);
+    if (addColor.includes("white")) colorNum.push(11);
+    if (addColor.includes("transparent")) colorNum.push(12);
+  };
+
+  const alcoholFilter = () => {
+    if (addAlcohol.includes("낮음")) alcoholNum = 0;
+    if (addAlcohol.includes("보통")) alcoholNum = 1;
+    if (addAlcohol.includes("높음")) alcoholNum = 2;
+  };
+
   return (
     <>
       <Box>
