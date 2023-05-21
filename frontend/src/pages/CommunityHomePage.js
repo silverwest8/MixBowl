@@ -16,9 +16,9 @@ const dummyData = [
     id: 0,
     title:
       "제목 예시입니다. 만약 제목 길이가 아주 길다면 어떻게 될지 한 번 보도록 하겠습니다. 이런 식으로 길어진다면 글자수 제한을 해야 되겠죠.",
-    category: "자유게시판",
-    username: "user01",
-    userlevel: 3,
+    category: "free",
+    uname: "user01",
+    level: 3,
     liked: true,
     likes: 16,
     comments: 3,
@@ -28,9 +28,9 @@ const dummyData = [
   {
     id: 1,
     title: "두 번째 제목 예시",
-    category: "자유게시판",
-    username: "username10",
-    userlevel: 2,
+    category: "free",
+    uname: "username10",
+    level: 2,
     likes: 0,
     comments: 100,
     date: "5일 전",
@@ -40,11 +40,12 @@ const dummyData = [
   },
   {
     id: 2,
+    title: "",
     maintext:
       "질문글 예시입니다. 이런식으로 질문이 bold체로 다 들어가야 되겠죠. 질문의 경우 title이 길어지는 것으로 할까요 아니면 본문을 굵게 표현하는 것으로 할까요?",
-    category: "질문과 답변",
-    username: "한글닉네임열글자라면",
-    userlevel: 1,
+    category: "qna",
+    uname: "한글닉네임열글자라면",
+    level: 1,
     liked: true,
     likes: 1,
     comments: 0,
@@ -253,7 +254,7 @@ const NewPosts = styled.div`
   }
 `;
 
-const Button = styled.button`
+const Button = styled(Link)`
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   color: white;
   border-radius: 10px;
@@ -342,7 +343,7 @@ const CommunityHomePage = () => {
             ))}
           </section>
           <div>
-            <Button>더보기</Button>
+            <Button to="/community/board?category=all">더보기</Button>
           </div>
         </HotPosts>
         <NewPosts>

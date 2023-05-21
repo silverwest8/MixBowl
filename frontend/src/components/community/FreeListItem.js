@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 const FreeListItem = ({ data }) => {
   // TODO : 호버, 이미지처리
+  console.log(`${data.title}의 카테고리는 ${data.category}`);
   return (
     <ItemContainer to={`/community/${data.id}`}>
       <TopSection>
@@ -52,8 +53,8 @@ const FreeListItem = ({ data }) => {
         </ReactionContainer>
         <div className="userinfo">
           {data.date}
-          <span className="username">{data.username}</span>
-          <MemberBadge level={data.userlevel} />
+          <span className="username">{data.uname}</span>
+          <MemberBadge level={data.level} />
         </div>
       </BottomSection>
     </ItemContainer>
