@@ -1,0 +1,119 @@
+# review api for swagger
+paths:
+  /home/question:
+    get:
+      tags:
+        - home
+      summary: 답변을 기다리는 질문
+      description: ''
+      operationId: getHomeQuestion
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getHomeQuestion'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /home/cocktail:
+    get:
+      tags:
+        - home
+      summary: 이번 주 인기 칵테일 레시피
+      description: cocktailId는 이미지용, postId는 클릭 시 이동용
+      oprationId: getHomeCocktail
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getHomeCocktail'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /home/bar:
+    get:
+      tags:
+        - home
+      summary: 내 주변 칵테일 바
+      description: 지역 이름은 못
+      operationId: getHomeBar
+      parameters:
+        - in: query
+          name: query
+          description: ''
+          example: 칵테일바
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: x
+          description: 현재 위치 위도
+          example: 37.514322572335935
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: y
+          description: 현재 위치 경도
+          example: 127.06283102249932
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: radius
+          description: 반경
+          example: 20000
+          schema:
+            type: string
+        - in: query
+          name: sort
+          description: 정렬기준
+          schema:
+            type: string
+            enum: ['accuracy', 'distance']
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getHomeBar'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /home/community:
+    get:
+      tags:
+        - home
+      summary: 이번 주 커뮤니티 인기글
+      description: ''
+      operationId: getHomeCommunity
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getHomeCommunity'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
