@@ -1,14 +1,24 @@
 import styled from "styled-components";
 import { FaCocktail } from "react-icons/fa";
+import KakaoMap from "../cocktailbar/KakaoMap";
+import { useParams } from "react-router-dom";
+import MapSideInfo from "../cocktailbar/MapSideInfo";
 
 const HomeBar = ({ num }) => {
+  const params = useParams();
+
   return (
     <Section>
       <HomeTitleBox num={num}>
         <FaCocktail className="logo"></FaCocktail>
         <p>내 주변 칵테일 바</p>
       </HomeTitleBox>
-      <ItemBox>지도</ItemBox>
+      <Main>
+        <div className="wrapper">
+          <KakaoMap id={params.id} />
+          <MapSideInfo id={params.id} />
+        </div>
+      </Main>
     </Section>
   );
 };
@@ -41,6 +51,26 @@ const HomeTitleBox = styled.div`
   }
 `;
 
-const ItemBox = styled.div``;
+const Main = styled.main`
+  height: 30rem;
+  .wrapper {
+    display: flex;
+    height: 100%;
+  }
+  @media screen and (max-width: 920px) {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    .wrapper {
+      display: block;
+      flex-grow: 1;
+      position: relative;
+      overflow: hidden;
+    }
+  }
+  @media screen and (max-width: 840px) {
+    padding-top: 0;
+  }
+`;
 
 export default HomeBar;
