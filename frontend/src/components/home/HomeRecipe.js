@@ -1,11 +1,5 @@
 import styled from "styled-components";
 import { FaTrophy, FaThumbsUp, FaCommentDots } from "react-icons/fa";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/effect-coverflow";
-import "swiper/css/pagination";
-import { Navigation, EffectCoverflow, Pagination } from "swiper";
 
 const HomeRecipe = ({ num }) => {
   return (
@@ -14,46 +8,29 @@ const HomeRecipe = ({ num }) => {
         <FaTrophy className="logo"></FaTrophy>
         <p className="bold">이번주 인기 칵테일 레시피</p>
       </HomeTitleBox>
-      <Swiper
-        style={{
-          "--swiper-navigation-size": "2rem",
-          "--swiper-navigation-color": "#e9aa33",
-          "--swiper-pagination-color": "#e9aa33",
-        }}
-        slidesPerView={"auto"}
-        modules={[EffectCoverflow, Pagination]}
-        className="mySwiper"
-      >
-        {[1, 2, 3, 4].map((item) => {
-          return (
-            <SwiperSlide key={item}>
-              <ItemBox>
-                <p className="nickname">닉네임님의 레시피</p>
-                <div className="content">
-                  <img src="https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=465&q=80"></img>
-                  <p>
-                    이번주에 작성한 최근 좋아요한 리뷰 텍스트가 들어갑니다.
-                    이번주에 작성한 최근 좋아요한 리뷰 텍스트가 들어갑니다.
-                    이번주에 작성한 최근 좋아요한 리뷰 텍스트가 들어갑니다.
-                    이번주에 작성한 최근 좋아요한 리뷰 텍스트가 들어갑니다.
-                  </p>
-                </div>
-                <div className="info">
-                  <p>Old Fashioned</p>
-                  <div>
-                    <div className="thumbs">
-                      <FaThumbsUp /> 10
-                    </div>
-                    <div className="comment">
-                      <FaCommentDots /> 10
-                    </div>
-                  </div>
-                </div>
-              </ItemBox>
-            </SwiperSlide>
-          );
-        })}
-      </Swiper>
+      <ItemBox>
+        <p className="nickname">닉네임님의 레시피</p>
+        <div className="content">
+          <img src="https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=465&q=80"></img>
+          <p>
+            이번주에 작성한 최근 좋아요한 리뷰 텍스트가 들어갑니다. 이번주에
+            작성한 최근 좋아요한 리뷰 텍스트가 들어갑니다. 이번주에 작성한 최근
+            좋아요한 리뷰 텍스트가 들어갑니다. 이번주에 작성한 최근 좋아요한
+            리뷰 텍스트가 들어갑니다.
+          </p>
+        </div>
+        <div className="info">
+          <p>Old Fashioned</p>
+          <div>
+            <div className="thumbs">
+              <FaThumbsUp /> 10
+            </div>
+            <div className="comment">
+              <FaCommentDots /> 10
+            </div>
+          </div>
+        </div>
+      </ItemBox>
     </Section>
   );
 };
