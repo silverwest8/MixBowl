@@ -144,7 +144,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
     data.name = cocktail.NAME;
     data.alcoholic = cocktail.ALCOHOLIC;
     data.instruction = cocktail.INSTRUCTION;
-    data.image = cocktail.INAGE_PATH ? cocktail.INAGE_PATH : null
+    data.image = cocktail.IMAGE_PATH ? cocktail.IMAGE_PATH : null
 
     // color
     for (let i = 0; i < color.length; i++) {
