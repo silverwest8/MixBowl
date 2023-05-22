@@ -24,6 +24,21 @@ components:
               userLevel:
                 type: integer
                 example: 1
+              category:
+                type: integer
+                example: 1
+              title:
+                type: string
+                example: 게시글 제목명
+              createdAt:
+                type: string
+                example: 2023-05-15
+              content:
+                type: text
+                example: 게시글 내용
+              reply:
+                type: integer
+                example: 0
 
     getNewPost:
       properties:
