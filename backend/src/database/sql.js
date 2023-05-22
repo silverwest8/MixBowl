@@ -9,6 +9,7 @@ import KEYWORD from '../models/KEYWORD';
 import POST from '../models/POST';
 import COCKTAIL from '../models/COCKTAIL';
 import POST_LIKE from '../models/POST_LIKE';
+import POST_REPLY from '../models/POST_REPLY';
 import fs from 'fs';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 dotenv.config(); //JWT 키불러오기
@@ -207,6 +208,14 @@ const sql = {
     } catch (error) {
       console.log(error.message);
     }
+  },
+  postReply: async (req, pno) => {
+    const content = req.body.content;
+    await POST_REPLY.create({
+      UNO: req.user.dataValues.UNO,
+      PNO: pno,
+      CONTENT: content,
+    });
   },
   makePostLike: async (uno, pno) => {
     try {

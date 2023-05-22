@@ -8,6 +8,7 @@ import multer from 'multer';
 import POST from '../models/POST';
 import USER from '../models/USER';
 import POST_LIKE from '../models/POST_LIKE';
+import POST_REPLY from '../models/POST_REPLY';
 import fs from 'fs';
 import { Sequelize } from 'sequelize';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
@@ -103,7 +104,22 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
     console.log(error.message);
   }
 });
-
+router.post('/reply/:postId', checkAccess, async (req, res) => {
+  try {
+    const pno = req.params.postId;
+    await sql.postReply(req, pno);
+    res.send({
+      success: true,
+      message: 'REPLY post successfully',
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.send({
+      success: false,
+      message: 'REPLY post failed',
+    });
+  }
+});
 router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
   const postData = await POST.findByPk(pno);
@@ -112,6 +128,23 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
     attributes: [[Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
   });
   const likes = likePost[0].dataValues.LIKES;
+  const replies = await POST_REPLY.findAll({
+    where: {
+      PNO: pno,
+    },
+  });
+  const reply_arr = [];
+  for (const val of replies) {
+    const user = await USER.findByPk(val.dataValues.UNO);
+    delete val.dataValues.UNO;
+    val.dataValues.UNO_USER = {
+      NICKNAME: user.NICKNAME,
+      LEVEL: user.LEVEL,
+      CONTENT: val.dataValues.CONTENT,
+    };
+    reply_arr.push(val.dataValues.UNO_USER);
+  }
+  console.log(reply_arr);
   const imageIdArr = [];
   const imagesPromise = await IMAGE_COMMUNITY.findAll({
     where: {
@@ -136,6 +169,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        replies: reply_arr,
       });
     case 2:
       return res.send({
@@ -145,6 +179,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        replies: reply_arr,
       });
     case 3:
       return res.send({
@@ -157,6 +192,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        replies: reply_arr,
       });
     case 4:
       return res.send({
@@ -167,6 +203,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        replies: reply_arr,
       });
   }
 });
