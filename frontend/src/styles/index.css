@@ -283,3 +283,40 @@ video {
   position: relative;
 }
 
+.recipeSlider {
+  margin: 2rem auto 0;
+  max-width: 1180px;
+  display: flex;
+  align-items: center;
+}
+.recipeSlider .swiper-slide {
+  width: 36.5rem;
+  @media screen and (max-width: 428px) {
+    width: 24rem;
+  }
+}
+.recipeSlider .swiper-button-prev {
+  padding-right: 2rem;
+}
+.recipeSlider .swiper-button-next {
+  padding-left: 2rem;
+}
+
+.answerSlider {
+  margin: 2rem auto 0;
+  max-width: 1180px;
+  display: flex;
+  align-items: center;
+}
+.answerSlider .swiper-slide {
+  width: 21.5rem;
+  @media screen and (max-width: 428px) {
+    width: 20rem;
+  }
+}
+.answerSlider .swiper-button-prev {
+  padding-right: 2rem;
+}
+.answerSlider .swiper-button-next {
+  padding-left: 2rem;
+}
