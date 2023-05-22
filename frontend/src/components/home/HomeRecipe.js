@@ -70,7 +70,7 @@ const Section = styled.div`
 `;
 const Gradient = styled.div`
   width: 10%;
-  height: 90%;
+  height: 100%;
   position: absolute;
   top: 0;
   right: 0;
