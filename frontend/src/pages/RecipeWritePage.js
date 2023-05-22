@@ -14,7 +14,7 @@ const RecipeWritePage = () => {
         <RecipeExplain></RecipeExplain>
       </section>
       <section>
-        <RecipeSubmit></RecipeSubmit>
+        <RecipeSubmit actionType="post"></RecipeSubmit>
       </section>
     </main>
   );

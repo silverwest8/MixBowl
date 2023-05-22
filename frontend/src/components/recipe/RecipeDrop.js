@@ -43,8 +43,8 @@ const RecipeDrop = ({ options }) => {
 
   useEffect(() => {
     setArr({
-      latest: false,
-      recommendation: true,
+      latest: true,
+      recommendation: false,
     });
   }, []);
 

@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import { FaCheckCircle } from "react-icons/fa";
 import RecipeIngredients from "./RecipeIngredients";
 
-const RecipeExplain = ({ Alcohol, Explain }) => {
+const RecipeExplain = () => {
   const [{ addAlcohol }, setAddAlcohol] = useRecoilState(AddRecipeState);
   const [{ addExplain }, setAddExplain] = useRecoilState(AddRecipeState);
 

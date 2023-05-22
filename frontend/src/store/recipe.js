@@ -34,8 +34,8 @@ export const alcoholState = atom({
 export const sortState = atom({
   key: "sortState",
   default: {
-    latest: false,
-    recommendation: true,
+    latest: true,
+    recommendation: false,
   },
 });
 
@@ -62,4 +62,14 @@ export const AddRecipeState = atom({
     addAlcohol: "",
     addExplain: "",
   },
+});
+
+export const AddRecipeImgState = atom({
+  key: "AddRecipeImgState",
+  default: "",
+});
+
+export const RecipeRoportState = atom({
+  key: "RecipeRoportState",
+  default: 0,
 });
