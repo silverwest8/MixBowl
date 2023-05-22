@@ -10,10 +10,12 @@ import USER from '../models/USER';
 import POST_LIKE from '../models/POST_LIKE';
 import POST_REPLY from '../models/POST_REPLY';
 import fs from 'fs';
-import { Sequelize } from 'sequelize';
+import { Sequelize, Op } from 'sequelize';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 dotenv.config();
+const oneWeekAgo = new Date();
+oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
 const router = express.Router();
 
@@ -124,10 +126,22 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
   const postData = await POST.findByPk(pno);
   let isWriter = false;
+  // const likePost = await POST_LIKE.findAll({
+  //   attributes: [[Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
+  // });
   const likePost = await POST_LIKE.findAll({
-    attributes: [[Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
+    attributes: ['PNO', [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
+    where: {
+      PNO: pno,
+    },
+    group: ['PNO'],
   });
-  const likes = likePost[0].dataValues.LIKES;
+  let likes;
+  if (likePost.length === 0) {
+    likes = 0;
+  } else {
+    likes = likePost[0].dataValues.LIKES;
+  }
   const replies = await POST_REPLY.findAll({
     where: {
       PNO: pno,
@@ -314,6 +328,76 @@ router.get('/cocktails', async (req, res) => {
     res.json({
       success: false,
       message: "can't get cocktails in cocktail DB",
+    });
+  }
+});
+
+router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
+  try {
+    const list = [];
+    const result = await POST_LIKE.findAll({
+      attributes: [
+        'POST_LIKE.PNO',
+        [Sequelize.fn('COUNT', Sequelize.col('POST_LIKE.PNO')), 'likeCount'],
+      ],
+      group: ['POST_LIKE.PNO'],
+      order: [[Sequelize.fn('COUNT', Sequelize.col('POST_LIKE.PNO')), 'DESC']],
+      include: [
+        {
+          model: POST,
+          required: true,
+          as: 'PNO_POST',
+          where: {
+            createdAt: {
+              [Op.lt]: oneWeekAgo,
+            },
+          },
+        },
+      ],
+      limit: 3, //최대 3개로 조정.
+    });
+    for (const val of result) {
+      const postInfo = val.dataValues.PNO_POST;
+      const data = {};
+      data['likeCount'] = val.dataValues.likeCount;
+      const user = await USER.findByPk(postInfo.UNO);
+      data['userName'] = user.NICKNAME;
+      data['userLevel'] = user.LEVEL;
+      data['category'] = postInfo.CATEGORY;
+      data['title'] = postInfo.TITLE || null;
+      data['createdAt'] = postInfo.createdAt;
+      data['content'] = postInfo.CONTENT;
+      const replyNum = await POST_REPLY.findAll({
+        attributes: [
+          'PNO',
+          [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'Replies'],
+        ],
+        where: {
+          PNO: postInfo.PNO,
+        },
+        group: ['PNO'],
+      });
+      if (replyNum.length !== 0) {
+        data['reply'] = replyNum[0].dataValues.Replies;
+      } else {
+        data['reply'] = 0;
+      }
+      console.log(data);
+
+      list.push(data);
+    }
+
+    console.log(list);
+    res.send({
+      success: true,
+      message: 'Post List loaded successfully',
+      data: list,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.send({
+      success: false,
+      message: 'Post List loaded failed',
     });
   }
 });

@@ -348,13 +348,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /communities/getHotPost:
+  /communities/hotPost:
     get:
       tags:
         - communities
       summary: 이번 주 인기글 조회
-      description: 더보기 하면 전체글 리스트로 가는건가요? 일단은 3개만 보내겠습니다
-      operationId: communityGetHotPost
+      description:
+      operationId: getCommunityHotPost
       parameters:
       responses:
         '200':
@@ -399,7 +399,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /communities/PostList/{category_name}:
+  /communities/list/category/{category_name}:
     get:
       tags:
         - communities
