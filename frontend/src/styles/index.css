@@ -309,7 +309,7 @@ video {
   align-items: center;
 }
 .answerSlider .swiper-slide {
-  width: 21.5rem;
+  width: 22rem;
   @media screen and (max-width: 428px) {
     width: 20rem;
   }
