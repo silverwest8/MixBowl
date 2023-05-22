@@ -232,6 +232,16 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
+      const replyNum = await POST_REPLY.findAll({
+        attributes: [
+          'PNO',
+          [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'Replies'],
+        ],
+        where: {
+          PNO: val.dataValues.PNO,
+        },
+        group: ['PNO'],
+      });
 
       delete val.dataValues.UNO;
       val.dataValues.UNO_USER = {
@@ -244,13 +254,27 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
       } else {
         val.dataValues.LIKE = 0;
       }
+      if (replyNum.length !== 0) {
+        val.dataValues.REPLY = replyNum[0].dataValues.Replies;
+      } else {
+        val.dataValues.REPLY = 0;
+      }
 
       list.push(val.dataValues);
     }
 
     console.log(list);
+    res.send({
+      success: true,
+      message: 'Post List loaded successfully',
+      data: list,
+    });
   } catch (error) {
     console.log(error.message);
+    res.send({
+      success: false,
+      message: 'Post List loaded failed',
+    });
   }
 });
 router.get('/one/image', async (req, res) => {
