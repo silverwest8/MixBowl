@@ -141,6 +141,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
       NICKNAME: user.NICKNAME,
       LEVEL: user.LEVEL,
       CONTENT: val.dataValues.CONTENT,
+      createdAt: val.dataValues.createdAt,
     };
     reply_arr.push(val.dataValues.UNO_USER);
   }
