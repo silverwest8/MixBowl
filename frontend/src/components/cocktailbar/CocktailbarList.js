@@ -1,4 +1,3 @@
-import axios from "axios";
 import CocktailBarItem from "./CocktailbarItem";
 import SearchBar from "../common/SearchBar";
 import Skeleton from "@mui/material/Skeleton";
@@ -8,22 +7,8 @@ import { mapState } from "../../store/map";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAccessToken } from "../../utils/token";
+import { getCocktailBarList } from "../../api/cocktailbar";
 import { theme } from "../../styles/theme";
-
-const getBarList = async ({ queryKey }) => {
-  const accessToken = getAccessToken();
-  if (accessToken)
-    axios.defaults.headers.common.Authorization = getAccessToken();
-  if (queryKey[1] !== null) {
-    const { data } = await axios.get(
-      `/api/review/getList?query=${queryKey[2] || "칵테일 바"}&x=${
-        queryKey[1].lng
-      }&y=${queryKey[1].lat}&radius=${queryKey[3]}&sort=accuracy`
-    );
-    return data;
-  } else return null;
-};
 
 const CocktailbarList = () => {
   const navigate = useNavigate();
@@ -33,7 +18,7 @@ const CocktailbarList = () => {
   const [{ center, location, radius }, setMapState] = useRecoilState(mapState);
   const { data } = useQuery(
     ["cocktail bar list", center, query, radius],
-    getBarList,
+    getCocktailBarList,
     {
       onError: (error) => {
         if (error.response.status === 401)

@@ -1,39 +1,12 @@
-# review api for swagger
-components:
-  schemas:
-    Cookie:
-      type: string
-    Review:
-      type: object
-      properties:
-        PLACE_ID:
-          type: integer
-          example: 123
-          description: '장소정보'
-        TEXT:
-          type: string
-          example: '리뷰내용입니다.'
-        RATING:
-          type: integer
-          example: 4
-          description: '별점입니다'
-        IMAGE:
-          type: integer
-          example: 4
-          description: '이미지인데 어떻게 적어야할지 몰라서 일단 이렇게...'
+# reviews api for swagger
 paths:
-  /review/create:
+  /reviews:
     post:
       tags:
-        - review
-      summary: 리뷰 작성 -> placeId가 주소 쿼리로 붙습니다.
+        - reviews
+      summary: 리뷰 작성
       description: ''
       operationId: createReview
-      parameters:
-        - name: placeId
-          in: query
-          type: integer
-          description: 'placeId정보'
       requestBody:
         required: true
         content:
@@ -41,22 +14,32 @@ paths:
             schema:
               type: object
               properties:
+                placeId:
+                  type: integer
                 rating:
                   type: integer
                   example: 4
-                  description: '별점'
                 keyword:
-                  type: string
-                  example: '3,4,5'
-                  description: '키워드 종류를 쉼표로 구분하여 전송'
+                  type: array
+                  items:
+                    type: integer
+                  maxItem: 3
+                  minItem: 3
+                  example: [3, 4, 5]
+                  description: 키워드 종류를 쉼표로 구분하여 전송
                 detail:
                   type: text
-                  example: '너무 맛있고 분위기가 좋아요'
-                  description: '리뷰 세부 내용 담아서 전송'
+                  example: 너무 맛있고 분위기가 좋아요
+                  description: 리뷰 세부 내용 담아서 전송
                 image:
                   type: text
-                  example: 'multipart/form-data 형식으로 form태그인가?로 최대 5개까지 올려주세요. 이거는 req에 따로 포함하지 않고 form태그로 파일만 올려주시면됩니다'
-
+                  example: multipart/form-data 형식으로 최대 5개
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: integer
       responses:
         '200':
           description: ''
@@ -71,19 +54,76 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /review/update:
-    put:
+  /reviews/{reviewId}:
+    get:
       tags:
         - review
-      summary: 리뷰 수정
+      summary: 특정 칵테일 바 리뷰 조회
+      description: ''
+      operationId: getReview
+      parameters:
+        - in: path
+          name: placeId
+          description: 장소 ID
+          example: 1389819741
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getReview'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /reviews/{reviewId}:
+    post:
+      tags:
+        - review
+      summary: 리뷰 수정 (post로 수정하기로 결정)
       description: ''
       operationId: updateReview
+
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Nickname'
+              type: object
+              properties:
+                placeId:
+                  type: integer
+                rating:
+                  type: integer
+                  example: 4
+                keyword:
+                  type: array
+                  items:
+                    type: integer
+                  maxItem: 3
+                  minItem: 3
+                  example: [3, 4, 5]
+                  description: 키워드 종류를 쉼표로 구분하여 전송
+                detail:
+                  type: text
+                  example: 너무 맛있고 분위기가 좋아요
+                  description: 리뷰 세부 내용 담아서 전송
+                image:
+                  type: text
+                  example: multipart/form-data 형식으로 최대 5개
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: integer
       responses:
         '200':
           description: ''
@@ -97,11 +137,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-
-  /review/delete:
     delete:
       tags:
-        - review
+        - reviews
       summary: 리뷰 삭제
       description: ''
       operationId: deleteReview
@@ -124,10 +162,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /review/getList:
+  /reviews/barlist:
     get:
       tags:
-        - review
+        - reviews
       summary: 칵테일 바 리스트 조회
       description: ''
       operationId: getList
@@ -176,17 +214,65 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-
-  /review/getBar/{id}:
+  /reviews/one/{reviewId}:
     get:
       tags:
         - review
+      sumary: 칵테일 바 리뷰 단건 조회 및 수정페이지
+      description: ''
+      oprationId: get One Bar Review
+      parameters:
+        - in: path
+          name: reviewId
+          description: 리뷰 ID
+          example: 68
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rating:
+                    type: Float
+                  keyword:
+                    type: array
+                    items:
+                      type: integer
+                    maxItem: 3
+                    minItem: 1
+                    example: [3, 4, 5]
+                    description: 키워드 종류를 쉼표로 구분하여 전송
+                  detail:
+                    type: text
+                    example: 너무 맛있고 분위기가 좋아요
+                    description: 리뷰 세부 내용 담아서 전송
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: text
+                    example: Successfuly loaded previous review data
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+  /reviews/bar/{placeId}:
+    get:
+      tags:
+        - reviews
       summary: 칵테일 바 단건 조회
       description: ''
       operationId: getBar
       parameters:
         - in: path
-          name: id
+          name: placeId
           description: 장소 ID
           example: 1389819741
           schema:
@@ -205,29 +291,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-
-  /review/getReview/{id}:
+  /reviews/image/one?imageId={imageId}:
     get:
       tags:
         - review
-      summary: 특정 칵테일 바 리뷰 조회
+      summary: review 리스트 페이지에서 imageId별 이미지 가져오기
       description: ''
-      operationId: getReview
+      operationId: getImageById
       parameters:
-        - in: path
-          name: id
-          description: 장소 ID
-          example: 1389819741
-          schema:
-            type: string
-          required: true
+        - name: imageId
+          in: query
+          type: integer
+          example: 68
       responses:
         '200':
-          description: ''
+          description:
           content:
-            application/json:
+            image/jpeg:
               schema:
-                $ref: '#/components/schemas/getReview'
+                type: string
+                format: binary
+
         '400':
           description: ''
           content:

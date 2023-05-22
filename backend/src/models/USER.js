@@ -12,11 +12,13 @@ export default class USER extends Model {
     },
     NICKNAME: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: false,
+      unique: "NICKNAME_UNIQUE"
     },
     EMAIL: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: false,
+      unique: "EMAIL_UNIQUE"
     },
     PASSWORD: {
       type: DataTypes.STRING(45),
@@ -26,7 +28,7 @@ export default class USER extends Model {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
-      comment: "1: Level 1-> 가입만 하면 됨\n2: Level 2 -> 일주일에 3회 이상 || 게시글 10개 이상\n3: Level 3 -> 게시글 30개 이상\n* 한번 등급이 올라가면 안떨어짐\n\n4: 바 사장님\n5. 조주기능사\n"
+      comment: "1: Level 1-> 가입만 하면 됨\\\\n2: Level 2 -> 일주일에 3회 이상 || 게시글 10개 이상\\\\n3: Level 3 -> 게시글 30개 이상\\\\n* 한번 등급이 올라가면 안떨어짐\\\\n\\\\n4: 바 사장님\\\\n5. 조주기능사\\\\n6. 관리자\\n"
     },
     TOKEN: {
       type: DataTypes.STRING(400),
@@ -43,6 +45,22 @@ export default class USER extends Model {
         using: "BTREE",
         fields: [
           { name: "UNO" },
+        ]
+      },
+      {
+        name: "NICKNAME_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "NICKNAME" },
+        ]
+      },
+      {
+        name: "EMAIL_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "EMAIL" },
         ]
       },
     ]
