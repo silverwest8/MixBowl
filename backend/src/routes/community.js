@@ -122,6 +122,57 @@ router.post('/reply/:postId', checkAccess, async (req, res) => {
     });
   }
 });
+router.put('/reply/:replyId', checkAccess, async (req, res) => {
+  try {
+    const uno = req.decoded.unum;
+    const replyId = req.params.replyId;
+    const reply_uno = await sql.getReplyUno(replyId);
+    if (uno === reply_uno) {
+      await sql.changeReply(req, replyId);
+      res.send({
+        success: true,
+        message: 'change Reply successfully',
+      });
+    } else {
+      res.send({
+        success: false,
+        message: 'cannot change reply/not writer',
+      });
+    }
+  } catch (error) {
+    console.log('error', error.message);
+    res.send({
+      success: false,
+      message: 'change Reply failed',
+    });
+  }
+});
+
+router.delete('/reply/:replyId', checkAccess, async (req, res) => {
+  try {
+    const uno = req.decoded.unum;
+    const replyId = req.params.replyId;
+    const reply_uno = await sql.getReplyUno(replyId);
+    if (uno === reply_uno) {
+      await sql.deleteReply(req, replyId);
+      res.send({
+        success: true,
+        message: 'delete Reply successfully',
+      });
+    } else {
+      res.send({
+        success: false,
+        message: 'cannot delete reply/not writer',
+      });
+    }
+  } catch (error) {
+    console.log('error', error.message);
+    res.send({
+      success: false,
+      message: 'delete Reply failed',
+    });
+  }
+});
 router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
   const postData = await POST.findByPk(pno);
@@ -150,6 +201,14 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const reply_arr = [];
   for (const val of replies) {
     const user = await USER.findByPk(val.dataValues.UNO);
+    let isReplyWriter = false;
+    if (req.user !== undefined) {
+      //로그인 한 상태일 때,
+      console.log(val.dataValues);
+      if (req.user.UNO === val.dataValues.UNO) {
+        isReplyWriter = true;
+      }
+    }
     delete val.dataValues.UNO;
     val.dataValues.UNO_USER = {
       replyId: val.dataValues.PRNO,
@@ -157,6 +216,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
       LEVEL: user.LEVEL,
       CONTENT: val.dataValues.CONTENT,
       createdAt: val.dataValues.createdAt,
+      isReplyWriter: isReplyWriter,
     };
     reply_arr.push(val.dataValues.UNO_USER);
   }

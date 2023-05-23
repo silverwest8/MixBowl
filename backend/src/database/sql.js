@@ -217,6 +217,32 @@ const sql = {
       CONTENT: content,
     });
   },
+  changeReply: async (req, replyId) => {
+    const content = req.body.content;
+    try {
+      await POST_REPLY.update(
+        {
+          CONTENT: content,
+        },
+        { where: { PRNO: replyId } }
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  deleteReply: async (req, replyId) => {
+    try {
+      await POST_REPLY.destroy({
+        where: { PRNO: replyId },
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  getReplyUno: async (replyId) => {
+    const reply = await POST_REPLY.findByPk(replyId);
+    return reply.UNO;
+  },
   makePostLike: async (uno, pno) => {
     try {
       await POST_LIKE.create({
@@ -241,7 +267,6 @@ const sql = {
       console.log(error.message);
     }
   },
-  postCommunityReply: async (req) => {},
 
   getCommunityPost: async (req) => {},
   postImage: async (req, db) => {

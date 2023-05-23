@@ -184,6 +184,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
+  /communities/reply/{replyId}:
     put:
       tags:
         - communities
@@ -192,8 +193,8 @@ paths:
       operationId: modifyReply
       parameters:
         - in: path
-          name: postId
-          description: 포스트 고유번호
+          name: replyId
+          description: 댓글 고유번호
           type: integer
           example: 15
           required: true
@@ -230,8 +231,8 @@ paths:
       operationId: delteReply
       parameters:
         - in: path
-          name: postId
-          description: 포스트 고유번호
+          name: replyId
+          description: 댓글 고유번호
           type: integer
           example: 15
           required: true
@@ -318,6 +319,10 @@ paths:
                         CONTENT:
                           type: text
                           example: 댓글 내용 예시입니다.
+                        isReplyWriter:
+                          type: boolean
+                          example: true
+                          description: 댓글 작성자인지 확인
 
                   isWriter:
                     type: boolean
