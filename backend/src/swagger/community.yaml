@@ -460,13 +460,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /communities/list/category/{category_name}:
+  /communities/list/category/{category_name}?page={page}:
     get:
       tags:
         - communities
       summary: 전체 글, 카테고리별 글 조회
-      description: 'query로 검색 필터링 생각중입니다'
-      operationId: getCommunityPost
+      description:
+      operationId: getCommunityPostByCategory
       parameters:
         - in: path
           name: category_name
@@ -475,11 +475,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: search
-          description: 검색키워드
-          example: 피치크러쉬
+          name: page
+          description: 페이지수
+          example: 3
           schema:
-            type: string
+            type: integer
       responses:
         '200':
           description: ''

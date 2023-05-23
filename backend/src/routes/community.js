@@ -348,7 +348,6 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
       limit: limit,
       offset: offset,
     });
-
     for (const val of posts) {
       const user = await USER.findByPk(val.dataValues.UNO);
       const likePost = await POST_LIKE.findAll({
@@ -371,7 +370,6 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
-
       delete val.dataValues.UNO;
       val.dataValues.UNO_USER = {
         NICKNAME: user.NICKNAME,
@@ -406,6 +404,93 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
     });
   }
 });
+router.get(
+  '/list/category/:category_name',
+  checkTokenYesAndNo,
+  async (req, res) => {
+    try {
+      const category_name = req.params.category_name;
+      let category;
+      if (category_name === 'recommend') {
+        category = 1;
+      } else if (category_name === 'question') {
+        category = 2;
+      } else if (category_name === 'review') {
+        category = 3;
+      } else if (category_name === 'free') {
+        category = 4;
+      } else {
+        throw new Error('not valid category name');
+      }
+      const page = Number(req.query.page);
+      const offset = 10 * (page - 1);
+      const limit = 10;
+      const list = [];
+      const posts = await POST.findAll({
+        where: { category: category },
+        order: [['createdAt', 'DESC']],
+        limit: limit,
+        offset: offset,
+      });
+
+      for (const val of posts) {
+        const user = await USER.findByPk(val.dataValues.UNO);
+        const likePost = await POST_LIKE.findAll({
+          attributes: [
+            'PNO',
+            [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES'],
+          ],
+          where: {
+            PNO: val.dataValues.PNO,
+          },
+          group: ['PNO'],
+        });
+        const replyNum = await POST_REPLY.findAll({
+          attributes: [
+            'PNO',
+            [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'Replies'],
+          ],
+          where: {
+            PNO: val.dataValues.PNO,
+          },
+          group: ['PNO'],
+        });
+
+        delete val.dataValues.UNO;
+        val.dataValues.UNO_USER = {
+          NICKNAME: user.NICKNAME,
+          LEVEL: user.LEVEL,
+        };
+
+        if (likePost.length !== 0) {
+          val.dataValues.LIKE = likePost[0].dataValues.LIKES;
+        } else {
+          val.dataValues.LIKE = 0;
+        }
+        if (replyNum.length !== 0) {
+          val.dataValues.REPLY = replyNum[0].dataValues.Replies;
+        } else {
+          val.dataValues.REPLY = 0;
+        }
+
+        list.push(val.dataValues);
+      }
+
+      console.log(list);
+      res.send({
+        success: true,
+        message: 'Post List loaded successfully',
+        data: list,
+      });
+    } catch (error) {
+      console.log(error.message);
+      res.send({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+);
 router.get('/one/image', async (req, res) => {
   //이미지 하나 요청
   try {
