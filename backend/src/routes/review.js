@@ -5,10 +5,7 @@ import multer from 'multer';
 import fs from 'fs';
 import checkAccess from '../middleware/checkAccessToken';
 import axios from 'axios';
-import PLACE from '../models/PLACE';
-import REVIEW from '../models/REVIEW';
-import USER from '../models/USER';
-import KEYWORD from '../models/KEYWORD';
+import { db } from '../models';
 import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
 import sql from '../database/sql';
@@ -54,14 +51,14 @@ const KEYWORD_VALUE = [
 
 async function getKeyword(placeId) {
   let keywordlist = [null, null, null];
-  const keyword = await KEYWORD.findAll({
+  const keyword = await db.KEYWORD.findAll({
     attributes: [
       'KEYWORD',
-      [Sequelize.fn('count', Sequelize.col('*')), 'COUNT'],
+      [Sequelize.fn('COUNT', Sequelize.col('*')), 'COUNT'],
     ],
     include: [
       {
-        model: REVIEW,
+        model: db.REVIEW,
         as: 'REVIEW',
         attributes: [],
         where: { PLACE_ID: placeId },
@@ -80,7 +77,7 @@ async function getKeyword(placeId) {
 
 async function getKeywordByReviewId(reviewId) {
   const keywordlist = [];
-  const keyword = await KEYWORD.findAll({
+  const keyword = await db.KEYWORD.findAll({
     where: {
       REVIEW_ID: reviewId,
     },
@@ -132,7 +129,7 @@ router.get('/barlist', checkAccess, async (req, res) => {
         };
         const element = response.data.documents[i];
         if (element.category_name == '음식점 > 술집 > 칵테일바') {
-          const [place, created] = await PLACE.findOrCreate({
+          const [place, created] = await db.PLACE.findOrCreate({
             where: { PLACE_ID: element.id },
             defaults: {
               NAME: element.place_name,
@@ -157,14 +154,14 @@ router.get('/barlist', checkAccess, async (req, res) => {
           }
 
           data.total_cnt++;
-          const review_num = await REVIEW.findAll({
+          const review_num = await db.REVIEW.findAll({
             where: { PLACE_ID: element.id },
           });
-          const reviewList = await REVIEW.findAll({
+          const reviewList = await db.REVIEW.findAll({
             where: { PLACE_ID: element.id },
             include: [
               {
-                model: USER,
+                model: db.USER,
                 as: 'UNO_USER',
                 attributes: ['UNO', 'NICKNAME', 'LEVEL'],
                 required: false,
@@ -173,7 +170,7 @@ router.get('/barlist', checkAccess, async (req, res) => {
             order: [['createdAt', 'DESC']],
             limit: 2,
           });
-          const rating = await REVIEW.findOne({
+          const rating = await db.REVIEW.findOne({
             attributes: [
               'PLACE_ID',
               [Sequelize.fn('AVG', Sequelize.col('RATING')), 'AVG_RATING'],
@@ -231,10 +228,10 @@ router.get('/bar/:placeId', checkAccess, async (req, res) => {
   let data = {};
   const placeId = req.params.placeId;
   console.log(placeId);
-  const place_data = await PLACE.findByPk(placeId);
+  const place_data = await db.PLACE.findByPk(placeId);
   data = Object.assign(place_data.dataValues);
   try {
-    const rating = await REVIEW.findOne({
+    const rating = await db.REVIEW.findOne({
       attributes: [
         'PLACE_ID',
         [Sequelize.fn('AVG', Sequelize.col('RATING')), 'AVG_RATING'],
@@ -267,11 +264,11 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
       list: [],
     };
     const place_id = req.params.place_id;
-    const review = await REVIEW.findAll({
+    const review = await db.REVIEW.findAll({
       where: { PLACE_ID: place_id },
       include: [
         {
-          model: USER,
+          model: db.USER,
           as: 'UNO_USER',
           attributes: ['UNO', 'NICKNAME', 'LEVEL'],
           required: false,
