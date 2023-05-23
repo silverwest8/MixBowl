@@ -12,6 +12,7 @@ import fs from 'fs';
 import { Sequelize, Op } from 'sequelize';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
+import dotenv from 'dotenv';
 dotenv.config();
 const oneWeekAgo = new Date();
 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
