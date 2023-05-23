@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-dotenv.config(); //JWT 키불러오기
+dotenv.config();
 
 //인증 필요한 expree router에 적용할 미들웨어를 작성한 함수
 

@@ -1,7 +1,6 @@
 'use strict';
 
 import express from 'express';
-import dotenv from 'dotenv';
 import sql from '../database/sql';
 import checkAccess from '../middleware/checkAccessToken';
 import multer from 'multer';

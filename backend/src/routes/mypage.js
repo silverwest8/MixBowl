@@ -28,7 +28,7 @@ router.get('/recipes/:page', checkAccess, async (req, res) => {
               model: db.USER,
               as: 'UNO_USER',
               attributes: ['NICKNAME', 'LEVEL'],
-              require: false,
+              required: false,
             },
           ],
         },

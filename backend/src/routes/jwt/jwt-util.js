@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import sql from '../../database/sql';
 dotenv.config();
 
 export function sign(userNumber) {
