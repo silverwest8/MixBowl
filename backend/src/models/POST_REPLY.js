@@ -1,10 +1,10 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class COCKTAIL_SAVE extends Model {
+export default class POST_REPLY extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    CNO: {
+    PRNO: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -18,31 +18,21 @@ export default class COCKTAIL_SAVE extends Model {
         key: 'UNO'
       }
     },
-    NAME: {
-      type: DataTypes.STRING(45),
+    PNO: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      unique: "NAME_UNIQUE"
+      references: {
+        model: 'POST',
+        key: 'PNO'
+      }
     },
-    ALCOHOLIC: {
-      type: DataTypes.STRING(45),
-      allowNull: true,
-      comment: "1- 0~ 5(낮음), 2 - 6~15(보통), 3 - 그 이상(높음)"
-    },
-    INSTRUCTION: {
+    CONTENT: {
       type: DataTypes.TEXT,
       allowNull: false
-    },
-    IMAGE_PATH: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    GLASS: {
-      type: DataTypes.STRING(45),
-      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'COCKTAIL_SAVE',
+    tableName: 'POST_REPLY',
     timestamps: true,
     indexes: [
       {
@@ -50,19 +40,18 @@ export default class COCKTAIL_SAVE extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "CNO" },
+          { name: "PRNO" },
         ]
       },
       {
-        name: "NAME_UNIQUE",
-        unique: true,
+        name: "PNO_idx",
         using: "BTREE",
         fields: [
-          { name: "NAME" },
+          { name: "PNO" },
         ]
       },
       {
-        name: "UNO3_idx",
+        name: "UNO_idx",
         using: "BTREE",
         fields: [
           { name: "UNO" },

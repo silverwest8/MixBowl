@@ -1,0 +1,179 @@
+'use strict';
+
+import express from 'express';
+import dotenv from 'dotenv';
+import sql from '../database/sql';
+import checkAccess from '../middleware/checkAccessToken';
+import multer from 'multer';
+import POST from '../models/POST';
+import fs from 'fs';
+dotenv.config();
+
+const router = express.Router();
+
+export default router;
+
+// 파일 업로드를 위해 사용되는 multipart/form-data 를 front에서 사용할것
+
+//multer 미들웨어 파일 제한 값 (Doc 공격으로부터 서버를 보호하는데 도움이 된다.)
+const limits = {
+  fieldNameSize: 200, // 필드명 사이즈 최대값 (기본값 100bytes)
+  filedSize: 1024 * 1024, // 필드 사이즈 값 설정 (기본값 1MB)
+  fields: 2, // 파일 형식이 아닌 필드의 최대 개수 (기본 값 무제한)
+  fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
+  files: 5, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
+};
+const fileFilter = (req, file, callback) => {
+  const typeArray = file.originalname.split('.');
+  const fileType = typeArray[typeArray.length - 1]; // 이미지 확장자 추출
+  //이미지 확장자 구분 검사
+  if (fileType === 'jpg' || fileType === 'jpeg' || fileType === 'png') {
+    callback(null, true);
+  } else {
+    return callback(
+      { message: '*.jpg, *.jpeg, *.png 파일만 업로드가 가능합니다.' },
+      false
+    );
+  }
+};
+//multer 미들웨어 설정
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // 파일이 업로드되는 경로 지정
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // 파일 이름 설정
+  },
+});
+const upload = multer({
+  storage: storage,
+  dest: __dirname + '/uploads/', // 이미지 업로드 경로
+  limits: limits, // 이미지 업로드 제한 설정
+  fileFilter: fileFilter, // 이미지 업로드 필터링 설정
+});
+
+router.post('/like/:pno', checkAccess, async (req, res) => {
+  const uno = req.decoded.unum;
+  const pno = req.params.pno;
+  console.log(uno, pno);
+  try {
+    const isPostLike = await sql.makePostLike(uno, pno);
+    if (isPostLike === 3) {
+      //db 접근 자체 못하는 오류
+      throw new Error("We can't make Post Like DB");
+    } else if (isPostLike === 2) {
+      //db에 이미 좋아요 기록이 있는경우 -> 좋아요 취소
+      await sql.deletePostLike(uno, pno);
+    }
+    res.json({
+      success: true,
+      message: 'Like or Dislike Updated successfully',
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
+  try {
+    const post = await sql.postCommunity(req);
+
+    console.log(post);
+    //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
+    req.files.map(async (data) => {
+      console.log('폼에 정의된 필드명 : ', data.fieldname);
+      console.log('사용자가 업로드한 파일 명 : ', data.originalname);
+      console.log('파일의 엔코딩 타입 : ', data.encoding);
+      console.log('파일의 Mime 타입 : ', data.mimetype);
+      console.log('파일이 저장된 폴더 : ', data.destination);
+      console.log('destinatin에 저장된 파일 명 : ', data.filename);
+      console.log('업로드된 파일의 전체 경로 ', data.path);
+      console.log('파일의 바이트(byte 사이즈)', data.size);
+    });
+    await sql.postImage(req, post);
+    res.json({
+      success: true,
+      message: 'Community Multipart Upload Ok & DB update OK',
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
+router.get('/:postId', async (req, res) => {
+  const pno = req.params.postId;
+  const postData = await POST.findByPk(pno);
+  switch (postData.CATEGORY) {
+    //postId 로 이미지 찾을 수 있음
+    case 1:
+      return res.send({
+        title: postData.TITLE,
+        like: postData.LIKE,
+        content: postData.CONTENT,
+        postId: postData.PNO,
+      });
+      break;
+    case 2:
+      return res.send({
+        like: postData.LIKE,
+        content: postData.CONTENT,
+        postId: postData.PNO,
+      });
+      break;
+    case 3:
+      return res.send({
+        title: postData.TITLE,
+        like: postData.LIKE,
+        content: postData.CONTENT,
+        cno: postData.CNO,
+        postId: postData.PNO,
+      });
+      break;
+    case 4:
+      return res.send({
+        title: postData.TITLE,
+        like: postData.LIKE,
+        content: postData.CONTENT,
+        postId: postData.PNO,
+      });
+      break;
+  }
+});
+router.get('/image', async (req, res) => {
+  //이미지 하나 요청
+  try {
+    const imageId = req.query.imageId;
+    const imgPath = await sql.getImagePath(imageId);
+    const data = fs.readFileSync(imgPath);
+    res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+    res.write(data);
+    return res.end();
+  } catch (error) {
+    console.log(error.message);
+    return res
+      .status(400)
+      .json({ success: false, message: '이미지 조회 실패', error });
+  }
+});
+router.get('/cocktails', async (req, res) => {
+  try {
+    const cocktailNames = [];
+    await sql.getCocktails().then((value) => {
+      console.log(value);
+      for (let i = 0; i < value.length; i++) {
+        cocktailNames.push(value[i].NAME + '/' + value[i].CNO);
+      }
+    });
+    console.log(cocktailNames);
+    res.json({
+      success: true,
+      message: 'get All Cocktails in cocktail DB',
+      data: cocktailNames,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.json({
+      success: false,
+      message: "can't get cocktails in cocktail DB",
+    });
+  }
+});

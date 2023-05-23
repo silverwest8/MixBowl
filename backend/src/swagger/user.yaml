@@ -132,10 +132,10 @@ paths:
       description: ''
       operationId: logoutUser
       parameters:
-        - in: cookie
+        - in: header
           name: refresh_token
           schema:
-            $ref: '#/components/schemas/Cookie'
+            $ref: '#/components/schemas/Token'
       responses:
         '200':
           description: ''
@@ -317,14 +317,17 @@ paths:
       tags:
         - users
       summary: 바텐더 확인
-      description: 일단 닉네임 보내는 걸로 했는데 다시 정해야 함.
+      description: birth -> 주민번호 앞 6자리 |
+        qualification -> 자격번호 |
+        issueDate -> 발급연월일 8자리 |
+        lcsNo -> 자격증내지번호
       operationId: checkBartender
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Nickname'
+              $ref: '#/components/schemas/BartenderReq'
       responses:
         '200':
           description: ''
@@ -340,12 +343,42 @@ paths:
                 $ref: '#/components/schemas/Fail'
 
   /users:
+    get:
+      tags:
+        - users
+      summary: 회원정보 가져오기
+      description: ""
+      operationId: getUser
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            $ref: '#/components/schemas/Token'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getUser'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+    
     put:
       tags:
         - users
       summary: 회원정보수정
       description: 닉네임만 바꿀 수 있음
       operationId: updateUser
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            $ref: '#/components/schemas/Token'
       requestBody:
         required: true
         content:
@@ -373,10 +406,10 @@ paths:
       description: ''
       operationId: deleteUser
       parameters:
-        - in: cookie
-          name: refresh_token
+        - in: header
+          name: Authorization
           schema:
-            $ref: '#/components/schemas/Cookie'
+            $ref: '#/components/schemas/Token'
       responses:
         '200':
           description: ''
