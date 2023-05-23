@@ -163,6 +163,19 @@ paths:
                 like:
                   type: integer
                   example: 0
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
 
     delete:
       tags:
