@@ -84,6 +84,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
+  /communities/one/image?imageId={imageId}:
+    get:
+      tags:
+        - communities
+      summary: 이미지 요청 전달
+      description:
+      operationId: getCommunityOneImage
+      parameters:
+        - in: query
+          name: imageId
+          description: image ID
+          type: integer
+          example: 1
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Operation Success
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
   /communities/like/{pno}:
     post:
       tags:
@@ -111,12 +145,115 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
+  /communities/reply/{postId}:
+    post:
+      tags:
+        - communities
+      summary: 커뮤니티 게시글의 댓글 달기
+      description:
+      operationId: postReply
+      parameters:
+        - in: path
+          name: postId
+          description: 포스트 고유번호
+          type: integer
+          example: 15
+          required: true
+      requestBody:
+        required: true
+        description: 댓글 등록하기
+        content:
+          application/json:
+            schema:
+              type:
+              properties:
+                content:
+                  type: text
+                  example: 댓글 예시가 들어갑니다.
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
 
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+    put:
+      tags:
+        - communities
+      summary: 커뮤니티 게시글의 댓글 수정
+      description:
+      operationId: modifyReply
+      parameters:
+        - in: path
+          name: postId
+          description: 포스트 고유번호
+          type: integer
+          example: 15
+          required: true
+      requestBody:
+        required: true
+        description: 댓글 등록하기
+        content:
+          application/json:
+            schema:
+              type:
+              properties:
+                content:
+                  type: text
+                  example: 댓글 예시가 들어갑니다.
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+    delete:
+      tags:
+        - communities
+      summary: 커뮤니티 게시글의 댓글 삭제
+      description:
+      operationId: delteReply
+      parameters:
+        - in: path
+          name: postId
+          description: 포스트 고유번호
+          type: integer
+          example: 15
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
   /communities/{postId}:
     get:
       tags:
         - communities
-      summary: 커뮤니티 한개의 게시글 가져오기
+      summary: 커뮤니티 한개의 게시글 가져오기 + 게시글에 딸린 이미지 id를 images 배열로 묶어 전송 + 댓글 내용 array 속 object로 전송
       description:
       operationId: getOnePost
       parameters:
@@ -132,14 +269,47 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  title:
+                    type: string
+                    example: 아래 세부 사항은 생략하겠습니다.(content,like 등등,, cocktaillike는 칵테일 추천할때만 쓰고, like는 게시글 좋아요 수에요
+                  images:
+                    type: array
+                    items:
+                      type: integer
+                    example: [12, 13, 14]
+                  replies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        UNO_USER:
+                          type: object
+                          properties:
+                            NICKNAME:
+                              type: string
+                              example: NEWNICKNAME
+                            LEVEL:
+                              type: integer
+                              example: 1
+                            CONTENT:
+                              type: text
+                              example: 댓글 내용 예시입니다.
+
+                  isWriter:
+                    type: integer
+                    example: 1
         '400':
           description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-    put:
+    post:
       tags:
         - communities
       summary: 커뮤니티 글 수정
@@ -198,13 +368,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /communities/getHotPost:
+  /communities/list/all:
+    get:
+      tags:
+        - communities
+      summary: 전체 글 리스트 조회
+      description: 'query로 검색 필터링 생각중입니다'
+      operationId: getCommunityPost
+      parameters:
+        - in: query
+          name: page
+          description: 불러올 데이터 수 page (1 page 당 10개, 1부터 시작)
+          example: 2
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/communityGetTotal'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /communities/hotPost:
     get:
       tags:
         - communities
       summary: 이번 주 인기글 조회
-      description: 더보기 하면 전체글 리스트로 가는건가요? 일단은 3개만 보내겠습니다
-      operationId: communityGetHotPost
+      description:
+      operationId: getCommunityHotPost
       parameters:
       responses:
         '200':
@@ -220,36 +418,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /communities/getNewPost/{category_name}:
-    get:
-      tags:
-        - communities
-      summary: 최신글 조회
-      description: category_id에 따라 카테고리별 최신글을 5개씩 가져옵니다
-      operationId: communityGetNewPost
-      parameters:
-        - in: path
-          name: category_name
-          description: 카테고리 이름
-          example: 1
-          schema:
-            type: integer
-          required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/getNewPost'
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Fail'
-
-  /communities/PostList/{category_name}:
+  /communities/list/category/{category_name}:
     get:
       tags:
         - communities
@@ -260,7 +429,7 @@ paths:
         - in: path
           name: category_name
           description: 카테고리 이름
-          example: total, recommand, question, review, free
+          example: recommend, question, review, free
           schema:
             type: string
         - in: query
@@ -282,31 +451,3 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
-
-/communities/getTotal:
-  get:
-    tags:
-      - communities
-    summary: 전체 글, 카테고리별 글 조회
-    description: 'query로 검색 필터링 생각중입니다 - 근데 기능 중에 있나요?'
-    operationId: getReview
-    parameters:
-      - in: query
-        name: search
-        description: 검색키워드
-        example: 피치크러쉬
-        schema:
-          type: string
-    responses:
-      '200':
-        description: ''
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/communityGetTotal'
-      '400':
-        description: ''
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Fail'

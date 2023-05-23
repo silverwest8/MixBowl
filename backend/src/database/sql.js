@@ -9,6 +9,7 @@ import KEYWORD from '../models/KEYWORD';
 import POST from '../models/POST';
 import COCKTAIL from '../models/COCKTAIL';
 import POST_LIKE from '../models/POST_LIKE';
+import POST_REPLY from '../models/POST_REPLY';
 import fs from 'fs';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 dotenv.config(); //JWT 키불러오기
@@ -208,6 +209,14 @@ const sql = {
       console.log(error.message);
     }
   },
+  postReply: async (req, pno) => {
+    const content = req.body.content;
+    await POST_REPLY.create({
+      UNO: req.user.dataValues.UNO,
+      PNO: pno,
+      CONTENT: content,
+    });
+  },
   makePostLike: async (uno, pno) => {
     try {
       await POST_LIKE.create({
@@ -372,14 +381,15 @@ const sql = {
     });
     return next();
   },
-  getImagePath: async (imageId) => {
+  getImagePath: async (imageId, category) => {
     try {
-      const image = await IMAGE.findByPk(imageId);
-      if (image === 'undefined') {
+      if (category === 'review') {
+        const image = await IMAGE.findByPk(imageId);
+        return image.PATH;
+      } else if (category === 'community') {
         const image_communty = await IMAGE_COMMUNITY.findByPk(imageId);
-        return image_community.PATH;
+        return image_communty.PATH;
       }
-      return image.PATH;
     } catch (error) {
       console.log(error.message);
     }
