@@ -152,6 +152,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
     const user = await USER.findByPk(val.dataValues.UNO);
     delete val.dataValues.UNO;
     val.dataValues.UNO_USER = {
+      replyId: val.dataValues.PRNO,
       NICKNAME: user.NICKNAME,
       LEVEL: user.LEVEL,
       CONTENT: val.dataValues.CONTENT,

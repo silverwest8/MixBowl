@@ -276,7 +276,26 @@ paths:
                     example: true
                   title:
                     type: string
-                    example: 아래 세부 사항은 생략하겠습니다.(content,like 등등,, cocktaillike는 칵테일 추천할때만 쓰고, like는 게시글 좋아요 수에요
+                    example: 제목이 옵니다. cocktaillike는 칵테일 추천할때만 쓰고, like는 게시글 좋아요 수에요
+                  cocktaillike:
+                    type: integer
+                    example: 1
+                    description: (부연설명 - cocktaillike는 칵테일 추천 게시글에만 적용되는 property입니다. 칵테일 추천시 1 아니면 0)
+                  like:
+                    type: integer
+                    example: 3
+                    description: 게시글 별 좋아요 수입니다.
+                  content:
+                    type: text
+                    example: 게시글 내용입니다.
+                  cno:
+                    type: integer
+                    example: 1
+                    description: 칵테일 고유 번호입니다.
+                  postId:
+                    type: integer
+                    example: 15
+                    description: 게시글 고유 번호입니다.
                   images:
                     type: array
                     items:
@@ -287,22 +306,23 @@ paths:
                     items:
                       type: object
                       properties:
-                        UNO_USER:
-                          type: object
-                          properties:
-                            NICKNAME:
-                              type: string
-                              example: NEWNICKNAME
-                            LEVEL:
-                              type: integer
-                              example: 1
-                            CONTENT:
-                              type: text
-                              example: 댓글 내용 예시입니다.
+                        replyId:
+                          type: integer
+                          example: 1
+                        NICKNAME:
+                          type: string
+                          example: NEWNICKNAME
+                        LEVEL:
+                          type: integer
+                          example: 1
+                        CONTENT:
+                          type: text
+                          example: 댓글 내용 예시입니다.
 
                   isWriter:
-                    type: integer
-                    example: 1
+                    type: boolean
+                    example: true
+
         '400':
           description: ''
           content:
