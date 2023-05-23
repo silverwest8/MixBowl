@@ -84,8 +84,7 @@ router.post('/like/:pno', checkAccess, async (req, res) => {
 router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   try {
     const post = await sql.postCommunity(req);
-
-    console.log(post);
+    console.log('maybe', post);
     //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
     req.files.map(async (data) => {
       console.log('폼에 정의된 필드명 : ', data.fieldname);
@@ -283,7 +282,20 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
       });
   }
 });
+router.post('/:postId', checkAccess, async (req, res) => {
+  const pno = req.params.postId;
+  const uno = req.decoded.unum;
+  const postData = await POST.findByPk(pno);
+  // if (postData.dataValues.UNO === uno) {
+  //   const data = Object.assign(postData.dataValues);
+  //   sql.
+  // }
 
+  //get으로 다 포스트 전체 내용 받아오고 다시 전달
+  if (postData.dataValues.UNO === uno) {
+    await sql.changeCommunity(req);
+  }
+});
 router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
   try {
     const page = Number(req.query.page);

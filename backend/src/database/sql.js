@@ -205,6 +205,61 @@ const sql = {
       console.log(error.message);
     }
   },
+  changeCommunity: async (req) => {
+    const unum = req.decoded.unum;
+    console.log(req.body.data);
+    const category = req.query.category;
+    const data = JSON.parse(req.body.data);
+    console.log('data', data);
+    // try {
+    //   if (category === '1') {
+    //     //칵테일 추천
+    //     const { title, content } = data;
+    //     const post = await POST.create({
+    //       UNO: unum,
+    //       CATEGORY: category,
+    //       TITLE: title,
+    //       CONTENT: content,
+    //     });
+    //     return post;
+    //   } else if (category === '2') {
+    //     //질문과 답변
+    //     const { content } = data;
+    //     const post = await POST.create({
+    //       UNO: unum,
+    //       CATEGORY: category,
+    //       CONTENT: content,
+    //     });
+    //     return post;
+    //   } else if (category === '3') {
+    //     //칵테일 리뷰 -> 제목 = 타이틀
+    //     const { title, content, like, cno } = data;
+    //     const post = await POST.create({
+    //       UNO: unum,
+    //       CATEGORY: category,
+    //       TITLE: title,
+    //       CONTENT: content,
+    //       CNO: cno,
+    //       LIKE: like,
+    //     });
+    //     return post;
+    //   } else if (category === '4') {
+    //     //자유게시판
+    //     const { title, content } = data;
+    //     const post = await POST.create({
+    //       UNO: unum,
+    //       CATEGORY: category,
+    //       TITLE: title,
+    //       CONTENT: content,
+    //     });
+    //     return post;
+    //   } else {
+    //     throw new Error('invalid category');
+    //   }
+    // } catch (error) {
+    //   console.log(error.message);
+    // }
+  },
   postReply: async (req, pno) => {
     const content = req.body.content;
     await POST_REPLY.create({

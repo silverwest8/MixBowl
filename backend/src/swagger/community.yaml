@@ -46,6 +46,152 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
+  /communities/{postId}:
+    get:
+      tags:
+        - communities
+      summary: 커뮤니티 한개의 게시글 가져오기 + 게시글에 딸린 이미지 id를 images 배열로 묶어 전송 + 댓글 내용 array 속 object로 전송
+      description:
+      operationId: getOnePost
+      parameters:
+        - in: path
+          name: postId
+          description: 포스트 고유 번호
+          type: integer
+          example: 15
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  title:
+                    type: string
+                    example: 제목이 옵니다. cocktaillike는 칵테일 추천할때만 쓰고, like는 게시글 좋아요 수에요
+                  cocktaillike:
+                    type: integer
+                    example: 1
+                    description: (부연설명 - cocktaillike는 칵테일 추천 게시글에만 적용되는 property입니다. 칵테일 추천시 1 아니면 0)
+                  like:
+                    type: integer
+                    example: 3
+                    description: 게시글 별 좋아요 수입니다.
+                  content:
+                    type: text
+                    example: 게시글 내용입니다.
+                  cno:
+                    type: integer
+                    example: 1
+                    description: 칵테일 고유 번호입니다.
+                  postId:
+                    type: integer
+                    example: 15
+                    description: 게시글 고유 번호입니다.
+                  images:
+                    type: array
+                    items:
+                      type: integer
+                    example: [12, 13, 14]
+                  replies:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        replyId:
+                          type: integer
+                          example: 1
+                        NICKNAME:
+                          type: string
+                          example: NEWNICKNAME
+                        LEVEL:
+                          type: integer
+                          example: 1
+                        CONTENT:
+                          type: text
+                          example: 댓글 내용 예시입니다.
+                        isReplyWriter:
+                          type: boolean
+                          example: true
+                          description: 댓글 작성자인지 확인
+
+                  isWriter:
+                    type: boolean
+                    example: true
+
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+    post:
+      tags:
+        - communities
+      summary: 커뮤니티 글 수정
+      description:
+      operationId: updatePost
+      parameters:
+      requestBody:
+        required: true
+        description: 커뮤니티글 수정, category key를 하나 더 추가해주세요.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  example: 1
+                title:
+                  type: string
+                  example: 1-이 칵테일을 추천합니다 / 2-질문글은 제목이 없습니다 / 3-이 칵테일을 리뷰합니다(이 경우에만 like를 씁니다) / 4-자유글입니다
+                content:
+                  type: text
+                  example: 1-달달하고 맛있어요 / 2-이 재료 대신 저 재료 써도 되나요? / 3-이 칵테일은 이렇습니다 / 4-저는 칵테일을 좋아합니다
+                image:
+                  type: text
+                  example: multipart/form-data 형식으로 form태그인가?로 최대 5개까지 올려주세요. 이거는 req에 따로 포함하지 않고 form태그로 파일만 올려주시면됩니다
+                category:
+                  type: integer
+                  example: 1
+                like:
+                  type: integer
+                  example: 0
+
+    delete:
+      tags:
+        - communities
+      summary: 커뮤니티 글 삭제
+      description: ''
+      operationId: deletePost
+      parameters:
+        - in: path
+          name: postId
+          description: 게시글 ID
+          example: 3
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
   /communities/cocktails:
     get:
       tags:
@@ -244,148 +390,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Success'
 
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Fail'
-  /communities/{postId}:
-    get:
-      tags:
-        - communities
-      summary: 커뮤니티 한개의 게시글 가져오기 + 게시글에 딸린 이미지 id를 images 배열로 묶어 전송 + 댓글 내용 array 속 object로 전송
-      description:
-      operationId: getOnePost
-      parameters:
-        - in: path
-          name: postId
-          description: 포스트 고유 번호
-          type: integer
-          example: 15
-          required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  title:
-                    type: string
-                    example: 제목이 옵니다. cocktaillike는 칵테일 추천할때만 쓰고, like는 게시글 좋아요 수에요
-                  cocktaillike:
-                    type: integer
-                    example: 1
-                    description: (부연설명 - cocktaillike는 칵테일 추천 게시글에만 적용되는 property입니다. 칵테일 추천시 1 아니면 0)
-                  like:
-                    type: integer
-                    example: 3
-                    description: 게시글 별 좋아요 수입니다.
-                  content:
-                    type: text
-                    example: 게시글 내용입니다.
-                  cno:
-                    type: integer
-                    example: 1
-                    description: 칵테일 고유 번호입니다.
-                  postId:
-                    type: integer
-                    example: 15
-                    description: 게시글 고유 번호입니다.
-                  images:
-                    type: array
-                    items:
-                      type: integer
-                    example: [12, 13, 14]
-                  replies:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        replyId:
-                          type: integer
-                          example: 1
-                        NICKNAME:
-                          type: string
-                          example: NEWNICKNAME
-                        LEVEL:
-                          type: integer
-                          example: 1
-                        CONTENT:
-                          type: text
-                          example: 댓글 내용 예시입니다.
-                        isReplyWriter:
-                          type: boolean
-                          example: true
-                          description: 댓글 작성자인지 확인
-
-                  isWriter:
-                    type: boolean
-                    example: true
-
-        '400':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Fail'
-    post:
-      tags:
-        - communities
-      summary: 커뮤니티 글 수정
-      description: 1 - 칵테일 추천 || 2 - 질문과 답변 || 3 - 칵테일 리뷰 || 4 - 자유
-      operationId: updatePost
-      parameters:
-      requestBody:
-        required: true
-        description: category_id에 따른 예시를 하나에 모두 적었습니다. category_id가 3인 경우에만 like(칵테일 추천)를 씁니다.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                category_id:
-                  type: integer
-                  example: 1
-                title:
-                  type: string
-                  example: 1-이 칵테일을 추천합니다 / 2-질문글은 제목이 없습니다 / 3-이 칵테일을 리뷰합니다(이 경우에만 like를 씁니다) / 4-자유글입니다
-                content:
-                  type: text
-                  example: 1-달달하고 맛있어요 / 2-이 재료 대신 저 재료 써도 되나요? / 3-이 칵테일은 이렇습니다 / 4-저는 칵테일을 좋아합니다
-                image:
-                  type: text
-                  example: multipart/form-data 형식으로 form태그인가?로 최대 5개까지 올려주세요. 이거는 req에 따로 포함하지 않고 form태그로 파일만 올려주시면됩니다
-                like:
-                  type: integer
-                  example: 0
-
-    delete:
-      tags:
-        - communities
-      summary: 커뮤니티 글 삭제
-      description: ''
-      operationId: deletePost
-      parameters:
-        - in: path
-          name: postId
-          description: 게시글 ID
-          example: 3
-          schema:
-            type: integer
-          required: true
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Success'
         '400':
           description: ''
           content:
