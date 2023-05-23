@@ -112,7 +112,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
       color: [],
       ingred: [],
       instruction: '',
-      image: null
+      image: null,
     };
 
     // cocktail get
@@ -142,7 +142,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
     data.name = cocktail.NAME;
     data.alcoholic = cocktail.ALCOHOLIC;
     data.instruction = cocktail.INSTRUCTION;
-    data.image = cocktail.IMAGE_PATH ? cocktail.IMAGE_PATH : null
+    data.image = cocktail.IMAGE_PATH ? cocktail.IMAGE_PATH : null;
 
     // color
     for (let i = 0; i < color.length; i++) {
@@ -499,13 +499,19 @@ router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
         CATEGORY: 3,
         CNO: cocktailId,
       },
-      attributes: ['CONTENT', 'createdAt'],
+      attributes: [
+        ['CONTENT', 'content'],
+        ['createdAt', 'date'],
+      ],
       include: [
         {
           model: db.USER,
           as: 'UNO_USER',
           required: true,
-          attributes: ['NICKNAME', 'LEVEL'],
+          attributes: [
+            ['NICKNAME', 'nickname'],
+            ['LEVEL', 'level'],
+          ],
         },
       ],
     });

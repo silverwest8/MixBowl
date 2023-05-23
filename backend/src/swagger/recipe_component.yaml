@@ -304,30 +304,33 @@ components:
         message:
           type: string
           example: 칵테일 레시피 리뷰 리스트 조회 성공
-        count:
-          type: integer
-          example: 10
-        list:
-          type: array
-          items:
-            type: object
-            properties:
-              text:
-                type: string
-                example: |
-                  후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.
-              date:
-                type: string
-                example: 2023.05.02(열두시간 전 일케 하는건 프론트에서 처리해도 괜찮을것같기도...)
-              USER:
+        data:
+          type: object
+          properties:
+            count:
+              type: integer
+              example: 10
+            list:
+              type: array
+              items:
                 type: object
                 properties:
-                  nickname:
+                  text:
                     type: string
-                    example: 알콜릭
-                  level:
-                    type: integer
-                    example: 2
+                    example: |
+                      후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.  후기 텍스트입니다.
+                  date:
+                    type: string
+                    example: 2023.05.02(열두시간 전 일케 하는건 프론트에서 처리해도 괜찮을것같기도...)
+                  USER:
+                    type: object
+                    properties:
+                      nickname:
+                        type: string
+                        example: 알콜릭
+                      level:
+                        type: integer
+                        example: 2
 
     LikeUnlikeSuccess:
       properties:
