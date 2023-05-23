@@ -10,6 +10,7 @@ import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
 import sql from '../database/sql';
 import dotenv from 'dotenv';
+import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 dotenv.config();
 const router = express.Router();
 
@@ -254,6 +255,10 @@ router.get('/bar/:placeId', checkAccess, async (req, res) => {
   }
 });
 
+router.get('/checkToken', checkTokenYesAndNo, async (req, res) => {
+  console.log('checkandno');
+});
+
 router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
   // Example
   // http://localhost:3030/reviews/17649496
@@ -306,7 +311,7 @@ router.get('/bar/reviewlist/:place_id', checkAccess, async (req, res) => {
 router.get('/image/one', async (req, res) => {
   try {
     const imageId = req.query.imageId;
-    const imgPath = await sql.getImagePath(imageId);
+    const imgPath = await sql.getImagePath(imageId, 'review');
     const data = fs.readFileSync(imgPath);
     res.writeHead(200, { 'Content-Type': 'image/jpeg' });
     res.write(data);

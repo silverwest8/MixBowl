@@ -6,6 +6,7 @@ import KEYWORD from '../models/KEYWORD';
 import POST from '../models/POST';
 import COCKTAIL from '../models/COCKTAIL';
 import POST_LIKE from '../models/POST_LIKE';
+import POST_REPLY from '../models/POST_REPLY';
 import fs from 'fs';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 
@@ -204,6 +205,40 @@ const sql = {
       console.log(error.message);
     }
   },
+  postReply: async (req, pno) => {
+    const content = req.body.content;
+    await POST_REPLY.create({
+      UNO: req.user.dataValues.UNO,
+      PNO: pno,
+      CONTENT: content,
+    });
+  },
+  changeReply: async (req, replyId) => {
+    const content = req.body.content;
+    try {
+      await POST_REPLY.update(
+        {
+          CONTENT: content,
+        },
+        { where: { PRNO: replyId } }
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  deleteReply: async (req, replyId) => {
+    try {
+      await POST_REPLY.destroy({
+        where: { PRNO: replyId },
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  getReplyUno: async (replyId) => {
+    const reply = await POST_REPLY.findByPk(replyId);
+    return reply.UNO;
+  },
   makePostLike: async (uno, pno) => {
     try {
       await POST_LIKE.create({
@@ -228,7 +263,6 @@ const sql = {
       console.log(error.message);
     }
   },
-  postCommunityReply: async (req) => {},
 
   getCommunityPost: async (req) => {},
   postImage: async (req, db) => {
@@ -368,14 +402,15 @@ const sql = {
     });
     return next();
   },
-  getImagePath: async (imageId) => {
+  getImagePath: async (imageId, category) => {
     try {
-      const image = await IMAGE.findByPk(imageId);
-      if (image === 'undefined') {
+      if (category === 'review') {
+        const image = await IMAGE.findByPk(imageId);
+        return image.PATH;
+      } else if (category === 'community') {
         const image_communty = await IMAGE_COMMUNITY.findByPk(imageId);
-        return image_community.PATH;
+        return image_communty.PATH;
       }
-      return image.PATH;
     } catch (error) {
       console.log(error.message);
     }
