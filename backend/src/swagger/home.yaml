@@ -26,7 +26,7 @@ paths:
       tags:
         - home
       summary: 이번 주 인기 칵테일 레시피
-      description: cocktailId는 이미지용, postId는 클릭 시 이동용
+      description: cocktailId는 이미지용
       oprationId: getHomeCocktail
       responses:
         '200':
@@ -47,7 +47,7 @@ paths:
       tags:
         - home
       summary: 내 주변 칵테일 바
-      description: 지역 이름은 못
+      description: 이거 사용 안하고 그냥 review/barlist를 그대로 써도 될 듯 합니다.
       operationId: getHomeBar
       parameters:
         - in: query
@@ -102,7 +102,7 @@ paths:
       tags:
         - home
       summary: 이번 주 커뮤니티 인기글
-      description: ''
+      description: 칵테일 리뷰 카테고리는 빼고 보여줍니다.
       operationId: getHomeCommunity
       responses:
         '200':

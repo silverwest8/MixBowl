@@ -52,26 +52,27 @@ components:
             type: object
             properties:
               cocktailId:
-                type: integer
+                type: string
                 example: 22
-              postId:
-                type: integer
-                example: 32
-              title:
+              cocktailName:
                 type: string
                 example: Flaming Volcano
-              content:
+              reviewContent:
                 type: string
-                example: 내용입니다.
+                example: 가장 좋아하는 칵테일입니다. (리뷰가 없는 경우 null입니다.)
               like:
                 type: integer
                 example: 10
               reply:
                 type: integer
                 example: 10
-              nickname:
-                type: string
-                example: 알콜릭
+              USER:
+                type: object
+                properties:
+                  nickname:
+                    type: string
+                    example: ninja
+              
 
     getHomeBar:
       properties:
@@ -137,9 +138,6 @@ components:
               content:
                 type: string
                 example: 내용입니다.(질문글은 내용만 있습니다.)
-              cocktailId:
-                type: integer
-                example: 22
               like:
                 type: integer
                 example: 10
