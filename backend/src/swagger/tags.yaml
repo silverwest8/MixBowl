@@ -1,13 +1,16 @@
 # Tags for Swagger
 
 tags:
+  - name: home
+    description: Operations about home
   - name: users
     description: Operations about users
   - name: recipes
     description: Operation about recipes
   - name: communities
-    description: Operation about community posting
+    description: Operation about communities
   - name: reviews
-    description: Operation about review
+    description: Operation about reviews
   - name: mypages
-    description: Operation about mypage
+    description: Operation about mypages
+

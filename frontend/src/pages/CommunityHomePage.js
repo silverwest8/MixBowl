@@ -330,7 +330,7 @@ const CommunityHomePage = () => {
             </h1>
             <SearchBar
               placeholder="관심있는 내용을 검색해보세요!"
-              showSearchButton={true}
+              showCloseButton={false}
             />
           </section>
           <div className="grid-container">

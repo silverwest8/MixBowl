@@ -5,12 +5,13 @@ import sql from '../database/sql';
 import userUtil from '../middleware/user';
 import checkAccess from '../middleware/checkAccessToken';
 import { refresh_new } from './jwt/jwt-util';
-import AUTH_CODE from '../models/AUTH_CODE';
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import * as validation from '../validation/user';
-import USER from '../models/USER';
-
+import { db } from '../models';
+import nodemailer from 'nodemailer';
+import axios from 'axios';
+import iconv from 'iconv-lite';
+import * as cheerio from 'cheerio';
 dotenv.config();
 
 const router = express.Router();
@@ -86,7 +87,7 @@ router.put('/emaildupcheck', async (req, res) => {
 router.post('/sendauthmail', async (req, res) => {
   try {
     const authNum = Math.random().toString().slice(2, 7);
-    await AUTH_CODE.create({ EMAIL: req.body.email, AUTH_CODE: authNum });
+    await db.AUTH_CODE.create({ EMAIL: req.body.email, AUTH_CODE: authNum });
 
     //인증번호 보내기
     const mailOptions = {
@@ -108,6 +109,7 @@ router.post('/sendauthmail', async (req, res) => {
       return res.json({ success: true, message: '인증메일이 발송되었습니다.' });
     });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({
       success: false,
       message: '인증번호메일 발송에 실패하였습니다.',
@@ -119,7 +121,7 @@ router.post('/sendauthmail', async (req, res) => {
 //인증번호 확인
 router.put('/checkauth', async (req, res) => {
   try {
-    const check = await AUTH_CODE.findOne({
+    const check = await db.AUTH_CODE.findOne({
       where: { EMAIL: req.body.email },
       order: [['createdAt', 'DESC']],
     });
@@ -166,17 +168,75 @@ router.put('/checkbarowner', checkAccess, async (req, res) => {
 // bartender 인증
 router.put('/checkbartender', checkAccess, async (req, res) => {
   try {
-    const bartender = true;
-    if (bartender) {
-      req.user.update({ LEVEL: 5 });
+    const name = req.body.name; //
+    const encoded = iconv.encode(name, 'euc-kr');
+    let encodedName = '';
+    for (var i = 0; i < encoded.length; i++) {
+      encodedName += '%' + encoded[i].toString('16');
     }
-    return res
-      .status(200)
-      .json({ success: true, bartender: true, message: '바텐더 인증 성공' });
+    console.log(encoded);
+    console.log(encodedName.toUpperCase());
+    const response = await axios.get(
+      `https://www.q-net.or.kr/qlf006.do?hgulNm=${encodedName}`, // 이름 인코딩
+      {
+        params: {
+          id: 'qlf00601s01',
+          gSite: 'Q',
+          gId: '',
+          resdNo1: req.body.birth, //생년월일
+          lcsNo: req.body.qualification, // 자격증번호
+          qualExpDt: req.body.issueDate, // 발급(등록)연월일
+          lcsMngNo: req.body.lcsMngNo, // 자격증내지번호
+        },
+        responseType: 'arraybuffer',
+      }
+    );
+    const contentType = response.headers['content-type'];
+    const charset = contentType.includes('charset=')
+      ? contentType.split('charset=')[1]
+      : 'UTF-8';
+    const content = iconv.decode(response.data, charset).trim();
+
+    const $ = cheerio.load(content);
+    console.log(charset);
+    console.log(content);
+    console.log($('.ff_zh').text());
+    console.log($('.fc_r').text());
+    let bartender = false;
+    if ($('.ff_zh').text()) {
+      bartender = true;
+      if (bartender) {
+        req.user.update({ LEVEL: 5 });
+      }
+      return res.status(200).json({
+        success: true,
+        bartender,
+        message: '바텐더 인증에 성공하였습니다',
+      });
+    } else {
+      return res.status(200).json({
+        success: true,
+        bartender,
+        message: '바텐더 인증을 다시 시도해주세요',
+      });
+    }
   } catch (error) {
+    console.log(error);
     return res
       .status(400)
       .json({ success: false, message: '바텐더 인증 실패', error });
+  }
+});
+
+// 회원 정보 조회
+router.get('/', checkAccess, async (req, res) => {
+  try {
+    console.log(req.user);
+    return res.status(200).json({ success: true, message: '회원 정보 조회 성공', data: req.user});
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: '회원 정보 조회 실패', error });
   }
 });
 

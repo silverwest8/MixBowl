@@ -76,7 +76,7 @@ const CocktailbarDetail = ({ id }) => {
           cnt={reviewData.data.total_cnt}
           reviewList={reviewData.data.list}
           name={detailData.data.NAME}
-          id={detailData.data.PLACE_ID}
+          placeId={detailData.data.PLACE_ID}
         />
       </Section>
     )
