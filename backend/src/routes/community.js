@@ -108,7 +108,13 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
 });
 router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
-  const postData = await POST.findByPk(pno);
+  const postData = await POST.findByPk(Number(pno));
+  if (postData === null) {
+    return res.status(400).send({
+      success: false,
+      message: "게시물이 없습니다."
+    });
+  }
   const user = await USER.findByPk(postData.dataValues.UNO);
   console.log(user);
   let isWriter = false;
@@ -131,8 +137,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
     },
   });
   let isUserLike = false;
-  console.log(req.user.UNO, postData.PNO);
-  const isLike = await POST_LIKE.findAll({
+  const isLike = req.user === undefined ? [] : await POST_LIKE.findAll({
     where: { UNO: req.user.UNO, PNO: postData.PNO },
   });
   console.log(isLike);
