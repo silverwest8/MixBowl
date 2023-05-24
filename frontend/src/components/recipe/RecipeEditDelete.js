@@ -51,7 +51,6 @@ const RecipeEditDelete = ({ options }) => {
   const handleConform = () => {
     deleteReipe(id)
       .then((response) => {
-        console.log(response);
         if (response.success) {
           ToastMessageDelete();
           closeModal();

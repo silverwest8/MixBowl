@@ -18,13 +18,22 @@ const ReportRecipeModal = ({ handleClose, id }) => {
   const onSubmit = () => {
     reportRecipe(id, reportNum)
       .then((response) => {
-        console.log(response);
-        setToastState({
-          show: true,
-          message: "이미 신고한 게시물입니다.",
-          type: "error",
-          ms: 2000,
-        });
+        if (response.success === true) {
+          setToastState({
+            show: true,
+            message: "신고가 완료되었습니다.",
+            type: "success",
+            ms: 2000,
+          });
+        }
+        if (response.success === false) {
+          setToastState({
+            show: true,
+            message: "이미 신고한 게시물입니다.",
+            type: "error",
+            ms: 2000,
+          });
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -59,7 +68,6 @@ const RecipeDetailCard = () => {
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/recipes/detail/${id}`);
       setRecipe(data.data);
-      console.log(data.data);
     } catch (error) {
       return error.message;
     }
@@ -179,7 +187,6 @@ const RecipeDetailCard = () => {
                 onClick={() => {
                   likteRecipe(id, true, recipe.like - 1)
                     .then((response) => {
-                      console.log(response);
                       setRecipe((prevRecipe) => ({
                         ...prevRecipe,
                         USER: {
@@ -203,7 +210,6 @@ const RecipeDetailCard = () => {
                 onClick={() => {
                   likteRecipe(id, false, recipe.like + 1)
                     .then((response) => {
-                      console.log(response);
                       setRecipe((prevRecipe) => ({
                         ...prevRecipe,
                         USER: {

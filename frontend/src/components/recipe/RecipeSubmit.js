@@ -84,7 +84,6 @@ const RecipeSubmit = ({ actionType }) => {
           image: [recipeImg],
         })
           .then((response) => {
-            console.log(response);
             if (response.success) {
               setToastState({
                 show: true,
@@ -138,7 +137,6 @@ const RecipeSubmit = ({ actionType }) => {
           image: [recipeImg],
         })
           .then((response) => {
-            console.log(response);
             if (response.success) {
               setToastState({
                 show: true,
