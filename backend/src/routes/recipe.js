@@ -3,14 +3,12 @@
 import express from 'express';
 import { db, sequelize } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
-import dotenv from 'dotenv';
 import axios from 'axios';
 import multer from 'multer';
 import fs from 'fs';
 import { Sequelize } from 'sequelize';
 import { logger } from '../../winston/winston';
 
-dotenv.config();
 const router = express.Router();
 
 //multer 미들웨어 설정
@@ -114,7 +112,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
       color: [],
       ingred: [],
       instruction: '',
-      image: null
+      image: null,
     };
 
     // cocktail get
@@ -144,7 +142,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
     data.name = cocktail.NAME;
     data.alcoholic = cocktail.ALCOHOLIC;
     data.instruction = cocktail.INSTRUCTION;
-    data.image = cocktail.IMAGE_PATH ? cocktail.IMAGE_PATH : null
+    data.image = cocktail.IMAGE_PATH ? cocktail.IMAGE_PATH : null;
 
     // color
     for (let i = 0; i < color.length; i++) {
@@ -291,9 +289,10 @@ router.delete('/:cocktailId', async (req, res) => {
 
 router.get('/list/filter/:page', checkAccess, async (req, res) => {
   try {
+    const unit = 20;
     const page = Number(req.params.page);
-    const offset = 20 * (page - 1);
-    const limit = 20;
+    const offset = unit * (page - 1);
+    const limit = unit;
     const color = req.query.color
       ? JSON.parse(`{"color": ${req.query.color}}`).color
       : null;
@@ -500,13 +499,19 @@ router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
         CATEGORY: 3,
         CNO: cocktailId,
       },
-      attributes: ['CONTENT', 'createdAt'],
+      attributes: [
+        ['CONTENT', 'content'],
+        ['createdAt', 'date'],
+      ],
       include: [
         {
           model: db.USER,
           as: 'UNO_USER',
           required: true,
-          attributes: ['NICKNAME', 'LEVEL'],
+          attributes: [
+            ['NICKNAME', 'nickname'],
+            ['LEVEL', 'level'],
+          ],
         },
       ],
     });

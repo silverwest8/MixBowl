@@ -2,7 +2,7 @@
 
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config(); //JWT 키불러오기
 import USER from '../models/USER';
 import { logger } from '../../winston/winston';
 
@@ -12,15 +12,21 @@ export default async (req, res, next) => {
   // 인증 완료
   try {
     //req.headers.authorization = access Token일 경우
+    if (req.headers.authorization === undefined) {
+      throw new Error('Not Login Status');
+    }
     req.decoded = jwt.verify(req.headers.authorization, process.env.SECRET_KEY);
     const user = await USER.findOne({
       where: { UNO: req.decoded.unum },
-      attributes: ['UNO', 'NICKNAME', 'EMAIL', 'LEVEL'],
     });
     req.user = user;
     logger.info(`UNO : ${req.user.UNO}`);
     return next();
   } catch (error) {
+    if (error.message === 'Not Login Status') {
+      console.log('not login status');
+      return next();
+    }
     //유효시간 만료
     if (error.name === 'TokenExpiredError') {
       return res.status(419).json({
