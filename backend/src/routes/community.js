@@ -109,6 +109,8 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
 router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
   const postData = await POST.findByPk(pno);
+  const user = await USER.findByPk(postData.dataValues.UNO);
+  console.log(user);
   let isWriter = false;
   const likePost = await POST_LIKE.findAll({
     attributes: ['PNO', [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
@@ -128,6 +130,16 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
       PNO: pno,
     },
   });
+  let isUserLike = false;
+  console.log(req.user.UNO, postData.PNO);
+  const isLike = await POST_LIKE.findAll({
+    where: { UNO: req.user.UNO, PNO: postData.PNO },
+  });
+  console.log(isLike);
+  if (isLike.length !== 0) {
+    isUserLike = true;
+  }
+  console.log(isUserLike);
   const reply_arr = [];
   for (const val of replies) {
     const user = await USER.findByPk(val.dataValues.UNO);
@@ -171,20 +183,30 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         success: true,
         title: postData.TITLE,
         like: likes,
+        isUserLike: isUserLike,
         content: postData.CONTENT,
+        username: user.dataValues.NICKNAME,
+        userlevel: user.dataValues.LEVEL,
+        createdAt: postData.createdAt,
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        category: postData.dataValues.CATEGORY,
         replies: reply_arr,
       });
     case 2:
       return res.send({
         success: true,
         like: likes,
+        isUserLike: isUserLike,
         content: postData.CONTENT,
+        username: user.dataValues.NICKNAME,
+        userlevel: user.dataValues.LEVEL,
+        createdAt: postData.createdAt,
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        category: postData.dataValues.CATEGORY,
         replies: reply_arr,
       });
     case 3:
@@ -192,12 +214,17 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         success: true,
         title: postData.TITLE,
         cocktailLike: postData.LIKE,
+        isUserLike: isUserLike,
         like: likes,
         content: postData.CONTENT,
+        username: user.dataValues.NICKNAME,
+        userlevel: user.dataValues.LEVEL,
+        createdAt: postData.createdAt,
         cno: postData.CNO,
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        category: postData.dataValues.CATEGORY,
         replies: reply_arr,
       });
     case 4:
@@ -205,10 +232,15 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         success: true,
         title: postData.TITLE,
         like: likes,
+        isUserLike: isUserLike,
         content: postData.CONTENT,
+        username: user.dataValues.NICKNAME,
+        userlevel: user.dataValues.LEVEL,
+        createdAt: postData.createdAt,
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        category: postData.dataValues.CATEGORY,
         replies: reply_arr,
       });
   }

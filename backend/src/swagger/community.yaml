@@ -71,9 +71,22 @@ paths:
                   success:
                     type: boolean
                     example: true
+                  username:
+                    type: string
+                    example: 유저닉네임
+                  userlevel:
+                    type: integer
+                    example: 1
                   title:
                     type: string
                     example: 제목이 옵니다. cocktaillike는 칵테일 추천할때만 쓰고, like는 게시글 좋아요 수에요
+                  createdAt:
+                    type: string
+                    example: 2023-05-16 (날짜정보)
+                  isUserLike:
+                    type: boolean
+                    example: true
+                    description: 로그인 유저가 게시글을 좋아하는지 좋아함 true.  좋아요 안함 false.
                   cocktaillike:
                     type: integer
                     example: 1
@@ -89,6 +102,10 @@ paths:
                     type: integer
                     example: 1
                     description: 칵테일 고유 번호입니다.
+                  category:
+                    type: integer
+                    example: 1
+                    description: 카테고리 나타내기 위한 키
                   postId:
                     type: integer
                     example: 15
