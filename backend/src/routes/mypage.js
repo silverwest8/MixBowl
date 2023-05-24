@@ -8,8 +8,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
 
-router.get('/recipes', checkAccess, async (req, res) => {
+router.get('/recipes/:page', checkAccess, async (req, res) => {
   try {
+    const unit = 10;
+    const page = Number(req.params.page);
+    const offset = unit * (page - 1);
+    const limit = unit;
     let list = [];
     const like = await db.COCKTAIL_LIKE.findAll({
       where: { UNO: req.user.UNO },
@@ -24,11 +28,13 @@ router.get('/recipes', checkAccess, async (req, res) => {
               model: db.USER,
               as: 'UNO_USER',
               attributes: ['NICKNAME', 'LEVEL'],
-              require: false,
+              required: false,
             },
           ],
         },
       ],
+      offset,
+      limit,
     });
     // console.log(like);
     for (let i = 0; i < like.length; i++) {
@@ -53,7 +59,7 @@ router.get('/recipes', checkAccess, async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: 'Mypage recipes get 성공', list });
+      .json({ success: true, message: 'Mypage recipes get 성공', count: list.length, list });
   } catch (error) {
     console.log(error);
     return res
@@ -62,11 +68,17 @@ router.get('/recipes', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/posts', checkAccess, async (req, res) => {
+router.get('/posts/:page', checkAccess, async (req, res) => {
   try {
+    const unit = 10;
+    const page = Number(req.params.page);
+    const offset = unit * (page - 1);
+    const limit = unit;
     let list = [];
     const posts = await db.POST.findAll({
       where: { UNO: req.user.UNO },
+      offset,
+      limit,
     });
     for (let i = 0; i < posts.length; i++) {
       const post = posts[i];
@@ -75,6 +87,7 @@ router.get('/posts', checkAccess, async (req, res) => {
         category: post.CATEGORY,
         title: post.TITLE,
         content: post.CONTENT,
+        cocktailId: post.CNO,
         like: await db.POST_LIKE.count({
           where: {
             PNO: post.PNO,
@@ -93,7 +106,7 @@ router.get('/posts', checkAccess, async (req, res) => {
     }
     return res
       .status(200)
-      .json({ success: true, message: 'Mypage posts get 성공', list });
+      .json({ success: true, message: 'Mypage posts get 성공', count: list.length, list });
   } catch (error) {
     console.log(error);
     return res
@@ -102,8 +115,12 @@ router.get('/posts', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/replies', checkAccess, async (req, res) => {
+router.get('/replies/:page', checkAccess, async (req, res) => {
   try {
+    const unit = 10;
+    const page = Number(req.params.page);
+    const offset = unit * (page - 1);
+    const limit = unit;
     let list = [];
     const replies = await db.POST_REPLY.findAll({
       where: { UNO: req.user.UNO },
@@ -115,10 +132,13 @@ router.get('/replies', checkAccess, async (req, res) => {
           required: false,
         },
       ],
+      offset,
+      limit,
     });
     for (let i = 0; i < replies.length; i++) {
       const reply = replies[i];
       let temp = {
+        postId: reply.PNO,
         content: reply.CONTENT,
         title: reply.PNO_POST.TITLE,
         date: reply.createdAt,
@@ -129,7 +149,7 @@ router.get('/replies', checkAccess, async (req, res) => {
     }
     return res
       .status(200)
-      .json({ success: true, message: 'Mypage replies get 성공', list });
+      .json({ success: true, message: 'Mypage replies get 성공', count: list.length, list });
   } catch (error) {
     console.log(error);
     return res
@@ -138,8 +158,12 @@ router.get('/replies', checkAccess, async (req, res) => {
   }
 });
 
-router.get('/reviews', checkAccess, async (req, res) => {
+router.get('/reviews/:page', checkAccess, async (req, res) => {
   try {
+    const unit = 10;
+    const page = Number(req.params.page);
+    const offset = unit * (page - 1);
+    const limit = unit;
     let list = [];
     const reviews = await db.REVIEW.findAll({
       where: { UNO: req.user.UNO },
@@ -157,6 +181,8 @@ router.get('/reviews', checkAccess, async (req, res) => {
           required: false,
         },
       ],
+      offset,
+      limit,
     });
 
     let keyword = [];
@@ -166,8 +192,9 @@ router.get('/reviews', checkAccess, async (req, res) => {
         keyword.push(review.KEYWORDs[j].KEYWORD);
       }
       let temp = {
+        placeId: review.PLACE_ID,
+        placeName: review.PLACE.NAME,
         text: review.TEXT,
-        place: review.PLACE.NAME,
         keyword: keyword,
       };
       // console.log(review);
@@ -176,7 +203,7 @@ router.get('/reviews', checkAccess, async (req, res) => {
     }
     return res
       .status(200)
-      .json({ success: true, message: 'Mypage reviews get 성공', list });
+      .json({ success: true, message: 'Mypage reviews get 성공', count: list.length, list });
   } catch (error) {
     console.log(error);
     return res

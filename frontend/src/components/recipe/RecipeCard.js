@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { FaThumbsUp, FaCommentDots } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
@@ -13,10 +13,10 @@ import {
   colorState,
   AddRecipeState,
 } from "../../store/recipe";
+import { useInView } from "react-intersection-observer";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 const RecipeCard = () => {
-  const [recipe, setRecipe] = useState([]);
-  // const [image, setImage] = useState(null);
   const colorNum = [];
   const alcoholNum = [];
   let sortInit = false;
@@ -26,50 +26,7 @@ const RecipeCard = () => {
   const sort = useRecoilValue(sortState);
   const addRecipeState = useResetRecoilState(AddRecipeState);
   const token = localStorage.getItem("access_token");
-
-  const GetRecipe = async (color, alcohol, sort) => {
-    colorFilter();
-    alcoholFilter();
-    sort = sortFilter();
-    try {
-      axios.defaults.headers.common.Authorization = token;
-      let url = `/api/recipes/list/filter/1?alcoholic=[${alcohol}]&color=[${color}]&search=${search}`;
-      if (sort) {
-        url += "&sort=new";
-      }
-      const { data } = await axios.get(url);
-      setRecipe(data.list);
-    } catch (error) {
-      console.log("empty or error");
-      setRecipe([]);
-    }
-  };
-
-  // const getImage = async (cocktailId) => {
-  //   try {
-  //     axios.defaults.headers.common.Authorization = token;
-  //     const response = await axios.get(`/api/recipes/image/${cocktailId}`, {
-  //       responseType: "blob",
-  //     });
-
-  //     const blobData = response.data;
-  //     const imageUrl = URL.createObjectURL(blobData);
-
-  //     console.log(imageUrl);
-  //     setImage(imageUrl);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  useEffect(() => {
-    GetRecipe(colorNum, alcoholNum, sortInit);
-    // getImage(11000);
-  }, [search, color, alcohol, sort]);
-
-  useEffect(() => {
-    addRecipeState();
-  }, []);
+  const { ref, inView } = useInView();
 
   const colorFilter = () => {
     if (color.red) colorNum.push(1);
@@ -97,62 +54,115 @@ const RecipeCard = () => {
     return sortInit;
   };
 
+  const GetRecipe = async (page, color, alcohol, sort) => {
+    colorFilter();
+    alcoholFilter();
+    sort = sortFilter();
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      let url = `/api/recipes/list/filter/${page}?alcoholic=[${alcohol}]&color=[${color}]&search=${search}`;
+      if (sort) {
+        url += "&sort=new";
+      }
+      const { data } = await axios.get(url);
+      console.log(url);
+      return { page, list: data.list };
+    } catch (error) {
+      console.log("empty or error");
+    }
+  };
+
+  const { isSuccess, data, fetchNextPage, remove } = useInfiniteQuery(
+    ["page"],
+    ({ pageParam = 1 }) => GetRecipe(pageParam, colorNum, alcoholNum, sortInit),
+    {
+      getNextPageParam: (lastPage) => {
+        return lastPage.page + 1;
+      },
+    }
+  );
+
+  useEffect(() => {
+    remove();
+    fetchNextPage(1);
+  }, [search, color, alcohol, sort]);
+
+  useEffect(() => {
+    addRecipeState();
+  }, []);
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [inView]);
+
   return (
     <MiddleBox>
-      {/* {image && <img src={image} style={{ width: "500px", height: "500px" }} />} */}
       <CardBox>
         <div className="arr">
+          <p>{sort.latest === true ? "최신순" : "추천순"}</p>
           <RecipeDrop />
         </div>
-        {recipe.map((item) => (
-          <RecipeBox key={item.id}>
-            {token ? (
-              <Link to={`/recipe/${item.id}`}>
-                <img
-                  src={`http://localhost:3030/recipes/image/${item.id}`}
-                ></img>
-                <h1>{item.name}</h1>
-              </Link>
-            ) : (
-              <>
-                <img src={item.image_path}></img>
-                <h1>{item.name}</h1>
-              </>
-            )}
+        {isSuccess &&
+          data.pages.map((page) =>
+            page.list.map((item) => (
+              <RecipeBox key={item.id}>
+                {token ? (
+                  <Link to={`/recipe/${item.id}`}>
+                    <img src={`/api/recipes/image/${item.id}`}></img>
+                    <h1>{item.name}</h1>
+                  </Link>
+                ) : (
+                  <>
+                    <img src={item.image_path}></img>
+                    <h1>{item.name}</h1>
+                  </>
+                )}
 
-            <TextBox>
-              <p>
-                @{item.USER.nickname} <MemberBadge level={item.USER.level} />
-              </p>
-              <div>
-                <p className="ThumbsUp">
-                  <FaThumbsUp></FaThumbsUp>
-                  {item.like}
-                </p>
-                <p className="Comment">
-                  <FaCommentDots></FaCommentDots>
-                  {item.post}
-                </p>
-              </div>
-            </TextBox>
-          </RecipeBox>
-        ))}
+                <TextBox>
+                  <NickName>
+                    @{item.USER.nickname}
+                    <MemberBadge level={item.USER.level} />
+                  </NickName>
+                  <div>
+                    <p className="ThumbsUp">
+                      <FaThumbsUp></FaThumbsUp>
+                      {item.like}
+                    </p>
+                    <p className="Comment">
+                      <FaCommentDots></FaCommentDots>
+                      {item.post}
+                    </p>
+                  </div>
+                </TextBox>
+              </RecipeBox>
+            ))
+          )}
       </CardBox>
+      <div ref={ref}></div>
     </MiddleBox>
   );
 };
 
+const NickName = styled.div`
+  display: flex;
+  font-size: 0.875rem;
+  margin-top: 0.3rem;
+`;
+
 const TextBox = styled.div`
   display: flex;
   justify-content: space-between;
-  & > div {
+  div {
     display: flex;
     align-items: center;
     gap: 0.4rem;
   }
   p {
-    display: flex;
-    align-items: center;
+    font-size: 0.875rem;
+    margin-top: 0.3rem;
+    gap: 0.2rem;
   }
 `;
 
@@ -169,6 +179,11 @@ const CardBox = styled.div`
     grid-row: 1;
     justify-self: end;
     margin-right: 1rem;
+    display: flex;
+    p {
+      margin-right: 0.5rem;
+      color: ${({ theme }) => theme.color.primaryGold};
+    }
   }
 
   @media screen and (max-width: 928px) {
@@ -197,11 +212,6 @@ const RecipeBox = styled.div`
   h1 {
     font-size: 1.25rem;
     margin-top: 0.5rem;
-  }
-  p {
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-    gap: 0.2rem;
   }
   .ThumbsUp {
     display: flex;

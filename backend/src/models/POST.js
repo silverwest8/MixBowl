@@ -39,8 +39,7 @@ export default class POST extends Model {
     },
     LIKE: {
       type: DataTypes.TINYINT,
-      allowNull: true,
-      defaultValue: 0
+      allowNull: true
     },
     CONTENT: {
       type: DataTypes.TEXT,

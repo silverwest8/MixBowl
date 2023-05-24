@@ -10,6 +10,12 @@ const RecipeSearch = (props) => {
     setSearch(e.target.value);
   };
 
+  const onKeyDown = (e) => {
+    if (e.keyCode === 13) onSearch();
+  };
+
+  const onSearch = () => {};
+
   return (
     <SearchBox>
       <SearchBar
@@ -18,6 +24,8 @@ const RecipeSearch = (props) => {
         onChange={handleInputChange}
         showCloseButton={false}
         disabled={props.disabled}
+        onKeyDown={onKeyDown}
+        onSearch={onSearch}
       />
     </SearchBox>
   );

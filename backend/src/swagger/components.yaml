@@ -2,8 +2,9 @@
 
 components:
   schemas:
-    Cookie:
+    Token:
       type: string
+      example: eyJhbGciOiJIUzI1NiIsInR5
     Success:
       type: object
       properties:
