@@ -6,7 +6,7 @@ paths:
         - mypages
       summary: 내가 추천한 레시피
       description: 10개씩 페이징합니다.
-      operationId: getMyRecips
+      operationId: getMyRecipes
       parameters:
         - in: path
           name: page
@@ -20,7 +20,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getMyRecips'
+                $ref: '#/components/schemas/getMyRecipes'
         '400':
           description: ''
           content:
@@ -49,7 +49,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getMyPosts'
-               
         '400':
           description: ''
           content:

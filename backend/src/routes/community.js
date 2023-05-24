@@ -1,7 +1,6 @@
 'use strict';
 
 import express from 'express';
-import dotenv from 'dotenv';
 import sql from '../database/sql';
 import checkAccess from '../middleware/checkAccessToken';
 import multer from 'multer';
@@ -13,6 +12,8 @@ import fs from 'fs';
 import { Sequelize, Op } from 'sequelize';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
+import dotenv from 'dotenv';
+import POST_REPORT from '../models/POST_REPORT';
 dotenv.config();
 const oneWeekAgo = new Date();
 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -84,8 +85,7 @@ router.post('/like/:pno', checkAccess, async (req, res) => {
 router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   try {
     const post = await sql.postCommunity(req);
-
-    console.log(post);
+    console.log('maybe', post);
     //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
     req.files.map(async (data) => {
       console.log('폼에 정의된 필드명 : ', data.fieldname);
@@ -106,29 +106,10 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
     console.log(error.message);
   }
 });
-router.post('/reply/:postId', checkAccess, async (req, res) => {
-  try {
-    const pno = req.params.postId;
-    await sql.postReply(req, pno);
-    res.send({
-      success: true,
-      message: 'REPLY post successfully',
-    });
-  } catch (error) {
-    console.log(error.message);
-    res.send({
-      success: false,
-      message: 'REPLY post failed',
-    });
-  }
-});
 router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
   const postData = await POST.findByPk(pno);
   let isWriter = false;
-  // const likePost = await POST_LIKE.findAll({
-  //   attributes: [[Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
-  // });
   const likePost = await POST_LIKE.findAll({
     attributes: ['PNO', [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
     where: {
@@ -150,12 +131,22 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const reply_arr = [];
   for (const val of replies) {
     const user = await USER.findByPk(val.dataValues.UNO);
+    let isReplyWriter = false;
+    if (req.user !== undefined) {
+      //로그인 한 상태일 때,
+      console.log(val.dataValues);
+      if (req.user.UNO === val.dataValues.UNO) {
+        isReplyWriter = true;
+      }
+    }
     delete val.dataValues.UNO;
     val.dataValues.UNO_USER = {
+      replyId: val.dataValues.PRNO,
       NICKNAME: user.NICKNAME,
       LEVEL: user.LEVEL,
       CONTENT: val.dataValues.CONTENT,
       createdAt: val.dataValues.createdAt,
+      isReplyWriter: isReplyWriter,
     };
     reply_arr.push(val.dataValues.UNO_USER);
   }
@@ -222,19 +213,164 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
       });
   }
 });
+router.post(
+  '/:postId',
+  checkAccess,
+  sql.deleteImage,
+  upload.array('files', 5),
+  async (req, res) => {
+    try {
+      const pno = req.params.postId;
+      const uno = req.decoded.unum;
+      const postData = await POST.findByPk(pno);
+      // if (postData.dataValues.UNO === uno) {
+      //   const data = Object.assign(postData.dataValues);
+      //   sql.
+      // }
+
+      //get으로 다 포스트 전체 내용 받아오고 다시 전달
+      if (postData.dataValues.UNO === uno) {
+        const post = await sql.changeCommunity(req, pno);
+        console.log('post', post);
+        await sql.postImage(req, post);
+        res.send({
+          success: true,
+          message: 'modify success',
+        });
+      } else {
+        res.send({
+          success: false,
+          message: "can't modify post/ not writer",
+        });
+      }
+    } catch (error) {
+      console.log(error.message);
+      res.send({
+        success: false,
+        message: 'sth wrong happend in system',
+      });
+    }
+  }
+);
+router.delete('/:postId', checkAccess, sql.deleteImage, async (req, res) => {
+  console.log('hi');
+  try {
+    await sql.deletePost(req);
+    return res
+      .status(200)
+      .json({ success: true, message: 'Delete Review Success' });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+router.post('/reply/:postId', checkAccess, async (req, res) => {
+  try {
+    const pno = req.params.postId;
+    await sql.postReply(req, pno);
+    res.send({
+      success: true,
+      message: 'REPLY post successfully',
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.send({
+      success: false,
+      message: 'REPLY post failed',
+    });
+  }
+});
+router.put('/reply/:replyId', checkAccess, async (req, res) => {
+  try {
+    const uno = req.decoded.unum;
+    const replyId = req.params.replyId;
+    const reply_uno = await sql.getReplyUno(replyId);
+    if (uno === reply_uno) {
+      await sql.changeReply(req, replyId);
+      res.send({
+        success: true,
+        message: 'change Reply successfully',
+      });
+    } else {
+      res.send({
+        success: false,
+        message: 'cannot change reply/not writer',
+      });
+    }
+  } catch (error) {
+    console.log('error', error.message);
+    res.send({
+      success: false,
+      message: 'change Reply failed',
+    });
+  }
+});
+
+router.delete('/reply/:replyId', checkAccess, async (req, res) => {
+  try {
+    const uno = req.decoded.unum;
+    const replyId = req.params.replyId;
+    const reply_uno = await sql.getReplyUno(replyId);
+    if (uno === reply_uno) {
+      await sql.deleteReply(req, replyId);
+      res.send({
+        success: true,
+        message: 'delete Reply successfully',
+      });
+    } else {
+      res.send({
+        success: false,
+        message: 'cannot delete reply/not writer',
+      });
+    }
+  } catch (error) {
+    console.log('error', error.message);
+    res.send({
+      success: false,
+      message: 'delete Reply failed',
+    });
+  }
+});
 
 router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
   try {
     const page = Number(req.query.page);
+    const search = req.query.search;
+    console.log('search', search);
     const offset = 10 * (page - 1);
     const limit = 10;
     const list = [];
-    const posts = await POST.findAll({
-      order: [['createdAt', 'DESC']],
-      limit: limit,
-      offset: offset,
-    });
-
+    let posts;
+    if (search) {
+      posts = await POST.findAll({
+        order: [['createdAt', 'DESC']],
+        limit: limit,
+        offset: offset,
+        where: {
+          [Sequelize.Op.or]: [
+            {
+              TITLE: {
+                [Op.like]: `%${search}%`,
+              },
+            },
+            {
+              CONTENT: {
+                [Op.like]: `%${search}%`,
+              },
+            },
+          ],
+        },
+      });
+    } else {
+      posts = await POST.findAll({
+        order: [['createdAt', 'DESC']],
+        limit: limit,
+        offset: offset,
+      });
+    }
     for (const val of posts) {
       const user = await USER.findByPk(val.dataValues.UNO);
       const likePost = await POST_LIKE.findAll({
@@ -257,7 +393,6 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
-
       delete val.dataValues.UNO;
       val.dataValues.UNO_USER = {
         NICKNAME: user.NICKNAME,
@@ -292,6 +427,122 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
     });
   }
 });
+router.get(
+  '/list/category/:category_name',
+  checkTokenYesAndNo,
+  async (req, res) => {
+    try {
+      const category_name = req.params.category_name;
+      const search = req.query.search;
+      let category;
+      if (category_name === 'recommend') {
+        category = 1;
+      } else if (category_name === 'question') {
+        category = 2;
+      } else if (category_name === 'review') {
+        category = 3;
+      } else if (category_name === 'free') {
+        category = 4;
+      } else {
+        throw new Error('not valid category name');
+      }
+      const page = Number(req.query.page);
+      const offset = 10 * (page - 1);
+      const limit = 10;
+      const list = [];
+      let posts;
+      if (search) {
+        posts = await POST.findAll({
+          where: {
+            [Op.and]: [
+              { CATEGORY: category },
+              {
+                [Op.or]: [
+                  {
+                    TITLE: {
+                      [Op.like]: `%${search}%`,
+                    },
+                  },
+                  {
+                    CONTENT: {
+                      [Op.like]: `%${search}%`,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          order: [['createdAt', 'DESC']],
+          limit: limit,
+          offset: offset,
+        });
+      } else {
+        posts = await POST.findAll({
+          where: { category: category },
+          order: [['createdAt', 'DESC']],
+          limit: limit,
+          offset: offset,
+        });
+      }
+
+      for (const val of posts) {
+        const user = await USER.findByPk(val.dataValues.UNO);
+        const likePost = await POST_LIKE.findAll({
+          attributes: [
+            'PNO',
+            [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES'],
+          ],
+          where: {
+            PNO: val.dataValues.PNO,
+          },
+          group: ['PNO'],
+        });
+        const replyNum = await POST_REPLY.findAll({
+          attributes: [
+            'PNO',
+            [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'Replies'],
+          ],
+          where: {
+            PNO: val.dataValues.PNO,
+          },
+          group: ['PNO'],
+        });
+
+        delete val.dataValues.UNO;
+        val.dataValues.UNO_USER = {
+          NICKNAME: user.NICKNAME,
+          LEVEL: user.LEVEL,
+        };
+
+        if (likePost.length !== 0) {
+          val.dataValues.LIKE = likePost[0].dataValues.LIKES;
+        } else {
+          val.dataValues.LIKE = 0;
+        }
+        if (replyNum.length !== 0) {
+          val.dataValues.REPLY = replyNum[0].dataValues.Replies;
+        } else {
+          val.dataValues.REPLY = 0;
+        }
+
+        list.push(val.dataValues);
+      }
+
+      console.log(list);
+      res.send({
+        success: true,
+        message: 'Post List loaded successfully',
+        data: list,
+      });
+    } catch (error) {
+      console.log(error.message);
+      res.send({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+);
 router.get('/one/image', async (req, res) => {
   //이미지 하나 요청
   try {
@@ -399,5 +650,35 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       success: false,
       message: 'Post List loaded failed',
     });
+  }
+});
+router.post('/report/:postId', checkAccess, async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const report = req.body.report;
+    const [result, created] = await POST_REPORT.findOrCreate({
+      where: {
+        PNO: postId,
+        UNO: req.user.UNO,
+      },
+      defaults: {
+        REPORT: report,
+      },
+    });
+    if (created) {
+      return res.status(200).json({
+        success: true,
+        message: 'Post Report 성공',
+      });
+    } else {
+      return res
+        .status(200)
+        .json({ success: false, message: 'Post Report 중복' });
+    }
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Post Report 실패', error });
   }
 });

@@ -172,7 +172,7 @@ paths:
         - in: query
           name: query
           description: ''
-          example: 수원 칵테일바
+          example: 칵테일바
           schema:
             type: string
           required: true
