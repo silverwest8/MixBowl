@@ -110,9 +110,6 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
   const postData = await POST.findByPk(pno);
   let isWriter = false;
-  // const likePost = await POST_LIKE.findAll({
-  //   attributes: [[Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
-  // });
   const likePost = await POST_LIKE.findAll({
     attributes: ['PNO', [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
     where: {
