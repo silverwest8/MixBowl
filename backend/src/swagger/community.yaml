@@ -145,9 +145,6 @@ paths:
             schema:
               type: object
               properties:
-                category_id:
-                  type: integer
-                  example: 1
                 title:
                   type: string
                   example: 1-이 칵테일을 추천합니다 / 2-질문글은 제목이 없습니다 / 3-이 칵테일을 리뷰합니다(이 경우에만 like를 씁니다) / 4-자유글입니다
