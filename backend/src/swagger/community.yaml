@@ -424,6 +424,12 @@ paths:
           example: 2
           schema:
             type: integer
+        - in: query
+          name: search
+          description: 검색할 단어
+          example: 맛있어요
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -480,6 +486,12 @@ paths:
           example: 3
           schema:
             type: integer
+        - in: query
+          name: search
+          description: 검색할 단어
+          example: 맛있어요
+          schema:
+            type: string
       responses:
         '200':
           description: ''

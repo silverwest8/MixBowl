@@ -340,14 +340,39 @@ router.delete('/reply/:replyId', checkAccess, async (req, res) => {
 router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
   try {
     const page = Number(req.query.page);
+    const search = req.query.search;
+    console.log('search', search);
     const offset = 10 * (page - 1);
     const limit = 10;
     const list = [];
-    const posts = await POST.findAll({
-      order: [['createdAt', 'DESC']],
-      limit: limit,
-      offset: offset,
-    });
+    let posts;
+    if (search) {
+      posts = await POST.findAll({
+        order: [['createdAt', 'DESC']],
+        limit: limit,
+        offset: offset,
+        where: {
+          [Sequelize.Op.or]: [
+            {
+              TITLE: {
+                [Op.like]: `%${search}%`,
+              },
+            },
+            {
+              CONTENT: {
+                [Op.like]: `%${search}%`,
+              },
+            },
+          ],
+        },
+      });
+    } else {
+      posts = await POST.findAll({
+        order: [['createdAt', 'DESC']],
+        limit: limit,
+        offset: offset,
+      });
+    }
     for (const val of posts) {
       const user = await USER.findByPk(val.dataValues.UNO);
       const likePost = await POST_LIKE.findAll({
@@ -410,6 +435,7 @@ router.get(
   async (req, res) => {
     try {
       const category_name = req.params.category_name;
+      const search = req.query.search;
       let category;
       if (category_name === 'recommend') {
         category = 1;
@@ -426,12 +452,40 @@ router.get(
       const offset = 10 * (page - 1);
       const limit = 10;
       const list = [];
-      const posts = await POST.findAll({
-        where: { category: category },
-        order: [['createdAt', 'DESC']],
-        limit: limit,
-        offset: offset,
-      });
+      let posts;
+      if (search) {
+        posts = await POST.findAll({
+          where: {
+            [Op.and]: [
+              { CATEGORY: category },
+              {
+                [Op.or]: [
+                  {
+                    TITLE: {
+                      [Op.like]: `%${search}%`,
+                    },
+                  },
+                  {
+                    CONTENT: {
+                      [Op.like]: `%${search}%`,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          order: [['createdAt', 'DESC']],
+          limit: limit,
+          offset: offset,
+        });
+      } else {
+        posts = await POST.findAll({
+          where: { category: category },
+          order: [['createdAt', 'DESC']],
+          limit: limit,
+          offset: offset,
+        });
+      }
 
       for (const val of posts) {
         const user = await USER.findByPk(val.dataValues.UNO);
