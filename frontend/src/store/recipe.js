@@ -1,5 +1,10 @@
 import { atom } from "recoil";
 
+export const searchState = atom({
+  key: "searchState",
+  default: "",
+});
+
 export const colorState = atom({
   key: "colorState",
   default: {
@@ -20,9 +25,51 @@ export const colorState = atom({
 });
 
 export const alcoholState = atom({
-  key: "alcoholState ",
+  key: "alcoholState",
   default: {
-    min: 0,
-    max: 0,
+    alcohol: "",
   },
+});
+
+export const sortState = atom({
+  key: "sortState",
+  default: {
+    latest: true,
+    recommendation: false,
+  },
+});
+
+export const AddRecipeState = atom({
+  key: "AddRecipeState",
+  default: {
+    addImg: "",
+    addName: "",
+    addColor: [],
+    addItem: [
+      {
+        addLength: 1,
+        addName: "",
+        addAmount: null,
+        addUnit: "",
+      },
+      {
+        addLength: 2,
+        addName: "",
+        addAmount: null,
+        addUnit: "",
+      },
+    ],
+    addAlcohol: "",
+    addExplain: "",
+  },
+});
+
+export const AddRecipeImgState = atom({
+  key: "AddRecipeImgState",
+  default: "",
+});
+
+export const RecipeRoportState = atom({
+  key: "RecipeRoportState",
+  default: 0,
 });

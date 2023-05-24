@@ -63,26 +63,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-    post:
-      tags:
-        - recipes
-      summary: 칵테일 레시피 수정
-      description: ''
-      operationId: updateRecipe
-      parameters:
-        - in: path
-          name: cocktailId
-          type: integer
-          example: 3
-          description: 변경하려는 레시피 id
-      requestBody:
-        required: true
-        description: ''
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/updateRecipe'
-
     delete:
       tags:
         - recipes
@@ -111,7 +91,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /recipes/list/filter:
+  /recipes/update/{cocktailId}:
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 수정
+      description: PUT 메소드로는 이미지 전송이 안돼서 POST로 합니다
+      operationId: updateRecipe
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          example: 3
+          description: 변경하려는 레시피 id
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateRecipe'
+
+  /recipes/list/filter/{page}:
     get:
       tags:
         - recipes
@@ -119,21 +120,22 @@ paths:
       description: ''
       operationId: getRecipeList
       parameters:
-        - in: query
-          name: max
+        - in: path
+          name: page
           type: integer
-          description: 최대 도수
-          example: 20
+          description: page number
+          example: 1
+          required: true
         - in: query
-          name: min
-          type: integer
-          description: 최소 도수
-          example: 3
+          name: alcoholic
+          type: string
+          description: 알콜수준, 0-낮음, 1-보통, 2-높음
+          example: '[0,1,2]'
         - in: query
           name: color
           type: string
-          description: 색상, 최대 몇개?, 1-빨강 2-주황 3-노랑 4-초록 5-파랑 6-보라 7-분홍 8-검정 9-갈색 10-회색 11-흰색 12-무색
-          example: 1
+          description: 색상, 최대3개, 1-빨강 2-주황 3-노랑 4-초록 5-파랑 6-보라 7-분홍 8-검정 9-갈색 10-회색 11-흰색 12-무색
+          example: '[1,2,3]'
         - in: query
           name: search
           type: string
@@ -142,8 +144,8 @@ paths:
         - in: query
           name: sort
           type: string
-          description: 정렬기준
-          example: like, newest
+          description: 정렬기준(일단은 기본-추천순이고 sort query로 new를 줬을 때만 최신순입니다)
+          example: new
       responses:
         '200':
           description: ''
@@ -233,6 +235,70 @@ paths:
               schema:
                 type: string
                 format: binary
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/like/{cocktailId}:
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 좋아요/좋아요 취소
+      description: 이미 좋아요 했는지 확인해서 좋아요 혹은 좋아요취소, Success시 liked에 좋아요인지/최소인지와 like에 like 개수를 return합니다
+      operationId: LikeCocktail
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 11000
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LikeUnlikeSuccess'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /recipes/report/{cocktailId}:
+    post:
+      tags:
+        - recipes
+      summary: 칵테일 레시피 신고
+      description: status 200에서 success-true이면 신고 성공, false이면 이미 신고한 상태
+      operationId: ReportCocktail
+      parameters:
+        - in: path
+          name: cocktailId
+          type: integer
+          description: 칵테일 레시피 ID
+          example: 11000
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              properties:
+                report:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
         '400':
           description: ''
           content:

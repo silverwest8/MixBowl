@@ -1,13 +1,14 @@
-import mysql from 'mysql2';
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import * as jwt_module from '../routes/jwt/jwt-util';
 import USER from '../models/USER';
 import REVIEW from '../models/REVIEW';
 import IMAGE from '../models/IMAGE';
 import KEYWORD from '../models/KEYWORD';
+import POST from '../models/POST';
+import COCKTAIL from '../models/COCKTAIL';
+import POST_LIKE from '../models/POST_LIKE';
+import POST_REPLY from '../models/POST_REPLY';
 import fs from 'fs';
-dotenv.config(); //JWT 키불러오기
+import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 
 const sql = {
   getUser: async () => {
@@ -149,16 +150,203 @@ const sql = {
       console.log(error.message);
     }
   },
-  postImage: async (req, review) => {
+  postCommunity: async (req) => {
+    const unum = req.decoded.unum;
+    console.log(req.body.data);
+    const category = req.query.category;
+    const data = JSON.parse(req.body.data);
+    console.log('data', data);
     try {
-      const reviewId = review.REVIEW_ID;
+      if (category === '1') {
+        //칵테일 추천
+        const { title, content } = data;
+        const post = await POST.create({
+          UNO: unum,
+          CATEGORY: category,
+          TITLE: title,
+          CONTENT: content,
+        });
+        return post;
+      } else if (category === '2') {
+        //질문과 답변
+        const { content } = data;
+        const post = await POST.create({
+          UNO: unum,
+          CATEGORY: category,
+          CONTENT: content,
+        });
+        return post;
+      } else if (category === '3') {
+        //칵테일 리뷰 -> 제목 = 타이틀
+        const { title, content, like, cno } = data;
+        const post = await POST.create({
+          UNO: unum,
+          CATEGORY: category,
+          TITLE: title,
+          CONTENT: content,
+          CNO: cno,
+          LIKE: like,
+        });
+        return post;
+      } else if (category === '4') {
+        //자유게시판
+        const { title, content } = data;
+        const post = await POST.create({
+          UNO: unum,
+          CATEGORY: category,
+          TITLE: title,
+          CONTENT: content,
+        });
+        return post;
+      } else {
+        throw new Error('invalid category');
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  changeCommunity: async (req, pno) => {
+    const unum = req.decoded.unum;
+    const data = JSON.parse(req.body.data);
+    console.log('data', data);
+    const return_obj = { PNO: pno };
+    try {
+      if (data.category === 1) {
+        //칵테일 추천
+        const { title, content } = data;
+        const post = await POST.update(
+          {
+            TITLE: title,
+            CONTENT: content,
+          },
+          { where: { PNO: pno } }
+        );
+        return return_obj;
+      } else if (data.category === 2) {
+        //질문과 답변
+        const { content } = data;
+        const post = await POST.update(
+          {
+            CONTENT: content,
+          },
+          { where: { PNO: pno } }
+        );
+        return return_obj;
+      } else if (data.category === 3) {
+        //칵테일 리뷰 -> 제목 = 타이틀
+        const { title, content, like, cno } = data;
+        const post = await POST.update(
+          {
+            TITLE: title,
+            CONTENT: content,
+            CNO: cno,
+            LIKE: like,
+          },
+          { where: { PNO: pno } }
+        );
+        return return_obj;
+      } else if (data.category === 4) {
+        //자유게시판
+        const { title, content } = data;
+        const post = await POST.update(
+          {
+            TITLE: title,
+            CONTENT: content,
+          },
+          { where: { PNO: pno } }
+        );
+        return return_obj;
+      } else {
+        throw new Error('invalid category');
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  postReply: async (req, pno) => {
+    const content = req.body.content;
+    await POST_REPLY.create({
+      UNO: req.user.dataValues.UNO,
+      PNO: pno,
+      CONTENT: content,
+    });
+  },
+  changeReply: async (req, replyId) => {
+    const content = req.body.content;
+    try {
+      await POST_REPLY.update(
+        {
+          CONTENT: content,
+        },
+        { where: { PRNO: replyId } }
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  deleteReply: async (req, replyId) => {
+    try {
+      await POST_REPLY.destroy({
+        where: { PRNO: replyId },
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+  getReplyUno: async (replyId) => {
+    const reply = await POST_REPLY.findByPk(replyId);
+    return reply.UNO;
+  },
+  makePostLike: async (uno, pno) => {
+    try {
+      await POST_LIKE.create({
+        UNO: uno,
+        PNO: pno,
+      });
+      return 1;
+    } catch (error) {
+      if (error.message === 'Validation error') {
+        return 2;
+      }
+      console.log(error.message);
+      return 3;
+    }
+  },
+  deletePostLike: async (uno, pno) => {
+    try {
+      await POST_LIKE.destroy({
+        where: { UNO: uno, PNO: pno },
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+
+  getCommunityPost: async (req) => {},
+  postImage: async (req, db) => {
+    try {
+      let categoryDb = 0; //review 참조
+      let communityId;
+      if (db.REVIEW_ID === undefined) {
+        communityId = Number(db.PNO);
+        categoryDb = 1; // community(Post) 참조
+      } else {
+        const reviewId = db.REVIEW_ID;
+      }
       req.files.map(async (data) => {
         let path = data.path;
         try {
-          await IMAGE.create({
-            REVIEW_ID: reviewId,
-            PATH: path,
-          });
+          if (categoryDb === 0) {
+            await IMAGE.create({
+              REVIEW_ID: reviewId,
+              PATH: path,
+            });
+          } else if (categoryDb === 1) {
+            await IMAGE_COMMUNITY.create({
+              PNO: communityId,
+              PATH: path,
+            });
+          }
         } catch (error) {
           console.log(error.message);
         }
@@ -167,6 +355,12 @@ const sql = {
     } catch (error) {
       console.log(error.message);
     }
+  },
+  getCocktails: async () => {
+    const cocktails = await COCKTAIL.findAll({
+      attributes: ['NAME', 'CNO'],
+    });
+    return cocktails;
   },
   getImageId: async (reviewId) => {
     const idArr = [];
@@ -247,30 +441,84 @@ const sql = {
       }
     }
   },
+  deletePost: async (req) => {
+    const unum = req.decoded.unum;
+    const postId = req.params.postId;
+    const post = await POST.findByPk(postId);
+    if (post.UNO === req.user.UNO) {
+      console.log('권한 확인');
+    } else {
+      throw new Error('no authorization to delete post');
+    }
+    if (post !== null) {
+      try {
+        await POST.destroy({ where: { PNO: postId } });
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  },
   deleteImage: async (req, res, next) => {
     const reviewId = req.params.reviewId;
-    const images = await IMAGE.findAll({
-      where: {
-        REVIEW_ID: reviewId,
-      },
-    });
-    images.forEach((img) => {
-      fs.unlink(img.PATH, (err) => {
-        if (err) throw err;
-        console.log('delete success');
-      });
-    });
-    await IMAGE.destroy({
-      where: {
-        REVIEW_ID: reviewId,
-      },
-    });
+    console.log('check');
+    if (reviewId !== undefined) {
+      try {
+        const images = await IMAGE.findAll({
+          where: {
+            REVIEW_ID: reviewId,
+          },
+        });
+        images.forEach((img) => {
+          fs.unlink(img.PATH, (err) => {
+            if (err) throw err;
+            console.log('delete success');
+          });
+        });
+        await IMAGE.destroy({
+          where: {
+            REVIEW_ID: reviewId,
+          },
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      const postId = req.params.postId;
+      try {
+        if (postId !== undefined) {
+          const images = await IMAGE_COMMUNITY.findAll({
+            where: {
+              PNO: postId,
+            },
+          });
+          images.forEach((img) => {
+            fs.unlink(img.PATH, (err) => {
+              if (err) throw err;
+              console.log('delete success');
+            });
+          });
+          await IMAGE_COMMUNITY.destroy({
+            where: {
+              PNO: postId,
+            },
+          });
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
     return next();
   },
-  getImagePath: async (imageId) => {
+  getImagePath: async (imageId, category) => {
     try {
-      const image = await IMAGE.findByPk(imageId);
-      return image.PATH;
+      if (category === 'review') {
+        const image = await IMAGE.findByPk(imageId);
+        return image.PATH;
+      } else if (category === 'community') {
+        const image_communty = await IMAGE_COMMUNITY.findByPk(imageId);
+        return image_communty.PATH;
+      }
     } catch (error) {
       console.log(error.message);
     }

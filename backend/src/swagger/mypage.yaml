@@ -1,0 +1,113 @@
+# review api for swagger
+paths:
+  /mypages/recipes/{page}:
+    get:
+      tags:
+        - mypages
+      summary: 내가 추천한 레시피
+      description: 10개씩 페이징합니다.
+      operationId: getMyRecipes
+      parameters:
+        - in: path
+          name: page
+          type: integer
+          description: page number
+          example: 1
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMyRecipes'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /mypages/posts/{page}:
+    get:
+      tags:
+        - mypages
+      summary: 내가 쓴 게시물
+      description: 10개씩 페이징합니다. category에 따라서 필요 없는 항목이 있을 수 있습니다. ex) cocktailId는 칵테일 리뷰 카테고리에서만 쓰이며, 이미지를 가져올 수 있습니다.
+      oprationId: getMyPosts
+      parameters:
+        - in: path
+          name: page
+          type: integer
+          description: page number
+          example: 1
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMyPosts'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /mypages/replies/{page}:
+    get:
+      tags:
+        - mypages
+      summary: 내가 쓴 댓글
+      description: 10개씩 페이징합니다.
+      operationId: getMyRecpies
+      parameters:
+        - in: path
+          name: page
+          type: integer
+          description: page number
+          example: 1
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMyReplies'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+
+  /mypages/reviews/{page}:
+    get:
+      tags:
+        - mypages
+      summary: 내가 쓴 칵테일 바 리뷰
+      description: 10개씩 페이징합니다.
+      operationId: getMyReviews
+      parameters:
+        - in: path
+          name: page
+          type: integer
+          description: page number
+          example: 1
+          required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getMyReviews'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'

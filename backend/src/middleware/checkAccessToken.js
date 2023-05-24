@@ -2,7 +2,7 @@
 
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-dotenv.config(); //JWT 키불러오기
+dotenv.config();
 import USER from '../models/USER';
 import { logger } from '../../winston/winston';
 
@@ -15,9 +15,10 @@ export default async (req, res, next) => {
     req.decoded = jwt.verify(req.headers.authorization, process.env.SECRET_KEY);
     const user = await USER.findOne({
       where: { UNO: req.decoded.unum },
+      attributes: ['UNO', 'NICKNAME', 'EMAIL', 'LEVEL'],
     });
     req.user = user;
-    logger.info(user);
+    logger.info(`UNO : ${req.user.UNO}`);
     return next();
   } catch (error) {
     //유효시간 만료

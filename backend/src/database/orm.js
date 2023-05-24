@@ -2,7 +2,6 @@
 
 require('dotenv').config();
 const Sequelize = require('sequelize-auto');
-
 const sequelizeAuto = new Sequelize(
   process.env.DB_DATABASE,
   process.env.DB_USERNAME,
@@ -13,9 +12,26 @@ const sequelizeAuto = new Sequelize(
     dialect: 'mysql',
     directory: './src/models',
     lang: 'esm',
+    // tables: [
+    //   'AUTH_CODE',
+    //   'COCKTAIL_LIKE',
+    //   'COCKTAIL_REPORT',
+    //   'COCKTAIL',
+    //   'COLOR',
+    //   'IMAGE',
+    //   'KEYWORD',
+    //   'PLACE',
+    //   'POST_LIKE',
+    //   'POST_REPLY',
+    //   'POST_REPORT',
+    //   'POST',
+    //   'RECIPE',
+    //   'REVIEW',
+    //   'USER'
+    // ],
   }
 );
 
-sequelizeAuto.run(err => {
+sequelizeAuto.run((err) => {
   if (err) throw err;
 });
