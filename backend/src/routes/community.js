@@ -13,6 +13,7 @@ import { Sequelize, Op } from 'sequelize';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 import dotenv from 'dotenv';
+import POST_REPORT from '../models/POST_REPORT';
 dotenv.config();
 const oneWeekAgo = new Date();
 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -652,5 +653,35 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       success: false,
       message: 'Post List loaded failed',
     });
+  }
+});
+router.post('/report/:postId', checkAccess, async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const report = req.body.report;
+    const [result, created] = await POST_REPORT.findOrCreate({
+      where: {
+        PNO: postId,
+        UNO: req.user.UNO,
+      },
+      defaults: {
+        REPORT: report,
+      },
+    });
+    if (created) {
+      return res.status(200).json({
+        success: true,
+        message: 'Post Report 성공',
+      });
+    } else {
+      return res
+        .status(200)
+        .json({ success: false, message: 'Post Report 중복' });
+    }
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Post Report 실패', error });
   }
 });

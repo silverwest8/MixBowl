@@ -505,3 +505,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fail'
+  /communities/report/{postId}:
+    post:
+      tags:
+        - communities
+      summary: 칵테일 POST 신고
+      description: status 200에서 success-true이면 신고 성공, false이면 이미 신고한 상태
+      operationId: ReportPost
+      parameters:
+        - in: path
+          name: postId
+          type: integer
+          description: 게시글 고유 ID
+          example: 15
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              properties:
+                report:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
