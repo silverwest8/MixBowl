@@ -109,7 +109,7 @@ const RecipeDetailCard = () => {
                 @{recipe.USER.nickname}
                 <MemberBadge level={recipe.USER.level} />
               </User>
-              <p>{recipe.date.slice(0, 10)}</p>
+              <p className="date">{recipe.date.slice(0, 10)}</p>
             </div>
             <div className="color">
               <ColorBox>
@@ -174,7 +174,7 @@ const RecipeDetailCard = () => {
             </div>
           </div>
           <div>
-            <span>레시피</span>
+            <span className="recipes">레시피</span>
             <Explain>{recipe.instruction}</Explain>
           </div>
         </Material>
@@ -253,8 +253,8 @@ const User = styled.div`
 `;
 const ColorBox = styled.div`
   display: flex;
-  margin-top: 0.3rem;
-  gap: 0.6rem;
+  margin-top: 0.5rem;
+  gap: 0.7rem;
   align-items: center;
   color: ${({ theme }) => theme.color.primaryGold};
   .alcohol {
@@ -287,6 +287,9 @@ const TextBox = styled.div`
     div {
       margin-right: 0.5rem;
     }
+  }
+  .date {
+    color: ${({ theme }) => theme.color.lightGray};
   }
   @media screen and (min-width: 429px) {
     margin-left: 2rem;
@@ -329,19 +332,22 @@ const RecipeBox = styled.div`
 `;
 
 const Material = styled.div`
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   div {
     flex-direction: column;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     display: flex;
     flex-wrap: wrap;
     span {
       margin-right: 0.75rem;
       color: ${({ theme }) => theme.color.primaryGold};
+    }
+    .recipes {
+      margin-top: 1.25rem;
     }
   }
 `;
@@ -401,6 +407,7 @@ const Explain = styled.div`
 
 const CallButton = styled.button`
   width: 3rem;
+  height: 1.8rem;
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 0.5rem;
   color: ${({ theme }) => theme.color.primaryGold};
