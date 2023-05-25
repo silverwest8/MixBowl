@@ -21,18 +21,18 @@ const FreeListItem = ({ data }) => {
           <h4>{data.title}</h4>
         </div>
         <div className="category">
-          {data.category === "qna"
+          {data.category === 2
             ? "질문과 답변"
-            : data.category === "free"
+            : data.category === 4
             ? "자유 게시글"
-            : data.category === "review"
+            : data.category === 3
             ? "칵테일 리뷰"
-            : data.category === "recommendation"
+            : data.category === 1
             ? "칵테일 추천"
             : ""}
         </div>
       </TopSection>
-      <MainText className={data.category === "qna" ? "question" : ""}>
+      <MainText className={data.category === 2 ? "question" : ""}>
         {data.maintext}
       </MainText>
       <BottomSection>
@@ -41,12 +41,12 @@ const FreeListItem = ({ data }) => {
           {data.likes}
           <FaCommentDots className="icon comment" />
           <span className="shown">
-            {data.category === "qna" && data.comments === 0
+            {data.category === 2 && data.comments === 0
               ? "지금 답변을 기다리고 있어요"
               : data.comments}
           </span>
           <span className="hidden">
-            {data.category === "qna" && data.comments === 0
+            {data.category === 2 && data.comments === 0
               ? "답변 필요"
               : data.comments}
           </span>

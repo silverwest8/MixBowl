@@ -8,7 +8,7 @@ const CommentItem = ({ data }) => {
         <p>{data.content}</p>
         <div>
           <DateContainer>{data.title}</DateContainer>
-          <DateContainer>{data.date}</DateContainer>
+          <DateContainer>{data.date.slice(0, 3)}</DateContainer>
         </div>
       </ItemWrapper>
     </ItemContainer>

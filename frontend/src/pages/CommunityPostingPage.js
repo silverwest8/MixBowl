@@ -1,12 +1,20 @@
 import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
 import Title from "../components/common/Title";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Input from "../components/common/Input";
 import ImageUpload from "../components/common/ImageUpload";
 import { AiFillHeart } from "react-icons/ai";
 import { ImSad } from "react-icons/im";
 import { Link } from "react-router-dom";
+// import AutoCompleteCocktail from "../components/community/AutoCompleteCocktail";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import { Box } from "@mui/material";
+import Paper from "@mui/material/Paper";
+import axios from "axios";
+import { getAccessToken } from "../utils/token";
+import { getAllRecipe } from "../api/community";
 
 const Background = styled.div`
   color: white;
@@ -91,7 +99,45 @@ const MainSection = styled.div`
   > div:last-child {
     margin-top: 1.2rem;
   }
+  #autocompleteCocktail {
+    color: white;
+    width: 100%;
+  }
+  .selection {
+    border: 2px solid ${({ theme }) => theme.color.primaryGold};
+    outline: "none";
+    border-radius: 8px;
+    color: white;
+    &:focus {
+      outline: "none";
+    }
+    width: 45vw;
+    @media screen and (max-width: 500px) {
+      width: 60vw;
+    }
+    @media screen and (max-width: 800px) {
+      width: 83vw;
+    }
+  }
+  .MuiAutocomplete-noOptions {
+    color: ${({ theme }) => theme.color.primaryGold}!important;
+  }
 `;
+const StyledTextField = styled(TextField)({
+  "& label": {
+    color: "lightgray",
+  },
+  "& label.Mui-focused": {
+    outline: "none",
+  },
+  outline: "none",
+});
+
+const StyledOptionBox = styled(Box)({
+  color: "white",
+  backgroundColor: `${({ theme }) => theme.color.darkGray}`,
+});
+
 const ImageSection = styled.div`
   width: 100%;
   margin-top: 2rem;
@@ -158,10 +204,45 @@ const Button = styled(Link)`
 
 const CommunityPostingPage = () => {
   const [tab, setTab] = useState("글 내용");
+  const [list, setList] = useState([]);
+  const [recipes, setRecipes] = useState([]);
   const recommendationTab = () => setTab("추천 이유");
   const qnaTab = () => setTab("질문 내용");
   const reviewTab = () => setTab("후기 내용");
   const freeTab = () => setTab("글 내용");
+  const token = localStorage.getItem("access_token");
+  const GetRecipe = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      const { data } = await axios.get(`/api/communities/list/cocktails`);
+      console.log("data is ", data);
+      if (data.success) {
+        setList(data.data);
+        console.log("list here ", list);
+        SetRecipe(list);
+      }
+    } catch (error) {
+      console.log("err is ", error);
+    }
+  };
+  const SetRecipe = (list) => {
+    console.log("length is ", list);
+    for (let i = 0; i < list.length; i++) {
+      // console.log("each is ", list[i]);
+      const name = list[i].split("/")[0];
+      const num = list[i].split("/")[1];
+      console.log("new object is ", { name, num });
+      setRecipes((oldArray) => [...oldArray, { name, num }]);
+    }
+    console.log("recipes are ", recipes);
+  };
+
+  useEffect(() => {
+    GetRecipe();
+  }, []);
+
+  // const top100Films = [{ label: "The Shawshank Redemption", year: 1994 }];
+
   return (
     <main
       style={{
@@ -206,13 +287,67 @@ const CommunityPostingPage = () => {
           <MainSection>
             {tab === "질문 내용" ? (
               ""
+            ) : tab === "후기 내용" ? (
+              recipes.length !== 0 && (
+                <Autocomplete
+                  disablePortal
+                  id="autocompleteCocktail"
+                  options={recipes}
+                  getOptionLabel={(option) => option.name || ""}
+                  onChange={(event, value) => console.log("value is ", value)}
+                  sx={{
+                    width: 300,
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        border: "none",
+                      },
+                    "& + .MuiAutocomplete-popper .MuiAutocomplete-option:hover":
+                      {
+                        // 👇 Customize the hover bg color here
+                        backgroundColor: "#e9aa33",
+                        color: "black",
+                      },
+                    // 👇 Optional: keep this one to customize the selected item when hovered
+                    "& + .MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected='true']:hover":
+                      {
+                        backgroundColor: "#e9aa33",
+                        color: "black",
+                      },
+                  }}
+                  renderInput={(params) => (
+                    <StyledTextField
+                      {...params}
+                      label=""
+                      className="selection"
+                      fullWidth
+                    />
+                  )}
+                  PaperComponent={(props) => (
+                    <Paper
+                      sx={{
+                        background: "#3e3e3e",
+                        color: "white",
+                        fontSize: "0.9rem",
+                      }}
+                      {...props}
+                    />
+                  )}
+                />
+              )
             ) : (
               <Input
                 placeholder={tab === "후기 내용" ? "칵테일 이름" : "제목"}
                 className="input-title"
               />
             )}
-            <Textarea rows={15} placeholder={tab} />
+            <Textarea
+              rows={15}
+              placeholder={
+                tab === "질문 내용"
+                  ? "질문글은 수정, 삭제가 불가하니 신중히 작성해주세요."
+                  : tab
+              }
+            />
           </MainSection>
           <ImageSection>
             <ImageUpload />

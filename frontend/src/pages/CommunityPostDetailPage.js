@@ -14,38 +14,10 @@ import ReportModal from "../components/common/ReportModal";
 import { useModal } from "../hooks/useModal";
 import { toastState } from "../store/toast";
 import { useSetRecoilState } from "recoil";
+import { getAccessToken } from "../utils/token";
+import axios from "axios";
 
 const postData = [
-  {
-    // TODO: 이미지 처리
-    id: 0,
-    title:
-      "제목 예시입니다. 만약 제목 길이가 아주 길다면 어떻게 될지 한 번 보도록 하겠습니다. 이런 식으로 길어진다면 글자수 제한을 해야 되겠죠.",
-    category: "free",
-    username: "user01",
-    userlevel: 3,
-    liked: true,
-    likes: 16,
-    comments: [
-      {
-        id: 0,
-        username: "댓글이름",
-        date: "1일 전",
-        userlevel: 2,
-        content: "댓글 예시는 이런 식으로",
-      },
-      {
-        id: 1,
-        username: "namelikeit",
-        date: "1시간 전",
-        userlevel: 3,
-        content:
-          "댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. ",
-      },
-    ],
-    date: "1일 전",
-    content: "본문 예시입니다. 짧을 경우.",
-  },
   {
     id: 1,
     title: "두 번째 제목 예시",
@@ -327,16 +299,23 @@ const CommunityPostDetailPage = () => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const { openModal, closeModal } = useModal();
-
+  const token = localStorage.getItem("access_token");
   const GetPost = async () => {
     try {
-      setPost(postData[id]);
-      setLiked(postData[id].liked);
-      setLikeCount(postData[id].likes);
+      // setLiked(postData[id].liked);
+      axios.defaults.headers.common.Authorization = token;
+      const { data } = await axios.get(`/api/communities/${id}`);
+      console.log("data here ", data);
+      setPost(data);
+      setLikeCount(data.like);
     } catch (error) {
       return error.message;
     }
   };
+
+  useEffect(() => {
+    GetPost();
+  }, []);
 
   const [comment, setComment] = useState("");
   const onChangeComment = (e) => {
@@ -353,14 +332,20 @@ const CommunityPostDetailPage = () => {
       content: comment,
     });
   };
-  const changeLike = () => {
+  const changeLike = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      const { likeCheck } = await axios.post(`/api//communities/like/${id}`);
+      console.log("liked is ", likeCheck);
+    } catch (error) {
+      return error.message;
+    }
     if (liked) {
       setLikeCount(likeCount - 1);
     } else {
       setLikeCount(likeCount + 1);
     }
     setLiked(!liked);
-    console.log("like is ", liked);
   };
   const setToastState = useSetRecoilState(toastState);
   const submitReport = () => {
@@ -376,10 +361,6 @@ const CommunityPostDetailPage = () => {
     }, 300);
     closeModal();
   };
-
-  useEffect(() => {
-    GetPost();
-  }, []);
   return (
     <main
       style={{
@@ -397,13 +378,13 @@ const CommunityPostDetailPage = () => {
                 <MdArrowBackIosNew className="icon" />
               </Link>
               <span>
-                {post.category === "qna"
+                {post.category === 2
                   ? "질문과 답변"
-                  : post.category === "free"
+                  : post.category === 4
                   ? "자유 게시글"
-                  : post.category === "review"
+                  : post.category === 3
                   ? "칵테일 리뷰"
-                  : post.category === "recommendation"
+                  : post.category === 1
                   ? "칵테일 추천"
                   : ""}
               </span>
@@ -412,10 +393,12 @@ const CommunityPostDetailPage = () => {
               <span>{post.username}</span>
               <MemberBadge level={post.userlevel} />
             </Username>
-            <TitleContainer className={post.category === "qna" ? "none" : ""}>
+            <TitleContainer className={post.category === 2 ? "none" : ""}>
               <span>{post.title}</span>
               {/* TODO: 로그인 시 달라지게, 지금은 임시로 넣어둠 */}
-              {post.content ? (
+              {post.isWriter ? (
+                <DropdownMenu />
+              ) : (
                 <ReportButton
                   onClick={() =>
                     openModal(ReportModal, {
@@ -426,8 +409,6 @@ const CommunityPostDetailPage = () => {
                 >
                   신고
                 </ReportButton>
-              ) : (
-                <DropdownMenu />
               )}
             </TitleContainer>
           </TopSection>
@@ -456,18 +437,18 @@ const CommunityPostDetailPage = () => {
                 </CommentButton>
               }
             />
-            {post.category === "qna" ? (
+            {post.category === 2 ? (
               <ul>
-                {post.comments &&
-                  post.comments.map((el) => (
-                    <AnswerItem data={el} key={el.id} />
+                {post.replies &&
+                  post.replies.map((el) => (
+                    <AnswerItem data={el} key={el.replyId} />
                   ))}
               </ul>
             ) : (
               <ul>
-                {post.comments &&
-                  post.comments.map((el) => (
-                    <CommentItem data={el} key={el.id} />
+                {post.replies &&
+                  post.replies.map((el) => (
+                    <CommentItem data={el} key={el.replyId} />
                   ))}
               </ul>
             )}

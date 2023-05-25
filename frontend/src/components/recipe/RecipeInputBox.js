@@ -1,50 +1,62 @@
 import styled from "styled-components";
 import { FaCheckCircle, FaCheck } from "react-icons/fa";
 
-const Textarea = ({
+const RecipeInputBox = ({
+  type,
   value,
   name,
-  rows,
-  cols,
   placeholder,
   Button,
   onChange,
   message,
   messageType,
+  disabled,
 }) => {
   return (
-    <Wrapper>
-      <InputBox>
-        <textarea
-          name={name}
-          value={value}
-          rows={rows}
-          cols={cols}
-          placeholder={placeholder}
-          onChange={onChange}
-          autoComplete="off"
-        />
-        {Button || null}
-      </InputBox>
+    <div>
+      {disabled === true ? (
+        <InputBox style={{ cursor: "pointer" }}>
+          <input
+            type={type}
+            name={name}
+            value={value}
+            placeholder={placeholder}
+            onChange={onChange}
+            autoComplete="off"
+            style={{ cursor: "pointer" }}
+            disabled
+          />
+          {Button || null}
+        </InputBox>
+      ) : (
+        <InputBox>
+          <input
+            type={type}
+            name={name}
+            value={value}
+            placeholder={placeholder}
+            onChange={onChange}
+            autoComplete="off"
+          />
+          {Button || null}
+        </InputBox>
+      )}
+
       {message && (
         <Message className={messageType}>
           {messageType === "success" ? (
             <FaCheckCircle />
           ) : messageType === "error" ? (
-            "*"
+            "* "
           ) : (
             <FaCheck />
           )}
           {message}
         </Message>
       )}
-    </Wrapper>
+    </div>
   );
 };
-
-const Wrapper = styled.div`
-  width: 100%;
-`;
 
 const InputBox = styled.div`
   display: flex;
@@ -53,22 +65,8 @@ const InputBox = styled.div`
   border: 2px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 8px;
   padding: 0.8rem 0.95rem;
-  & > textarea {
-    flex-grow: 1;
-    background-color: transparent;
-    border: none;
-  }
-  & > textarea::placeholder {
+  & > input::placeholder {
     color: ${({ theme }) => theme.color.lightGray};
-  }
-  & > textarea:focus {
-    outline: none;
-  }
-  button {
-    color: ${({ theme }) => theme.color.primaryGold};
-    text-decoration: underline;
-    font-size: 0.875rem;
-    flex-shrink: 0;
   }
 `;
 
@@ -78,7 +76,6 @@ const Message = styled.p`
   gap: 0.375rem;
   font-size: 0.75rem;
   margin: 0.25rem 0 0 0.125rem;
-
   &.success {
     color: ${({ theme }) => theme.color.green};
   }
@@ -87,4 +84,4 @@ const Message = styled.p`
   }
 `;
 
-export default Textarea;
+export default RecipeInputBox;

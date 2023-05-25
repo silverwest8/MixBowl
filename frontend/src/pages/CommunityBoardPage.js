@@ -6,101 +6,91 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import Title from "../components/common/Title";
 import { HiPencilAlt } from "react-icons/hi";
 import { MdArrowBackIosNew } from "react-icons/md";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import axios from "axios";
 
-const dummyData = [
-  {
-    // TODO: 이미지 처리
-    id: 0,
-    title:
-      "제목 예시입니다. 만약 제목 길이가 아주 길다면 어떻게 될지 한 번 보도록 하겠습니다. 이런 식으로 길어진다면 글자수 제한을 해야 되겠죠.",
-    category: "free",
-    uname: "user01",
-    level: 3,
-    liked: true,
-    likes: 16,
-    comments: 3,
-    date: "1일 전",
-    maintext: "본문 예시입니다. 짧을 경우.",
-  },
-  {
-    id: 1,
-    title: "두 번째 제목 예시",
-    category: "free",
-    uname: "username10",
-    level: 2,
-    likes: 0,
-    comments: 100,
-    date: "5일 전",
-    // TODO : 나중에는 date 타입으로 받아올것
-    maintext:
-      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-  },
-  {
-    id: 2,
-    // qna는 title 입력값을 아예 안 받을 것인지?
-    maintext:
-      "질문글 예시입니다. 이런식으로 질문이 bold체로 다 들어가야 되겠죠. 질문의 경우 title이 길어지는 것으로 할까요 아니면 본문을 굵게 표현하는 것으로 할까요?",
-    category: "qna",
-    uname: "한글닉네임열글자라면",
-    level: 1,
-    liked: true,
-    likes: 1,
-    comments: 0,
-    date: "2일 전",
-  },
-  {
-    id: 3,
-    title: "칵테일 추천글 예시",
-    category: "recommendation",
-    uname: "recommend",
-    level: 4,
-    likes: 3,
-    comments: 100,
-    date: "5달 전",
-    maintext:
-      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-  },
-  {
-    id: 4,
-    title: "칵테일 리뷰 예시",
-    category: "review",
-    uname: "recommend",
-    level: 4,
-    recommended: false,
-    likes: 3,
-    comments: 100,
-    date: "1년 전",
-    maintext:
-      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-  },
-  {
-    id: 5,
-    // qna는 title 입력값을 아예 안 받을 것인지?
-    maintext:
-      "질문글 예시입니다. 답변이 있을 때와 없을 떄에 따라서 상단에 표시되는지가 달라질 것입니다",
-    category: "qna",
-    uname: "한글",
-    level: 1,
-    liked: false,
-    likes: 0,
-    comments: 1,
-    date: "2일 전",
-  },
-  {
-    id: 6,
-    title: "칵테일 리뷰 예시 ",
-    category: "review",
-    uname: "recommend",
-    recommended: true,
-    level: 4,
-    likes: 3,
-    comments: 2,
-    date: "1년 전",
-    maintext:
-      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-  },
-];
+// const dummyData = [
+//   // TODO : 이미지 처리
+//   {
+//     id: 1,
+//     title: "두 번째 제목 예시",
+//     category: "free",
+//     uname: "username10",
+//     level: 2,
+//     likes: 0,
+//     comments: 100,
+//     date: "5일 전",
+//     // TODO : 나중에는 date 타입으로 받아올것
+//     maintext:
+//       "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
+//   },
+//   {
+//     id: 2,
+//     // qna는 title 입력값을 아예 안 받을 것인지?
+//     maintext:
+//       "질문글 예시입니다. 이런식으로 질문이 bold체로 다 들어가야 되겠죠. 질문의 경우 title이 길어지는 것으로 할까요 아니면 본문을 굵게 표현하는 것으로 할까요?",
+//     category: "qna",
+//     uname: "한글닉네임열글자라면",
+//     level: 1,
+//     liked: true,
+//     likes: 1,
+//     comments: 0,
+//     date: "2일 전",
+//   },
+//   {
+//     id: 3,
+//     title: "칵테일 추천글 예시",
+//     category: "recommendation",
+//     uname: "recommend",
+//     level: 4,
+//     likes: 3,
+//     comments: 100,
+//     date: "5달 전",
+//     maintext:
+//       "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
+//   },
+//   {
+//     id: 4,
+//     title: "칵테일 리뷰 예시",
+//     category: "review",
+//     uname: "recommend",
+//     level: 4,
+//     recommended: false,
+//     likes: 3,
+//     comments: 100,
+//     date: "1년 전",
+//     maintext:
+//       "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
+//   },
+//   {
+//     id: 5,
+//     // qna는 title 입력값을 아예 안 받을 것인지?
+//     maintext:
+//       "질문글 예시입니다. 답변이 있을 때와 없을 떄에 따라서 상단에 표시되는지가 달라질 것입니다",
+//     category: "qna",
+//     uname: "한글",
+//     level: 1,
+//     liked: false,
+//     likes: 0,
+//     comments: 1,
+//     date: "2일 전",
+//   },
+//   {
+//     id: 6,
+//     title: "칵테일 리뷰 예시 ",
+//     category: "review",
+//     uname: "recommend",
+//     recommended: true,
+//     level: 4,
+//     likes: 3,
+//     comments: 2,
+//     date: "1년 전",
+//     maintext:
+//       "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
+//   },
+// ];
 
 const Background = styled.div`
   color: white;
@@ -246,7 +236,11 @@ const WritingButton = styled(Link)`
 
 const CommunityBoardPage = () => {
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("access_token");
+  const { ref, inView } = useInView();
   const [input, setInput] = useState("");
+  const [postings, setPostings] = useState([]);
   const searchParams = new URLSearchParams(useLocation().search);
   const [menu, setMenu] = useState(
     searchParams.get("category")?.replaceAll('"', "") === "qna"
@@ -297,6 +291,44 @@ const CommunityBoardPage = () => {
       );
     } else return true;
   };
+
+  const GetAll = async (page) => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      const { data } = await axios.get(
+        `/api/communities/list/all?page=${page}`
+      );
+      console.log(data.data);
+      setPostings(data.data);
+      return { page, list: data.data };
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const { isSuccess, data, fetchNextPage, remove } = useInfiniteQuery(
+    ["page"],
+    ({ pageParam = 1 }) => GetAll(pageParam),
+    {
+      getNextPageParam: (lastPage) => {
+        return lastPage.page + 1;
+      },
+    }
+  );
+  console.log("page data is ", data);
+
+  useEffect(() => {
+    remove();
+    fetchNextPage(1);
+    // 검색어, 메뉴 바뀔 때마다
+  }, [searchParams, menu]);
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [inView]);
+
   return (
     <main
       style={{
@@ -338,9 +370,18 @@ const CommunityBoardPage = () => {
         <MainSection>
           {/* TODO: 질문에 답변없을때 상단에 올리기 */}
           <section>
-            {dummyData
-              .map((el) => <FreeListItem data={el} key={el.id} />)
-              .filter(categoryFunction)}
+            {isSuccess &&
+              postings
+                .map((el) => <FreeListItem data={el} key={el.PNO} />)
+                .filter(categoryFunction)}
+            {/* {isSuccess &&
+              data.pages
+                .map((page) =>
+                  page.data.map((item) => (
+                    <FreeListItem data={item} key={item.PNO} />
+                  ))
+                )
+                .filter(categoryFunction)} */}
           </section>
         </MainSection>
         <WritingButton to="/community/posting">

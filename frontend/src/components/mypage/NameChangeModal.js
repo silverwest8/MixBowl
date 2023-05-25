@@ -7,6 +7,8 @@ import { useSetRecoilState } from "recoil";
 import { toastState } from "../../store/toast";
 import Input from "../common/Input";
 import { FaTimes } from "react-icons/fa";
+import axios from "axios";
+import { getAccessToken } from "../../utils/token";
 
 const WarningSet = styled.div`
   color: ${({ theme }) => theme.color.red};
@@ -60,8 +62,22 @@ const NameChangeModal = ({ handleClose, username }) => {
       setWarningMsg("글자수 제한은 10자 입니다");
       return;
     }
-    // TODO : 중복됐을 경우
-    mutateEdit({ username });
+    // 중복됐을 경우
+    const token = getAccessToken();
+    axios.defaults.headers.common.Authorization = token;
+    const { data } = await axios.put("api/users/nicknamedupcheck", {
+      checkname: uname.username,
+    });
+
+    if (data.duplicate === false) {
+      mutateEdit({ username });
+    } else {
+      setToastState({
+        show: true,
+        message: "닉네임 수정에 실패했습니다. 다시 시도해주세요.",
+        type: "error",
+      });
+    }
   };
 
   return (

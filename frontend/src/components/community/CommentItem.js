@@ -1,19 +1,67 @@
 import styled from "styled-components";
 import MemberBadge from "../common/MemberBadge";
 import DropdownMenu from "../common/DropdownMenu";
+import ReportModal from "../common/ReportModal";
+import { useModal } from "../../hooks/useModal";
+import { toastState } from "../../store/toast";
+import { useSetRecoilState } from "recoil";
+
+const ReportButton = styled.div`
+  flex: 1 0 auto;
+  margin-left: 1rem;
+  padding: 0.2rem 1rem;
+  border: 1px solid ${({ theme }) => theme.color.primaryGold};
+  border-radius: 5px;
+  font-size: 0.75rem;
+  max-height: 1.5rem;
+  max-width: 3.5rem;
+  color: ${({ theme }) => theme.color.primaryGold};
+  &:hover {
+    color: white;
+    background-color: ${({ theme }) => theme.color.primaryGold};
+  }
+`;
 
 const CommentItem = ({ data }) => {
+  const { openModal, closeModal } = useModal();
+  const setToastState = useSetRecoilState(toastState);
+  const submitReport = () => {
+    // TODO
+    // report 수 증가?
+    setTimeout(() => {
+      setToastState({
+        show: true,
+        message: "신고가 완료되었습니다.",
+        type: "success",
+        ms: 1000,
+      });
+    }, 300);
+    closeModal();
+  };
   return (
     <ItemContainer>
       <TopSection>
         <div>
-          <span>{data.username}</span>
-          <MemberBadge level={data.userlevel} />
+          <span>{data.NICKNAME}</span>
+          <MemberBadge level={data.level} />
         </div>
-        <DropdownMenu />
+        {data.isReplyWriter ? (
+          <DropdownMenu />
+        ) : (
+          <ReportButton
+            onClick={() =>
+              openModal(ReportModal, {
+                handleClose: closeModal,
+                onSubmit: submitReport,
+              })
+            }
+          >
+            신고
+          </ReportButton>
+        )}
       </TopSection>
-      <p>{data.content}</p>
-      <DateContainer>{data.date}</DateContainer>
+      <p>{data.CONTENT}</p>
+      <DateContainer>{data.createdAt.slice(0, 10)}</DateContainer>
     </ItemContainer>
   );
 };

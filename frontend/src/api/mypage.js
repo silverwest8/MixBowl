@@ -10,9 +10,11 @@ export const withdrawal = async (id) => {
   return data;
 };
 
-export const nameChange = async (id) => {
+export const nameChange = async (checkname) => {
   const token = getAccessToken();
   axios.defaults.headers.common.Authorization = token;
-  const { data } = await axios.patch(`/api/namechange/${id}`);
+  const { data } = await axios.put(`/api/users`, {
+    checkname,
+  });
   return data;
 };

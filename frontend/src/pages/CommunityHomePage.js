@@ -13,19 +13,6 @@ import BoardShortListItem from "../components/community/BoardShortListItem";
 
 const dummyData = [
   {
-    id: 0,
-    title:
-      "제목 예시입니다. 만약 제목 길이가 아주 길다면 어떻게 될지 한 번 보도록 하겠습니다. 이런 식으로 길어진다면 글자수 제한을 해야 되겠죠.",
-    category: "free",
-    uname: "user01",
-    level: 3,
-    liked: true,
-    likes: 16,
-    comments: 3,
-    date: "1일 전",
-    maintext: "본문 예시입니다. 짧을 경우.",
-  },
-  {
     id: 1,
     title: "두 번째 제목 예시",
     category: "free",

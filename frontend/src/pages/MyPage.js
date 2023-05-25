@@ -300,7 +300,7 @@ const LevelSection = styled.div`
 const Section = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 2rem 0;
+  margin-top: 3rem;
   > div:first-child {
     font-size: 1.5rem;
     display: flex;
@@ -310,7 +310,7 @@ const Section = styled.div`
     }
   }
   > div:last-child {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
   }
 `;
 const ButtonContainer = styled.div`
@@ -347,7 +347,6 @@ const MyPage = () => {
               onClick={() => {
                 openModal(NameChangeModal, {
                   handleClose: closeModal,
-                  username,
                 });
               }}
             />

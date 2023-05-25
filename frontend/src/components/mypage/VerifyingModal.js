@@ -51,7 +51,7 @@ const Section = styled.div`
   }
 `;
 
-const LevelInfoModal = ({ handleClose }) => {
+const VerifyingModal = ({ handleClose }) => {
   return (
     <Modal title="등급 안내" handleClose={handleClose} onCancel={handleClose}>
       <Wrapper>
@@ -85,4 +85,4 @@ const LevelInfoModal = ({ handleClose }) => {
   );
 };
 
-export default LevelInfoModal;
+export default VerifyingModal;
