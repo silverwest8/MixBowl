@@ -38,6 +38,7 @@ const ButtonBox = styled.div`
   gap: 0.625rem;
   justify-content: flex-end;
   flex-shrink: 0;
+  width: 180px;
   & > button {
     padding: 0.3rem 0.5rem;
     border: 2px solid ${({ theme }) => theme.color.primaryGold};
@@ -49,7 +50,7 @@ const ButtonBox = styled.div`
       background-color: ${({ theme }) => theme.color.primaryGold};
     }
   }
-  @media screen and (max-width: 840px) {
+  @media screen and (max-width: 920px) {
     width: 100%;
     justify-content: center;
     padding: 0.75rem 0;
