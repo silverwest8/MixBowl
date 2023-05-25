@@ -42,7 +42,12 @@ export const SlideNextButton = ({ nextElId, children }) => {
     }
   };
   return (
-    <Button onClick={onClick} type="button" id={nextElId || defaultNextElId}>
+    <Button
+      onClick={onClick}
+      type="button"
+      id={nextElId || defaultNextElId}
+      className="next-button"
+    >
       {children}
     </Button>
   );
@@ -56,7 +61,12 @@ export const SlidePrevButton = ({ prevElId, children }) => {
     }
   };
   return (
-    <Button onClick={onClick} type="button" id={prevElId || defaultPrevElId}>
+    <Button
+      onClick={onClick}
+      type="button"
+      id={prevElId || defaultPrevElId}
+      className="prev-button"
+    >
       {children}
     </Button>
   );
@@ -70,19 +80,32 @@ const Button = styled.button`
   }
 `;
 
-const Slider = ({ elementList, spaceBetween }) => {
+const Slider = ({
+  elementList,
+  spaceBetween,
+  swiperSlideStyle,
+  prevElId,
+  nextElId,
+}) => {
   return (
     <SliderWrapper>
-      <SlidePrevButton>
+      <SlidePrevButton prevElId={prevElId}>
         <FaChevronLeft />
       </SlidePrevButton>
-      <BlurBox className="prev-blur-box" />
-      <CustomSwiper slidesPerView="auto" spaceBetween={spaceBetween}>
+      {/* <BlurBox className="prev-blur-box" /> */}
+      <CustomSwiper
+        slidesPerView="auto"
+        spaceBetween={spaceBetween || 20}
+        prevElId={prevElId}
+        nextElId={nextElId}
+      >
         {elementList.map((element, index) => (
-          <SwiperSlide key={index}>{element}</SwiperSlide>
+          <SwiperSlide style={swiperSlideStyle} key={index}>
+            {element}
+          </SwiperSlide>
         ))}
       </CustomSwiper>
-      <SlideNextButton>
+      <SlideNextButton nextElId={nextElId}>
         <FaChevronRight />
       </SlideNextButton>
       <BlurBox className="next-blur-box" />
@@ -109,6 +132,8 @@ const BlurBox = styled.div`
 
 const SliderWrapper = styled.div`
   position: relative;
+  width: 100%;
+  height: 100%;
   & > button {
     position: absolute;
     top: 50%;
@@ -118,34 +143,26 @@ const SliderWrapper = styled.div`
       display: none;
     }
   }
-  #swiper-prev:disabled ~ .prev-blur-box {
+  .prev-button:disabled ~ .prev-blur-box {
     display: none;
   }
-  #swiper-next:disabled ~ .next-blur-box {
+  .next-button:disabled ~ .next-blur-box {
     display: none;
   }
-  #swiper-prev {
-    left: 10px;
+  .prev-button {
+    left: 0px;
   }
-  #swiper-next {
-    right: 10px;
+  .next-button {
+    right: 0px;
   }
   .swiper-slide {
     position: relative;
-    width: 11.25rem !important;
-    height: 11.25rem;
   }
   .swiper-wrapper {
     margin-bottom: 0;
   }
   .swiper-pagination {
     display: none;
-  }
-  img {
-    width: 100%;
-    height: 100%;
-    border-radius: 2px;
-    object-fit: cover;
   }
   @media screen and (${({ theme }) => theme.device.mobile}) {
     & > button {

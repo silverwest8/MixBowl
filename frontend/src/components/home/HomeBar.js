@@ -13,12 +13,12 @@ const HomeBar = () => {
         <FaCocktail className="logo"></FaCocktail>
         <p>내 주변 칵테일 바</p>
       </HomeTitleBox>
-      <Main>
+      <Wrapper>
         <div className="wrapper">
           <KakaoMap id={params.id} />
           <MapSideInfo id={params.id} />
         </div>
-      </Main>
+      </Wrapper>
     </Section>
   );
 };
@@ -39,12 +39,12 @@ const HomeTitleBox = styled.div`
     margin-right: 0.75rem;
   }
   p {
-    text-size: 1.5rem;
+    font-size: 1.5rem;
     font-weight: bold;
   }
 `;
 
-const Main = styled.main`
+const Wrapper = styled.div`
   height: 30rem;
   .wrapper {
     display: flex;

@@ -75,7 +75,7 @@ const HomeTitleBox = styled.div`
     margin-right: 0.75rem;
   }
   p {
-    text-size: 1.5rem;
+    font-size: 1.5rem;
     font-weight: bold;
   }
 `;

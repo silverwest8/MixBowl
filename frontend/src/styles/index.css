@@ -285,13 +285,17 @@ video {
 
 .recipeSlider {
   margin: 1.5rem auto 0;
-  max-width: 1180px;
+  max-width: 1144px;
   display: flex;
   align-items: center;
+  padding: 0 1rem;
 }
 .recipeSlider .swiper-slide {
   width: 35rem;
-  @media screen and (max-width: 428px) {
+ 
+}
+@media screen and (max-width: 428px) {
+  .recipeSlider .swiper-slide {
     width: 24rem;
   }
 }
@@ -304,15 +308,14 @@ video {
 
 .answerSlider {
   margin: 1.5rem auto 0;
-  max-width: 1180px;
+  max-width: 1144px;
   display: flex;
   align-items: center;
+  padding: 0 1rem;
 }
 .answerSlider .swiper-slide {
-  width: 22rem;
-  @media screen and (max-width: 428px) {
-    width: 20rem;
-  }
+  width: 20rem;
+
 }
 .answerSlider .swiper-button-prev {
   padding-right: 2rem;

@@ -22,9 +22,9 @@ export const setToken = ({ accessToken, refreshToken }) => {
 
 export const removeTokens = () => {
   cookies.remove(REFRESH_TOKEN_KEY);
-  axios.defaults.headers.common.refresh = "";
+  axios.defaults.headers.common.refresh = undefined;
   window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-  axios.defaults.headers.common.Authorization = "";
+  axios.defaults.headers.common.Authorization = undefined;
 };
 
 export const getAccessToken = () =>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Map, CustomOverlayMap } from "react-kakao-maps-sdk";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { mapState } from "../../store/map";
 import { getDistance } from "../../utils/map";
 import styled from "styled-components";
@@ -9,8 +9,10 @@ import { BiCurrentLocation } from "react-icons/bi";
 import { FaUndoAlt } from "react-icons/fa";
 import { MdEditLocationAlt } from "react-icons/md";
 import AutoCompleteInput from "./AutoCompleteInput";
+import { authState } from "../../store/auth";
 
 function KakaoMap({ id }) {
+  const { isLoggedin } = useRecoilValue(authState);
   const navigate = useNavigate();
   const [center, setCenter] = useState({
     lat: 37.5878109,
@@ -139,17 +141,24 @@ function KakaoMap({ id }) {
             >
               <BiCurrentLocation />
             </button>
-            <button
-              className={showInput ? "active" : ""}
-              onClick={() => setShowInput((state) => !state)}
-            >
-              <MdEditLocationAlt />
-            </button>
+            {isLoggedin && (
+              <button
+                className={showInput ? "active" : ""}
+                onClick={() => setShowInput((state) => !state)}
+              >
+                <MdEditLocationAlt />
+              </button>
+            )}
           </div>
-          <button onClick={() => searchCocktailbar()} className="search-button">
-            <FaUndoAlt />
-            현지도에서 재검색
-          </button>
+          {isLoggedin && (
+            <button
+              onClick={() => searchCocktailbar()}
+              className="search-button"
+            >
+              <FaUndoAlt />
+              현지도에서 재검색
+            </button>
+          )}
         </>
       )}
     </MapWrapper>
