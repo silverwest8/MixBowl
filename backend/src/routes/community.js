@@ -596,7 +596,7 @@ router.get('/one/image', async (req, res) => {
       .json({ success: false, message: '이미지 조회 실패', error });
   }
 });
-router.get('/cocktails', async (req, res) => {
+router.get('/list/cocktails', async (req, res) => {
   try {
     const cocktailNames = [];
     await sql.getCocktails().then((value) => {
