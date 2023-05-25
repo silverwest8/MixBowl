@@ -65,7 +65,6 @@ const RecipeCard = () => {
         url += "&sort=new";
       }
       const { data } = await axios.get(url);
-      console.log(url);
       return { page, list: data.list };
     } catch (error) {
       console.log("empty or error");

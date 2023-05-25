@@ -10,6 +10,7 @@ const RecipeInputBox = ({
   onChange,
   message,
   messageType,
+  maxLength,
   disabled,
 }) => {
   return (
@@ -22,6 +23,7 @@ const RecipeInputBox = ({
             value={value}
             placeholder={placeholder}
             onChange={onChange}
+            maxLength={maxLength}
             autoComplete="off"
             style={{ cursor: "pointer" }}
             disabled
@@ -36,6 +38,7 @@ const RecipeInputBox = ({
             value={value}
             placeholder={placeholder}
             onChange={onChange}
+            maxLength={maxLength}
             autoComplete="off"
           />
           {Button || null}

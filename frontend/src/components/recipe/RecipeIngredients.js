@@ -108,7 +108,8 @@ const RecipeIngredients = () => {
                   key={index}
                   placeholder={"재료 이름"}
                   onChange={(e) => handleName(index, e)}
-                  value={items.addName}
+                  value={items.addName || ""}
+                  maxLength={15}
                 ></RecipeInputBox>
               );
             })}
@@ -121,7 +122,8 @@ const RecipeIngredients = () => {
                   key={index}
                   placeholder={"재료 양"}
                   onChange={(e) => handleAmount(index, e)}
-                  value={items.addAmount}
+                  value={items.addAmount || ""}
+                  maxLength={5}
                 ></RecipeInputBox>
               );
             })}
@@ -134,7 +136,8 @@ const RecipeIngredients = () => {
                   key={index}
                   placeholder={"단위"}
                   onChange={(e) => handleUnit(index, e)}
-                  value={items.addUnit}
+                  value={items.addUnit || ""}
+                  maxLength={5}
                 ></RecipeInputBox>
               );
             })}
