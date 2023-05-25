@@ -53,7 +53,7 @@ const HomeCocktail = () => {
                           <NoReview>
                             아직 리뷰가 없어요.
                             <br />첫 리뷰를 작성해주세요~
-                            <Link to={`/recipe/${item.cocktailId}`}>
+                            <Link to={`/community/posting`}>
                               <WriteButton>
                                 <FaPen className="pen"></FaPen>작성하기
                               </WriteButton>
