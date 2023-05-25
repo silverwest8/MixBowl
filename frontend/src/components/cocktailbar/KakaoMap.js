@@ -102,6 +102,7 @@ function KakaoMap({ id }) {
 
   // 현위치 가져오기
   useEffect(() => {
+    if (data) return;
     getCurrentPosition();
   }, []);
 

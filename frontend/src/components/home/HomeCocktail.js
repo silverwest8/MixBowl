@@ -7,6 +7,8 @@ import { getCocktail } from "../../api/homeapi";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Slider from "../common/Slider";
+import Skeleton from "@mui/material/Skeleton";
+import { theme } from "../../styles/theme";
 
 const HomeCocktail = () => {
   const [data, setData] = useState(null);
@@ -33,53 +35,64 @@ const HomeCocktail = () => {
           nextElId="recipe-slider-next"
           elementList={
             data
-              ? data.list.slice(0, 10).map((item) => {
-                  return (
-                    <SwiperSlide key={item.cocktailId}>
-                      <ItemBox>
-                        <p className="nickname">
-                          {item.USER.nickname}님의 레시피
-                        </p>
-                        <div className="content">
-                          <Link to={`/recipe/${item.cocktailId}`}>
-                            <img
-                              src={"/api/recipes/image/" + item.cocktailId}
-                            ></img>
-                          </Link>
-                          {item.reviewContent ? (
-                            <p>{item.reviewContent}</p>
-                          ) : (
-                            <NoReview>
-                              아직 리뷰가 없어요.
-                              <br />첫 리뷰를 작성해주세요~
-                              <Link to={`/recipe/${item.cocktailId}`}>
-                                <WriteButton>
-                                  <FaPen className="pen"></FaPen>작성하기
-                                </WriteButton>
-                              </Link>
-                            </NoReview>
-                          )}
-                        </div>
-                        <div className="info">
-                          <Link to={`/recipe/${item.cocktailId}`}>
-                            <p>{item.cocktailName}</p>
-                          </Link>
-                          <div>
-                            <div className="thumbs">
-                              <FaThumbsUp />
-                              {item.like}
-                            </div>
-                            <div className="comment">
-                              <FaCommentDots />
-                              {item.reply}
-                            </div>
+              ? data.list.slice(0, 10).map((item) => (
+                  <SwiperSlide key={item.cocktailId}>
+                    <ItemBox>
+                      <p className="nickname">
+                        {item.USER.nickname}님의 레시피
+                      </p>
+                      <div className="content">
+                        <Link to={`/recipe/${item.cocktailId}`}>
+                          <img
+                            src={"/api/recipes/image/" + item.cocktailId}
+                          ></img>
+                        </Link>
+                        {item.reviewContent ? (
+                          <p>{item.reviewContent}</p>
+                        ) : (
+                          <NoReview>
+                            아직 리뷰가 없어요.
+                            <br />첫 리뷰를 작성해주세요~
+                            <Link to={`/recipe/${item.cocktailId}`}>
+                              <WriteButton>
+                                <FaPen className="pen"></FaPen>작성하기
+                              </WriteButton>
+                            </Link>
+                          </NoReview>
+                        )}
+                      </div>
+                      <div className="info">
+                        <Link to={`/recipe/${item.cocktailId}`}>
+                          <p>{item.cocktailName}</p>
+                        </Link>
+                        <div>
+                          <div className="thumbs">
+                            <FaThumbsUp />
+                            {item.like}
+                          </div>
+                          <div className="comment">
+                            <FaCommentDots />
+                            {item.reply}
                           </div>
                         </div>
-                      </ItemBox>
+                      </div>
+                    </ItemBox>
+                  </SwiperSlide>
+                ))
+              : Array(2)
+                  .fill(1)
+                  .map((_, index) => (
+                    <SwiperSlide key={index}>
+                      <Skeleton
+                        variant="rounded"
+                        width="100%"
+                        height="15rem"
+                        sx={{
+                          backgroundColor: theme.color.darkGray,
+                        }}
+                      />
                     </SwiperSlide>
-                  );
-                })
-              : []
+                  ))
           }
         />
       </div>

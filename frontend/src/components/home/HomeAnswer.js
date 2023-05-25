@@ -8,9 +8,10 @@ import { getQuestion } from "../../api/homeapi";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Slider from "../common/Slider";
+import Skeleton from "@mui/material/Skeleton";
+import { theme } from "../../styles/theme";
 
 const HomeAnswer = () => {
-  const isMobile = window.innerWidth < 428;
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -53,7 +54,20 @@ const HomeAnswer = () => {
                     </SwiperSlide>
                   );
                 })
-              : []
+              : Array(3)
+                  .fill(1)
+                  .map((_, index) => (
+                    <SwiperSlide key={index}>
+                      <Skeleton
+                        variant="rounded"
+                        width="100%"
+                        height="15rem"
+                        sx={{
+                          backgroundColor: theme.color.darkGray,
+                        }}
+                      />
+                    </SwiperSlide>
+                  ))
           }
         />
       </div>
