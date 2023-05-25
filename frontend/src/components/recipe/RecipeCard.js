@@ -69,6 +69,7 @@ const RecipeCard = () => {
       return { page, list: data.list };
     } catch (error) {
       console.log("empty or error");
+      return { page, list: [] };
     }
   };
 
