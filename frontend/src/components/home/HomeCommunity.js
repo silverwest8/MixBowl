@@ -76,7 +76,7 @@ const HomeCommunity = () => {
 
 const Section = styled.div`
   padding: 0 1rem;
-  margin: 2rem auto 0;
+  margin: 2rem auto 2rem;
   max-width: 1144px;
 `;
 
