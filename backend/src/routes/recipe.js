@@ -420,10 +420,10 @@ router.get('/list/filter/:page', checkAccess, async (req, res) => {
       group: ['COCKTAIL.CNO'],
       offset,
       limit,
-      order: [[sort == 'new' ? 'createdAt' : 'LIKECOUNT', 'DESC']],
+      order: [[sort, 'DESC']],
       subQuery: false,
     });
-    console.log(result[0].dataValues.LIKECOUNT);
+    // console.log(result[0].dataValues.LIKECOUNT);
     console.log('result', result.length);
     for (let i = 0; i < result.length; i++) {
       // console.log(result[i]);
