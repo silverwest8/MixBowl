@@ -18,7 +18,7 @@ const Header = () => {
         <HeaderBox>
           <div>
             <div className="mobile-header-center">
-              <Link to="/">
+              <Link to="/" className="logo-link">
                 <img
                   src="/images/logo.png"
                   className="logo-image"
@@ -79,23 +79,30 @@ const HeaderBox = styled.header`
   }
   .mobile-header-center {
     height: 100%;
+    width: 180px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
   }
-  a {
+  .logo-link {
     display: flex;
     align-items: center;
     height: 100%;
-    margin-bottom: 2px;
+    padding-top: 0.5rem;
   }
   @media screen and (max-width: 1296px) {
     padding: 0 1rem;
   }
-  @media screen and (max-width: 840px) {
+  @media screen and (max-width: 920px) {
     padding: 0;
     align-items: center;
     height: auto;
     & > div {
       display: flex;
       flex-direction: column;
+    }
+    .logo-link {
+      padding-top: 0;
     }
     .mobile-header-center {
       display: flex;
@@ -121,7 +128,7 @@ const NavWrapper = styled.div`
     display: flex;
     justify-content: center;
   }
-  @media screen and (max-width: 840px) {
+  @media screen and (max-width: 920px) {
     display: ${({ show }) => (show ? "flex" : "none")};
     flex-direction: column;
     border-bottom: 2px solid ${({ theme }) => theme.color.primaryGold};
@@ -133,8 +140,8 @@ const NavWrapper = styled.div`
 
 const Spacer = styled.div`
   height: 3.375rem;
-  @media screen and (max-width: 840px) {
-    height: 4.675rem;
+  @media screen and (max-width: 920px) {
+    height: 4.375rem;
   }
 `;
 
