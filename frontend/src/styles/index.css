@@ -284,7 +284,7 @@ video {
 }
 
 .recipeSlider {
-  margin: 2rem auto 0;
+  margin: 1.5rem auto 0;
   max-width: 1180px;
   display: flex;
   align-items: center;
@@ -303,7 +303,7 @@ video {
 }
 
 .answerSlider {
-  margin: 2rem auto 0;
+  margin: 1.5rem auto 0;
   max-width: 1180px;
   display: flex;
   align-items: center;
