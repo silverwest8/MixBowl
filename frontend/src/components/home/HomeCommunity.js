@@ -1,44 +1,59 @@
 import styled from "styled-components";
 import { FaHotjar, FaThumbsUp, FaCommentDots } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
+import { getCommunity } from "../../api/homeapi";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-const HomeBulletin = ({ num }) => {
+const HomeCommunity = () => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const communityData = await getCommunity();
+      setData(communityData);
+    };
+    fetchData();
+  }, []);
+
   return (
     <Section>
-      <HomeTitleBox num={num}>
+      <HomeTitleBox>
         <FaHotjar className="logo"></FaHotjar>
         <p>이번주 커뮤니티 인기글</p>
       </HomeTitleBox>
       <GridBox>
-        {[1, 2, 3, 4].map((item) => (
-          <ItemBox key={item}>
-            <div className="title">
-              <h4>제목이 들어갑니다 최대 한줄</h4>
-              <p>자유게시판</p>
-            </div>
-            <div className="content">
-              <p>
-                내용이 들어갑니다 최대 몇자? 내용이 들어갑니다 최대 몇자? 내용이
-                들어갑니다 최대 몇자? 내용이 들어갑니다 최대 몇자? 내용이
-                들어갑니다 최대 몇자? 내용이 들어갑니다 최대 몇자?...
-              </p>
-            </div>
-            <div className="info">
-              <div>
-                <div className="thumbs">
-                  <FaThumbsUp /> 10
+        {data &&
+          data.list.slice(0, 4).map((item) => (
+            <ItemBox key={item.postId}>
+              <div className="title">
+                <Link to={`/community/${item.postId}`}>
+                  <h4>{item.title}</h4>
+                </Link>
+                <p>자유게시판</p>
+              </div>
+              <div className="content">
+                <Link to={`/community/${item.postId}`}>
+                  <p>{item.content}</p>
+                </Link>
+              </div>
+              <div className="info">
+                <div>
+                  <div className="thumbs">
+                    <FaThumbsUp /> {item.like}
+                  </div>
+                  <div className="comment">
+                    <FaCommentDots /> {item.reply}
+                  </div>
                 </div>
-                <div className="comment">
-                  <FaCommentDots /> 10
+                <div>
+                  <p className="day"> {item.date.slice(0, 10)}</p>
+                  {item.USER.nickname}
+                  <MemberBadge level={item.USER.level}></MemberBadge>
                 </div>
               </div>
-              <div>
-                <p className="day"> 1일전</p>
-                닉네임<MemberBadge></MemberBadge>
-              </div>
-            </div>
-          </ItemBox>
-        ))}
+            </ItemBox>
+          ))}
       </GridBox>
     </Section>
   );
@@ -56,14 +71,7 @@ const HomeTitleBox = styled.div`
   margin-bottom: 0.75rem;
   font-size: 1.25rem;
   .logo {
-    color: ${({ theme, num }) =>
-      num === 1
-        ? theme.color.lightGray
-        : num === 2
-        ? theme.color.primaryGold
-        : num === 3
-        ? theme.color.red
-        : null};
+    color: ${({ theme }) => theme.color.red};
     margin-right: 0.75rem;
   }
   p {
@@ -130,4 +138,4 @@ const ItemBox = styled.div`
   }
 `;
 
-export default HomeBulletin;
+export default HomeCommunity;

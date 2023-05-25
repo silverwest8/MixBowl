@@ -4,12 +4,12 @@ import KakaoMap from "../cocktailbar/KakaoMap";
 import { useParams } from "react-router-dom";
 import MapSideInfo from "../cocktailbar/MapSideInfo";
 
-const HomeBar = ({ num }) => {
+const HomeBar = () => {
   const params = useParams();
 
   return (
     <Section>
-      <HomeTitleBox num={num}>
+      <HomeTitleBox>
         <FaCocktail className="logo"></FaCocktail>
         <p>내 주변 칵테일 바</p>
       </HomeTitleBox>
@@ -35,14 +35,7 @@ const HomeTitleBox = styled.div`
   margin-bottom: 0.75rem;
   font-size: 1.25rem;
   .logo {
-    color: ${({ theme, num }) =>
-      num === 1
-        ? theme.color.lightGray
-        : num === 2
-        ? theme.color.primaryGold
-        : num === 3
-        ? theme.color.red
-        : null};
+    color: ${({ theme }) => theme.color.primaryGold};
     margin-right: 0.75rem;
   }
   p {

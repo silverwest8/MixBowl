@@ -290,7 +290,7 @@ video {
   align-items: center;
 }
 .recipeSlider .swiper-slide {
-  width: 36.5rem;
+  width: 35rem;
   @media screen and (max-width: 428px) {
     width: 24rem;
   }
