@@ -22,7 +22,7 @@ const CocktailbarList = () => {
     {
       onError: (error) => {
         if (error.response.status === 401)
-          navigate("/login?return_url=/cocktailbar");
+          navigate(`/login?return_url=${window.location.href}`);
       },
     }
   );

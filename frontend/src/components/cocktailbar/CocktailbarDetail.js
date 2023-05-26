@@ -18,7 +18,7 @@ const CocktailbarDetail = ({ id }) => {
         queryFn: getCocktailBar,
         onError: (error) => {
           if (error.response.status === 401)
-            navigate("/login?return_url=/cocktailbar");
+            navigate(`/login?return_url=${window.location.pathname}`);
         },
       },
       {
@@ -26,7 +26,7 @@ const CocktailbarDetail = ({ id }) => {
         queryFn: getReview,
         onError: (error) => {
           if (error.response.status === 401)
-            navigate("/login?return_url=/cocktailbar");
+            navigate(`/login?return_url=${window.location.pathname}`);
         },
       },
     ],
@@ -52,7 +52,7 @@ const CocktailbarDetail = ({ id }) => {
     reviewData !== undefined && (
       <Section>
         <Header>
-          <button onClick={() => navigate(-1)}>
+          <button onClick={() => navigate("/cocktailbar")}>
             <FaChevronLeft />
           </button>
           <h1 className="place">{detailData.data.NAME}</h1>

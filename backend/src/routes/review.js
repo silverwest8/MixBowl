@@ -89,7 +89,7 @@ async function getKeywordByReviewId(reviewId) {
   return keywordlist;
 }
 
-router.get('/barlist', checkAccess, async (req, res) => {
+router.get('/barlist', checkTokenYesAndNo, async (req, res) => {
   // Example
   // http://localhost:3030/reviews/list?query=수원 칵테일바&x=37.514322572335935&y=127.06283102249932&radius=20000&sort=accuracy
   let data = {
@@ -193,7 +193,7 @@ router.get('/barlist', checkAccess, async (req, res) => {
               .then((arr) => {
                 temp.review.review_list[i].dataValues.imgIdArr = arr; //imgId삽입
               });
-            if (req.user.UNO == temp.review.review_list[i].UNO_USER.UNO) {
+            if (req.user && req.user.UNO == temp.review.review_list[i].UNO_USER.UNO) {
               temp.review.review_list[
                 i
               ].dataValues.UNO_USER.dataValues.ISWRITER = true;

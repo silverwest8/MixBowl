@@ -21,7 +21,6 @@ const Button = styled.button`
   bottom: 1rem;
   width: 8.75rem;
   height: 2.25rem;
-  border: 2px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 2.25rem;
   display: flex;
   align-items: center;
