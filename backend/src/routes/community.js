@@ -13,6 +13,7 @@ import { Sequelize, Op } from 'sequelize';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 import dotenv from 'dotenv';
+import POST_REPORT from '../models/POST_REPORT';
 dotenv.config();
 const oneWeekAgo = new Date();
 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -107,11 +108,16 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
 });
 router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
-  const postData = await POST.findByPk(pno);
+  const postData = await POST.findByPk(Number(pno));
+  if (postData === null) {
+    return res.status(400).send({
+      success: false,
+      message: "게시물이 없습니다."
+    });
+  }
+  const user = await USER.findByPk(postData.dataValues.UNO);
+  console.log(user);
   let isWriter = false;
-  // const likePost = await POST_LIKE.findAll({
-  //   attributes: [[Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
-  // });
   const likePost = await POST_LIKE.findAll({
     attributes: ['PNO', [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
     where: {
@@ -130,6 +136,15 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
       PNO: pno,
     },
   });
+  let isUserLike = false;
+  const isLike = req.user === undefined ? [] : await POST_LIKE.findAll({
+    where: { UNO: req.user.UNO, PNO: postData.PNO },
+  });
+  console.log(isLike);
+  if (isLike.length !== 0) {
+    isUserLike = true;
+  }
+  console.log(isUserLike);
   const reply_arr = [];
   for (const val of replies) {
     const user = await USER.findByPk(val.dataValues.UNO);
@@ -173,20 +188,30 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         success: true,
         title: postData.TITLE,
         like: likes,
+        isUserLike: isUserLike,
         content: postData.CONTENT,
+        username: user.dataValues.NICKNAME,
+        userlevel: user.dataValues.LEVEL,
+        createdAt: postData.createdAt,
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        category: postData.dataValues.CATEGORY,
         replies: reply_arr,
       });
     case 2:
       return res.send({
         success: true,
         like: likes,
+        isUserLike: isUserLike,
         content: postData.CONTENT,
+        username: user.dataValues.NICKNAME,
+        userlevel: user.dataValues.LEVEL,
+        createdAt: postData.createdAt,
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        category: postData.dataValues.CATEGORY,
         replies: reply_arr,
       });
     case 3:
@@ -194,12 +219,17 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         success: true,
         title: postData.TITLE,
         cocktailLike: postData.LIKE,
+        isUserLike: isUserLike,
         like: likes,
         content: postData.CONTENT,
+        username: user.dataValues.NICKNAME,
+        userlevel: user.dataValues.LEVEL,
+        createdAt: postData.createdAt,
         cno: postData.CNO,
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        category: postData.dataValues.CATEGORY,
         replies: reply_arr,
       });
     case 4:
@@ -207,10 +237,15 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
         success: true,
         title: postData.TITLE,
         like: likes,
+        isUserLike: isUserLike,
         content: postData.CONTENT,
+        username: user.dataValues.NICKNAME,
+        userlevel: user.dataValues.LEVEL,
+        createdAt: postData.createdAt,
         postId: postData.PNO,
         images: imageIdArr,
         isWriter: isWriter,
+        category: postData.dataValues.CATEGORY,
         replies: reply_arr,
       });
   }
@@ -340,14 +375,39 @@ router.delete('/reply/:replyId', checkAccess, async (req, res) => {
 router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
   try {
     const page = Number(req.query.page);
+    const search = req.query.search;
+    console.log('search', search);
     const offset = 10 * (page - 1);
     const limit = 10;
     const list = [];
-    const posts = await POST.findAll({
-      order: [['createdAt', 'DESC']],
-      limit: limit,
-      offset: offset,
-    });
+    let posts;
+    if (search) {
+      posts = await POST.findAll({
+        order: [['createdAt', 'DESC']],
+        limit: limit,
+        offset: offset,
+        where: {
+          [Sequelize.Op.or]: [
+            {
+              TITLE: {
+                [Op.like]: `%${search}%`,
+              },
+            },
+            {
+              CONTENT: {
+                [Op.like]: `%${search}%`,
+              },
+            },
+          ],
+        },
+      });
+    } else {
+      posts = await POST.findAll({
+        order: [['createdAt', 'DESC']],
+        limit: limit,
+        offset: offset,
+      });
+    }
     for (const val of posts) {
       const user = await USER.findByPk(val.dataValues.UNO);
       const likePost = await POST_LIKE.findAll({
@@ -410,6 +470,7 @@ router.get(
   async (req, res) => {
     try {
       const category_name = req.params.category_name;
+      const search = req.query.search;
       let category;
       if (category_name === 'recommend') {
         category = 1;
@@ -426,12 +487,40 @@ router.get(
       const offset = 10 * (page - 1);
       const limit = 10;
       const list = [];
-      const posts = await POST.findAll({
-        where: { category: category },
-        order: [['createdAt', 'DESC']],
-        limit: limit,
-        offset: offset,
-      });
+      let posts;
+      if (search) {
+        posts = await POST.findAll({
+          where: {
+            [Op.and]: [
+              { CATEGORY: category },
+              {
+                [Op.or]: [
+                  {
+                    TITLE: {
+                      [Op.like]: `%${search}%`,
+                    },
+                  },
+                  {
+                    CONTENT: {
+                      [Op.like]: `%${search}%`,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          order: [['createdAt', 'DESC']],
+          limit: limit,
+          offset: offset,
+        });
+      } else {
+        posts = await POST.findAll({
+          where: { category: category },
+          order: [['createdAt', 'DESC']],
+          limit: limit,
+          offset: offset,
+        });
+      }
 
       for (const val of posts) {
         const user = await USER.findByPk(val.dataValues.UNO);
@@ -598,5 +687,35 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       success: false,
       message: 'Post List loaded failed',
     });
+  }
+});
+router.post('/report/:postId', checkAccess, async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const report = req.body.report;
+    const [result, created] = await POST_REPORT.findOrCreate({
+      where: {
+        PNO: postId,
+        UNO: req.user.UNO,
+      },
+      defaults: {
+        REPORT: report,
+      },
+    });
+    if (created) {
+      return res.status(200).json({
+        success: true,
+        message: 'Post Report 성공',
+      });
+    } else {
+      return res
+        .status(200)
+        .json({ success: false, message: 'Post Report 중복' });
+    }
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: 'Post Report 실패', error });
   }
 });

@@ -16,8 +16,8 @@ export const useStaySignedIn = () => {
         setAuthState({ isLoggedin: false });
       }
     } else {
-      axios.defaults.headers.common.Authorization = "";
-      axios.defaults.headers.common.refresh = "";
+      axios.defaults.headers.common.Authorization = undefined;
+      axios.defaults.headers.common.refresh = undefined;
       setAuthState({ isLoggedin: false });
     }
   }, []);

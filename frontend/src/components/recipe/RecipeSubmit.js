@@ -122,7 +122,7 @@ const RecipeSubmit = ({ actionType }) => {
       if (isDuplicate) {
         setToastState({
           show: true,
-          message: "중복된 항목이 있습니다.",
+          message: "중복된 재료가 있습니다.",
           type: "error",
           ms: 3000,
         });
