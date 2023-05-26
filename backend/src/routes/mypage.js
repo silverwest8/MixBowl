@@ -138,6 +138,7 @@ router.get('/replies/:page', checkAccess, async (req, res) => {
     for (let i = 0; i < replies.length; i++) {
       const reply = replies[i];
       let temp = {
+        replyId: reply.PRNO,
         postId: reply.PNO,
         content: reply.CONTENT,
         title: reply.PNO_POST.TITLE,
