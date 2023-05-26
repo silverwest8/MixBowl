@@ -451,8 +451,8 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
       });
       console.log('val', val.dataValues.UNO);
       let isWriter = false;
-      if (req.user.UNO === val.dataValues.UNO) {
-        if (req.user !== undefined) {
+      if (req.user !== undefined) {
+        if (req.user.UNO === val.dataValues.UNO) {
           isWriter = true;
         }
       }
