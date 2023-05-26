@@ -112,7 +112,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   if (postData === null) {
     return res.status(400).send({
       success: false,
-      message: "게시물이 없습니다."
+      message: '게시물이 없습니다.',
     });
   }
   const user = await USER.findByPk(postData.dataValues.UNO);
@@ -137,9 +137,12 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
     },
   });
   let isUserLike = false;
-  const isLike = req.user === undefined ? [] : await POST_LIKE.findAll({
-    where: { UNO: req.user.UNO, PNO: postData.PNO },
-  });
+  const isLike =
+    req.user === undefined
+      ? []
+      : await POST_LIKE.findAll({
+          where: { UNO: req.user.UNO, PNO: postData.PNO },
+        });
   console.log(isLike);
   if (isLike.length !== 0) {
     isUserLike = true;
@@ -420,6 +423,22 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
+      let isUserLike = false;
+      const isLike =
+        req.user === undefined
+          ? []
+          : await POST_LIKE.findAll({
+              where: { UNO: req.user.UNO, PNO: val.dataValues.PNO },
+            });
+      console.log(isLike);
+      if (isLike.length !== 0) {
+        isUserLike = true;
+      }
+      val.dataValues.isUserLike = isUserLike;
+      val.dataValues.cocktailLike = -1; //cocktail관련 게시글이 아닌경우 -1로 초기화
+      if (val.CATEGORY === 3) {
+        val.dataValues.cocktailLike = val.LIKE;
+      }
       const replyNum = await POST_REPLY.findAll({
         attributes: [
           'PNO',
@@ -430,12 +449,19 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
+      console.log('val', val.dataValues.UNO);
+      let isWriter = false;
+      if (req.user !== undefined) {
+        if (req.user.UNO === val.dataValues.UNO) {
+          isWriter = true;
+        }
+      }
+      val.dataValues.isWriter = isWriter;
       delete val.dataValues.UNO;
       val.dataValues.UNO_USER = {
         NICKNAME: user.NICKNAME,
         LEVEL: user.LEVEL,
       };
-
       if (likePost.length !== 0) {
         val.dataValues.LIKE = likePost[0].dataValues.LIKES;
       } else {
@@ -446,7 +472,6 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
       } else {
         val.dataValues.REPLY = 0;
       }
-
       list.push(val.dataValues);
     }
 
@@ -534,6 +559,25 @@ router.get(
           },
           group: ['PNO'],
         });
+        let isUserLike = false;
+        const isLike =
+          req.user === undefined
+            ? []
+            : await POST_LIKE.findAll({
+                where: { UNO: req.user.UNO, PNO: val.dataValues.PNO },
+              });
+        console.log(isLike);
+        if (isLike.length !== 0) {
+          isUserLike = true;
+        }
+        val.dataValues.isUserLike = isUserLike;
+        let isWriter = false;
+        if (req.user !== undefined) {
+          if (req.user.UNO === val.dataValues.UNO) {
+            isWriter = true;
+          }
+        }
+        val.dataValues.isWriter = isWriter;
         const replyNum = await POST_REPLY.findAll({
           attributes: [
             'PNO',
@@ -596,7 +640,7 @@ router.get('/one/image', async (req, res) => {
       .json({ success: false, message: '이미지 조회 실패', error });
   }
 });
-router.get('/cocktails', async (req, res) => {
+router.get('/list/cocktails', async (req, res) => {
   try {
     const cocktailNames = [];
     await sql.getCocktails().then((value) => {
@@ -645,6 +689,25 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       limit: 3, //최대 3개로 조정.
     });
     for (const val of result) {
+      let isWriter = false;
+      if (req.user !== undefined) {
+        if (req.user.UNO === val.dataValues.UNO) {
+          isWriter = true;
+        }
+      }
+      let isUserLike = false;
+      console.log(val);
+      const isLike =
+        req.user === undefined
+          ? []
+          : await POST_LIKE.findAll({
+              where: { UNO: req.user.UNO, PNO: val.dataValues.PNO_POST.PNO },
+            });
+      console.log(isLike);
+      if (isLike.length !== 0) {
+        isUserLike = true;
+      }
+      val.dataValues.isWriter = isWriter;
       const postInfo = val.dataValues.PNO_POST;
       const data = {};
       data['likeCount'] = val.dataValues.likeCount;
@@ -655,6 +718,8 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       data['title'] = postInfo.TITLE || null;
       data['createdAt'] = postInfo.createdAt;
       data['content'] = postInfo.CONTENT;
+      data['isWriter'] = isWriter;
+      data['isUserLike'] = isUserLike;
       const replyNum = await POST_REPLY.findAll({
         attributes: [
           'PNO',

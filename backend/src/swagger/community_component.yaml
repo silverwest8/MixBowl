@@ -30,6 +30,10 @@ components:
               title:
                 type: string
                 example: 게시글 제목명
+              isUserLike:
+                type: boolean
+                example: true
+                description: 유저가 좋아요 눌렀으면 true 아니면 false
               createdAt:
                 type: string
                 example: 2023-05-15
@@ -82,6 +86,14 @@ components:
               date:
                 type: string
                 example: 1일전
+              cocktailLike:
+                type: integer
+                example: 1
+                description: 칵테일추천글 아니면 -1, 추천글일 경우 추천 안하면 0, 추천하면 1
+              isUserLike:
+                type: boolean
+                example: true
+                description: 유저가 좋아요 눌렀으면 true 아니면 false
               UNO_USER:
                 type: object
                 properties:

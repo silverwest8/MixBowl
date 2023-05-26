@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start:dev": "nodemon --watch \"./src/**/*.*\" --exec babel-node ./src/app.js",
+    "start:dev": "node \"./src/database/orm.js\" && nodemon --watch \"./src/**/*.*\" --exec babel-node ./src/app.js",
     "test": "jest",
     "makemodels": "node \"./src/database/orm.js\""
   },
