@@ -82,6 +82,10 @@ components:
               date:
                 type: string
                 example: 1일전
+              cocktailLike:
+                type: integer
+                example: 1
+                description: 칵테일추천글 아니면 -1, 추천글일 경우 추천 안하면 0, 추천하면 1
               UNO_USER:
                 type: object
                 properties:
