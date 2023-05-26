@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Input from "../common/Input";
 import { AddRecipeState, AddRecipeImgState } from "../../store/recipe";
 import { useState, useRef, useEffect } from "react";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaImage } from "react-icons/fa";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { toastState } from "../../store/toast";
 
@@ -118,13 +118,14 @@ const RecipeTitleImgColor = ({ Title, Color }) => {
       <TopBox>
         <h1>{Title}</h1>
         <FlexBox>
-          <img
-            src={
-              addImg === ""
-                ? process.env.PUBLIC_URL + "/images/logo.png"
-                : addImg
-            }
-          />
+          {addImg ? (
+            <img src={addImg} />
+          ) : (
+            <div className="image-box">
+              <FaImage />
+            </div>
+          )}
+
           <ButtonBox>
             <Button onClick={handleAddButton}>첨부</Button>
             <input
@@ -295,6 +296,17 @@ const TopBox = styled.div`
   align-items: center;
   margin-top: 3rem;
   margin-bottom: 2rem;
+  .image-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    height: 8.875rem;
+    width: 8.875rem;
+    border: 1px solid ${({ theme }) => theme.color.primaryGold};
+    color: ${({ theme }) => theme.color.gray};
+    border-radius: 0.75rem;
+  }
   img {
     height: 8.875rem;
     width: 8.875rem;
