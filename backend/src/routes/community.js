@@ -710,14 +710,14 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       val.dataValues.isWriter = isWriter;
       const postInfo = val.dataValues.PNO_POST;
       const data = {};
-      data['likeCount'] = val.dataValues.likeCount;
+      data['PNO'] = val.dataValues.PNO_POST.PNO;
+      data['LIKE'] = val.dataValues.likeCount;
       const user = await USER.findByPk(postInfo.UNO);
-      data['userName'] = user.NICKNAME;
-      data['userLevel'] = user.LEVEL;
-      data['category'] = postInfo.CATEGORY;
-      data['title'] = postInfo.TITLE || null;
+      data['UNO_USER'] = { NICKNAME: user.NICKNAME, LEVEL: user.LEVEL };
+      data['CATEGORY'] = postInfo.CATEGORY;
+      data['TITLE'] = postInfo.TITLE || null;
       data['createdAt'] = postInfo.createdAt;
-      data['content'] = postInfo.CONTENT;
+      data['CONTENT'] = postInfo.CONTENT;
       data['isWriter'] = isWriter;
       data['isUserLike'] = isUserLike;
       const replyNum = await POST_REPLY.findAll({
@@ -731,9 +731,9 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
         group: ['PNO'],
       });
       if (replyNum.length !== 0) {
-        data['reply'] = replyNum[0].dataValues.Replies;
+        data['REPLY'] = replyNum[0].dataValues.Replies;
       } else {
-        data['reply'] = 0;
+        data['REPLY'] = 0;
       }
       console.log(data);
 
