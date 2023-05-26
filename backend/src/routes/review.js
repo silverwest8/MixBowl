@@ -51,28 +51,35 @@ const KEYWORD_VALUE = [
 ];
 
 async function getKeyword(placeId) {
-  let keywordlist = [null, null, null];
-  const keyword = await db.KEYWORD.findAll({
-    attributes: [
-      'KEYWORD',
-      [Sequelize.fn('COUNT', Sequelize.col('*')), 'COUNT'],
-    ],
-    include: [
-      {
-        model: db.REVIEW,
-        as: 'REVIEW',
-        attributes: [],
-        where: { PLACE_ID: placeId },
-        required: false,
-      },
-    ],
-    group: ['KEYWORD'],
-    order: [[Sequelize.literal('COUNT'), 'DESC']],
-    limit: 3,
+  console.log('placeId', placeId);
+  let keywordlist = [];
+  const reviews = await db.REVIEW.findAll({
+    where: {
+      PLACE_ID: placeId,
+    },
+    attributes: ['REVIEW_ID'],
   });
-  keyword.forEach((keyword) =>
-    keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1].value)
-  );
+  const reviewArray = reviews.map((x) => x.REVIEW_ID);
+  console.log('reviewArray', reviewArray);
+  if (reviewArray.length) {
+    const keywords = await db.KEYWORD.findAll({
+      attributes: [
+        'KEYWORD',
+        [Sequelize.fn('COUNT', Sequelize.col('KEYWORD')), 'COUNT'],
+      ],
+      where: {
+        REVIEW_ID: {
+          [Sequelize.Op.or]: reviewArray,
+        },
+      },
+      subQuery: false,
+      group: ['KEYWORD'],
+      order: [[Sequelize.literal('COUNT'), 'DESC']],
+      limit: 3,
+    });
+    keywordlist = keywords.map((x) => x.KEYWORD);
+    console.log('keywordlist', keywordlist);
+  }
   return keywordlist;
 }
 
