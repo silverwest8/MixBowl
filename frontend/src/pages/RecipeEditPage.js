@@ -21,7 +21,7 @@ const RecipeEditPage = () => {
   const colorString = [];
   const token = localStorage.getItem("access_token");
 
-  const GetImg = async () => {
+  const GetImg = async (imageExists) => {
     try {
       axios.defaults.headers.common.Authorization = token;
       const response = await axios.get(`/api/recipes/image/${id}`, {
@@ -36,10 +36,13 @@ const RecipeEditPage = () => {
         addImg: base64Image,
       }));
 
-      const file = new File([blobData], "RecipeEdit.jpg", {
-        type: response.headers["content-type"],
-      });
-      setPostImg(file);
+      if (imageExists !== null) {
+        const file = new File([blobData], "RecipeEdit.jpg", {
+          type: response.headers["content-type"],
+        });
+
+        setPostImg(file);
+      }
     } catch (error) {
       return error.message;
     }
@@ -49,6 +52,8 @@ const RecipeEditPage = () => {
     try {
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/recipes/${id}`);
+
+      const imageExists = data.data.image;
 
       setAddName((prev) => ({
         ...prev,
@@ -136,13 +141,16 @@ const RecipeEditPage = () => {
         ...prev,
         addExplain: data.data.instruction,
       }));
+      GetImg(imageExists);
     } catch (error) {
       return error.message;
     }
   };
 
   useEffect(() => {
-    GetImg();
+    window.scroll({
+      top: 0,
+    });
     GetRecipe();
   }, []);
 

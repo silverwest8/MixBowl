@@ -6,7 +6,7 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 
 const RecipeComment = () => {
-  const [comment, setComment] = useState([]);
+  const [comment, setComment] = useState(null);
   const params = useParams();
   const id = params.id;
 
@@ -27,33 +27,29 @@ const RecipeComment = () => {
     <Comment>
       <TopBox>
         <p>
-          리뷰<span>({comment.list && comment.list.count})</span>
+          리뷰<span>{comment && `(${comment.count})`}</span>
         </p>
-        <Link to="/community/posting">
+        <Link to="/community">
           <PostButton>
             <FaPen className="pen"></FaPen>작성하기
           </PostButton>
         </Link>
       </TopBox>
-      {[1, 2, 3, 4].map((index) => (
-        <CommentBox key={index}>
-          <div className="user">
-            @닉네임
-            <MemberBadge level={2} />
-          </div>
-          <div className="text">
-            후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트
-          </div>
-          <div className="day">12시간전</div>
-          <HorizonLine></HorizonLine>
-        </CommentBox>
-      ))}
+      {comment && comment.list.length !== 0 ? (
+        comment.list.map((item) => (
+          <CommentBox key={item}>
+            <div className="user">
+              @{item.UNO_USER.nickname}
+              <MemberBadge level={item.UNO_USER.level} />
+            </div>
+            <div className="text">{item.content}</div>
+            <div className="day">{item.date.slice(0, 10)}</div>
+            <HorizonLine></HorizonLine>
+          </CommentBox>
+        ))
+      ) : (
+        <p className="empty-message">리뷰가 없습니다.</p>
+      )}
     </Comment>
   );
 };
@@ -63,6 +59,8 @@ const TopBox = styled.div`
   justify-content: space-between;
   margin-top: 1rem;
   p {
+    display: flex;
+    align-items: center;
     font-size: 1.25rem;
     span {
       font-size: 1rem;
@@ -101,11 +99,16 @@ const HorizonLine = styled.p`
 
 const Comment = styled.div`
   width: 50vw;
-  margin: auto;
+  margin: 0 auto 4rem;
   display: flex;
   flex-direction: column;
   @media screen and (max-width: 840px) {
     width: 70vw;
+  }
+  .empty-message {
+    color: ${({ theme }) => theme.color.gray};
+    margin-top: 1rem;
+    text-align: center;
   }
 `;
 
