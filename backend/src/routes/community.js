@@ -572,8 +572,8 @@ router.get(
         }
         val.dataValues.isUserLike = isUserLike;
         let isWriter = false;
-        if (req.user.UNO === val.dataValues.UNO) {
-          if (req.user !== undefined) {
+        if (req.user !== undefined) {
+          if (req.user.UNO === val.dataValues.UNO) {
             isWriter = true;
           }
         }
@@ -690,8 +690,8 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
     });
     for (const val of result) {
       let isWriter = false;
-      if (req.user.UNO === val.dataValues.UNO) {
-        if (req.user !== undefined) {
+      if (req.user !== undefined) {
+        if (req.user.UNO === val.dataValues.UNO) {
           isWriter = true;
         }
       }
