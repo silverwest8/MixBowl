@@ -546,8 +546,11 @@ router.get(
           offset: offset,
         });
       }
-
       for (const val of posts) {
+        val.dataValues.cocktailLike = -1;
+        if (category === 3) {
+          val.dataValues.cocktailLike = val.dataValues.LIKE;
+        }
         const user = await USER.findByPk(val.dataValues.UNO);
         const likePost = await POST_LIKE.findAll({
           attributes: [
@@ -578,6 +581,7 @@ router.get(
           }
         }
         val.dataValues.isWriter = isWriter;
+
         const replyNum = await POST_REPLY.findAll({
           attributes: [
             'PNO',
@@ -605,7 +609,6 @@ router.get(
         } else {
           val.dataValues.REPLY = 0;
         }
-
         list.push(val.dataValues);
       }
 

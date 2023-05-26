@@ -6,55 +6,70 @@ import { Link } from "react-router-dom";
 
 const FreeListItem = ({ data }) => {
   // TODO : 호버, 이미지처리
-  // console.log(`${data.TITLE}의 카테고리는 ${data.CATEGORY}`);
+  console.log("lets see the data ", data);
   return (
     <ItemContainer to={`/community/${data.PNO}`}>
-      <TopSection>
+      <div className="wrapper">
         <div>
-          <span>
-            {data.CATEGORY === 3 && data.cocktailLike !== null ? (
-              <BiHeartCircle className="recommend icon" />
-            ) : (
-              ""
-            )}
-          </span>
-          <h4>{data.TITLE}</h4>
+          <TopSection>
+            <div>
+              <span>
+                {data.CATEGORY === 3 && data.cocktailLike === 1 ? (
+                  <BiHeartCircle className="recommend icon" />
+                ) : (
+                  ""
+                )}
+              </span>
+              <h4>{data.TITLE}</h4>
+            </div>
+            <div className="category">
+              {data.CATEGORY === 2
+                ? "질문과 답변"
+                : data.CATEGORY === 4
+                ? "자유 게시글"
+                : data.CATEGORY === 3
+                ? "칵테일 리뷰"
+                : data.CATEGORY === 1
+                ? "칵테일 추천"
+                : ""}
+            </div>
+          </TopSection>
+          <MainText className={data.CATEGORY === 2 ? "question" : ""}>
+            {data.CONTENT}
+          </MainText>
+          <BottomSection>
+            <ReactionContainer>
+              <FaThumbsUp className={data.isUserLike ? "icon liked" : "icon"} />
+              {data.LIKE}
+              <FaCommentDots className="icon comment" />
+              <span className="shown">
+                {data.CATEGORY === 2 && data.REPLY === 0
+                  ? "지금 답변을 기다리고 있어요"
+                  : data.REPLY}
+              </span>
+              <span className="hidden">
+                {data.CATEGORY === 2 && data.REPLY === 0
+                  ? "답변 필요"
+                  : data.REPLY}
+              </span>
+            </ReactionContainer>
+            <div className="userinfo">
+              {data.createdAt.slice(0, 10)}
+              <span className="username">{data.UNO_USER.NICKNAME}</span>
+              <MemberBadge level={data.UNO_USER.LEVEL} />
+            </div>
+          </BottomSection>
         </div>
-        <div className="category">
-          {data.CATEGORY === 2
-            ? "질문과 답변"
-            : data.CATEGORY === 4
-            ? "자유 게시글"
-            : data.CATEGORY === 3
-            ? "칵테일 리뷰"
-            : data.CATEGORY === 1
-            ? "칵테일 추천"
-            : ""}
-        </div>
-      </TopSection>
-      <MainText className={data.CATEGORY === 2 ? "question" : ""}>
-        {data.CONTENT}
-      </MainText>
-      <BottomSection>
-        <ReactionContainer>
-          <FaThumbsUp className={data.isUserLike ? "icon liked" : "icon"} />
-          {data.LIKE}
-          <FaCommentDots className="icon comment" />
-          <span className="shown">
-            {data.CATEGORY === 2 && data.REPLY === 0
-              ? "지금 답변을 기다리고 있어요"
-              : data.REPLY}
-          </span>
-          <span className="hidden">
-            {data.CATEGORY === 2 && data.REPLY === 0 ? "답변 필요" : data.REPLY}
-          </span>
-        </ReactionContainer>
-        <div className="userinfo">
-          {data.createdAt.slice(0, 10)}
-          <span className="username">{data.UNO_USER.NICKNAME}</span>
-          <MemberBadge level={data.UNO_USER.LEVEL} />
-        </div>
-      </BottomSection>
+        {data.images && (
+          <ImageSection>
+            <img
+              src={
+                "https://cdn.discordapp.com/attachments/751695059354648616/1033937959008874504/Screenshot_20221016_130522.jpg"
+              }
+            />
+          </ImageSection>
+        )}
+      </div>
     </ItemContainer>
   );
 };
@@ -79,6 +94,14 @@ const ItemContainer = styled(Link)`
     font-size: 1.125rem;
     -webkit-line-clamp: 2;
     height: 3.5rem;
+  }
+  .wrapper {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    > div:first-child {
+      width: 100%;
+    }
   }
 `;
 
@@ -152,6 +175,14 @@ const ReactionContainer = styled.div`
       display: inline;
     }
   }
+`;
+
+const ImageSection = styled.div`
+  border: 2px solid ${({ theme }) => theme.color.primaryGold};
+  width: 6rem;
+  height: 6rem;
+  border-radius: 10px;
+  overflow: hidden;
 `;
 
 const MainText = styled.div`

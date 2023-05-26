@@ -44,21 +44,21 @@ const NameChangeModal = ({ handleClose, username }) => {
       handleClose();
     },
   });
-  const [uname, setUname] = useState({ username });
+  const [uname, setUname] = useState({ checkname: username });
 
   const onChange = (e) => {
     const { value } = e.target;
     setUname(() => ({
-      username: value,
+      checkname: value,
     }));
   };
   const onSubmit = async () => {
     setWarningMsg("");
-    if (uname.username === "") {
+    if (uname.checkname === "") {
       setWarningMsg("닉네임을 입력해 주세요");
       return;
     }
-    if (uname.username.length > 10) {
+    if (uname.checkname.length > 10) {
       setWarningMsg("글자수 제한은 10자 입니다");
       return;
     }
@@ -69,7 +69,8 @@ const NameChangeModal = ({ handleClose, username }) => {
       checkname: uname.username,
     });
 
-    if (data.duplicate === false) {
+    if (data.duplicate === true) {
+      console.log("username is ", username);
       mutateEdit({ username });
     } else {
       setToastState({

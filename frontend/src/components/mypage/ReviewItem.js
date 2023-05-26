@@ -5,7 +5,7 @@ const ReviewItem = ({ data }) => {
   return (
     <ItemContainer>
       <ItemWrapper to={`/cocktailbar/${data.placeId}`}>
-        <p>{data.content}</p>
+        <p>{data.text}</p>
         <div>
           <div>
             {data.keyword &&

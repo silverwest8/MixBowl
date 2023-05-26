@@ -4,11 +4,11 @@ import { Link } from "react-router-dom";
 const CommentItem = ({ data }) => {
   return (
     <ItemContainer>
-      <ItemWrapper to={`/community/${data.titleid}`}>
+      <ItemWrapper to={`/community/${data.postId}`}>
         <p>{data.content}</p>
         <div>
           <DateContainer>{data.title}</DateContainer>
-          <DateContainer>{data.date.slice(0, 3)}</DateContainer>
+          <DateContainer>{data.date.slice(0, 10)}</DateContainer>
         </div>
       </ItemWrapper>
     </ItemContainer>

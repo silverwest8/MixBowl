@@ -15,6 +15,7 @@ import ReviewItem from "../components/mypage/ReviewItem";
 import LevelInfoModal from "../components/mypage/LevelInfoModal";
 import NameChangeModal from "../components/mypage/NameChangeModal";
 import VerifyingModal from "../components/mypage/VerifyingModal";
+import axios from "axios";
 
 const dummyData = {
   uname: "유저123",
@@ -149,17 +150,32 @@ const TopSection = styled.div`
   align-items: center;
   font-size: 2rem;
   margin-bottom: 4rem;
-  span {
+  > div:first-child {
+    display: flex;
+    @media screen and (max-width: 800px) {
+      flex-direction: column;
+    }
+    > span:first-child {
+      color: ${({ theme }) => theme.color.primaryGold};
+    }
+  }
+  > span {
     color: ${({ theme }) => theme.color.primaryGold};
   }
   .icon {
     margin-left: 1rem;
     color: ${({ theme }) => theme.color.primaryGold};
   }
+  @media screen and (max-width: 800px) {
+    align-items: end;
+    .down {
+      margin-bottom: 0.2rem;
+    }
+  }
 `;
 const NoContent = styled.div`
   width: 100%;
-  height: 40vh;
+  height: 20vh;
   color: ${({ theme }) => theme.color.primaryGold};
   display: flex;
   align-items: center;
@@ -170,6 +186,12 @@ const MainWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 60vw;
+  @media screen and (max-width: 800px) {
+    width: 80vw;
+  }
+  @media screen and (max-width: 500px) {
+    width: 85vw;
+  }
 `;
 
 const TextBox = styled.div`
@@ -194,6 +216,7 @@ const RecipeWrapper = styled.div`
   margin-bottom: 2rem;
   justify-items: center;
   width: 100%;
+  overflow: hidden;
 
   @media screen and (max-width: 928px) {
     display: grid;
@@ -322,9 +345,102 @@ const ButtonContainer = styled.div`
 
 const MyPage = () => {
   const { openModal, closeModal } = useModal();
-  const [username, setUsername] = useState("예시");
+  const [userInfo, setUserInfo] = useState({});
+  const [recipe, setRecipe] = useState([]);
+  const [postings, setPostings] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const token = localStorage.getItem("access_token");
+  // const GetMyInfo = async () => {
+  //   try {
+  //     axios.defaults.headers.common.Authorization = token;
+  //     const { data } = await axios.get(`/api/users`);
+  //     console.log("user info is ", data);
+  //     setUserInfo(data.data);
+  //   } catch (error) {
+  //     console.log("empty or error");
+  //   }
+  // };
+  // const GetMyRecipe = async () => {
+  //   try {
+  //     axios.defaults.headers.common.Authorization = token;
+  //     const { data } = await axios.get(`/api/mypages/recipes/1`);
+  //     console.log("here, recipe is ", data);
+  //     setRecipe(data.list);
+  //   } catch (error) {
+  //     console.log("empty or error");
+  //   }
+  // };
+  // const GetPostings = async () => {
+  //   try {
+  //     axios.defaults.headers.common.Authorization = token;
+  //     const { data } = await axios.get(`/api/mypages/posts/1`);
+  //     console.log("here, posting is ", data);
+  //     setPostings(data.list);
+  //   } catch (error) {
+  //     console.log("empty or error");
+  //   }
+  // };
+  // const GetComments = async () => {
+  //   try {
+  //     axios.defaults.headers.common.Authorization = token;
+  //     const { data } = await axios.get(`/api/mypages/replies/1`);
+  //     console.log("here, comment is ", data);
+  //     setComments(data.list);
+  //   } catch (error) {
+  //     console.log("empty or error");
+  //   }
+  // };
+  // const GetReviews = async () => {
+  //   try {
+  //     axios.defaults.headers.common.Authorization = token;
+  //     const { data } = await axios.get(`/api/mypages/reviews/1`);
+  //     setReviews(data.list);
+  //   } catch (error) {
+  //     console.log("empty or error");
+  //   }
+  // };
+  // useEffect(() => {
+  //   GetMyInfo();
+  //   GetMyRecipe();
+  //   GetPostings();
+  //   GetComments();
+  //   GetReviews();
+  // }, []);
+
+  const [dataFetched, setDataFetched] = useState(false); // Add a flag to track if data has been fetched
+
+  const fetchData = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+
+      // Fetch data only if it hasn't been fetched before
+      if (!dataFetched) {
+        const userInfoResponse = await axios.get(`/api/users`);
+        const recipeResponse = await axios.get(`/api/mypages/recipes/1`);
+        const postingsResponse = await axios.get(`/api/mypages/posts/1`);
+        const commentsResponse = await axios.get(`/api/mypages/replies/1`);
+        const reviewsResponse = await axios.get(`/api/mypages/reviews/1`);
+
+        console.log("user info is ", userInfoResponse.data);
+        setUserInfo(userInfoResponse.data.data);
+        console.log("here, recipe is ", recipeResponse.data);
+        setRecipe(recipeResponse.data.list);
+        console.log("here, posting is ", postingsResponse.data);
+        setPostings(postingsResponse.data.list);
+        console.log("here, comment is ", commentsResponse.data);
+        setComments(commentsResponse.data.list);
+        console.log("here, review is ", reviewsResponse.data);
+        setReviews(reviewsResponse.data.list);
+
+        setDataFetched(true); // Set the flag to indicate that data has been fetched
+      }
+    } catch (error) {
+      console.log("empty or error");
+    }
+  };
   useEffect(() => {
-    setUsername(dummyData.uname);
+    fetchData();
   }, []);
 
   return (
@@ -340,10 +456,11 @@ const MyPage = () => {
         <MainWrapper>
           <TopSection>
             <div>
-              <span>{dummyData.uname}</span>님의 마이페이지
+              <span>{userInfo.NICKNAME}</span>
+              <span>님의 마이페이지</span>
             </div>
             <FaPen
-              className="icon"
+              className="icon down"
               onClick={() => {
                 openModal(NameChangeModal, {
                   handleClose: closeModal,
@@ -370,13 +487,13 @@ const MyPage = () => {
               </Button>
             </div>
             <div>
-              <span>{dummyData.level}단계</span>
+              <span>{userInfo.LEVEL}단계</span>
               <span>
-                {dummyData.level === 1
+                {userInfo.LEVEL === 1
                   ? "Cocktell에 가입한 회원"
-                  : dummyData.level === 2
+                  : userInfo.LEVEL === 2
                   ? "일주일 3회 이상 방문, 게시글 10개 이상 작성"
-                  : dummyData.level === 3
+                  : userInfo.LEVEL === 3
                   ? "게시글 30개 이상 작성"
                   : "조주기능사 자격증 소지자, 칵테일 관련 사업자"}
               </span>
@@ -388,19 +505,22 @@ const MyPage = () => {
               <MdArrowForwardIos className="icon" />
             </div>
             <div>
-              {dummyData.recipes.length === 0 ? (
+              {recipe && recipe.length === 0 ? (
                 <NoContent>추천하신 레시피가 없습니다</NoContent>
               ) : (
                 <RecipeWrapper>
-                  {dummyData.recipes?.map((index) => (
-                    <RecipeBox key={index.rno}>
-                      <Link to={`/recipe/${index.rno}`}>
-                        <img src={index.image_path}></img>
+                  {recipe?.map((index) => (
+                    <RecipeBox key={index.cocktailId}>
+                      <Link to={`/recipe/${index.cocktailId}`}>
+                        <img
+                          src={"/api/recipes/image/" + index.cocktailId}
+                        ></img>
                         <h1>{index.name}</h1>
                       </Link>
                       <TextBox>
                         <p>
-                          @{index.uname} <MemberBadge level={index.level} />
+                          @{index.USER.nickname}{" "}
+                          <MemberBadge level={index.USER.level} />
                         </p>
                         <div>
                           <p className="ThumbsUp">
@@ -425,12 +545,12 @@ const MyPage = () => {
               <MdArrowForwardIos className="icon" />
             </div>
             <div>
-              {dummyData.postings.length === 0 ? (
+              {postings.length === 0 ? (
                 <NoContent>작성하신 게시물이 없습니다</NoContent>
               ) : (
-                dummyData.postings
+                postings
                   .slice(0, 3)
-                  ?.map((el) => <FreeListItem key={el.id} data={el} />)
+                  ?.map((el) => <FreeListItem key={el.postId} data={el} />)
               )}
             </div>
           </Section>
@@ -455,12 +575,10 @@ const MyPage = () => {
               <MdArrowForwardIos className="icon" />
             </div>
             <div>
-              {dummyData.reviews.length === 0 ? (
+              {reviews.length === 0 ? (
                 <NoContent>작성하신 리뷰가 없습니다</NoContent>
               ) : (
-                dummyData.reviews?.map((el) => (
-                  <ReviewItem key={el.id} data={el} />
-                ))
+                reviews?.map((el) => <ReviewItem key={el.placeId} data={el} />)
               )}
             </div>
           </Section>
@@ -469,7 +587,6 @@ const MyPage = () => {
               onClick={() => {
                 openModal(WithdrawModal, {
                   handleClose: closeModal,
-                  username,
                 });
               }}
             >
