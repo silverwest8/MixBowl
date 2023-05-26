@@ -54,6 +54,11 @@ components:
               postId:
                 type: integer
                 example: 1
+              images:
+                type: array
+                items:
+                  type: integer
+                  example: [8, 9]
               category:
                 type: integer
                 example: 4
