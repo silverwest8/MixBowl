@@ -63,23 +63,8 @@ const RecipeTitleImgColor = ({ Title, Color }) => {
   };
 
   const handleColor = (color) => {
-    if (addColor.length >= 3) {
+    if (addColor.length >= 3 && !addColor.includes(color)) {
       ToastMessageColor();
-      setAddColor((prev) => ({ ...prev, addColor: [] }));
-      setColoritem({
-        red: false,
-        pink: false,
-        orange: false,
-        black: false,
-        yellow: false,
-        brown: false,
-        green: false,
-        grey: false,
-        blue: false,
-        white: false,
-        purple: false,
-        transparent: false,
-      });
     } else {
       setAddColor((prev) => {
         if (prev.addColor.includes(color)) {
@@ -298,11 +283,9 @@ const RecipeTitleImgColor = ({ Title, Color }) => {
 };
 
 const RecipeBox = styled.div`
-  width: 40vw;
-  margin: auto;
-  @media screen and (max-width: 840px) {
-    width: 80vw;
-  }
+  width: 80vw;
+  margin: 0 auto;
+  max-width: 416px;
 `;
 
 const TopBox = styled.div`
@@ -357,7 +340,6 @@ const ColorBox = styled.div`
 `;
 
 const ColorButton = styled.button`
-  width: 6rem;
   height: 3rem;
   border-radius: 1rem;
   background-color: ${(props) => props.bgColor};
@@ -369,13 +351,10 @@ const ColorButton = styled.button`
 
 const ColorButtonBox = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1rem;
   margin-top: 0.5rem;
   margin-bottom: 2rem;
-  @media screen and (max-width: 1280px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
   @media screen and (max-width: 350px) {
     grid-template-columns: 1fr 1fr 1fr;
   }

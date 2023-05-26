@@ -135,11 +135,9 @@ const FlexBox = styled.div`
 `;
 
 const Box = styled.div`
-  width: 40vw;
-  margin: auto;
-  @media screen and (max-width: 840px) {
-    width: 80vw;
-  }
+  width: 80vw;
+  margin: 0 auto;
+  max-width: 416px;
 `;
 
 export default RecipeExplain;

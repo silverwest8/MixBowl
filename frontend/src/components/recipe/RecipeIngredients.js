@@ -205,7 +205,7 @@ const InputBox = styled.div`
   align-items: center;
 `;
 const Name = styled.div`
-  width: 20vw;
+  width: 50%;
   margin-right: 0.5rem;
   font-size: 1rem;
   display: flex;
@@ -216,7 +216,7 @@ const Name = styled.div`
   }
 `;
 const Volume = styled.div`
-  width: 15vw;
+  width: 30%;
   margin-right: 0.5rem;
   font-size: 1rem;
   display: flex;
@@ -228,7 +228,7 @@ const Volume = styled.div`
 `;
 
 const Unit = styled.div`
-  width: 8vw;
+  width: 20%;
   font-size: 1rem;
   display: flex;
   gap: 0.5rem;

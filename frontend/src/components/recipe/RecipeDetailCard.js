@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa";
 import RecipeEditDelete from "./RecipeEditDelete";
 import RecipeReportModal from "./RecipeReportModal";
@@ -11,6 +11,8 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { RecipeRoportState } from "../../store/recipe";
 import { reportRecipe, likteRecipe } from "../../api/recipeapi";
 import { toastState } from "../../store/toast";
+import Skeleton from "@mui/material/Skeleton";
+import { theme } from "../../styles/theme";
 
 const ReportRecipeModal = ({ handleClose, id }) => {
   const reportNum = useRecoilValue(RecipeRoportState);
@@ -58,6 +60,7 @@ const alcoholFilter = (recipe) => {
 const RecipeDetailCard = () => {
   const [recipe, setRecipe] = useState([]);
   const alcohol = alcoholFilter(recipe);
+  const navigate = useNavigate();
   const params = useParams();
   const id = params.id;
   const { openModal, closeModal } = useModal();
@@ -74,11 +77,63 @@ const RecipeDetailCard = () => {
   };
 
   useEffect(() => {
-    GetRecipe();
+    if (token) {
+      GetRecipe();
+    } else {
+      navigate(`/login?return_url=${window.location.pathname}`);
+    }
   }, []);
 
   if (!recipe || !recipe.USER) {
-    return null;
+    return (
+      <>
+        <TopBox>
+          <RecipeBox>
+            <img src={`/api/recipes/image/${id}`}></img>
+            <TextBox>
+              <Skeleton
+                variant="rounded"
+                width="100%"
+                height="12.5rem"
+                sx={{
+                  backgroundColor: theme.color.darkGray,
+                }}
+              />
+            </TextBox>
+          </RecipeBox>
+          <Material>
+            <div>
+              <span>재료 목록</span>
+              <Skeleton
+                variant="rounded"
+                width="100%"
+                height="5rem"
+                sx={{
+                  backgroundColor: theme.color.darkGray,
+                }}
+              />
+            </div>
+            <div>
+              <span className="recipes">레시피</span>
+              <Skeleton
+                variant="rounded"
+                width="100%"
+                height="5rem"
+                sx={{
+                  backgroundColor: theme.color.darkGray,
+                }}
+              />
+            </div>
+          </Material>
+        </TopBox>
+        <MidBox>
+          <RecBox>
+            <button></button>
+          </RecBox>
+          <HorizonLine></HorizonLine>
+        </MidBox>
+      </>
+    );
   }
 
   return (
@@ -97,7 +152,7 @@ const RecipeDetailCard = () => {
                     onClick={() => {
                       openModal(ReportRecipeModal, {
                         handleClose: closeModal,
-                        id: id,
+                        id,
                       });
                     }}
                   >
@@ -357,7 +412,6 @@ const TopBox = styled.div`
   margin: auto;
   display: flex;
   flex-direction: column;
-  }
   @media screen and (max-width: 840px) {
     width: 70vw;
   }

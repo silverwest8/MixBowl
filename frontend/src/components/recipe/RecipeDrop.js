@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useSetRecoilState } from "recoil";
 import { sortState } from "../../store/recipe";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -40,13 +40,6 @@ const RecipeDrop = ({ options }) => {
       }));
     }
   };
-
-  useEffect(() => {
-    setArr({
-      latest: true,
-      recommendation: false,
-    });
-  }, []);
 
   return (
     <DropBox>

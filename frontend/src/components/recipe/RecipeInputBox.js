@@ -71,6 +71,9 @@ const InputBox = styled.div`
   & > input::placeholder {
     color: ${({ theme }) => theme.color.lightGray};
   }
+  & > input {
+    width: 100%;
+  }
 `;
 
 const Message = styled.p`

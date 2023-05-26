@@ -27,7 +27,7 @@ const RecipeComment = () => {
     <Comment>
       <TopBox>
         <p>
-          리뷰<span>({comment && comment.count})</span>
+          리뷰<span>{comment && `(${comment.count})`}</span>
         </p>
         <Link to="/community">
           <PostButton>
@@ -35,7 +35,7 @@ const RecipeComment = () => {
           </PostButton>
         </Link>
       </TopBox>
-      {comment &&
+      {comment && comment.list.length !== 0 ? (
         comment.list.map((item) => (
           <CommentBox key={item}>
             <div className="user">
@@ -46,7 +46,10 @@ const RecipeComment = () => {
             <div className="day">{item.date.slice(0, 10)}</div>
             <HorizonLine></HorizonLine>
           </CommentBox>
-        ))}
+        ))
+      ) : (
+        <p className="empty-message">리뷰가 없습니다.</p>
+      )}
     </Comment>
   );
 };
@@ -96,11 +99,16 @@ const HorizonLine = styled.p`
 
 const Comment = styled.div`
   width: 50vw;
-  margin: auto;
+  margin: 0 auto 4rem;
   display: flex;
   flex-direction: column;
   @media screen and (max-width: 840px) {
     width: 70vw;
+  }
+  .empty-message {
+    color: ${({ theme }) => theme.color.gray};
+    margin-top: 1rem;
+    text-align: center;
   }
 `;
 
