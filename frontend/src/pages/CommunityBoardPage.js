@@ -234,38 +234,26 @@ const CommunityBoardPage = () => {
   };
   const setTabRecommendation = () => {
     setMenutext("칵테일 추천");
-    setMenu("recommendation");
-    // navigate(`/community/board?category=recommendation`);
+    setMenu("recommend");
   };
   const setTabReview = () => {
     setMenutext("칵테일 리뷰");
     setMenu("review");
-    // navigate(`/community/board?category=review`);
   };
   const setTabFree = () => {
     setMenutext("자유");
     setMenu("free");
-    // navigate(`/community/board?category=free`);
   };
   const setTabEntire = () => {
     setMenutext("전체");
     setMenu("");
-    // navigate(`/community/board?category=all`);
   };
-  // const categoryFunction = (e) => {
-  //   if (searchParams.get("category")?.replaceAll('"', "") !== "all") {
-  //     return (
-  //       e.props.data.category ===
-  //       searchParams.get("category")?.replaceAll('"', "")
-  //     );
-  //   } else return true;
-  // };
 
   const GetPosting = async (page, search, menu) => {
     try {
       console.log("menu is ", menu);
       axios.defaults.headers.common.Authorization = token;
-      let url = `/api/communities/list/category/${menu}?page=${page}}`;
+      let url = `/api/communities/list/category/${menu}?page=${page}`;
       if (menu === "") {
         url = `/api/communities/list/all?page=${page}`;
       }
@@ -275,21 +263,23 @@ const CommunityBoardPage = () => {
       const { data } = await axios.get(url);
       console.log(url);
       console.log("data is ", data);
-      return { page, list: data.data };
+      return { page, list: data.data, count: data.data.length };
     } catch (error) {
       console.log("empty or error");
+      return { page, list: [], count: 0 };
     }
   };
 
-  const { isSuccess, data, fetchNextPage, remove } = useInfiniteQuery(
-    ["page"],
-    ({ pageParam = 1 }) => GetPosting(pageParam, search, menu),
-    {
-      getNextPageParam: (lastPage) => {
-        return lastPage.page + 1;
-      },
-    }
-  );
+  const { isSuccess, data, fetchNextPage, remove, hasNextPage } =
+    useInfiniteQuery(
+      ["board", search, menu],
+      ({ pageParam = 1 }) => GetPosting(pageParam, search, menu),
+      {
+        getNextPageParam: (lastPage) => {
+          return lastPage.page + 1;
+        },
+      }
+    );
 
   useEffect(() => {
     remove();
@@ -298,12 +288,12 @@ const CommunityBoardPage = () => {
   }, [search, menu]);
 
   useEffect(() => {
-    if (inView) {
+    if (inView && hasNextPage) {
       fetchNextPage();
     }
   }, [inView]);
 
-  useEffect(async () => {
+  useEffect(() => {
     addPostingState();
   }, []);
 
@@ -323,7 +313,7 @@ const CommunityBoardPage = () => {
               <Link to={"/community"}>
                 <MdArrowBackIosNew className="icon" />
               </Link>
-              {menutext}
+              {search === "" ? menutext : `"${search}" 검색 결과`}
             </span>
             {/* <SearchBar
               placeholder="관심있는 내용을 검색해보세요!"

@@ -374,7 +374,7 @@ const CommunityPostDetailPage = () => {
         <EntireSection>
           <TopSection>
             <TopMost>
-              <Link to={"/community/board?category=all"}>
+              <Link to={"/community/board"}>
                 <MdArrowBackIosNew className="icon" />
               </Link>
               <span>
