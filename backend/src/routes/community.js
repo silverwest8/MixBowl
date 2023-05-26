@@ -423,7 +423,10 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
-      console.log(val);
+      val.dataValues.cocktailLike = -1; //cocktail관련 게시글이 아닌경우 -1로 초기화
+      if (val.CATEGORY === 3) {
+        val.dataValues.cocktailLike = val.LIKE;
+      }
       const replyNum = await POST_REPLY.findAll({
         attributes: [
           'PNO',
