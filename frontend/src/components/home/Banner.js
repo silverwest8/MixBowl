@@ -5,23 +5,6 @@ import "swiper/css";
 import { Autoplay, EffectFade } from "swiper";
 import "swiper/css/effect-fade";
 
-const BannerBox = styled.div`
-  padding: 0 1rem;
-  height: 20vw;
-  margin: 40px auto 0;
-  max-width: 1144px;
-`;
-
-const ImageWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  & > img {
-    position: absolute;
-    inset: 0;
-  }
-`;
-
 export const Banner = () => {
   return (
     <BannerBox>
@@ -49,5 +32,26 @@ export const Banner = () => {
     </BannerBox>
   );
 };
+
+const BannerBox = styled.div`
+  padding: 0 1rem;
+  height: 17vw;
+  margin: 2rem auto 0;
+  max-width: 1144px;
+
+  @media screen and (min-width: 1144px) {
+    height: 12.5rem;
+  }
+`;
+
+const ImageWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  & > img {
+    position: absolute;
+    inset: 0;
+  }
+`;
 
 export default Banner;

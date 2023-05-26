@@ -1,8 +1,8 @@
 import Title from "../components/common/Title";
-import RecipePost from "../components/recipe/RecipePost";
+import RecipeWriteBtn from "../components/recipe/RecipeWriteBtn";
 import RecipeSearch from "../components/recipe/RecipeSearch";
 import RecipeCard from "../components/recipe/RecipeCard";
-import RecipeButton from "../components/recipe/RecipeButton";
+import RecipeBtn from "../components/recipe/RecipeBtn";
 import styled from "styled-components";
 
 const RecipePage = () => {
@@ -13,13 +13,13 @@ const RecipePage = () => {
         <RecipeSearch placeholder="원하는 칵테일 레시피를 검색해보세요" />
       </section>
       <section>
-        <RecipeButton />
+        <RecipeBtn />
       </section>
       <section>
         <RecipeCard></RecipeCard>
       </section>
       <section>
-        <RecipePost></RecipePost>
+        <RecipeWriteBtn></RecipeWriteBtn>
       </section>
     </Main>
   );

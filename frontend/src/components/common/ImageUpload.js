@@ -45,6 +45,7 @@ const ImageUpload = ({ defaultFiles }) => {
       setImageFileListState([]);
     };
   }, []);
+  console.log(files);
   return (
     <Section>
       <div className="header">
@@ -53,28 +54,33 @@ const ImageUpload = ({ defaultFiles }) => {
         {message && <p className="message">{message}</p>}
       </div>
       <div className="selection-wrapper">
-        {files.length !== 0 && (
-          <div className="image-list">
-            {files.map((item) => (
-              <ImageWrapper key={item.id} onClick={() => removeImage(item.id)}>
-                <img src={URL.createObjectURL(item.file)} />
-                <div className="background" />
-                <BiMinusCircle />
-              </ImageWrapper>
-            ))}
-          </div>
-        )}
         <div>
-          <button onClick={openFileInput} type="button">
-            <BiPlusCircle />
-          </button>
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            ref={ref}
-            onChange={addImageFile}
-          />
+          {files.length !== 0 && (
+            <div className="image-list">
+              {files.map((item) => (
+                <ImageWrapper
+                  key={item.id}
+                  onClick={() => removeImage(item.id)}
+                >
+                  <img src={URL.createObjectURL(item.file)} />
+                  <div className="background" />
+                  <BiMinusCircle />
+                </ImageWrapper>
+              ))}
+            </div>
+          )}
+          <div>
+            <button onClick={openFileInput} type="button">
+              <BiPlusCircle />
+            </button>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              ref={ref}
+              onChange={addImageFile}
+            />
+          </div>
         </div>
       </div>
     </Section>
@@ -100,12 +106,15 @@ const Section = styled.section`
     display: none;
   }
   .selection-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    overflow-y: scroll;
+    overflow-x: scroll;
     ::-webkit-scrollbar {
       display: none;
+    }
+    & > div {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      width: calc(30.25rem + 20px);
     }
   }
   svg {

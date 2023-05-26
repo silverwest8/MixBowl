@@ -12,8 +12,9 @@ import CommunityHomePage from "./pages/CommunityHomePage";
 import PostingPage from "./pages/PostingPage";
 import RegisterPage from "./pages/RegisterPage";
 import RecipePage from "./pages/RecipePage";
-import WriteRecipePage from "./pages/WriteRecipePage";
+import RecipeWritePage from "./pages/RecipeWritePage";
 import DetailRecipePage from "./pages/DetailRecipePage";
+import RecipeEditPage from "./pages/RecipeEditPage";
 import RecipeRoute from "./routes/RecipeRoute";
 import ToastMessage from "./components/common/ToastMessage";
 import ModalRenderer from "./components/layout/ModalRenderer";
@@ -48,7 +49,8 @@ function App() {
                 <Route element={<RecipeRoute />}>
                   <Route path="recipe" element={<RecipePage />} />
                   <Route path="/recipe/:id" element={<DetailRecipePage />} />
-                  <Route path="/writerecipe" element={<WriteRecipePage />} />
+                  <Route path="/recipe/:id/edit" element={<RecipeEditPage />} />
+                  <Route path="/recipe/write" element={<RecipeWritePage />} />
                 </Route>
                 <Route path="mypage" element={<HomePage />} />
                 <Route path="login" element={<LoginPage />} />

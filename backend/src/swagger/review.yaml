@@ -1,4 +1,4 @@
-# reviews api for swagger
+# review api for swagger
 paths:
   /reviews:
     post:
@@ -54,10 +54,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /reviews/{reviewId}:
+  /reviews/{placeId}:
     get:
       tags:
-        - review
+        - reviews
       summary: 특정 칵테일 바 리뷰 조회
       description: ''
       operationId: getReview
@@ -83,10 +83,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /reviews/{reviewId}:
     post:
       tags:
-        - review
+        - reviews
       summary: 리뷰 수정 (post로 수정하기로 결정)
       description: ''
       operationId: updateReview
@@ -144,10 +143,10 @@ paths:
       description: ''
       operationId: deleteReview
       parameters:
-        - in: cookie
+        - in: header
           name: refresh_token
           schema:
-            $ref: '#/components/schemas/Cookie'
+            $ref: '#/components/schemas/Token'
       responses:
         '200':
           description: ''
@@ -173,7 +172,7 @@ paths:
         - in: query
           name: query
           description: ''
-          example: 수원 칵테일바
+          example: 칵테일바
           schema:
             type: string
           required: true
@@ -217,8 +216,8 @@ paths:
   /reviews/one/{reviewId}:
     get:
       tags:
-        - review
-      sumary: 칵테일 바 리뷰 단건 조회 및 수정페이지
+        - reviews
+      summary: 칵테일 바 리뷰 단건 조회 및 수정페이지
       description: ''
       oprationId: get One Bar Review
       parameters:
@@ -294,7 +293,7 @@ paths:
   /reviews/image/one?imageId={imageId}:
     get:
       tags:
-        - review
+        - reviews
       summary: review 리스트 페이지에서 imageId별 이미지 가져오기
       description: ''
       operationId: getImageById
