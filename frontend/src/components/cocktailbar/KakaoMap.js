@@ -81,7 +81,10 @@ function KakaoMap({ id }) {
     });
   };
   const renderMarkers = () => {
-    if (data.length === 0) return;
+    if (data.length === 0) {
+      getLocation();
+      return;
+    }
     const bounds = new window.kakao.maps.LatLngBounds();
     const markers = [];
     for (let i = 0; i < data.length; i++) {
