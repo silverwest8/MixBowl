@@ -144,6 +144,7 @@ const RecipeCard = () => {
                 />
               ))}
       </CardBox>
+      <div ref={ref}></div>
     </MiddleBox>
   );
 };
