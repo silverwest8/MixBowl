@@ -3,6 +3,7 @@
 import express from 'express';
 import { db } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
+import { logger } from '../../winston/winston';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -63,7 +64,7 @@ router.get('/recipes/:page', checkAccess, async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage recipes get 실패', error });
@@ -122,7 +123,7 @@ router.get('/posts/:page', checkAccess, async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage posts get 실패', error });
@@ -169,7 +170,7 @@ router.get('/replies/:page', checkAccess, async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage replies get 실패', error });
@@ -235,7 +236,7 @@ router.get('/reviews/:page', checkAccess, async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage reviews get 실패', error });

@@ -4,6 +4,7 @@ import express from 'express';
 import axios from 'axios';
 import { db } from '../models';
 import { Sequelize } from 'sequelize';
+import { logger } from '../../winston/winston';
 const router = express.Router();
 
 router.get('/cocktaildb', async (req, res) => {
@@ -30,7 +31,7 @@ router.get('/cocktaildb', async (req, res) => {
     }
     res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktaildb API 조회 실패', error });
@@ -67,7 +68,7 @@ router.get('/cocktaildb/save', async (req, res) => {
     }
     res.status(200).json({ success: true });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktaildb API 조회 실패', error });
@@ -92,7 +93,7 @@ router.get('/cocktaildb/findById', async (req, res) => {
     }
     res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktaildb API id 조회 실패', error });
@@ -118,7 +119,7 @@ router.get('/cocktaildb/migration', async (req, res) => {
     res.status(200).json({ success: true });
     // res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'Cocktaildb API migration 실패',
@@ -143,7 +144,7 @@ router.get('/cocktaildb/ingredient', async (req, res) => {
             });
           }
         } catch (error) {
-          console.log(error);
+          logger.error(error);
           return res.status(400).json({
             success: false,
             message: 'Cocktaildb API ingredient building 실패',
@@ -155,7 +156,7 @@ router.get('/cocktaildb/ingredient', async (req, res) => {
     res.status(200).json({ success: true });
     // res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'Cocktaildb API migration 실패',
@@ -197,7 +198,7 @@ router.get('/cocktaildb/processing2', async (req, res) => {
       .json({ success: true, message: 'Cocktaildb API processing2 성공' });
     // res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'Cocktaildb API processing2 실패',
@@ -395,7 +396,7 @@ router.get('/cocktaildb/recipe', async (req, res) => {
       .json({ success: true, message: 'cocktaildb recipe set 성공' });
     // res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'cocktaildb recipe set 실패',
@@ -442,7 +443,7 @@ router.get('/ninja', async (req, res) => {
     }
     res.status(200).json({ success: true });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Ninja API id 조회 실패', error });
@@ -539,7 +540,7 @@ router.get('/ninja/processing', async (req, res) => {
       .json({ success: true, message: 'Ninja API processing 성공' });
     // res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'Ninja API processing 실패',
@@ -568,7 +569,7 @@ router.get('/ninja/processing3', async (req, res) => {
       .json({ success: true, message: 'Ninja API processing3 성공' });
     // res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'Ninja API processing3 실패',
@@ -601,7 +602,7 @@ router.get('/ninja/recipe', async (req, res) => {
       .json({ success: true, message: 'Ninja API recipe 성공' });
     // res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'Ninja API recipe 실패',
@@ -830,7 +831,7 @@ router.get('/ninja/unit', async (req, res) => {
       .json({ success: true, message: 'Ninja API recipe 성공' });
     // res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'Ninja API recipe 실패',
@@ -1006,7 +1007,7 @@ router.get('/color', async (req, res) => {
 
     return res.status(200).json({ success: true, message: 'Color data 성공' });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'Color data 실패',
@@ -1159,7 +1160,7 @@ router.get('/ABV', async (req, res) => {
 
     return res.status(200).json({ success: true, message: 'ABV data 성공' });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'ABV data 실패',
@@ -1201,7 +1202,7 @@ router.get('/imagepath', async (req, res) => {
       .json({ success: true, message: 'Ninja API recipe 성공' });
     // res.status(200).json(data);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: 'Ninja API recipe 실패',

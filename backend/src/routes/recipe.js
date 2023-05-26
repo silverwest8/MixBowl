@@ -97,7 +97,7 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
 
     res.status(200).json({ success: true, message: 'Recipe post 성공' });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     // 중간 실패시 COCKTAIL, COLOR, RECIPE 모두 삭제해줘야 함
     return res
       .status(400)
@@ -164,7 +164,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
       .status(200)
       .json({ success: true, message: 'Recipe get 성공', data });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Recipe get 실패', error });
@@ -256,7 +256,7 @@ router.post(
 
       res.status(200).json({ success: true, message: 'Cocktail update 성공' });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return res
         .status(400)
         .json({ success: false, message: 'Cocktail update 실패', error });
@@ -450,7 +450,7 @@ router.get('/list/filter/:page', checkAccess, async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail list get 실패', error });
@@ -542,7 +542,7 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
       .status(200)
       .json({ success: true, message: 'Cocktail detail get 성공', data });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail detail get 실패', error });
@@ -584,7 +584,7 @@ router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
       .status(200)
       .json({ success: true, message: 'Cocktail review get 성공', data: data });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail review get 실패', error });
@@ -616,7 +616,7 @@ router.get('/image/:cocktailId', async (req, res) => {
       return res.status(200).send(imageBuffer);
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Recipe Image get 실패', error });
@@ -644,7 +644,7 @@ router.post('/like/:cocktailId', checkAccess, async (req, res) => {
       like: count,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail Like/Unlike 실패', error });
@@ -675,7 +675,7 @@ router.post('/report/:cocktailId', checkAccess, async (req, res) => {
         .json({ success: false, message: 'Cocktail Report 중복' });
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail Report 실패', error });

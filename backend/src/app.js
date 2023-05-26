@@ -12,7 +12,7 @@ const port = 3030;
 
 //---- 모든 요청 응답 확인
 app.use((req, res, next) => {
-  logger.info('logging for routers');
+  console.log('logging for routers');
   next();
 });
 
