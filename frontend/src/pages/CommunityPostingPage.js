@@ -215,10 +215,10 @@ const CommunityPostingPage = () => {
     try {
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/communities/list/cocktails`);
-      console.log("data is ", data.data);
+      console.log("data is ", data);
       if (data.success) {
-        setList(data);
-        console.log("list here ", list);
+        setList(data.data);
+        console.log("list is ", list);
         SetRecipe(list);
         console.log("final is ", recipes);
       }
@@ -226,21 +226,21 @@ const CommunityPostingPage = () => {
       console.log("err is ", error);
     }
   };
-  const SetRecipe = ({ list }) => {
-    // console.log("length is ", list);
-    for (let i = 0; i < list.length; i++) {
-      // console.log("each is ", list[i]);
-      const name = list[i].split("/")[0];
-      const num = list[i].split("/")[1];
-      console.log("new object is ", { name, num });
-      setRecipes((oldArray) => [...oldArray, { name, num }]);
-    }
-    // console.log("recipes are ", recipes);
+  const SetRecipe = (data) => {
+    const newList = data.map((item) => {
+      const [name, num] = item.split("/");
+      return { name, num };
+    });
+    // console.log("what's wrong");
+    return setRecipes(newList);
   };
 
   useEffect(() => {
     GetRecipe();
   }, []);
+  useEffect(() => {
+    SetRecipe(list);
+  }, [list]);
 
   // const top100Films = [{ label: "The Shawshank Redemption", year: 1994 }];
 
@@ -289,52 +289,48 @@ const CommunityPostingPage = () => {
             {tab === "질문 내용" ? (
               ""
             ) : tab === "후기 내용" ? (
-              recipes.length !== 0 && (
-                <Autocomplete
-                  disablePortal
-                  id="autocompleteCocktail"
-                  options={recipes}
-                  getOptionLabel={(option) => option.name || ""}
-                  onChange={(event, value) => console.log("value is ", value)}
-                  sx={{
-                    width: 300,
-                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
-                      {
-                        border: "none",
-                      },
-                    "& + .MuiAutocomplete-popper .MuiAutocomplete-option:hover":
-                      {
-                        // 👇 Customize the hover bg color here
-                        backgroundColor: "#e9aa33",
-                        color: "black",
-                      },
-                    // 👇 Optional: keep this one to customize the selected item when hovered
-                    "& + .MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected='true']:hover":
-                      {
-                        backgroundColor: "#e9aa33",
-                        color: "black",
-                      },
-                  }}
-                  renderInput={(params) => (
-                    <StyledTextField
-                      {...params}
-                      label=""
-                      className="selection"
-                      fullWidth
-                    />
-                  )}
-                  PaperComponent={(props) => (
-                    <Paper
-                      sx={{
-                        background: "#3e3e3e",
-                        color: "white",
-                        fontSize: "0.9rem",
-                      }}
-                      {...props}
-                    />
-                  )}
-                />
-              )
+              <Autocomplete
+                disablePortal
+                id="autocompleteCocktail"
+                options={recipes}
+                getOptionLabel={(option) => option.name || ""}
+                onChange={(event, value) => console.log("value is ", value)}
+                sx={{
+                  width: 300,
+                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                  "& + .MuiAutocomplete-popper .MuiAutocomplete-option:hover": {
+                    // 👇 Customize the hover bg color here
+                    backgroundColor: "#e9aa33",
+                    color: "black",
+                  },
+                  // 👇 Optional: keep this one to customize the selected item when hovered
+                  "& + .MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected='true']:hover":
+                    {
+                      backgroundColor: "#e9aa33",
+                      color: "black",
+                    },
+                }}
+                renderInput={(params) => (
+                  <StyledTextField
+                    {...params}
+                    label=""
+                    className="selection"
+                    fullWidth
+                  />
+                )}
+                PaperComponent={(props) => (
+                  <Paper
+                    sx={{
+                      background: "#3e3e3e",
+                      color: "white",
+                      fontSize: "0.9rem",
+                    }}
+                    {...props}
+                  />
+                )}
+              />
             ) : (
               <Input
                 placeholder={tab === "후기 내용" ? "칵테일 이름" : "제목"}

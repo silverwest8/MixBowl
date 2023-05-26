@@ -7,11 +7,6 @@ export const searchState = atom({
   default: "",
 });
 
-export const menuState = atom({
-  key: "menuState",
-  default: "",
-});
-
 export const AddPostingState = atom({
   key: "AddPostingState",
   default: {
@@ -30,4 +25,9 @@ export const AddCommunityImgState = atom({
 export const CommunityReportState = atom({
   key: "CommunityReportState",
   default: 0,
+});
+
+export const menuState = atom({
+  key: "menuState",
+  default: "",
 });
