@@ -27,7 +27,7 @@ const RecipeCard = () => {
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
 
-  const colorFilter = (color) => {
+  const colorFilter = () => {
     const colorNum = [];
     if (color.red) colorNum.push(1);
     if (color.orange) colorNum.push(2);
@@ -53,11 +53,9 @@ const RecipeCard = () => {
   };
 
   const GetRecipe = async (page) => {
-    colorFilter();
-    alcoholFilter();
     try {
-      const colorInit = colorFilter(color);
-      const alcohoInit = alcoholFilter(alcohol);
+      const colorInit = colorFilter();
+      const alcohoInit = alcoholFilter();
       axios.defaults.headers.common.Authorization = token;
       let url = `/api/recipes/list/filter/${page}?alcoholic=[${alcohoInit}]&color=[${colorInit}]&search=${search}`;
       if (sort.latest) {
