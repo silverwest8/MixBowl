@@ -31,7 +31,7 @@ const CommunitySearch = (props) => {
   );
 };
 const SearchBox = styled.div`
-  margin: 2rem auto;
+  margin: 2rem 0;
   max-width: 40.25rem;
   width: 100%;
 `;

@@ -4,15 +4,17 @@ import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
 
-const FreeListItem = ({ data }) => {
+const HotListItem = ({ data }) => {
   // TODO : 호버, 이미지처리
   // console.log(`${data.TITLE}의 카테고리는 ${data.CATEGORY}`);
+  // 아직 없는 필드들 많음. 추가되면 그 데이터 형식에 맞춰서 바꾸기.
+  console.log("data is ", data);
   return (
     <ItemContainer to={`/community/${data.PNO}`}>
       <TopSection>
         <div>
           <span>
-            {data.CATEGORY === 3 && data.cocktailLike !== null ? (
+            {data.category === 3 && data.cocktailLike !== null ? (
               <BiHeartCircle className="recommend icon" />
             ) : (
               ""
@@ -52,7 +54,7 @@ const FreeListItem = ({ data }) => {
         <div className="userinfo">
           {data.createdAt.slice(0, 10)}
           <span className="username">{data.UNO_USER.NICKNAME}</span>
-          <MemberBadge level={data.UNO_USER.LEVEL} />
+          <MemberBadge level={data.UNO_USER} />
         </div>
       </BottomSection>
     </ItemContainer>
@@ -168,4 +170,4 @@ const MainText = styled.div`
   height: 4rem;
 `;
 
-export default FreeListItem;
+export default HotListItem;

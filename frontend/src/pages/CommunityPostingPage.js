@@ -215,7 +215,7 @@ const CommunityPostingPage = () => {
     try {
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/communities/list/cocktails`);
-      console.log("data is ", data);
+      console.log("data here ", data);
       if (data.success) {
         setList(data.data);
         console.log("list is ", list);
@@ -241,8 +241,6 @@ const CommunityPostingPage = () => {
   useEffect(() => {
     SetRecipe(list);
   }, [list]);
-
-  // const top100Films = [{ label: "The Shawshank Redemption", year: 1994 }];
 
   return (
     <main

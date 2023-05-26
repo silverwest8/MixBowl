@@ -262,7 +262,6 @@ const CommunityBoardPage = () => {
       }
       const { data } = await axios.get(url);
       console.log(url);
-      console.log("data is ", data);
       return { page, list: data.data, count: data.data.length };
     } catch (error) {
       console.log("empty or error");
@@ -313,7 +312,17 @@ const CommunityBoardPage = () => {
               <Link to={"/community"}>
                 <MdArrowBackIosNew className="icon" />
               </Link>
-              {search === "" ? menutext : `"${search}" 검색 결과`}
+              {search !== ""
+                ? `"${search}" 검색 결과`
+                : menu === "question"
+                ? "질문과 답변"
+                : menu === "recommend"
+                ? "칵테일 추천"
+                : menu === "free"
+                ? "자유"
+                : menu === "review"
+                ? "칵테일 리뷰"
+                : "전체"}
             </span>
             {/* <SearchBar
               placeholder="관심있는 내용을 검색해보세요!"
