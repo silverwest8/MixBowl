@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { FaThumbsUp, FaCommentDots } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
@@ -17,8 +17,6 @@ import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 const RecipeCard = () => {
-  const colorNum = [];
-  const alcoholNum = [];
   let sortInit = false;
   const search = useRecoilValue(searchState);
   const color = useRecoilValue(colorState);
@@ -27,8 +25,10 @@ const RecipeCard = () => {
   const addRecipeState = useResetRecoilState(AddRecipeState);
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
+  const isFirstRender = useRef(true);
 
-  const colorFilter = () => {
+  const colorFilter = (color) => {
+    const colorNum = [];
     if (color.red) colorNum.push(1);
     if (color.orange) colorNum.push(2);
     if (color.yellow) colorNum.push(3);
@@ -41,12 +41,15 @@ const RecipeCard = () => {
     if (color.grey) colorNum.push(10);
     if (color.white) colorNum.push(11);
     if (color.transparent) colorNum.push(12);
+    return colorNum;
   };
 
-  const alcoholFilter = () => {
+  const alcoholFilter = (alcohol) => {
+    const alcoholNum = [];
     if (alcohol.alcohol === "낮음") alcoholNum.push(0);
     if (alcohol.alcohol === "중간") alcoholNum.push(1);
     if (alcohol.alcohol === "높음") alcoholNum.push(2);
+    return alcoholNum;
   };
 
   const sortFilter = () => {
@@ -55,12 +58,12 @@ const RecipeCard = () => {
   };
 
   const GetRecipe = async (page, color, alcohol, sort) => {
-    colorFilter();
-    alcoholFilter();
-    sort = sortFilter();
     try {
+      const colorInit = colorFilter(color);
+      const alcohoInit = alcoholFilter(alcohol);
+      sort = sortFilter();
       axios.defaults.headers.common.Authorization = token;
-      let url = `/api/recipes/list/filter/${page}?alcoholic=[${alcohol}]&color=[${color}]&search=${search}`;
+      let url = `/api/recipes/list/filter/${page}?alcoholic=[${alcohoInit}]&color=[${colorInit}]&search=${search}`;
       if (sort) {
         url += "&sort=new";
       }
@@ -74,22 +77,26 @@ const RecipeCard = () => {
 
   const { isSuccess, data, fetchNextPage, remove } = useInfiniteQuery(
     ["page"],
-    ({ pageParam = 1 }) => GetRecipe(pageParam, colorNum, alcoholNum, sortInit),
+    ({ pageParam = 1 }) => GetRecipe(pageParam, color, alcohol, sortInit),
     {
       getNextPageParam: (lastPage) => {
+        if (lastPage.list.length === 0) {
+          return undefined;
+        }
         return lastPage.page + 1;
       },
     }
   );
 
   useEffect(() => {
-    remove();
-    fetchNextPage(1);
-  }, [search, color, alcohol, sort]);
-
-  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     addRecipeState();
-  }, []);
+    remove();
+    fetchNextPage();
+  }, [color, sort, alcohol, search]);
 
   useEffect(() => {
     if (inView) {
@@ -140,6 +147,7 @@ const RecipeCard = () => {
             ))
           )}
       </CardBox>
+      <div ref={ref}></div>
     </MiddleBox>
   );
 };

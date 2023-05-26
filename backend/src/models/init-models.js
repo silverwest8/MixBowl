@@ -8,6 +8,7 @@ import _AUTH_CODE from  "./AUTH_CODE.js";
 import _COCKTAIL from  "./COCKTAIL.js";
 import _COCKTAIL_LIKE from  "./COCKTAIL_LIKE.js";
 import _COCKTAIL_REPORT from  "./COCKTAIL_REPORT.js";
+import _COCKTAIL_SAVE from  "./COCKTAIL_SAVE.js";
 import _COLOR from  "./COLOR.js";
 import _IMAGE from  "./IMAGE.js";
 import _IMAGE_COMMUNITY from  "./IMAGE_COMMUNITY.js";
@@ -36,6 +37,7 @@ export default function initModels(sequelize) {
   const COCKTAIL = _COCKTAIL.init(sequelize, DataTypes);
   const COCKTAIL_LIKE = _COCKTAIL_LIKE.init(sequelize, DataTypes);
   const COCKTAIL_REPORT = _COCKTAIL_REPORT.init(sequelize, DataTypes);
+  const COCKTAIL_SAVE = _COCKTAIL_SAVE.init(sequelize, DataTypes);
   const COLOR = _COLOR.init(sequelize, DataTypes);
   const IMAGE = _IMAGE.init(sequelize, DataTypes);
   const IMAGE_COMMUNITY = _IMAGE_COMMUNITY.init(sequelize, DataTypes);
@@ -95,6 +97,8 @@ export default function initModels(sequelize) {
   USER.hasMany(COCKTAIL_LIKE, { as: "COCKTAIL_LIKEs", foreignKey: "UNO"});
   COCKTAIL_REPORT.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(COCKTAIL_REPORT, { as: "COCKTAIL_REPORTs", foreignKey: "UNO"});
+  COCKTAIL_SAVE.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
+  USER.hasMany(COCKTAIL_SAVE, { as: "COCKTAIL_SAVEs", foreignKey: "UNO"});
   POST.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
   USER.hasMany(POST, { as: "POSTs", foreignKey: "UNO"});
   POST_LIKE.belongsTo(USER, { as: "UNO_USER", foreignKey: "UNO"});
@@ -121,6 +125,7 @@ export default function initModels(sequelize) {
     COCKTAIL,
     COCKTAIL_LIKE,
     COCKTAIL_REPORT,
+    COCKTAIL_SAVE,
     COLOR,
     IMAGE,
     IMAGE_COMMUNITY,
