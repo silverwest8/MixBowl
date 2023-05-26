@@ -148,6 +148,9 @@ const RecipeEditPage = () => {
   };
 
   useEffect(() => {
+    window.scroll({
+      top: 0,
+    });
     GetRecipe();
   }, []);
 
