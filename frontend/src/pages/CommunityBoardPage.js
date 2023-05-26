@@ -1,4 +1,4 @@
-import SearchBar from "../components/common/SearchBar";
+// import SearchBar from "../components/common/SearchBar";
 // import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
 import FreeListItem from "../components/community/FreeListItem";
@@ -9,7 +9,10 @@ import { MdArrowBackIosNew } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { menuState, searchState, AddPostingState } from "../store/community";
 import axios from "axios";
+import CommunitySearch from "../components/community/CommunitySearch";
 
 // const dummyData = [
 //   // TODO : 이미지 처리
@@ -193,28 +196,6 @@ const Button = styled.button`
   }
 `;
 
-const Board = styled.div`
-  padding: 1rem;
-  background-color: ${({ theme }) => theme.color.darkGray};
-  border-radius: 10px;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  > span {
-    color: ${({ theme }) => theme.color.primaryGold};
-    font-weight: bold;
-    font-size: 1.125rem;
-    display: flex;
-    align-items: center;
-    .icon {
-      margin-left: 0.7rem;
-    }
-  }
-  > ul {
-    margin-top: 0.8rem;
-  }
-`;
-
 const WritingButton = styled(Link)`
   position: fixed;
   right: 1rem;
@@ -236,91 +217,107 @@ const WritingButton = styled(Link)`
 
 const CommunityBoardPage = () => {
   const navigate = useNavigate();
+  const search = useRecoilValue(searchState);
+  const addPostingState = useResetRecoilState(AddPostingState);
 
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
-  const [input, setInput] = useState("");
-  const [postings, setPostings] = useState([]);
+  // const [input, setInput] = useState("");
+  // const [postings, setPostings] = useState([]);
   const searchParams = new URLSearchParams(useLocation().search);
-  const [menu, setMenu] = useState(
-    searchParams.get("category")?.replaceAll('"', "") === "qna"
-      ? "질문과 답변"
-      : searchParams.get("category")?.replaceAll('"', "") === "recommendation"
-      ? "칵테일 추천"
-      : searchParams.get("category")?.replaceAll('"', "") === "free"
-      ? "자유"
-      : searchParams.get("category")?.replaceAll('"', "") === "review"
-      ? "칵테일 리뷰"
-      : "전체"
-  );
-  const onChange = (e) => setInput(e.target.value);
-  const onSearch = () => {
-    navigate(`/community/board?search=${input}`);
-    setMenu(`"${input}" 검색 결과`);
-  };
-  const onClear = () => {
-    setInput("");
-    navigate(`/community/board`, { replace: true });
-  };
+  const [{ menu }, setMenu] = useRecoilState(menuState);
+  const [menutext, setMenutext] = useState("전체");
+  // const onChange = (e) => setInput(e.target.value);
+  // const onSearch = () => {
+  //   navigate(`/community/board?search=${input}`);
+  //   setMenu(`"${input}" 검색 결과`);
+  // };
+  // const onClear = () => {
+  //   setInput("");
+  //   navigate(`/community/board`, { replace: true });
+  // };
   const setTabQna = () => {
-    setMenu("질문과 답변");
-    navigate(`/community/board?category=qna`);
+    setMenutext("질문과 답변");
+    setMenu("question");
+    navigate(`/community/board?category=question`);
     console.log("menu is ", menu);
   };
   const setTabRecommendation = () => {
-    setMenu("칵테일 추천");
+    setMenutext("칵테일 추천");
+    setMenu("recommendation");
     navigate(`/community/board?category=recommendation`);
   };
   const setTabReview = () => {
-    setMenu("칵테일 리뷰");
+    setMenutext("칵테일 리뷰");
+    setMenu("review");
     navigate(`/community/board?category=review`);
   };
   const setTabFree = () => {
-    setMenu("자유");
+    setMenutext("자유");
+    setMenu("free");
     navigate(`/community/board?category=free`);
   };
   const setTabEntire = () => {
-    setMenu("전체");
+    setMenutext("전체");
+    setMenu("");
     navigate(`/community/board?category=all`);
   };
-  const categoryFunction = (e) => {
-    if (searchParams.get("category")?.replaceAll('"', "") !== "all") {
-      return (
-        e.props.data.category ===
-        searchParams.get("category")?.replaceAll('"', "")
-      );
-    } else return true;
-  };
+  // const categoryFunction = (e) => {
+  //   if (searchParams.get("category")?.replaceAll('"', "") !== "all") {
+  //     return (
+  //       e.props.data.category ===
+  //       searchParams.get("category")?.replaceAll('"', "")
+  //     );
+  //   } else return true;
+  // };
 
-  const GetAll = async (page) => {
+  // const GetAll = async (page) => {
+  //   try {
+  //     axios.defaults.headers.common.Authorization = token;
+  //     const { data } = await axios.get(
+  //       `/api/communities/list/all?page=${page}`
+  //     );
+  //     console.log(data.data);
+  //     setPostings(data.data);
+  //     return { page: data.pageParams, list: data.pages };
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  const GetPosting = async (page, search, menuSelect) => {
     try {
       axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.get(
-        `/api/communities/list/all?page=${page}`
-      );
-      console.log(data.data);
-      setPostings(data.data);
+      let url = `/api/communities/list/category/${menuSelect}?page=${page}}`;
+      if (menu === "") {
+        url = `/api/communities/list/all?page=${page}`;
+      }
+      if (search !== "") {
+        url += `&search=${search}`;
+      }
+      const { data } = await axios.get(url);
+      console.log(url);
+      console.log("data is ", data);
       return { page, list: data.data };
     } catch (error) {
-      console.log(error);
+      console.log("empty or error");
     }
   };
 
   const { isSuccess, data, fetchNextPage, remove } = useInfiniteQuery(
     ["page"],
-    ({ pageParam = 1 }) => GetAll(pageParam),
+    ({ pageParam = 1 }) => GetPosting(pageParam, search, menu),
     {
       getNextPageParam: (lastPage) => {
         return lastPage.page + 1;
       },
     }
   );
-  console.log("page data is ", data);
 
   useEffect(() => {
     remove();
     fetchNextPage(1);
     // 검색어, 메뉴 바뀔 때마다
+    console.log("menu is ", menu);
   }, [searchParams, menu]);
 
   useEffect(() => {
@@ -328,6 +325,9 @@ const CommunityBoardPage = () => {
       fetchNextPage();
     }
   }, [inView]);
+  useEffect(() => {
+    addPostingState();
+  }, []);
 
   return (
     <main
@@ -345,15 +345,17 @@ const CommunityBoardPage = () => {
               <Link to={"/community"}>
                 <MdArrowBackIosNew className="icon" />
               </Link>
-              {menu}
+              {menutext}
             </span>
-            <SearchBar
+            {/* <SearchBar
               placeholder="관심있는 내용을 검색해보세요!"
               showSearchButton={true}
               onChange={onChange}
               onSearch={onSearch}
               onClear={onClear}
-            />
+            /> */}
+
+            <CommunitySearch placeholder="관심있는 내용을 검색해보세요!" />
           </div>
           <div>
             <div>
@@ -370,20 +372,20 @@ const CommunityBoardPage = () => {
         <MainSection>
           {/* TODO: 질문에 답변없을때 상단에 올리기 */}
           <section>
-            {isSuccess &&
+            {/* {isSuccess &&
               postings
                 .map((el) => <FreeListItem data={el} key={el.PNO} />)
-                .filter(categoryFunction)}
-            {/* {isSuccess &&
-              data.pages
-                .map((page) =>
-                  page.data.map((item) => (
-                    <FreeListItem data={item} key={item.PNO} />
-                  ))
-                )
                 .filter(categoryFunction)} */}
+            {isSuccess &&
+              data.pages.map((page) =>
+                page.list.map((item) => (
+                  <FreeListItem data={item} key={item.PNO} />
+                ))
+              )}
           </section>
         </MainSection>
+        <div ref={ref}></div>
+
         <WritingButton to="/community/posting">
           <HiPencilAlt />
           글쓰기

@@ -6,55 +6,54 @@ import { Link } from "react-router-dom";
 
 const FreeListItem = ({ data }) => {
   // TODO : 호버, 이미지처리
-  console.log(`${data.title}의 카테고리는 ${data.category}`);
+  // console.log(`${data.TITLE}의 카테고리는 ${data.CATEGORY}`);
   return (
-    <ItemContainer to={`/community/${data.id}`}>
+    <ItemContainer to={`/community/${data.PNO}`}>
       <TopSection>
         <div>
           <span>
-            {data.recommended === true ? (
+            {/* TODO 추천할때 아이콘 */}
+            {data.CATEGORY === 3 ? (
               <BiHeartCircle className="recommend icon" />
             ) : (
               ""
             )}
           </span>
-          <h4>{data.title}</h4>
+          <h4>{data.TITLE}</h4>
         </div>
         <div className="category">
-          {data.category === 2
+          {data.CATEGORY === 2
             ? "질문과 답변"
-            : data.category === 4
+            : data.CATEGORY === 4
             ? "자유 게시글"
-            : data.category === 3
+            : data.CATEGORY === 3
             ? "칵테일 리뷰"
-            : data.category === 1
+            : data.CATEGORY === 1
             ? "칵테일 추천"
             : ""}
         </div>
       </TopSection>
-      <MainText className={data.category === 2 ? "question" : ""}>
-        {data.maintext}
+      <MainText className={data.CATEGORY === 2 ? "question" : ""}>
+        {data.CONTENT}
       </MainText>
       <BottomSection>
         <ReactionContainer>
           <FaThumbsUp className={data.liked ? "icon liked" : "icon"} />
-          {data.likes}
+          {data.LIKE}
           <FaCommentDots className="icon comment" />
           <span className="shown">
-            {data.category === 2 && data.comments === 0
+            {data.CATEGORY === 2 && data.REPLY === 0
               ? "지금 답변을 기다리고 있어요"
-              : data.comments}
+              : data.REPLY}
           </span>
           <span className="hidden">
-            {data.category === 2 && data.comments === 0
-              ? "답변 필요"
-              : data.comments}
+            {data.CATEGORY === 2 && data.REPLY === 0 ? "답변 필요" : data.REPLY}
           </span>
         </ReactionContainer>
         <div className="userinfo">
-          {data.date}
-          <span className="username">{data.uname}</span>
-          <MemberBadge level={data.level} />
+          {data.createdAt.slice(0, 10)}
+          <span className="username">{data.UNO_USER.NICKNAME}</span>
+          <MemberBadge level={data.UNO_USER} />
         </div>
       </BottomSection>
     </ItemContainer>

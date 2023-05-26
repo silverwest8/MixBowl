@@ -215,18 +215,19 @@ const CommunityPostingPage = () => {
     try {
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/communities/list/cocktails`);
-      console.log("data is ", data);
+      console.log("data is ", data.data);
       if (data.success) {
-        setList(data.data);
+        setList(data);
         console.log("list here ", list);
         SetRecipe(list);
+        console.log("final is ", recipes);
       }
     } catch (error) {
       console.log("err is ", error);
     }
   };
-  const SetRecipe = (list) => {
-    console.log("length is ", list);
+  const SetRecipe = ({ list }) => {
+    // console.log("length is ", list);
     for (let i = 0; i < list.length; i++) {
       // console.log("each is ", list[i]);
       const name = list[i].split("/")[0];
@@ -234,7 +235,7 @@ const CommunityPostingPage = () => {
       console.log("new object is ", { name, num });
       setRecipes((oldArray) => [...oldArray, { name, num }]);
     }
-    console.log("recipes are ", recipes);
+    // console.log("recipes are ", recipes);
   };
 
   useEffect(() => {
