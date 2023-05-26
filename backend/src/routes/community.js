@@ -112,7 +112,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   if (postData === null) {
     return res.status(400).send({
       success: false,
-      message: "게시물이 없습니다."
+      message: '게시물이 없습니다.',
     });
   }
   const user = await USER.findByPk(postData.dataValues.UNO);
@@ -137,9 +137,12 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
     },
   });
   let isUserLike = false;
-  const isLike = req.user === undefined ? [] : await POST_LIKE.findAll({
-    where: { UNO: req.user.UNO, PNO: postData.PNO },
-  });
+  const isLike =
+    req.user === undefined
+      ? []
+      : await POST_LIKE.findAll({
+          where: { UNO: req.user.UNO, PNO: postData.PNO },
+        });
   console.log(isLike);
   if (isLike.length !== 0) {
     isUserLike = true;
@@ -420,6 +423,7 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
+      console.log(val);
       const replyNum = await POST_REPLY.findAll({
         attributes: [
           'PNO',
@@ -430,12 +434,12 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
+      console.log('val', val.dataValues.UNO);
       delete val.dataValues.UNO;
       val.dataValues.UNO_USER = {
         NICKNAME: user.NICKNAME,
         LEVEL: user.LEVEL,
       };
-
       if (likePost.length !== 0) {
         val.dataValues.LIKE = likePost[0].dataValues.LIKES;
       } else {
@@ -446,7 +450,6 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
       } else {
         val.dataValues.REPLY = 0;
       }
-
       list.push(val.dataValues);
     }
 
