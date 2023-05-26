@@ -221,6 +221,7 @@ const ButtonWrapper = styled.div`
   font-size: 1rem;
   align-items: center;
   margin-top: 1.5rem;
+  margin-bottom: 2rem;
   & > button {
     border-radius: 0.5rem;
     padding: 0.3rem 1.75rem;

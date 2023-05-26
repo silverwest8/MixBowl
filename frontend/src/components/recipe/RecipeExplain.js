@@ -85,6 +85,7 @@ const RecipeExplain = () => {
             }}
             rows={10}
             value={addExplain}
+            placeholder={"자유롭게 레시피를 작성해주세요"}
           ></Textarea>
         </RecipeBox>
       </Box>

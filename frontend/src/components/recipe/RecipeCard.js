@@ -19,8 +19,6 @@ import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
 
 const RecipeCard = () => {
-  const colorNum = [];
-  const alcoholNum = [];
   const search = useRecoilValue(searchState);
   const color = useRecoilValue(colorState);
   const { alcohol } = useRecoilValue(alcoholState);
@@ -29,7 +27,8 @@ const RecipeCard = () => {
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
 
-  const colorFilter = () => {
+  const colorFilter = (color) => {
+    const colorNum = [];
     if (color.red) colorNum.push(1);
     if (color.orange) colorNum.push(2);
     if (color.yellow) colorNum.push(3);
@@ -42,20 +41,25 @@ const RecipeCard = () => {
     if (color.grey) colorNum.push(10);
     if (color.white) colorNum.push(11);
     if (color.transparent) colorNum.push(12);
+    return colorNum;
   };
 
   const alcoholFilter = () => {
+    const alcoholNum = [];
     if (alcohol === "낮음") alcoholNum.push(0);
     if (alcohol === "중간") alcoholNum.push(1);
     if (alcohol === "높음") alcoholNum.push(2);
+    return alcoholNum;
   };
 
   const GetRecipe = async (page) => {
     colorFilter();
     alcoholFilter();
     try {
+      const colorInit = colorFilter(color);
+      const alcohoInit = alcoholFilter(alcohol);
       axios.defaults.headers.common.Authorization = token;
-      let url = `/api/recipes/list/filter/${page}?alcoholic=[${alcoholNum}]&color=[${colorNum}]&search=${search}`;
+      let url = `/api/recipes/list/filter/${page}?alcoholic=[${alcohoInit}]&color=[${colorInit}]&search=${search}`;
       if (sort.latest) {
         url += "&sort=new";
       }
