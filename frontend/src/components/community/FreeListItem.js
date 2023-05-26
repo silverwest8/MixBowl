@@ -12,8 +12,7 @@ const FreeListItem = ({ data }) => {
       <TopSection>
         <div>
           <span>
-            {/* TODO 추천할때 아이콘 */}
-            {data.CATEGORY === 3 ? (
+            {data.CATEGORY === 3 && data.cocktailLike !== null ? (
               <BiHeartCircle className="recommend icon" />
             ) : (
               ""
@@ -38,7 +37,7 @@ const FreeListItem = ({ data }) => {
       </MainText>
       <BottomSection>
         <ReactionContainer>
-          <FaThumbsUp className={data.liked ? "icon liked" : "icon"} />
+          <FaThumbsUp className={data.isUserLike ? "icon liked" : "icon"} />
           {data.LIKE}
           <FaCommentDots className="icon comment" />
           <span className="shown">

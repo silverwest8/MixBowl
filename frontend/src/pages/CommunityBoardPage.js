@@ -2,7 +2,7 @@
 // import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
 import FreeListItem from "../components/community/FreeListItem";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Title from "../components/common/Title";
 import { HiPencilAlt } from "react-icons/hi";
 import { MdArrowBackIosNew } from "react-icons/md";
@@ -216,51 +216,41 @@ const WritingButton = styled(Link)`
 `;
 
 const CommunityBoardPage = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const search = useRecoilValue(searchState);
+  const [menu, setMenu] = useRecoilState(menuState);
   const addPostingState = useResetRecoilState(AddPostingState);
 
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
   // const [input, setInput] = useState("");
   // const [postings, setPostings] = useState([]);
-  const searchParams = new URLSearchParams(useLocation().search);
-  const [{ menu }, setMenu] = useRecoilState(menuState);
+  // const searchParams = new URLSearchParams(useLocation().search);
   const [menutext, setMenutext] = useState("전체");
-  // const onChange = (e) => setInput(e.target.value);
-  // const onSearch = () => {
-  //   navigate(`/community/board?search=${input}`);
-  //   setMenu(`"${input}" 검색 결과`);
-  // };
-  // const onClear = () => {
-  //   setInput("");
-  //   navigate(`/community/board`, { replace: true });
-  // };
   const setTabQna = () => {
     setMenutext("질문과 답변");
     setMenu("question");
-    navigate(`/community/board?category=question`);
-    console.log("menu is ", menu);
+    // navigate(`/community/board?category=question`);
   };
   const setTabRecommendation = () => {
     setMenutext("칵테일 추천");
     setMenu("recommendation");
-    navigate(`/community/board?category=recommendation`);
+    // navigate(`/community/board?category=recommendation`);
   };
   const setTabReview = () => {
     setMenutext("칵테일 리뷰");
     setMenu("review");
-    navigate(`/community/board?category=review`);
+    // navigate(`/community/board?category=review`);
   };
   const setTabFree = () => {
     setMenutext("자유");
     setMenu("free");
-    navigate(`/community/board?category=free`);
+    // navigate(`/community/board?category=free`);
   };
   const setTabEntire = () => {
     setMenutext("전체");
     setMenu("");
-    navigate(`/community/board?category=all`);
+    // navigate(`/community/board?category=all`);
   };
   // const categoryFunction = (e) => {
   //   if (searchParams.get("category")?.replaceAll('"', "") !== "all") {
@@ -271,23 +261,11 @@ const CommunityBoardPage = () => {
   //   } else return true;
   // };
 
-  // const GetAll = async (page) => {
-  //   try {
-  //     axios.defaults.headers.common.Authorization = token;
-  //     const { data } = await axios.get(
-  //       `/api/communities/list/all?page=${page}`
-  //     );
-  //     console.log(data.data);
-  //     setPostings(data.data);
-  //     return { page: data.pageParams, list: data.pages };
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-  const GetPosting = async (page, search, menuSelect) => {
+  const GetPosting = async (page, search, menu) => {
     try {
+      console.log("menu is ", menu);
       axios.defaults.headers.common.Authorization = token;
-      let url = `/api/communities/list/category/${menuSelect}?page=${page}}`;
+      let url = `/api/communities/list/category/${menu}?page=${page}}`;
       if (menu === "") {
         url = `/api/communities/list/all?page=${page}`;
       }
@@ -317,15 +295,15 @@ const CommunityBoardPage = () => {
     remove();
     fetchNextPage(1);
     // 검색어, 메뉴 바뀔 때마다
-    console.log("menu is ", menu);
-  }, [searchParams, menu]);
+  }, [search, menu]);
 
   useEffect(() => {
     if (inView) {
       fetchNextPage();
     }
   }, [inView]);
-  useEffect(() => {
+
+  useEffect(async () => {
     addPostingState();
   }, []);
 
@@ -382,9 +360,9 @@ const CommunityBoardPage = () => {
                   <FreeListItem data={item} key={item.PNO} />
                 ))
               )}
+            <div ref={ref}></div>
           </section>
         </MainSection>
-        <div ref={ref}></div>
 
         <WritingButton to="/community/posting">
           <HiPencilAlt />

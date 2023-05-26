@@ -1,4 +1,6 @@
-import { atom } from "recoil";
+import { atom, RecoilEnv } from "recoil";
+
+RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
 export const searchState = atom({
   key: "searchState",
@@ -7,9 +9,7 @@ export const searchState = atom({
 
 export const menuState = atom({
   key: "menuState",
-  default: {
-    menu: "",
-  },
+  default: "",
 });
 
 export const AddPostingState = atom({
