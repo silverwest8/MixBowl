@@ -105,73 +105,6 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
     console.log(error.message);
   }
 });
-router.post('/reply/:postId', checkAccess, async (req, res) => {
-  try {
-    const pno = req.params.postId;
-    await sql.postReply(req, pno);
-    res.send({
-      success: true,
-      message: 'REPLY post successfully',
-    });
-  } catch (error) {
-    console.log(error.message);
-    res.send({
-      success: false,
-      message: 'REPLY post failed',
-    });
-  }
-});
-router.put('/reply/:replyId', checkAccess, async (req, res) => {
-  try {
-    const uno = req.decoded.unum;
-    const replyId = req.params.replyId;
-    const reply_uno = await sql.getReplyUno(replyId);
-    if (uno === reply_uno) {
-      await sql.changeReply(req, replyId);
-      res.send({
-        success: true,
-        message: 'change Reply successfully',
-      });
-    } else {
-      res.send({
-        success: false,
-        message: 'cannot change reply/not writer',
-      });
-    }
-  } catch (error) {
-    console.log('error', error.message);
-    res.send({
-      success: false,
-      message: 'change Reply failed',
-    });
-  }
-});
-
-router.delete('/reply/:replyId', checkAccess, async (req, res) => {
-  try {
-    const uno = req.decoded.unum;
-    const replyId = req.params.replyId;
-    const reply_uno = await sql.getReplyUno(replyId);
-    if (uno === reply_uno) {
-      await sql.deleteReply(req, replyId);
-      res.send({
-        success: true,
-        message: 'delete Reply successfully',
-      });
-    } else {
-      res.send({
-        success: false,
-        message: 'cannot delete reply/not writer',
-      });
-    }
-  } catch (error) {
-    console.log('error', error.message);
-    res.send({
-      success: false,
-      message: 'delete Reply failed',
-    });
-  }
-});
 router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
   const postData = await POST.findByPk(pno);
@@ -282,20 +215,128 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
       });
   }
 });
-router.post('/:postId', checkAccess, async (req, res) => {
-  const pno = req.params.postId;
-  const uno = req.decoded.unum;
-  const postData = await POST.findByPk(pno);
-  // if (postData.dataValues.UNO === uno) {
-  //   const data = Object.assign(postData.dataValues);
-  //   sql.
-  // }
+router.post(
+  '/:postId',
+  checkAccess,
+  sql.deleteImage,
+  upload.array('files', 5),
+  async (req, res) => {
+    try {
+      const pno = req.params.postId;
+      const uno = req.decoded.unum;
+      const postData = await POST.findByPk(pno);
+      // if (postData.dataValues.UNO === uno) {
+      //   const data = Object.assign(postData.dataValues);
+      //   sql.
+      // }
 
-  //get으로 다 포스트 전체 내용 받아오고 다시 전달
-  if (postData.dataValues.UNO === uno) {
-    await sql.changeCommunity(req);
+      //get으로 다 포스트 전체 내용 받아오고 다시 전달
+      if (postData.dataValues.UNO === uno) {
+        const post = await sql.changeCommunity(req, pno);
+        console.log('post', post);
+        await sql.postImage(req, post);
+        res.send({
+          success: true,
+          message: 'modify success',
+        });
+      } else {
+        res.send({
+          success: false,
+          message: "can't modify post/ not writer",
+        });
+      }
+    } catch (error) {
+      console.log(error.message);
+      res.send({
+        success: false,
+        message: 'sth wrong happend in system',
+      });
+    }
+  }
+);
+router.delete('/:postId', checkAccess, sql.deleteImage, async (req, res) => {
+  console.log('hi');
+  try {
+    await sql.deletePost(req);
+    return res
+      .status(200)
+      .json({ success: true, message: 'Delete Review Success' });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
+router.post('/reply/:postId', checkAccess, async (req, res) => {
+  try {
+    const pno = req.params.postId;
+    await sql.postReply(req, pno);
+    res.send({
+      success: true,
+      message: 'REPLY post successfully',
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.send({
+      success: false,
+      message: 'REPLY post failed',
+    });
+  }
+});
+router.put('/reply/:replyId', checkAccess, async (req, res) => {
+  try {
+    const uno = req.decoded.unum;
+    const replyId = req.params.replyId;
+    const reply_uno = await sql.getReplyUno(replyId);
+    if (uno === reply_uno) {
+      await sql.changeReply(req, replyId);
+      res.send({
+        success: true,
+        message: 'change Reply successfully',
+      });
+    } else {
+      res.send({
+        success: false,
+        message: 'cannot change reply/not writer',
+      });
+    }
+  } catch (error) {
+    console.log('error', error.message);
+    res.send({
+      success: false,
+      message: 'change Reply failed',
+    });
+  }
+});
+
+router.delete('/reply/:replyId', checkAccess, async (req, res) => {
+  try {
+    const uno = req.decoded.unum;
+    const replyId = req.params.replyId;
+    const reply_uno = await sql.getReplyUno(replyId);
+    if (uno === reply_uno) {
+      await sql.deleteReply(req, replyId);
+      res.send({
+        success: true,
+        message: 'delete Reply successfully',
+      });
+    } else {
+      res.send({
+        success: false,
+        message: 'cannot delete reply/not writer',
+      });
+    }
+  } catch (error) {
+    console.log('error', error.message);
+    res.send({
+      success: false,
+      message: 'delete Reply failed',
+    });
+  }
+});
+
 router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
   try {
     const page = Number(req.query.page);

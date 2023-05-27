@@ -205,60 +205,63 @@ const sql = {
       console.log(error.message);
     }
   },
-  changeCommunity: async (req) => {
+  changeCommunity: async (req, pno) => {
     const unum = req.decoded.unum;
-    console.log(req.body.data);
-    const category = req.query.category;
     const data = JSON.parse(req.body.data);
     console.log('data', data);
-    // try {
-    //   if (category === '1') {
-    //     //칵테일 추천
-    //     const { title, content } = data;
-    //     const post = await POST.create({
-    //       UNO: unum,
-    //       CATEGORY: category,
-    //       TITLE: title,
-    //       CONTENT: content,
-    //     });
-    //     return post;
-    //   } else if (category === '2') {
-    //     //질문과 답변
-    //     const { content } = data;
-    //     const post = await POST.create({
-    //       UNO: unum,
-    //       CATEGORY: category,
-    //       CONTENT: content,
-    //     });
-    //     return post;
-    //   } else if (category === '3') {
-    //     //칵테일 리뷰 -> 제목 = 타이틀
-    //     const { title, content, like, cno } = data;
-    //     const post = await POST.create({
-    //       UNO: unum,
-    //       CATEGORY: category,
-    //       TITLE: title,
-    //       CONTENT: content,
-    //       CNO: cno,
-    //       LIKE: like,
-    //     });
-    //     return post;
-    //   } else if (category === '4') {
-    //     //자유게시판
-    //     const { title, content } = data;
-    //     const post = await POST.create({
-    //       UNO: unum,
-    //       CATEGORY: category,
-    //       TITLE: title,
-    //       CONTENT: content,
-    //     });
-    //     return post;
-    //   } else {
-    //     throw new Error('invalid category');
-    //   }
-    // } catch (error) {
-    //   console.log(error.message);
-    // }
+    const return_obj = { PNO: pno };
+    try {
+      if (data.category === 1) {
+        //칵테일 추천
+        const { title, content } = data;
+        const post = await POST.update(
+          {
+            TITLE: title,
+            CONTENT: content,
+          },
+          { where: { PNO: pno } }
+        );
+        return return_obj;
+      } else if (data.category === 2) {
+        //질문과 답변
+        const { content } = data;
+        const post = await POST.update(
+          {
+            CONTENT: content,
+          },
+          { where: { PNO: pno } }
+        );
+        return return_obj;
+      } else if (data.category === 3) {
+        //칵테일 리뷰 -> 제목 = 타이틀
+        const { title, content, like, cno } = data;
+        const post = await POST.update(
+          {
+            TITLE: title,
+            CONTENT: content,
+            CNO: cno,
+            LIKE: like,
+          },
+          { where: { PNO: pno } }
+        );
+        return return_obj;
+      } else if (data.category === 4) {
+        //자유게시판
+        const { title, content } = data;
+        const post = await POST.update(
+          {
+            TITLE: title,
+            CONTENT: content,
+          },
+          { where: { PNO: pno } }
+        );
+        return return_obj;
+      } else {
+        throw new Error('invalid category');
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   },
   postReply: async (req, pno) => {
     const content = req.body.content;
@@ -322,12 +325,13 @@ const sql = {
   getCommunityPost: async (req) => {},
   postImage: async (req, db) => {
     try {
-      const reviewId = db.REVIEW_ID;
       let categoryDb = 0; //review 참조
       let communityId;
-      if (typeof reviewId === 'undefined') {
-        communityId = db.PNO;
+      if (db.REVIEW_ID === undefined) {
+        communityId = Number(db.PNO);
         categoryDb = 1; // community(Post) 참조
+      } else {
+        const reviewId = db.REVIEW_ID;
       }
       req.files.map(async (data) => {
         let path = data.path;
@@ -437,24 +441,73 @@ const sql = {
       }
     }
   },
+  deletePost: async (req) => {
+    const unum = req.decoded.unum;
+    const postId = req.params.postId;
+    const post = await POST.findByPk(postId);
+    if (post.UNO === req.user.UNO) {
+      console.log('권한 확인');
+    } else {
+      throw new Error('no authorization to delete post');
+    }
+    if (post !== null) {
+      try {
+        await POST.destroy({ where: { PNO: postId } });
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  },
   deleteImage: async (req, res, next) => {
     const reviewId = req.params.reviewId;
-    const images = await IMAGE.findAll({
-      where: {
-        REVIEW_ID: reviewId,
-      },
-    });
-    images.forEach((img) => {
-      fs.unlink(img.PATH, (err) => {
-        if (err) throw err;
-        console.log('delete success');
-      });
-    });
-    await IMAGE.destroy({
-      where: {
-        REVIEW_ID: reviewId,
-      },
-    });
+    console.log('check');
+    if (reviewId !== undefined) {
+      try {
+        const images = await IMAGE.findAll({
+          where: {
+            REVIEW_ID: reviewId,
+          },
+        });
+        images.forEach((img) => {
+          fs.unlink(img.PATH, (err) => {
+            if (err) throw err;
+            console.log('delete success');
+          });
+        });
+        await IMAGE.destroy({
+          where: {
+            REVIEW_ID: reviewId,
+          },
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      const postId = req.params.postId;
+      try {
+        if (postId !== undefined) {
+          const images = await IMAGE_COMMUNITY.findAll({
+            where: {
+              PNO: postId,
+            },
+          });
+          images.forEach((img) => {
+            fs.unlink(img.PATH, (err) => {
+              if (err) throw err;
+              console.log('delete success');
+            });
+          });
+          await IMAGE_COMMUNITY.destroy({
+            where: {
+              PNO: postId,
+            },
+          });
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
     return next();
   },
   getImagePath: async (imageId, category) => {
