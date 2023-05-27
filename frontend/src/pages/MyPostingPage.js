@@ -1,12 +1,13 @@
 import styled from "styled-components";
+import MyPostingItem from "../components/community/MyPostingItem";
 import { Link, useNavigate } from "react-router-dom";
+import Title from "../components/common/Title";
+import { HiPencilAlt } from "react-icons/hi";
 import { MdArrowBackIosNew } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { FaThumbsUp, FaCommentDots } from "react-icons/fa";
-import MemberBadge from "../components/common/MemberBadge";
 
 const Background = styled.div`
   color: white;
@@ -78,69 +79,6 @@ const TopSection = styled.div`
     }
   }
 `;
-const TextBox = styled.div`
-  display: flex;
-  justify-content: space-between;
-  & > div {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  p {
-    display: flex;
-    align-items: center;
-  }
-`;
-
-const RecipeWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 2rem;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  justify-items: center;
-
-  @media screen and (max-width: 928px) {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-  @media screen and (max-width: 720px) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  @media screen and (max-width: 350px) {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-`;
-
-const RecipeBox = styled.div`
-  width: 12.5rem;
-  img {
-    height: 12.5rem;
-    width: 100%;
-    object-fit: cover;
-    border: 2px solid ${({ theme }) => theme.color.primaryGold};
-    border-radius: 0.75rem;
-  }
-  h1 {
-    font-size: 1.25rem;
-    margin-top: 0.5rem;
-  }
-  p {
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-    gap: 0.2rem;
-  }
-  .ThumbsUp {
-    display: flex;
-    color: ${({ theme }) => theme.color.primaryGold};
-  }
-  .Comment {
-    display: flex;
-    color: ${({ theme }) => theme.color.lightGray};
-  }
-`;
 
 const NoContent = styled.div`
   width: 100%;
@@ -151,23 +89,19 @@ const NoContent = styled.div`
   justify-content: center;
 `;
 
-const NickName = styled.div`
-  display: flex;
-  font-size: 0.875rem;
-  margin-top: 0.3rem;
-`;
-
-const MyRecipePage = () => {
+const MyPostingPage = () => {
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
   const [username, setUsername] = useState("기본 유저");
+  const [level, setLevel] = useState("1");
 
   const GetPosting = async (page) => {
     try {
       axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.get(`/api/mypages/recipes/${page}`);
+      const { data } = await axios.get(`/api/mypages/posts/${page}`);
       const userInfoResponse = await axios.get(`/api/users`);
       setUsername(userInfoResponse.data.data.NICKNAME);
+      setLevel(userInfoResponse.data.data.LEVEL);
       // console.log("data list is ", data.list);
       return { page, list: data.list, count: data.list.length };
     } catch (error) {
@@ -216,51 +150,23 @@ const MyRecipePage = () => {
             <span className="hidden">
               <span className="gold">{username}</span>님이{" "}
             </span>
-            추천한 레시피
+            작성한 게시글
           </div>
         </TopSection>
         <MainSection>
           <section>
-            <RecipeWrapper>
-              {isSuccess &&
-                data.pages.map((page) =>
-                  page.list.map((item) => (
-                    <RecipeBox key={item.cocktailId}>
-                      {token ? (
-                        <Link to={`/recipe/${item.cocktailId}`}>
-                          <img
-                            src={`/api/recipes/image/${item.cocktailId}`}
-                          ></img>
-                          <h1>{item.name}</h1>
-                        </Link>
-                      ) : (
-                        <>
-                          <img src={item.image_path}></img>
-                          <h1>{item.name}</h1>
-                        </>
-                      )}
-
-                      <TextBox>
-                        <NickName>
-                          @{item.USER.nickname}
-                          <MemberBadge level={item.USER.level} />
-                        </NickName>
-                        <div>
-                          <p className="ThumbsUp">
-                            <FaThumbsUp></FaThumbsUp>
-                            {item.like}
-                          </p>
-                          <p className="Comment">
-                            <FaCommentDots></FaCommentDots>
-                            {item.post}
-                          </p>
-                        </div>
-                      </TextBox>
-                    </RecipeBox>
-                  ))
-                )}
-              <div ref={ref}></div>
-            </RecipeWrapper>
+            {isSuccess &&
+              data.pages.map((page) =>
+                page.list.map((item) => (
+                  <MyPostingItem
+                    data={item}
+                    key={item.postId}
+                    uname={username}
+                    level={level}
+                  />
+                ))
+              )}
+            <div ref={ref}></div>
           </section>
         </MainSection>
       </Background>
@@ -268,4 +174,4 @@ const MyRecipePage = () => {
   );
 };
 
-export default MyRecipePage;
+export default MyPostingPage;

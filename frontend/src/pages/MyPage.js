@@ -390,7 +390,9 @@ const MyPage = () => {
           <Section>
             <div>
               내가 쓴 게시글
-              <MdArrowForwardIos className="icon" />
+              <Link to={"/mypage/posting"}>
+                <MdArrowForwardIos className="icon" />
+              </Link>
             </div>
             <div>
               {postings.length === 0 ? (
