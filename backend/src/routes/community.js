@@ -381,6 +381,7 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
     const limit = 10;
     const list = [];
     let posts;
+    
     if (search) {
       posts = await POST.findAll({
         order: [['createdAt', 'DESC']],
@@ -420,6 +421,14 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
+      let isUserLike = false;
+      const isLike = req.user === undefined ? [] : await POST_LIKE.findAll({
+        where: { UNO: req.user.UNO, PNO: val.dataValues.PNO },
+      });
+      if (isLike.length !== 0) {
+        isUserLike = true;
+      }
+      val.dataValues.isUserLike = isUserLike;
       const replyNum = await POST_REPLY.findAll({
         attributes: [
           'PNO',
@@ -443,7 +452,11 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         NICKNAME: user.NICKNAME,
         LEVEL: user.LEVEL,
       };
-
+      let cocktailLike = -1;
+      if (val.dataValues.LIKE !== null){
+        cocktailLike = val.dataValues.LIKE;
+      }
+      val.dataValues.cocktailLike = cocktailLike;
       if (likePost.length !== 0) {
         val.dataValues.LIKE = likePost[0].dataValues.LIKES;
       } else {
@@ -531,6 +544,14 @@ router.get(
       }
 
       for (const val of posts) {
+        let isUserLike = false;
+        const isLike = req.user === undefined ? [] : await POST_LIKE.findAll({
+          where: { UNO: req.user.UNO, PNO: val.dataValues.PNO },
+        });
+        if (isLike.length !== 0) {
+          isUserLike = true;
+        }
+        val.dataValues.isUserLike = isUserLike;
         const user = await USER.findByPk(val.dataValues.UNO);
         const likePost = await POST_LIKE.findAll({
           attributes: [
@@ -560,7 +581,11 @@ router.get(
           },
           group: ['PNO'],
         });
-        
+        let cocktailLike = -1;
+        if (val.dataValues.LIKE !== null){
+          cocktailLike = val.dataValues.LIKE;
+        }
+        val.dataValues.cocktailLike = cocktailLike;
         delete val.dataValues.UNO;
         val.dataValues.UNO_USER = {
           NICKNAME: user.NICKNAME,
@@ -669,6 +694,7 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       data['userLevel'] = user.LEVEL;
       data['category'] = postInfo.CATEGORY;
       data['title'] = postInfo.TITLE || null;
+      data['cocktailLike'] = postInfo.LIKE || -1;
       data['createdAt'] = postInfo.createdAt;
       data['content'] = postInfo.CONTENT;
       const imageRow = await IMAGE_COMMUNITY.findOne({
