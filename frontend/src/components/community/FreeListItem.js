@@ -60,7 +60,7 @@ const FreeListItem = ({ data }) => {
             </div>
           </BottomSection>
         </div>
-        {data.images && (
+        {data.images.length !== 0 && (
           <ImageSection>
             <img
               src={

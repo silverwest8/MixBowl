@@ -22,8 +22,10 @@ const WarningSet = styled.div`
   }
 `;
 
-const NameChangeModal = ({ handleClose, username }) => {
+const NameChangeModal = ({ handleClose, checkname }) => {
   const setToastState = useSetRecoilState(toastState);
+  const [uname, setUname] = useState({ checkname });
+
   const [warningMsg, setWarningMsg] = useState("");
   const { mutate: mutateEdit } = useMutation({
     mutationFn: nameChange,
@@ -44,13 +46,13 @@ const NameChangeModal = ({ handleClose, username }) => {
       handleClose();
     },
   });
-  const [uname, setUname] = useState({ checkname: username });
 
   const onChange = (e) => {
     const { value } = e.target;
     setUname(() => ({
       checkname: value,
     }));
+    console.log("uname is ", uname);
   };
   const onSubmit = async () => {
     setWarningMsg("");
@@ -65,17 +67,19 @@ const NameChangeModal = ({ handleClose, username }) => {
     // 중복됐을 경우
     const token = getAccessToken();
     axios.defaults.headers.common.Authorization = token;
+    console.log("sending data is ", uname);
     const { data } = await axios.put("api/users/nicknamedupcheck", {
-      checkname: uname.username,
+      uname,
     });
+    console.log("data ", data);
 
-    if (data.duplicate === true) {
-      console.log("username is ", username);
-      mutateEdit({ username });
+    if (data.duplicate === false) {
+      console.log("username is ", uname);
+      mutateEdit({ uname });
     } else {
       setToastState({
         show: true,
-        message: "닉네임 수정에 실패했습니다. 다시 시도해주세요.",
+        message: "중복된 닉네임입니다. 다시 시도해주세요.",
         type: "error",
       });
     }
@@ -86,10 +90,10 @@ const NameChangeModal = ({ handleClose, username }) => {
       title="닉네임 수정"
       handleClose={handleClose}
       onCancel={handleClose}
-      onConfirm={() => onSubmit(username)}
+      onConfirm={() => onSubmit(checkname)}
     >
       <Input
-        defaultValue={username}
+        defaultValue={checkname}
         placeholder="새 닉네임 입력"
         onChange={onChange}
       />

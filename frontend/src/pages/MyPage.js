@@ -216,7 +216,9 @@ const RecipeWrapper = styled.div`
   margin-bottom: 2rem;
   justify-items: center;
   width: 100%;
-  overflow: hidden;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  max-height: 18rem;
 
   @media screen and (max-width: 928px) {
     display: grid;
@@ -345,71 +347,18 @@ const ButtonContainer = styled.div`
 
 const MyPage = () => {
   const { openModal, closeModal } = useModal();
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState({
+    NICKNAME: "기본 유저",
+    LEVEL: 1,
+  });
   const [recipe, setRecipe] = useState([]);
   const [postings, setPostings] = useState([]);
   const [comments, setComments] = useState([]);
   const [reviews, setReviews] = useState([]);
   const token = localStorage.getItem("access_token");
-  // const GetMyInfo = async () => {
-  //   try {
-  //     axios.defaults.headers.common.Authorization = token;
-  //     const { data } = await axios.get(`/api/users`);
-  //     console.log("user info is ", data);
-  //     setUserInfo(data.data);
-  //   } catch (error) {
-  //     console.log("empty or error");
-  //   }
-  // };
-  // const GetMyRecipe = async () => {
-  //   try {
-  //     axios.defaults.headers.common.Authorization = token;
-  //     const { data } = await axios.get(`/api/mypages/recipes/1`);
-  //     console.log("here, recipe is ", data);
-  //     setRecipe(data.list);
-  //   } catch (error) {
-  //     console.log("empty or error");
-  //   }
-  // };
-  // const GetPostings = async () => {
-  //   try {
-  //     axios.defaults.headers.common.Authorization = token;
-  //     const { data } = await axios.get(`/api/mypages/posts/1`);
-  //     console.log("here, posting is ", data);
-  //     setPostings(data.list);
-  //   } catch (error) {
-  //     console.log("empty or error");
-  //   }
-  // };
-  // const GetComments = async () => {
-  //   try {
-  //     axios.defaults.headers.common.Authorization = token;
-  //     const { data } = await axios.get(`/api/mypages/replies/1`);
-  //     console.log("here, comment is ", data);
-  //     setComments(data.list);
-  //   } catch (error) {
-  //     console.log("empty or error");
-  //   }
-  // };
-  // const GetReviews = async () => {
-  //   try {
-  //     axios.defaults.headers.common.Authorization = token;
-  //     const { data } = await axios.get(`/api/mypages/reviews/1`);
-  //     setReviews(data.list);
-  //   } catch (error) {
-  //     console.log("empty or error");
-  //   }
-  // };
-  // useEffect(() => {
-  //   GetMyInfo();
-  //   GetMyRecipe();
-  //   GetPostings();
-  //   GetComments();
-  //   GetReviews();
-  // }, []);
 
-  const [dataFetched, setDataFetched] = useState(false); // Add a flag to track if data has been fetched
-
+  const [dataFetched, setDataFetched] = useState(false);
+  let name = "";
   const fetchData = async () => {
     try {
       axios.defaults.headers.common.Authorization = token;
@@ -422,18 +371,14 @@ const MyPage = () => {
         const commentsResponse = await axios.get(`/api/mypages/replies/1`);
         const reviewsResponse = await axios.get(`/api/mypages/reviews/1`);
 
-        console.log("user info is ", userInfoResponse.data);
         setUserInfo(userInfoResponse.data.data);
-        console.log("here, recipe is ", recipeResponse.data);
         setRecipe(recipeResponse.data.list);
-        console.log("here, posting is ", postingsResponse.data);
         setPostings(postingsResponse.data.list);
-        console.log("here, comment is ", commentsResponse.data);
         setComments(commentsResponse.data.list);
-        console.log("here, review is ", reviewsResponse.data);
         setReviews(reviewsResponse.data.list);
 
         setDataFetched(true); // Set the flag to indicate that data has been fetched
+        name = userInfo.NICKNAME;
       }
     } catch (error) {
       console.log("empty or error");
@@ -464,6 +409,7 @@ const MyPage = () => {
               onClick={() => {
                 openModal(NameChangeModal, {
                   handleClose: closeModal,
+                  name,
                 });
               }}
             />
@@ -481,7 +427,13 @@ const MyPage = () => {
                   }}
                 />
               </span>
-              <Button>
+              <Button
+                onClick={() => {
+                  openModal(VerifyingModal, {
+                    handleClose: closeModal,
+                  });
+                }}
+              >
                 <AiFillCamera />
                 <span>전문가 인증하기</span>
               </Button>
@@ -560,12 +512,12 @@ const MyPage = () => {
               <MdArrowForwardIos className="icon" />
             </div>
             <div>
-              {dummyData.comments.length === 0 ? (
+              {comments.length === 0 ? (
                 <NoContent>작성하신 댓글이 없습니다</NoContent>
               ) : (
-                dummyData.comments?.map((el) => (
-                  <CommentItem key={el.id} data={el} />
-                ))
+                comments
+                  .slice(0, 3)
+                  ?.map((el) => <CommentItem key={el.replyId} data={el} />)
               )}
             </div>
           </Section>
@@ -578,7 +530,9 @@ const MyPage = () => {
               {reviews.length === 0 ? (
                 <NoContent>작성하신 리뷰가 없습니다</NoContent>
               ) : (
-                reviews?.map((el) => <ReviewItem key={el.placeId} data={el} />)
+                reviews
+                  .slice(0, 3)
+                  ?.map((el) => <ReviewItem key={el.reviewId} data={el} />)
               )}
             </div>
           </Section>

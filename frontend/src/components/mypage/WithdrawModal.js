@@ -3,8 +3,9 @@ import Modal from "../common/Modal";
 import { withdrawal } from "../../api/mypage";
 import { useSetRecoilState } from "recoil";
 import { toastState } from "../../store/toast";
+import { removeTokens } from "../../utils/token";
 
-const WithdrawModal = ({ handleClose, username }) => {
+const WithdrawModal = ({ handleClose }) => {
   const setToastState = useSetRecoilState(toastState);
   const { mutate } = useMutation({
     mutationFn: withdrawal,
@@ -23,6 +24,9 @@ const WithdrawModal = ({ handleClose, username }) => {
         type: "success",
       });
       handleClose();
+      removeTokens();
+      window.location.reload();
+      window.location.replace("/login");
     },
   });
   return (
@@ -31,7 +35,7 @@ const WithdrawModal = ({ handleClose, username }) => {
       content="정말 탈퇴하시겠습니까?"
       handleClose={handleClose}
       onCancel={handleClose}
-      onConfirm={() => mutate(username)}
+      onConfirm={() => mutate()}
     ></Modal>
   );
 };
