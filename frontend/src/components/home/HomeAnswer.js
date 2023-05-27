@@ -22,8 +22,6 @@ const HomeAnswer = () => {
     fetchData();
   }, []);
 
-  console.log(data);
-
   return (
     <>
       <Section>

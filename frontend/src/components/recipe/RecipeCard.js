@@ -15,20 +15,20 @@ import {
 } from "../../store/recipe";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import Skeleton from "@mui/material/Skeleton";
+import { theme } from "../../styles/theme";
 
 const RecipeCard = () => {
-  const colorNum = [];
-  const alcoholNum = [];
-  let sortInit = false;
   const search = useRecoilValue(searchState);
   const color = useRecoilValue(colorState);
-  const alcohol = useRecoilValue(alcoholState);
+  const { alcohol } = useRecoilValue(alcoholState);
   const sort = useRecoilValue(sortState);
   const addRecipeState = useResetRecoilState(AddRecipeState);
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
 
   const colorFilter = () => {
+    const colorNum = [];
     if (color.red) colorNum.push(1);
     if (color.orange) colorNum.push(2);
     if (color.yellow) colorNum.push(3);
@@ -41,58 +41,51 @@ const RecipeCard = () => {
     if (color.grey) colorNum.push(10);
     if (color.white) colorNum.push(11);
     if (color.transparent) colorNum.push(12);
+    return colorNum;
   };
 
   const alcoholFilter = () => {
-    if (alcohol.alcohol === "낮음") alcoholNum.push(0);
-    if (alcohol.alcohol === "중간") alcoholNum.push(1);
-    if (alcohol.alcohol === "높음") alcoholNum.push(2);
+    const alcoholNum = [];
+    if (alcohol === "낮음") alcoholNum.push(0);
+    if (alcohol === "중간") alcoholNum.push(1);
+    if (alcohol === "높음") alcoholNum.push(2);
+    return alcoholNum;
   };
 
-  const sortFilter = () => {
-    if (sort.latest) sortInit = true;
-    return sortInit;
-  };
-
-  const GetRecipe = async (page, color, alcohol, sort) => {
-    colorFilter();
-    alcoholFilter();
-    sort = sortFilter();
+  const GetRecipe = async (page) => {
     try {
+      const colorInit = colorFilter();
+      const alcohoInit = alcoholFilter();
       axios.defaults.headers.common.Authorization = token;
-      let url = `/api/recipes/list/filter/${page}?alcoholic=[${alcohol}]&color=[${color}]&search=${search}`;
-      if (sort) {
+      let url = `/api/recipes/list/filter/${page}?alcoholic=[${alcohoInit}]&color=[${colorInit}]&search=${search}`;
+      if (sort.latest) {
         url += "&sort=new";
       }
       const { data } = await axios.get(url);
-      console.log(url);
-      return { page, list: data.list };
+      return { page, ...data };
     } catch (error) {
       console.log("empty or error");
+      return { page, list: [], count: 0 };
     }
   };
 
-  const { isSuccess, data, fetchNextPage, remove } = useInfiniteQuery(
-    ["page"],
-    ({ pageParam = 1 }) => GetRecipe(pageParam, colorNum, alcoholNum, sortInit),
+  const { isSuccess, data, fetchNextPage, hasNextPage } = useInfiniteQuery(
+    ["recipe", sort, color, alcohol, search],
+    ({ pageParam = 1 }) => GetRecipe(pageParam),
     {
       getNextPageParam: (lastPage) => {
-        return lastPage.page + 1;
+        if (lastPage.count === 0) return undefined;
+        else return lastPage.page + 1;
       },
     }
   );
-
-  useEffect(() => {
-    remove();
-    fetchNextPage(1);
-  }, [search, color, alcohol, sort]);
 
   useEffect(() => {
     addRecipeState();
   }, []);
 
   useEffect(() => {
-    if (inView) {
+    if (inView && hasNextPage) {
       fetchNextPage();
     }
   }, [inView]);
@@ -104,41 +97,54 @@ const RecipeCard = () => {
           <p>{sort.latest === true ? "최신순" : "추천순"}</p>
           <RecipeDrop />
         </div>
-        {isSuccess &&
-          data.pages.map((page) =>
-            page.list.map((item) => (
-              <RecipeBox key={item.id}>
-                {token ? (
-                  <Link to={`/recipe/${item.id}`}>
-                    <img src={`/api/recipes/image/${item.id}`}></img>
-                    <h1>{item.name}</h1>
-                  </Link>
-                ) : (
-                  <>
-                    <img src={item.image_path}></img>
-                    <h1>{item.name}</h1>
-                  </>
-                )}
+        {isSuccess
+          ? data.pages.map((page) =>
+              page.list.map((item) => (
+                <RecipeBox key={item.id}>
+                  {token ? (
+                    <Link to={`/recipe/${item.id}`}>
+                      <img src={`/api/recipes/image/${item.id}`}></img>
+                      <h1>{item.name}</h1>
+                    </Link>
+                  ) : (
+                    <>
+                      <img src={item.image_path}></img>
+                      <h1>{item.name}</h1>
+                    </>
+                  )}
 
-                <TextBox>
-                  <NickName>
-                    @{item.USER.nickname}
-                    <MemberBadge level={item.USER.level} />
-                  </NickName>
-                  <div>
-                    <p className="ThumbsUp">
-                      <FaThumbsUp></FaThumbsUp>
-                      {item.like}
-                    </p>
-                    <p className="Comment">
-                      <FaCommentDots></FaCommentDots>
-                      {item.post}
-                    </p>
-                  </div>
-                </TextBox>
-              </RecipeBox>
-            ))
-          )}
+                  <TextBox>
+                    <NickName>
+                      @{item.USER.nickname}
+                      <MemberBadge level={item.USER.level} />
+                    </NickName>
+                    <div>
+                      <p className="ThumbsUp">
+                        <FaThumbsUp></FaThumbsUp>
+                        {item.like}
+                      </p>
+                      <p className="Comment">
+                        <FaCommentDots></FaCommentDots>
+                        {item.post}
+                      </p>
+                    </div>
+                  </TextBox>
+                </RecipeBox>
+              ))
+            )
+          : Array(20)
+              .fill(1)
+              .map((_, index) => (
+                <Skeleton
+                  variant="rounded"
+                  width="100%"
+                  height="13rem"
+                  key={index}
+                  sx={{
+                    backgroundColor: theme.color.darkGray,
+                  }}
+                />
+              ))}
       </CardBox>
       <div ref={ref}></div>
     </MiddleBox>

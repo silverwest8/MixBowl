@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Input from "../common/Input";
 import { AddRecipeState, AddRecipeImgState } from "../../store/recipe";
 import { useState, useRef, useEffect } from "react";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaImage } from "react-icons/fa";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { toastState } from "../../store/toast";
 
@@ -63,23 +63,8 @@ const RecipeTitleImgColor = ({ Title, Color }) => {
   };
 
   const handleColor = (color) => {
-    if (addColor.length >= 3) {
+    if (addColor.length >= 3 && !addColor.includes(color)) {
       ToastMessageColor();
-      setAddColor((prev) => ({ ...prev, addColor: [] }));
-      setColoritem({
-        red: false,
-        pink: false,
-        orange: false,
-        black: false,
-        yellow: false,
-        brown: false,
-        green: false,
-        grey: false,
-        blue: false,
-        white: false,
-        purple: false,
-        transparent: false,
-      });
     } else {
       setAddColor((prev) => {
         if (prev.addColor.includes(color)) {
@@ -133,13 +118,14 @@ const RecipeTitleImgColor = ({ Title, Color }) => {
       <TopBox>
         <h1>{Title}</h1>
         <FlexBox>
-          <img
-            src={
-              addImg === ""
-                ? process.env.PUBLIC_URL + "/images/logo.png"
-                : addImg
-            }
-          />
+          {addImg ? (
+            <img src={addImg} />
+          ) : (
+            <div className="image-box">
+              <FaImage />
+            </div>
+          )}
+
           <ButtonBox>
             <Button onClick={handleAddButton}>첨부</Button>
             <input
@@ -298,11 +284,9 @@ const RecipeTitleImgColor = ({ Title, Color }) => {
 };
 
 const RecipeBox = styled.div`
-  width: 40vw;
-  margin: auto;
-  @media screen and (max-width: 840px) {
-    width: 80vw;
-  }
+  width: 80vw;
+  margin: 0 auto;
+  max-width: 416px;
 `;
 
 const TopBox = styled.div`
@@ -312,6 +296,17 @@ const TopBox = styled.div`
   align-items: center;
   margin-top: 3rem;
   margin-bottom: 2rem;
+  .image-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    height: 8.875rem;
+    width: 8.875rem;
+    border: 1px solid ${({ theme }) => theme.color.primaryGold};
+    color: ${({ theme }) => theme.color.gray};
+    border-radius: 0.75rem;
+  }
   img {
     height: 8.875rem;
     width: 8.875rem;
@@ -357,7 +352,6 @@ const ColorBox = styled.div`
 `;
 
 const ColorButton = styled.button`
-  width: 6rem;
   height: 3rem;
   border-radius: 1rem;
   background-color: ${(props) => props.bgColor};
@@ -369,13 +363,10 @@ const ColorButton = styled.button`
 
 const ColorButtonBox = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1rem;
   margin-top: 0.5rem;
   margin-bottom: 2rem;
-  @media screen and (max-width: 1280px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
   @media screen and (max-width: 350px) {
     grid-template-columns: 1fr 1fr 1fr;
   }
