@@ -22,6 +22,7 @@ import CommunityPostDetailPage from "./pages/CommunityPostDetailPage";
 import CommunityPostingPage from "./pages/CommunityPostingPage";
 import CommunityBoardPage from "./pages/CommunityBoardPage";
 import MyPage from "./pages/MyPage";
+import MyRecipePage from "./pages/MyRecipePage";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -56,6 +57,7 @@ function App() {
                   <Route path="/recipe/write" element={<RecipeWritePage />} />
                 </Route>
                 <Route path="mypage" element={<MyPage />} />
+                <Route path="mypage/recipe" element={<MyRecipePage />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<RegisterPage />} />
                 <Route path="cocktailbar" element={<CocktailBarPage />}>

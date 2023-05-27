@@ -232,6 +232,7 @@ const RecipeBox = styled.div`
 const MiddleBox = styled.div`
   display: flex;
   flex-direction: column;
+  border: 10px solid pink;
 `;
 
 export default RecipeCard;

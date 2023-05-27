@@ -17,117 +17,6 @@ import NameChangeModal from "../components/mypage/NameChangeModal";
 import VerifyingModal from "../components/mypage/VerifyingModal";
 import axios from "axios";
 
-const dummyData = {
-  uname: "유저123",
-  level: 1,
-  recipes: [
-    {
-      rno: 0,
-      image_path:
-        "https://cdn.discordapp.com/attachments/1103197507678392321/1103197535184633856/image.png",
-      name: "Old Fashioned",
-      uname: "user098",
-      level: 3,
-      liked: true,
-      comment: 10,
-      like: 3,
-    },
-    {
-      rno: 1,
-      image_path:
-        "https://cdn.discordapp.com/attachments/1103197507678392321/1103197535184633856/image.png",
-      name: "제목 길이제한 테스트 제목이 엄청 길어진다면 어떻게 될 것인지 확인해봅시다",
-      uname: "user098",
-      level: 3,
-      liked: true,
-      like: 3,
-    },
-  ],
-  postings: [
-    {
-      id: 0,
-      title: "example title",
-      category: "recommendation",
-      uname: "유저123",
-      level: 1,
-      likes: 32,
-      comments: 9,
-      date: "3일 전",
-      maintext: "칵테일 추천글을 썼다고 가정했을 때입니다.",
-    },
-    {
-      id: 1,
-      title: "두 번째 제목 예시",
-      category: "free",
-      uname: "username10",
-      level: 1,
-      likes: 0,
-      comments: 100,
-      date: "5일 전",
-      // TODO : 나중에는 date 타입으로 받아올것
-      maintext:
-        "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-    },
-    {
-      id: 2,
-      category: "qna",
-      uname: "username10",
-      level: 1,
-      likes: 10,
-      comments: 8,
-      date: "9일 전",
-      // TODO : 나중에는 date 타입으로 받아올것
-      maintext:
-        "이번엔 질문글입니다. 세 개까지만 보여줄 것이므로, 이 아래로는 게시글이 보이지 않아야 합니다. 내가 쓴 게시글 옆 화살표를 누르면 전체 게시글이 보일 것입니다.",
-    },
-    {
-      id: 3,
-      title: "칵테일 추천글입니다",
-      category: "recommendation",
-      uname: "username10",
-      level: 1,
-      likes: 1,
-      comments: 4,
-      date: "5달 전",
-      // TODO : 나중에는 date 타입으로 받아올것
-      maintext:
-        "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-    },
-  ],
-  comments: [
-    {
-      id: 0,
-      username: "댓글이름",
-      date: "1일 전",
-      userlevel: 2,
-      content: "댓글 예시는 이런 식으로",
-      title: "원글 제목은 아래에 표시",
-      titleid: 3,
-    },
-    {
-      id: 1,
-      username: "namelikeit",
-      date: "1시간 전",
-      userlevel: 3,
-      title:
-        "what if the title is really, like, insanely long? it has to be ellipsis. You gotta do it, right, now.",
-      content:
-        "댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. 댓글이 아주 길어진다면 이런 식으로 작성됩니다. ",
-      titleid: 4,
-    },
-  ],
-  reviews: [
-    {
-      id: 0,
-      keyword: ["혼술하기 좋아요", "술이 다양해요", "분위기가 좋아요"],
-      content:
-        "칵테일 바 리뷰 내용은 다음과 같습니다. 길어질 경우. 칵테일 바 리뷰 내용은 다음과 같습니다. 길어질 경우. 칵테일 바 리뷰 내용은 다음과 같습니다. 길어질 경우. 칵테일 바 리뷰 내용은 다음과 같습니다. 길어질 경우. 칵테일 바 리뷰 내용은 다음과 같습니다. 길어질 경우. 칵테일 바 리뷰 내용은 다음과 같습니다. 길어질 경우. ",
-      placeId: 3124,
-      placeName: "칵테일 바 이름",
-    },
-  ],
-};
-
 const Background = styled.div`
   color: white;
   display: flex;
@@ -337,6 +226,11 @@ const Section = styled.div`
   > div:last-child {
     margin-top: 1rem;
   }
+  .hover {
+    &:hover {
+      color: ${({ theme }) => theme.color.primaryGold};
+    }
+  }
 `;
 const ButtonContainer = styled.div`
   width: 100%;
@@ -454,7 +348,9 @@ const MyPage = () => {
           <Section>
             <div>
               내가 추천한 레시피
-              <MdArrowForwardIos className="icon" />
+              <Link to={"/mypage/recipe"}>
+                <MdArrowForwardIos className="icon hover" />
+              </Link>
             </div>
             <div>
               {recipe && recipe.length === 0 ? (
