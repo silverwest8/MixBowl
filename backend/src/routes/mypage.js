@@ -93,11 +93,20 @@ router.get('/posts/:page', checkAccess, async (req, res) => {
       // console.log(postImage);
       const images = postImage.map((x) => x.IMAGE_ID);
       // console.log(images);
+      const isUserLiked = await db.POST_LIKE.count({
+        where: {
+          UNO: req.user.UNO,
+          PNO: post.PNO,
+        },
+      });
+      console.log(isUserLiked);
       let temp = {
         postId: post.PNO,
         images,
         category: post.CATEGORY,
         title: post.TITLE,
+        cocktailLike: post.LIKE,
+        isUserLiked,
         content: post.CONTENT,
         cocktailId: post.CNO,
         like: await db.POST_LIKE.count({
@@ -213,7 +222,7 @@ router.get('/reviews/:page', checkAccess, async (req, res) => {
         },
       });
       // console.log(keywords);
-      keyword = keywords.map(x => x.KEYWORD)
+      keyword = keywords.map((x) => x.KEYWORD);
       // for (let j = 0; j < keywords.length; j++) {
       //   keyword.push(keywords[j].KEYWORD);
       // }
