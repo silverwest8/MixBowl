@@ -48,10 +48,10 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route element={<RecipeRoute />}>
                   <Route path="recipe" element={<RecipePage />} />
-                  <Route path="/recipe/:id" element={<DetailRecipePage />} />
                   <Route path="/recipe/:id/edit" element={<RecipeEditPage />} />
                   <Route path="/recipe/write" element={<RecipeWritePage />} />
                 </Route>
+                <Route path="/recipe/:id" element={<DetailRecipePage />} />
                 <Route path="mypage" element={<HomePage />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<RegisterPage />} />

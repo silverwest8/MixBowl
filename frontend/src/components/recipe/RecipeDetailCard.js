@@ -80,7 +80,7 @@ const RecipeDetailCard = () => {
     if (token) {
       GetRecipe();
     } else {
-      navigate(`/login?return_url=${window.location.pathname}`);
+      navigate(`/login?return_url=/recipe/${id}`);
     }
   }, []);
 
