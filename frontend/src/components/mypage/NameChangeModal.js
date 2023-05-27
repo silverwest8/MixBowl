@@ -67,9 +67,9 @@ const NameChangeModal = ({ handleClose, checkname }) => {
     // 중복됐을 경우
     const token = getAccessToken();
     axios.defaults.headers.common.Authorization = token;
-    console.log("sending data is ", uname);
+    console.log("sending data is ", uname.checkname);
     const { data } = await axios.put("api/users/nicknamedupcheck", {
-      uname,
+      checkname: uname.checkname,
     });
     console.log("data ", data);
 

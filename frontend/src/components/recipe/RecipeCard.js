@@ -101,10 +101,17 @@ const RecipeCard = () => {
           ? data.pages.map((page) =>
               page.list.map((item) => (
                 <RecipeBox key={item.id}>
-                  <Link to={`/recipe/${item.id}`}>
-                    <img src={`/api/recipes/image/${item.id}`}></img>
-                    <h1>{item.name}</h1>
-                  </Link>
+                  {token ? (
+                    <Link to={`/recipe/${item.id}`}>
+                      <img src={`/api/recipes/image/${item.id}`}></img>
+                      <h1>{item.name}</h1>
+                    </Link>
+                  ) : (
+                    <>
+                      <img src={item.image_path}></img>
+                      <h1>{item.name}</h1>
+                    </>
+                  )}
 
                   <TextBox>
                     <NickName>
@@ -139,7 +146,7 @@ const RecipeCard = () => {
                 />
               ))}
       </CardBox>
-      {token && <div ref={ref}></div>}
+      <div ref={ref}></div>
     </MiddleBox>
   );
 };
@@ -225,7 +232,6 @@ const RecipeBox = styled.div`
 const MiddleBox = styled.div`
   display: flex;
   flex-direction: column;
-  border: 10px solid pink;
 `;
 
 export default RecipeCard;

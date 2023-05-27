@@ -3,9 +3,30 @@ import { FaCommentDots, FaThumbsUp } from "react-icons/fa";
 import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const FreeListItem = ({ data }) => {
   // TODO : 호버, 이미지처리
+  const [path, setPath] = useState("");
+  const GetImage = async (id) => {
+    try {
+      const { data } = await axios.get(
+        `/api/communities/one/image?imageId=${id}`
+      );
+      console.log("path is ", data.data);
+      setPath(data.data.error.path);
+      return { data };
+    } catch (error) {
+      console.log("empty or error", error.response.data.error.path);
+      setPath(error.response.data.error.path);
+    }
+  };
+  useEffect(() => {
+    if (data.imageId !== 0) {
+      GetImage(data.imageId);
+    }
+  }, []);
   console.log("lets see the data ", data);
   return (
     <ItemContainer to={`/community/${data.PNO}`}>
@@ -60,14 +81,18 @@ const FreeListItem = ({ data }) => {
             </div>
           </BottomSection>
         </div>
-        {data.images.length !== 0 && (
+        {data.CNO ? (
           <ImageSection>
-            <img
-              src={
-                "https://cdn.discordapp.com/attachments/751695059354648616/1033937959008874504/Screenshot_20221016_130522.jpg"
-              }
-            />
+            <img src={`/api/recipes/image/${data.CNO}`}></img>
           </ImageSection>
+        ) : (
+          data.imageId !== 0 &&
+          data.imageId !== undefined &&
+          data.imageId !== null && (
+            <ImageSection>
+              <img src={path} />
+            </ImageSection>
+          )
         )}
       </div>
     </ItemContainer>
@@ -99,6 +124,7 @@ const ItemContainer = styled(Link)`
     display: flex;
     justify-content: space-around;
     width: 100%;
+    align-items: center;
     > div:first-child {
       width: 100%;
     }
@@ -127,7 +153,10 @@ const TopSection = styled.div`
     font-weight: bold;
     font-size: 1.125rem;
     @media screen and (max-width: 500px) {
-      width: 50vw;
+      width: 40vw;
+    }
+    @media screen and (max-width: 350px) {
+      width: 30vw;
     }
   }
   .category {
@@ -167,7 +196,7 @@ const ReactionContainer = styled.div`
   .hidden {
     display: none;
   }
-  @media screen and (max-width: 400px) {
+  @media screen and (max-width: 480px) {
     .shown {
       display: none;
     }
@@ -183,6 +212,7 @@ const ImageSection = styled.div`
   height: 6rem;
   border-radius: 10px;
   overflow: hidden;
+  margin: 1rem;
 `;
 
 const MainText = styled.div`

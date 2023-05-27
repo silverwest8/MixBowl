@@ -20,41 +20,41 @@ const HotListItem = ({ data }) => {
               ""
             )}
           </span>
-          <h4>{data.TITLE}</h4>
+          <h4>{data.title}</h4>
         </div>
         <div className="category">
-          {data.CATEGORY === 2
+          {data.category === 2
             ? "질문과 답변"
-            : data.CATEGORY === 4
+            : data.category === 4
             ? "자유 게시글"
-            : data.CATEGORY === 3
+            : data.category === 3
             ? "칵테일 리뷰"
-            : data.CATEGORY === 1
+            : data.category === 1
             ? "칵테일 추천"
             : ""}
         </div>
       </TopSection>
-      <MainText className={data.CATEGORY === 2 ? "question" : ""}>
-        {data.CONTENT}
+      <MainText className={data.category === 2 ? "question" : ""}>
+        {data.content}
       </MainText>
       <BottomSection>
         <ReactionContainer>
           <FaThumbsUp className={data.isUserLike ? "icon liked" : "icon"} />
-          {data.LIKE}
+          {data.likeCount}
           <FaCommentDots className="icon comment" />
           <span className="shown">
-            {data.CATEGORY === 2 && data.REPLY === 0
+            {data.category === 2 && data.reply === 0
               ? "지금 답변을 기다리고 있어요"
-              : data.REPLY}
+              : data.reply}
           </span>
           <span className="hidden">
-            {data.CATEGORY === 2 && data.REPLY === 0 ? "답변 필요" : data.REPLY}
+            {data.category === 2 && data.reply === 0 ? "답변 필요" : data.reply}
           </span>
         </ReactionContainer>
         <div className="userinfo">
           {data.createdAt.slice(0, 10)}
-          <span className="username">{data.UNO_USER.NICKNAME}</span>
-          <MemberBadge level={data.UNO_USER} />
+          <span className="username">{data.userName}</span>
+          <MemberBadge level={data.userLevel} />
         </div>
       </BottomSection>
     </ItemContainer>

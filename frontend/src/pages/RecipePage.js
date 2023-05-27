@@ -15,7 +15,7 @@ const RecipePage = () => {
       <section>
         <RecipeBtn />
       </section>
-      <section className="pink">
+      <section>
         <RecipeCard></RecipeCard>
       </section>
       <section>
@@ -30,9 +30,6 @@ const Main = styled.main`
   max-width: 1080px;
   margin: 0 auto 5rem;
   padding: 0 1rem;
-  .pink {
-    border: 10px solid pink;
-  }
 `;
 
 export default RecipePage;

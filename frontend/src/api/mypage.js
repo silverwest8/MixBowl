@@ -3,7 +3,7 @@ import axios from "axios";
 
 // 임시 api들
 
-export const withdrawal = async (id) => {
+export const withdrawal = async () => {
   const token = getAccessToken();
   axios.defaults.headers.common.Authorization = token;
   const { data } = await axios.delete(`/api/users`);
@@ -12,10 +12,10 @@ export const withdrawal = async (id) => {
 
 export const nameChange = async (checkname) => {
   const token = getAccessToken();
-  console.log("checkname is ", checkname);
+  console.log("checkname is ", checkname.uname.checkname);
   axios.defaults.headers.common.Authorization = token;
   const { data } = await axios.put(`/api/users`, {
-    checkname,
+    checkname: checkname.uname.checkname,
   });
   console.log("answer is ", data);
   return data;

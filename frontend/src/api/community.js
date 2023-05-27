@@ -45,8 +45,15 @@ export const postCommunity = async ({
   return data;
 };
 
-export const deletePost = async (id) => {
-  const { data } = await axios.delete(`/api/communities/${id}`);
+export const deleteReply = async (id) => {
+  const { data } = await axios.delete(`/api/communities/reply/${id}`);
+  return data;
+};
+
+export const deletePost = async () => {
+  const token = getAccessToken();
+  axios.defaults.headers.common.Authorization = token;
+  const { data } = await axios.delete(`/api/users`);
   return data;
 };
 
