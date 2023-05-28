@@ -112,7 +112,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   if (postData === null) {
     return res.status(400).send({
       success: false,
-      message: "게시물이 없습니다."
+      message: '게시물이 없습니다.',
     });
   }
   const user = await USER.findByPk(postData.dataValues.UNO);
@@ -137,9 +137,12 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
     },
   });
   let isUserLike = false;
-  const isLike = req.user === undefined ? [] : await POST_LIKE.findAll({
-    where: { UNO: req.user.UNO, PNO: postData.PNO },
-  });
+  const isLike =
+    req.user === undefined
+      ? []
+      : await POST_LIKE.findAll({
+          where: { UNO: req.user.UNO, PNO: postData.PNO },
+        });
   console.log(isLike);
   if (isLike.length !== 0) {
     isUserLike = true;
@@ -410,6 +413,15 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
     }
     for (const val of posts) {
       const user = await USER.findByPk(val.dataValues.UNO);
+      const image = await IMAGE_COMMUNITY.findOne({
+        where: {
+          PNO: val.dataValues.PNO,
+        },
+      });
+      let imageId = 0;
+      if (image !== null) {
+        imageId = image.IMAGE_ID;
+      }
       const likePost = await POST_LIKE.findAll({
         attributes: [
           'PNO',
@@ -420,6 +432,22 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
+      let isUserLike = false;
+      const isLike =
+        req.user === undefined
+          ? []
+          : await POST_LIKE.findAll({
+              where: { UNO: req.user.UNO, PNO: val.dataValues.PNO },
+            });
+      console.log(isLike);
+      if (isLike.length !== 0) {
+        isUserLike = true;
+      }
+      val.dataValues.isUserLike = isUserLike;
+      val.dataValues.cocktailLike = -1; //cocktail관련 게시글이 아닌경우 -1로 초기화
+      if (val.CATEGORY === 3) {
+        val.dataValues.cocktailLike = val.LIKE;
+      }
       const replyNum = await POST_REPLY.findAll({
         attributes: [
           'PNO',
@@ -430,20 +458,20 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
-      const imageRow = await IMAGE_COMMUNITY.findOne({
-        where:{PNO : val.dataValues.PNO}
-      })
-      let imageId = 0;
-      if (imageRow !== null){
-        imageId = imageRow.dataValues.IMAGE_ID;
+      console.log('val', val.dataValues.UNO);
+      let isWriter = false;
+      if (req.user !== undefined) {
+        if (req.user.UNO === val.dataValues.UNO) {
+          isWriter = true;
+        }
       }
       val.dataValues.imageId = imageId;
+      val.dataValues.isWriter = isWriter;
       delete val.dataValues.UNO;
       val.dataValues.UNO_USER = {
         NICKNAME: user.NICKNAME,
         LEVEL: user.LEVEL,
       };
-
       if (likePost.length !== 0) {
         val.dataValues.LIKE = likePost[0].dataValues.LIKES;
       } else {
@@ -454,7 +482,6 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
       } else {
         val.dataValues.REPLY = 0;
       }
-
       list.push(val.dataValues);
     }
 
@@ -529,8 +556,21 @@ router.get(
           offset: offset,
         });
       }
-
       for (const val of posts) {
+        val.dataValues.cocktailLike = -1;
+        if (category === 3) {
+          val.dataValues.cocktailLike = val.dataValues.LIKE;
+        }
+        const image = await IMAGE_COMMUNITY.findOne({
+          where: {
+            PNO: val.dataValues.PNO,
+          },
+        });
+        let imageId = 0;
+        if (image !== null) {
+          imageId = image.IMAGE_ID;
+        }
+        val.dataValues.imageId = imageId;
         const user = await USER.findByPk(val.dataValues.UNO);
         const likePost = await POST_LIKE.findAll({
           attributes: [
@@ -542,14 +582,26 @@ router.get(
           },
           group: ['PNO'],
         });
-        const imageRow = await IMAGE_COMMUNITY.findOne({
-          where:{PNO : val.dataValues.PNO}
-        })
-        let imageId = 0;
-        if (imageRow !== null){
-          imageId = imageRow.dataValues.IMAGE_ID;
+        let isUserLike = false;
+        const isLike =
+          req.user === undefined
+            ? []
+            : await POST_LIKE.findAll({
+                where: { UNO: req.user.UNO, PNO: val.dataValues.PNO },
+              });
+        console.log(isLike);
+        if (isLike.length !== 0) {
+          isUserLike = true;
         }
-        val.dataValues.imageId = imageId;
+        val.dataValues.isUserLike = isUserLike;
+        let isWriter = false;
+        if (req.user !== undefined) {
+          if (req.user.UNO === val.dataValues.UNO) {
+            isWriter = true;
+          }
+        }
+        val.dataValues.isWriter = isWriter;
+
         const replyNum = await POST_REPLY.findAll({
           attributes: [
             'PNO',
@@ -560,7 +612,7 @@ router.get(
           },
           group: ['PNO'],
         });
-        
+
         delete val.dataValues.UNO;
         val.dataValues.UNO_USER = {
           NICKNAME: user.NICKNAME,
@@ -577,7 +629,6 @@ router.get(
         } else {
           val.dataValues.REPLY = 0;
         }
-
         list.push(val.dataValues);
       }
 
@@ -661,25 +712,52 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       limit: 3, //최대 3개로 조정.
     });
     for (const val of result) {
+      let isWriter = false;
+      if (req.user !== undefined) {
+        if (req.user.UNO === val.dataValues.UNO) {
+          isWriter = true;
+        }
+      }
+      const image = await IMAGE_COMMUNITY.findOne({
+        where: {
+          PNO: val.dataValues.PNO_POST.PNO,
+        },
+      });
+      let imageId = 0;
+      if (image !== null) {
+        imageId = image.IMAGE_ID;
+      }
+      let isUserLike = false;
+      console.log(val);
+      const isLike =
+        req.user === undefined
+          ? []
+          : await POST_LIKE.findAll({
+              where: { UNO: req.user.UNO, PNO: val.dataValues.PNO_POST.PNO },
+            });
+      console.log(isLike);
+      if (isLike.length !== 0) {
+        isUserLike = true;
+      }
+      val.dataValues.isWriter = isWriter;
       const postInfo = val.dataValues.PNO_POST;
       const data = {};
-      data['likeCount'] = val.dataValues.likeCount;
+      data['PNO'] = val.dataValues.PNO_POST.PNO;
+      data['LIKE'] = val.dataValues.likeCount;
       const user = await USER.findByPk(postInfo.UNO);
-      data['userName'] = user.NICKNAME;
-      data['userLevel'] = user.LEVEL;
-      data['category'] = postInfo.CATEGORY;
-      data['title'] = postInfo.TITLE || null;
-      data['createdAt'] = postInfo.createdAt;
-      data['content'] = postInfo.CONTENT;
-      const imageRow = await IMAGE_COMMUNITY.findOne({
-        where:{PNO : postInfo.PNO}
-      })
-      let imageId = 0;
-      if (imageRow !== null){
-        imageId = imageRow.dataValues.IMAGE_ID;
-        console.log(imageId);
-      }
+      data['UNO_USER'] = { NICKNAME: user.NICKNAME, LEVEL: user.LEVEL };
+      data['CATEGORY'] = postInfo.CATEGORY;
       data['imageId'] = imageId;
+      data['TITLE'] = postInfo.TITLE || null;
+      data['createdAt'] = postInfo.createdAt;
+      data['CONTENT'] = postInfo.CONTENT;
+      data['isWriter'] = isWriter;
+      data['isUserLike'] = isUserLike;
+      data['cocktailLike'] = -1;
+      console.log(val);
+      if (postInfo.LIKE !== null) {
+        data['cocktailLike'] = postInfo.LIKE;
+      }
       const replyNum = await POST_REPLY.findAll({
         attributes: [
           'PNO',
@@ -691,14 +769,16 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
         group: ['PNO'],
       });
       if (replyNum.length !== 0) {
-        data['reply'] = replyNum[0].dataValues.Replies;
+        data['REPLY'] = replyNum[0].dataValues.Replies;
       } else {
-        data['reply'] = 0;
+        data['REPLY'] = 0;
       }
+      console.log(data);
 
       list.push(data);
     }
 
+    console.log(list);
     res.send({
       success: true,
       message: 'Post List loaded successfully',
