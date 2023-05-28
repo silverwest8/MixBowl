@@ -13,6 +13,7 @@ import axios from "axios";
 import BoardShortListItem from "../components/community/BoardShortListItem";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { menuState, searchState } from "../store/community";
+import LoadingPage from "./Loading";
 
 const Background = styled.div`
   color: white;
@@ -169,6 +170,7 @@ const CommunityHomePage = () => {
   const [frees, setFrees] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // const [input, setInput] = useState("");
   // const onChange = (e) => setInput(e.target.value);
@@ -181,65 +183,51 @@ const CommunityHomePage = () => {
   //   navigate(`/community/board${params.toString()}`, { replace: true });
   // };
   const token = localStorage.getItem("access_token");
-  const GetPosting = async () => {
+  const fetchData = async () => {
     try {
       axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.get(`/api/communities/list/hotPost`);
-      setPostings(data.data);
-    } catch (error) {
-      console.log("empty or error");
-    }
-  };
-  const GetRecommendations = async () => {
-    try {
-      axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.get(
+
+      const postingPromise = axios.get(`/api/communities/list/hotPost`);
+      const recommendationsPromise = axios.get(
         `/api/communities/list/category/recommend?page=1`
       );
-      setRecommendations(data.data.slice(0, 5));
-    } catch (error) {
-      console.log("empty or error");
-    }
-  };
-  const GetReviews = async () => {
-    try {
-      axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.get(
+      const reviewsPromise = axios.get(
         `/api/communities/list/category/review?page=1`
       );
-      setReviews(data.data.slice(0, 5));
-    } catch (error) {
-      console.log("empty or error");
-    }
-  };
-  const GetFrees = async () => {
-    try {
-      axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.get(
+      const freesPromise = axios.get(
         `/api/communities/list/category/free?page=1`
       );
-      setFrees(data.data.slice(0, 5));
-    } catch (error) {
-      console.log("empty or error");
-    }
-  };
-  const GetQuestions = async () => {
-    try {
-      axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.get(
+      const questionsPromise = axios.get(
         `/api/communities/list/category/question?page=1`
       );
-      setQuestions(data.data.slice(0, 5));
+
+      const [
+        postingResponse,
+        recommendationsResponse,
+        reviewsResponse,
+        freesResponse,
+        questionsResponse,
+      ] = await Promise.all([
+        postingPromise,
+        recommendationsPromise,
+        reviewsPromise,
+        freesPromise,
+        questionsPromise,
+      ]);
+
+      setPostings(postingResponse.data.data);
+      setRecommendations(recommendationsResponse.data.data.slice(0, 5));
+      setReviews(reviewsResponse.data.data.slice(0, 5));
+      setFrees(freesResponse.data.data.slice(0, 5));
+      setQuestions(questionsResponse.data.data.slice(0, 5));
+      setLoading(false);
     } catch (error) {
       console.log("empty or error");
     }
   };
+
   useEffect(() => {
-    GetPosting();
-    GetRecommendations();
-    GetReviews();
-    GetFrees();
-    GetQuestions();
+    fetchData();
   }, []);
 
   return (
@@ -251,107 +239,111 @@ const CommunityHomePage = () => {
       }}
     >
       <Title title="커뮤니티" />
-      <Background>
-        <HotPosts>
-          <h3>
-            <FaFire className="icon fire" />
-            이번주 인기글
-          </h3>
-          <section>
-            {postings.map((el) => (
-              <HotListItem data={el} key={el.pno} />
-            ))}
-          </section>
-          <div>
-            <Button to="/community/board">더보기</Button>
-          </div>
-        </HotPosts>
-        <NewPosts>
-          <section>
-            <h1>
-              <FaComments className="icon" />
-              최신글
-            </h1>
-            <CommunitySearch placeholder="관심있는 내용을 검색해보세요!" />
-            {/* <SearchBar
+      {loading ? (
+        <LoadingPage />
+      ) : (
+        <Background>
+          <HotPosts>
+            <h3>
+              <FaFire className="icon fire" />
+              이번주 인기글
+            </h3>
+            <section>
+              {postings.map((el) => (
+                <HotListItem data={el} key={el.pno} />
+              ))}
+            </section>
+            <div>
+              <Button to="/community/board">더보기</Button>
+            </div>
+          </HotPosts>
+          <NewPosts>
+            <section>
+              <h1>
+                <FaComments className="icon" />
+                최신글
+              </h1>
+              <CommunitySearch placeholder="관심있는 내용을 검색해보세요!" />
+              {/* <SearchBar
               showCloseButton={false}
               onChange={onChange}
               onSearch={onSearch}
               onClear={onClear}
             /> */}
-          </section>
-          <div className="grid-container">
-            <Board
-              onClick={() => {
-                setMenu("recommend");
-                navigate("/community/board");
-              }}
-            >
-              <span className="mini-title">
-                칵테일 추천
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {recommendations.map((el) => (
-                  <BoardShortListItem data={el} key={el.PNO} />
-                ))}
-              </ul>
-            </Board>
-            <Board
-              onClick={() => {
-                setMenu("question");
-                navigate("/community/board");
-              }}
-            >
-              <span className="mini-title">
-                질문과 답변
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {questions.map((el) => (
-                  <BoardShortListItem data={el} key={el.PNO} />
-                ))}
-              </ul>
-            </Board>
-            <Board
-              onClick={() => {
-                setMenu("review");
-                navigate("/community/board");
-              }}
-            >
-              <span className="mini-title">
-                칵테일 리뷰
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {reviews.map((el) => (
-                  <BoardShortListItem data={el} key={el.PNO} />
-                ))}
-              </ul>
-            </Board>
-            <Board
-              onClick={() => {
-                setMenu("free");
-                navigate("/community/board");
-              }}
-            >
-              <span className="mini-title">
-                자유게시판
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {frees.map((el) => (
-                  <BoardShortListItem data={el} key={el.PNO} />
-                ))}
-              </ul>
-            </Board>
-          </div>
-        </NewPosts>
-        <WritingButton to="/community/posting">
-          <HiPencilAlt />
-          글쓰기
-        </WritingButton>
-      </Background>
+            </section>
+            <div className="grid-container">
+              <Board
+                onClick={() => {
+                  setMenu("recommend");
+                  navigate("/community/board");
+                }}
+              >
+                <span className="mini-title">
+                  칵테일 추천
+                  <MdArrowForwardIos className="icon" />
+                </span>
+                <ul>
+                  {recommendations.map((el) => (
+                    <BoardShortListItem data={el} key={el.PNO} />
+                  ))}
+                </ul>
+              </Board>
+              <Board
+                onClick={() => {
+                  setMenu("question");
+                  navigate("/community/board");
+                }}
+              >
+                <span className="mini-title">
+                  질문과 답변
+                  <MdArrowForwardIos className="icon" />
+                </span>
+                <ul>
+                  {questions.map((el) => (
+                    <BoardShortListItem data={el} key={el.PNO} />
+                  ))}
+                </ul>
+              </Board>
+              <Board
+                onClick={() => {
+                  setMenu("review");
+                  navigate("/community/board");
+                }}
+              >
+                <span className="mini-title">
+                  칵테일 리뷰
+                  <MdArrowForwardIos className="icon" />
+                </span>
+                <ul>
+                  {reviews.map((el) => (
+                    <BoardShortListItem data={el} key={el.PNO} />
+                  ))}
+                </ul>
+              </Board>
+              <Board
+                onClick={() => {
+                  setMenu("free");
+                  navigate("/community/board");
+                }}
+              >
+                <span className="mini-title">
+                  자유게시판
+                  <MdArrowForwardIos className="icon" />
+                </span>
+                <ul>
+                  {frees.map((el) => (
+                    <BoardShortListItem data={el} key={el.PNO} />
+                  ))}
+                </ul>
+              </Board>
+            </div>
+          </NewPosts>
+          <WritingButton to="/community/posting">
+            <HiPencilAlt />
+            글쓰기
+          </WritingButton>
+        </Background>
+      )}
     </main>
   );
 };

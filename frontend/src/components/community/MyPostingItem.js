@@ -54,13 +54,13 @@ const MyPostingItem = ({ data, uname, level }) => {
               </span>
             </ReactionContainer>
             <div className="userinfo">
-              {/* {data.date.slice(0, 10)} */}
+              {data.date && data.date.slice(0, 10)}
               <span className="username">{uname}</span>
               <MemberBadge level={level} />
             </div>
           </BottomSection>
         </div>
-        {data.images.length !== 0 && (
+        {data.images && data.images.length !== 0 && (
           <ImageSection>
             <img
               src={

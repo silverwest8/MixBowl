@@ -7,6 +7,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { FaThumbsUp, FaCommentDots } from "react-icons/fa";
 import MemberBadge from "../components/common/MemberBadge";
+import LoadingPage from "./Loading";
 
 const Background = styled.div`
   color: white;
@@ -161,6 +162,7 @@ const MyRecipePage = () => {
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
   const [username, setUsername] = useState("기본 유저");
+  const [isLoading, setIsLoading] = useState(true);
 
   const GetPosting = async (page) => {
     try {
@@ -181,21 +183,29 @@ const MyRecipePage = () => {
     ({ pageParam = 1 }) => GetPosting(pageParam),
     {
       getNextPageParam: (lastPage) => {
+        if (lastPage.list.length === 0 || lastPage.count < 10) {
+          return undefined; // No more pages
+        }
         return lastPage.page + 1;
       },
     }
   );
 
+  // useEffect(() => {
+  //   fetchNextPage(1);
+  //   console.log("data is ", data);
+  // }, []);
   useEffect(() => {
-    fetchNextPage(1);
-    console.log("data is ", data);
-  }, []);
-
+    if (isSuccess) {
+      setIsLoading(false);
+    }
+  }, [isSuccess]);
   useEffect(() => {
     if (inView && hasNextPage) {
+      setIsLoading(true);
       fetchNextPage();
     }
-  }, [inView]);
+  }, [inView, hasNextPage]);
 
   return (
     <main
@@ -219,50 +229,54 @@ const MyRecipePage = () => {
             추천한 레시피
           </div>
         </TopSection>
-        <MainSection>
-          <section>
-            <RecipeWrapper>
-              {isSuccess &&
-                data.pages.map((page) =>
-                  page.list.map((item) => (
-                    <RecipeBox key={item.cocktailId}>
-                      {token ? (
-                        <Link to={`/recipe/${item.cocktailId}`}>
-                          <img
-                            src={`/api/recipes/image/${item.cocktailId}`}
-                          ></img>
-                          <h1>{item.name}</h1>
-                        </Link>
-                      ) : (
-                        <>
-                          <img src={item.image_path}></img>
-                          <h1>{item.name}</h1>
-                        </>
-                      )}
+        {isLoading ? (
+          <LoadingPage />
+        ) : (
+          <MainSection>
+            <section>
+              <RecipeWrapper>
+                {isSuccess &&
+                  data.pages.map((page) =>
+                    page.list.map((item) => (
+                      <RecipeBox key={item.cocktailId}>
+                        {token ? (
+                          <Link to={`/recipe/${item.cocktailId}`}>
+                            <img
+                              src={`/api/recipes/image/${item.cocktailId}`}
+                            ></img>
+                            <h1>{item.name}</h1>
+                          </Link>
+                        ) : (
+                          <>
+                            <img src={item.image_path}></img>
+                            <h1>{item.name}</h1>
+                          </>
+                        )}
 
-                      <TextBox>
-                        <NickName>
-                          @{item.USER.nickname}
-                          <MemberBadge level={item.USER.level} />
-                        </NickName>
-                        <div>
-                          <p className="ThumbsUp">
-                            <FaThumbsUp></FaThumbsUp>
-                            {item.like}
-                          </p>
-                          <p className="Comment">
-                            <FaCommentDots></FaCommentDots>
-                            {item.post}
-                          </p>
-                        </div>
-                      </TextBox>
-                    </RecipeBox>
-                  ))
-                )}
-              <div ref={ref}></div>
-            </RecipeWrapper>
-          </section>
-        </MainSection>
+                        <TextBox>
+                          {/* <NickName>
+                            @{item.USER.nickname}
+                            <MemberBadge level={item.USER.level} />
+                          </NickName> */}
+                          <div>
+                            <p className="ThumbsUp">
+                              <FaThumbsUp></FaThumbsUp>
+                              {item.like}
+                            </p>
+                            <p className="Comment">
+                              <FaCommentDots></FaCommentDots>
+                              {item.post}
+                            </p>
+                          </div>
+                        </TextBox>
+                      </RecipeBox>
+                    ))
+                  )}
+                <div ref={ref}></div>
+              </RecipeWrapper>
+            </section>
+          </MainSection>
+        )}
       </Background>
     </main>
   );

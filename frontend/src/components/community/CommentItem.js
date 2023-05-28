@@ -54,7 +54,7 @@ const CommentItem = ({ data }) => {
       <TopSection>
         <div>
           <span>{data.NICKNAME}</span>
-          <MemberBadge level={data.level} />
+          <MemberBadge level={data.LEVEL} />
         </div>
         {data.isReplyWriter ? (
           <DropdownMenu

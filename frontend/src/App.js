@@ -24,6 +24,8 @@ import CommunityBoardPage from "./pages/CommunityBoardPage";
 import MyPage from "./pages/MyPage";
 import MyRecipePage from "./pages/MyRecipePage";
 import MyPostingPage from "./pages/MyPostingPage";
+import MyCommentPage from "./pages/MyCommentPage";
+import MyReviewPage from "./pages/MyReviewPage";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -61,6 +63,8 @@ function App() {
                 <Route path="mypage" element={<MyPage />} />
                 <Route path="mypage/recipe" element={<MyRecipePage />} />
                 <Route path="mypage/posting" element={<MyPostingPage />} />
+                <Route path="mypage/comment" element={<MyCommentPage />} />
+                <Route path="mypage/review" element={<MyReviewPage />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<RegisterPage />} />
                 <Route path="cocktailbar" element={<CocktailBarPage />}>

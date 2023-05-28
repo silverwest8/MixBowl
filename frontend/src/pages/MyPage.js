@@ -17,6 +17,7 @@ import NameChangeModal from "../components/mypage/NameChangeModal";
 import VerifyingModal from "../components/mypage/VerifyingModal";
 import MyPostingItem from "../components/community/MyPostingItem";
 import axios from "axios";
+import LoadingPage from "./Loading";
 
 const Background = styled.div`
   color: white;
@@ -250,6 +251,7 @@ const MyPage = () => {
   const [postings, setPostings] = useState([]);
   const [comments, setComments] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem("access_token");
 
   const [dataFetched, setDataFetched] = useState(false);
@@ -271,6 +273,7 @@ const MyPage = () => {
         setPostings(postingsResponse.data.list);
         setComments(commentsResponse.data.list);
         setReviews(reviewsResponse.data.list);
+        setIsLoading(false);
 
         setDataFetched(true); // Set the flag to indicate that data has been fetched
         name = userInfo.NICKNAME;
@@ -291,169 +294,176 @@ const MyPage = () => {
         gap: "2rem",
       }}
     >
-      <Title title="커뮤니티" />
       <Background>
-        <MainWrapper>
-          <TopSection>
-            <div>
-              <span>{userInfo.NICKNAME}</span>
-              <span>님의 마이페이지</span>
-            </div>
-            <FaPen
-              className="icon down"
-              onClick={() => {
-                openModal(NameChangeModal, {
-                  handleClose: closeModal,
-                  name,
-                });
-              }}
-            />
-          </TopSection>
-          <LevelSection>
-            <div>
-              <span>
-                등급 관리
-                <BsInfoCircleFill
-                  className="icon"
+        {isLoading ? (
+          <LoadingPage />
+        ) : (
+          <MainWrapper>
+            <TopSection>
+              <div>
+                <span>{userInfo.NICKNAME}</span>
+                <span>님의 마이페이지</span>
+              </div>
+              <FaPen
+                className="icon down"
+                onClick={() => {
+                  openModal(NameChangeModal, {
+                    handleClose: closeModal,
+                    name,
+                  });
+                }}
+              />
+            </TopSection>
+            <LevelSection>
+              <div>
+                <span>
+                  등급 관리
+                  <BsInfoCircleFill
+                    className="icon"
+                    onClick={() => {
+                      openModal(LevelInfoModal, {
+                        handleClose: closeModal,
+                      });
+                    }}
+                  />
+                </span>
+                <Button
                   onClick={() => {
-                    openModal(LevelInfoModal, {
+                    openModal(VerifyingModal, {
                       handleClose: closeModal,
                     });
                   }}
-                />
-              </span>
-              <Button
+                >
+                  <AiFillCamera />
+                  <span>전문가 인증하기</span>
+                </Button>
+              </div>
+              <div>
+                <span>{userInfo.LEVEL}단계</span>
+                <span>
+                  {userInfo.LEVEL === 1
+                    ? "Cocktell에 가입한 회원"
+                    : userInfo.LEVEL === 2
+                    ? "일주일 3회 이상 방문, 게시글 10개 이상 작성"
+                    : userInfo.LEVEL === 3
+                    ? "게시글 30개 이상 작성"
+                    : "조주기능사 자격증 소지자, 칵테일 관련 사업자"}
+                </span>
+              </div>
+            </LevelSection>
+            <Section>
+              <div>
+                내가 추천한 레시피
+                <Link to={"/mypage/recipe"}>
+                  <MdArrowForwardIos className="icon hover" />
+                </Link>
+              </div>
+              <div>
+                {recipe && recipe.length === 0 ? (
+                  <NoContent>추천하신 레시피가 없습니다</NoContent>
+                ) : (
+                  <RecipeWrapper>
+                    {recipe?.map((index) => (
+                      <RecipeBox key={index.cocktailId}>
+                        <Link to={`/recipe/${index.cocktailId}`}>
+                          <img
+                            src={"/api/recipes/image/" + index.cocktailId}
+                          ></img>
+                          <h1>{index.name}</h1>
+                        </Link>
+                        <TextBox>
+                          <p>
+                            @{index.USER.nickname}{" "}
+                            <MemberBadge level={index.USER.level} />
+                          </p>
+                          <div>
+                            <p className="ThumbsUp">
+                              <FaThumbsUp></FaThumbsUp>
+                              {index.like}
+                            </p>
+                            <p className="Comment">
+                              <FaCommentDots></FaCommentDots>
+                              {index.comment ? index.comment : 0}
+                            </p>
+                          </div>
+                        </TextBox>
+                      </RecipeBox>
+                    ))}
+                  </RecipeWrapper>
+                )}
+              </div>
+            </Section>
+            <Section>
+              <div>
+                내가 쓴 게시글
+                <Link to={"/mypage/posting"}>
+                  <MdArrowForwardIos className="icon" />
+                </Link>
+              </div>
+              <div>
+                {postings.length === 0 ? (
+                  <NoContent>작성하신 게시물이 없습니다</NoContent>
+                ) : (
+                  postings
+                    .slice(0, 3)
+                    ?.map((el) => (
+                      <MyPostingItem
+                        data={el}
+                        key={el.postId}
+                        uname={userInfo.NICKNAME}
+                        level={userInfo.LEVEL}
+                      />
+                    ))
+                )}
+              </div>
+            </Section>
+            <Section>
+              <div>
+                내가 쓴 댓글
+                <Link to={"/mypage/comment"}>
+                  <MdArrowForwardIos className="icon" />
+                </Link>
+              </div>
+              <div>
+                {comments.length === 0 ? (
+                  <NoContent>작성하신 댓글이 없습니다</NoContent>
+                ) : (
+                  comments
+                    .slice(0, 3)
+                    ?.map((el) => <CommentItem key={el.replyId} data={el} />)
+                )}
+              </div>
+            </Section>
+            <Section>
+              <div>
+                내가 쓴 칵테일 바 리뷰
+                <Link to={"/mypage/review"}>
+                  <MdArrowForwardIos className="icon" />
+                </Link>
+              </div>
+              <div>
+                {reviews.length === 0 ? (
+                  <NoContent>작성하신 리뷰가 없습니다</NoContent>
+                ) : (
+                  reviews
+                    .slice(0, 3)
+                    ?.map((el) => <ReviewItem key={el.reviewId} data={el} />)
+                )}
+              </div>
+            </Section>
+            <ButtonContainer>
+              <WithdrawalButton
                 onClick={() => {
-                  openModal(VerifyingModal, {
+                  openModal(WithdrawModal, {
                     handleClose: closeModal,
                   });
                 }}
               >
-                <AiFillCamera />
-                <span>전문가 인증하기</span>
-              </Button>
-            </div>
-            <div>
-              <span>{userInfo.LEVEL}단계</span>
-              <span>
-                {userInfo.LEVEL === 1
-                  ? "Cocktell에 가입한 회원"
-                  : userInfo.LEVEL === 2
-                  ? "일주일 3회 이상 방문, 게시글 10개 이상 작성"
-                  : userInfo.LEVEL === 3
-                  ? "게시글 30개 이상 작성"
-                  : "조주기능사 자격증 소지자, 칵테일 관련 사업자"}
-              </span>
-            </div>
-          </LevelSection>
-          <Section>
-            <div>
-              내가 추천한 레시피
-              <Link to={"/mypage/recipe"}>
-                <MdArrowForwardIos className="icon hover" />
-              </Link>
-            </div>
-            <div>
-              {recipe && recipe.length === 0 ? (
-                <NoContent>추천하신 레시피가 없습니다</NoContent>
-              ) : (
-                <RecipeWrapper>
-                  {recipe?.map((index) => (
-                    <RecipeBox key={index.cocktailId}>
-                      <Link to={`/recipe/${index.cocktailId}`}>
-                        <img
-                          src={"/api/recipes/image/" + index.cocktailId}
-                        ></img>
-                        <h1>{index.name}</h1>
-                      </Link>
-                      <TextBox>
-                        <p>
-                          @{index.USER.nickname}{" "}
-                          <MemberBadge level={index.USER.level} />
-                        </p>
-                        <div>
-                          <p className="ThumbsUp">
-                            <FaThumbsUp></FaThumbsUp>
-                            {index.like}
-                          </p>
-                          <p className="Comment">
-                            <FaCommentDots></FaCommentDots>
-                            {index.comment ? index.comment : 0}
-                          </p>
-                        </div>
-                      </TextBox>
-                    </RecipeBox>
-                  ))}
-                </RecipeWrapper>
-              )}
-            </div>
-          </Section>
-          <Section>
-            <div>
-              내가 쓴 게시글
-              <Link to={"/mypage/posting"}>
-                <MdArrowForwardIos className="icon" />
-              </Link>
-            </div>
-            <div>
-              {postings.length === 0 ? (
-                <NoContent>작성하신 게시물이 없습니다</NoContent>
-              ) : (
-                postings
-                  .slice(0, 3)
-                  ?.map((el) => (
-                    <MyPostingItem
-                      data={el}
-                      key={el.postId}
-                      uname={userInfo.NICKNAME}
-                      level={userInfo.LEVEL}
-                    />
-                  ))
-              )}
-            </div>
-          </Section>
-          <Section>
-            <div>
-              내가 쓴 댓글
-              <MdArrowForwardIos className="icon" />
-            </div>
-            <div>
-              {comments.length === 0 ? (
-                <NoContent>작성하신 댓글이 없습니다</NoContent>
-              ) : (
-                comments
-                  .slice(0, 3)
-                  ?.map((el) => <CommentItem key={el.replyId} data={el} />)
-              )}
-            </div>
-          </Section>
-          <Section>
-            <div>
-              내가 쓴 칵테일 바 리뷰
-              <MdArrowForwardIos className="icon" />
-            </div>
-            <div>
-              {reviews.length === 0 ? (
-                <NoContent>작성하신 리뷰가 없습니다</NoContent>
-              ) : (
-                reviews
-                  .slice(0, 3)
-                  ?.map((el) => <ReviewItem key={el.reviewId} data={el} />)
-              )}
-            </div>
-          </Section>
-          <ButtonContainer>
-            <WithdrawalButton
-              onClick={() => {
-                openModal(WithdrawModal, {
-                  handleClose: closeModal,
-                });
-              }}
-            >
-              회원 탈퇴
-            </WithdrawalButton>
-          </ButtonContainer>
-        </MainWrapper>
+                회원 탈퇴
+              </WithdrawalButton>
+            </ButtonContainer>
+          </MainWrapper>
+        )}
       </Background>
     </main>
   );

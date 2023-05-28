@@ -4,59 +4,90 @@ import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
 
+const ImageSection = styled.div`
+  border: 2px solid ${({ theme }) => theme.color.primaryGold};
+  width: 6rem;
+  height: 6rem;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1rem;
+`;
+
 const HotListItem = ({ data }) => {
   // TODO : 호버, 이미지처리
   // console.log(`${data.TITLE}의 카테고리는 ${data.CATEGORY}`);
   // 아직 없는 필드들 많음. 추가되면 그 데이터 형식에 맞춰서 바꾸기.
+
   console.log("hot is ", data);
   return (
     <ItemContainer to={`/community/${data.PNO}`}>
-      <TopSection>
+      <div className="wrapper">
         <div>
-          <span>
-            {data.CATEGORY === 3 && data.cocktailLike !== null ? (
-              <BiHeartCircle className="recommend icon" />
-            ) : (
-              ""
-            )}
-          </span>
-          <h4>{data.TITLE}</h4>
+          <TopSection>
+            <div>
+              <span>
+                {data.CATEGORY === 3 && data.cocktailLike !== null ? (
+                  <BiHeartCircle className="recommend icon" />
+                ) : (
+                  ""
+                )}
+              </span>
+              <h4>{data.TITLE}</h4>
+            </div>
+            <div className="CATEGORY">
+              {data.CATEGORY === 2
+                ? "질문과 답변"
+                : data.CATEGORY === 4
+                ? "자유 게시글"
+                : data.CATEGORY === 3
+                ? "칵테일 리뷰"
+                : data.CATEGORY === 1
+                ? "칵테일 추천"
+                : ""}
+            </div>
+          </TopSection>
+          <MainText className={data.CATEGORY === 2 ? "question" : ""}>
+            {data.CONTENT}
+          </MainText>
+          <BottomSection>
+            <ReactionContainer>
+              <FaThumbsUp className={data.isUserLike ? "icon liked" : "icon"} />
+              {data.LIKE}
+              <FaCommentDots className="icon comment" />
+              <span className="shown">
+                {data.CATEGORY === 2 && data.REPLY === 0
+                  ? "지금 답변을 기다리고 있어요"
+                  : data.REPLY}
+              </span>
+              <span className="hidden">
+                {data.CATEGORY === 2 && data.REPLY === 0
+                  ? "답변 필요"
+                  : data.REPLY}
+              </span>
+            </ReactionContainer>
+            <div className="userinfo">
+              {data.createdAt.slice(5, 10)}
+              <span className="username">{data.UNO_USER.NICKNAME}</span>
+              <MemberBadge level={data.UNO_USER.LEVEL} />
+            </div>
+          </BottomSection>
         </div>
-        <div className="CATEGORY">
-          {data.CATEGORY === 2
-            ? "질문과 답변"
-            : data.CATEGORY === 4
-            ? "자유 게시글"
-            : data.CATEGORY === 3
-            ? "칵테일 리뷰"
-            : data.CATEGORY === 1
-            ? "칵테일 추천"
-            : ""}
-        </div>
-      </TopSection>
-      <MainText className={data.CATEGORY === 2 ? "question" : ""}>
-        {data.CONTENT}
-      </MainText>
-      <BottomSection>
-        <ReactionContainer>
-          <FaThumbsUp className={data.isUserLike ? "icon liked" : "icon"} />
-          {data.LIKE}
-          <FaCommentDots className="icon comment" />
-          <span className="shown">
-            {data.CATEGORY === 2 && data.REPLY === 0
-              ? "지금 답변을 기다리고 있어요"
-              : data.REPLY}
-          </span>
-          <span className="hidden">
-            {data.CATEGORY === 2 && data.REPLY === 0 ? "답변 필요" : data.REPLY}
-          </span>
-        </ReactionContainer>
-        <div className="userinfo">
-          {data.createdAt.slice(5, 10)}
-          <span className="username">{data.UNO_USER.NICKNAME}</span>
-          <MemberBadge level={data.UNO_USER.LEVEL} />
-        </div>
-      </BottomSection>
+        {data.CNO ? (
+          <ImageSection>
+            <img src={`/api/recipes/image/${data.CNO}`}></img>
+          </ImageSection>
+        ) : (
+          data.imageId !== 0 &&
+          data.imageId !== undefined &&
+          data.imageId !== null && (
+            <ImageSection>
+              <img
+                src={`${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${data.imageId}`}
+              />
+            </ImageSection>
+          )
+        )}
+      </div>
     </ItemContainer>
   );
 };
@@ -81,6 +112,15 @@ const ItemContainer = styled(Link)`
     font-size: 1.125rem;
     -webkit-line-clamp: 2;
     height: 3.5rem;
+  }
+  .wrapper {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    align-items: center;
+    > div:first-child {
+      width: 100%;
+    }
   }
 `;
 

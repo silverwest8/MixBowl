@@ -7,8 +7,9 @@ import { MdArrowBackIosNew } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import LoadingPage from "./Loading";
 import axios from "axios";
+import CommentItem from "../components/mypage/CommentItem";
+import LoadingPage from "./Loading";
 
 const Background = styled.div`
   color: white;
@@ -27,6 +28,7 @@ const MainSection = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-bottom: 5rem;
+  width: 60vw;
   > h3 {
     display: flex;
     flex-direction: row;
@@ -36,9 +38,6 @@ const MainSection = styled.div`
     .icon {
       color: ${({ theme }) => theme.color.red};
     }
-  }
-  > section {
-    width: 60vw;
   }
   > div {
     display: flex;
@@ -93,17 +92,17 @@ const NoContent = styled.div`
   justify-content: center;
 `;
 
-const MyPostingPage = () => {
+const MyCommentPage = () => {
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
   const [username, setUsername] = useState("기본 유저");
   const [level, setLevel] = useState("1");
   const [isLoading, setIsLoading] = useState(true);
 
-  const GetPosting = async (page) => {
+  const GetComment = async (page) => {
     try {
       axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.get(`/api/mypages/posts/${page}`);
+      const { data } = await axios.get(`/api/mypages/replies/${page}`);
       const userInfoResponse = await axios.get(`/api/users`);
       setUsername(userInfoResponse.data.data.NICKNAME);
       setLevel(userInfoResponse.data.data.LEVEL);
@@ -117,7 +116,7 @@ const MyPostingPage = () => {
 
   const { isSuccess, data, fetchNextPage, hasNextPage } = useInfiniteQuery(
     ["page"],
-    ({ pageParams = 1 }) => GetPosting(pageParams),
+    ({ pageParams = 1 }) => GetComment(pageParams),
     {
       getNextPageParam: (lastPage) => {
         console.log("lastPage is ", lastPage);
@@ -129,17 +128,16 @@ const MyPostingPage = () => {
     }
   );
 
+  // useEffect(() => {
+  //   fetchNextPage(1);
+  // }, []);
   useEffect(() => {
     if (isSuccess) {
       setIsLoading(false);
     }
   }, [isSuccess]);
-  // useEffect(() => {
-  //   fetchNextPage(1);
-  // }, []);
 
   useEffect(() => {
-    console.log("has Next Page is ", hasNextPage);
     if (inView && hasNextPage) {
       setIsLoading(true);
       fetchNextPage();
@@ -165,7 +163,7 @@ const MyPostingPage = () => {
             <span className="hidden">
               <span className="gold">{username}</span>님이{" "}
             </span>
-            작성한 게시글
+            작성한 댓글
           </div>
         </TopSection>
         {isLoading ? (
@@ -175,13 +173,8 @@ const MyPostingPage = () => {
             <section>
               {isSuccess &&
                 data.pages.map((page) =>
-                  page.list.map((item) => (
-                    <MyPostingItem
-                      data={item}
-                      key={item.postId}
-                      uname={username}
-                      level={level}
-                    />
+                  page.list.map((el) => (
+                    <CommentItem key={el.replyId} data={el} />
                   ))
                 )}
               <div ref={ref}></div>
@@ -193,4 +186,4 @@ const MyPostingPage = () => {
   );
 };
 
-export default MyPostingPage;
+export default MyCommentPage;

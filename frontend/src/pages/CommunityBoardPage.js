@@ -12,6 +12,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { menuState, searchState, AddPostingState } from "../store/community";
 import axios from "axios";
+import LoadingPage from "./Loading";
 import CommunitySearch from "../components/community/CommunitySearch";
 
 // const dummyData = [
@@ -220,7 +221,7 @@ const CommunityBoardPage = () => {
   const search = useRecoilValue(searchState);
   const [menu, setMenu] = useRecoilState(menuState);
   const addPostingState = useResetRecoilState(AddPostingState);
-
+  const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
   // const [input, setInput] = useState("");
@@ -284,6 +285,7 @@ const CommunityBoardPage = () => {
     remove();
     fetchNextPage(1);
     // 검색어, 메뉴 바뀔 때마다
+    setIsLoading(true);
   }, [search, menu]);
 
   useEffect(() => {
@@ -291,6 +293,12 @@ const CommunityBoardPage = () => {
       fetchNextPage();
     }
   }, [inView]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setIsLoading(false);
+    }
+  }, [isSuccess]);
 
   useEffect(() => {
     addPostingState();
@@ -305,6 +313,7 @@ const CommunityBoardPage = () => {
       }}
     >
       <Title title="커뮤니티" />
+
       <Background>
         <TopSection>
           <div>
@@ -324,13 +333,6 @@ const CommunityBoardPage = () => {
                 ? "칵테일 리뷰"
                 : "전체"}
             </span>
-            {/* <SearchBar
-              placeholder="관심있는 내용을 검색해보세요!"
-              showSearchButton={true}
-              onChange={onChange}
-              onSearch={onSearch}
-              onClear={onClear}
-            /> */}
 
             <CommunitySearch placeholder="관심있는 내용을 검색해보세요!" />
           </div>
@@ -346,22 +348,22 @@ const CommunityBoardPage = () => {
             </div>
           </div>
         </TopSection>
-        <MainSection>
-          {/* TODO: 질문에 답변없을때 상단에 올리기 */}
-          <section>
-            {/* {isSuccess &&
-              postings
-                .map((el) => <FreeListItem data={el} key={el.PNO} />)
-                .filter(categoryFunction)} */}
-            {isSuccess &&
-              data.pages.map((page) =>
-                page.list.map((item) => (
-                  <FreeListItem data={item} key={item.PNO} />
-                ))
-              )}
-            <div ref={ref}></div>
-          </section>
-        </MainSection>
+        {isLoading ? (
+          <LoadingPage />
+        ) : (
+          <MainSection>
+            {/* TODO: 질문에 답변없을때 상단에 올리기 */}
+            <section>
+              {isSuccess &&
+                data.pages.map((page) =>
+                  page.list.map((item) => (
+                    <FreeListItem data={item} key={item.PNO} />
+                  ))
+                )}
+              <div ref={ref}></div>
+            </section>
+          </MainSection>
+        )}
 
         <WritingButton to="/community/posting">
           <HiPencilAlt />

@@ -135,7 +135,7 @@ const VerifyingModal = ({ handleClose }) => {
             value={name}
             name="name"
           />
-          {name === "" && <span>{warningMsg}</span>}
+          <span>{name === "" && warningMsg}</span>
         </Section>
         <Section>
           <div>생년월일</div>
@@ -147,7 +147,7 @@ const VerifyingModal = ({ handleClose }) => {
             placeholder="생년월일 여섯 자리 입력"
             name="birth"
           />
-          {birth === "" && <span>{warningMsg}</span>}
+          <span>{birth === "" && warningMsg}</span>
         </Section>
         <Section>
           <div>자격증번호</div>
@@ -158,7 +158,7 @@ const VerifyingModal = ({ handleClose }) => {
             value={qualification}
             name="qualification"
           />
-          {qualification === "" && <span>{warningMsg}</span>}
+          <span>{qualification === "" && warningMsg}</span>
         </Section>
         <Section>
           <div>발급연월일</div>
@@ -169,7 +169,7 @@ const VerifyingModal = ({ handleClose }) => {
             value={issueDate}
             name="issueDate"
           />
-          {issueDate === "" && <span>{warningMsg}</span>}
+          <span>{issueDate === "" && warningMsg}</span>
         </Section>
         <Section>
           <div>자격증 내지 번호</div>
@@ -180,7 +180,7 @@ const VerifyingModal = ({ handleClose }) => {
             name="lcsMngNo"
             type="number"
           />
-          {lcsMngNo === "" && <span>{warningMsg}</span>}
+          <span>{lcsMngNo === "" && warningMsg}</span>
         </Section>
       </Wrapper>
     </Modal>

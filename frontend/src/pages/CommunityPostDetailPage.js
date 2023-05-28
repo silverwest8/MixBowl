@@ -76,7 +76,6 @@ const ReportButton = styled.div`
 `;
 
 const ImageSection = styled.div`
-  border: 1px solid green;
   width: 100%;
   margin-bottom: 1rem;
   display: flex;
@@ -84,10 +83,13 @@ const ImageSection = styled.div`
   gap: 0.625rem;
   & > div {
     position: relative;
-    width: calc(16.25rem / 3);
-    height: calc(16.25rem / 3);
+    width: 10rem;
+    height: 10rem;
     border-radius: 10px;
     cursor: pointer;
+    border: 2px solid ${({ theme }) => theme.color.primaryGold};
+    border-radius: 20px;
+    overflow: hidden;
     & > img {
       width: 100%;
       height: 100%;
@@ -231,6 +233,7 @@ const CommunityPostDetailPage = () => {
         message: "댓글이 작성되었습니다.",
         type: "success",
       });
+      setComment("");
       window.location.reload();
     } else {
       setToastState({
@@ -259,18 +262,38 @@ const CommunityPostDetailPage = () => {
     setLiked(!liked);
   };
   const setToastState = useSetRecoilState(toastState);
-  const submitReport = () => {
-    // TODO
-    // report 수 증가?
-    setTimeout(() => {
-      setToastState({
-        show: true,
-        message: "신고가 완료되었습니다.",
-        type: "success",
-        ms: 1000,
-      });
-    }, 300);
-    closeModal();
+
+  const submitReport = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      const { data } = await axios.post(
+        `/api/communities/report/${post.postId}`
+      );
+      console.log("report data is ", data);
+      if (data.success) {
+        setTimeout(() => {
+          setToastState({
+            show: true,
+            message: "신고가 완료되었습니다.",
+            type: "success",
+            ms: 1000,
+          });
+        }, 300);
+        closeModal();
+      } else {
+        setTimeout(() => {
+          setToastState({
+            show: true,
+            message: "이미 신고 완료된 게시물입니다.",
+            type: "error",
+            ms: 1000,
+          });
+        }, 300);
+        closeModal();
+      }
+    } catch (error) {
+      console.log("report error is ", error);
+    }
   };
   const onClickImage = ({ images, initialImageIndex }) => {
     openModal(ImageSliderModal, {
@@ -334,26 +357,27 @@ const CommunityPostDetailPage = () => {
           <MainSection>
             <div>{post.content}</div>
             <ImageSection>
-              {post.images.slice(0, 3).map((imageId, index) => (
-                <div
-                  key={imageId}
-                  onClick={() =>
-                    onClickImage({
-                      images: post.images.map((imageId) =>
-                        getCommunityImageUrl(imageId)
-                      ),
-                      initialImageIndex: index,
-                    })
-                  }
-                >
-                  <img src={getCommunityImageUrl(imageId)} />
-                  {index === 2 && post.images.length - index - 1 > 0 && (
-                    <div className="box">
-                      + {post.images.length - index - 1}
-                    </div>
-                  )}
-                </div>
-              ))}
+              {post.images &&
+                post.images.slice(0, 3).map((imageId, index) => (
+                  <div
+                    key={imageId}
+                    onClick={() =>
+                      onClickImage({
+                        images: post.images.map((imageId) =>
+                          getCommunityImageUrl(imageId)
+                        ),
+                        initialImageIndex: index,
+                      })
+                    }
+                  >
+                    <img src={getCommunityImageUrl(imageId)} />
+                    {index === 2 && post.images.length - index - 1 > 0 && (
+                      <div className="box">
+                        + {post.images.length - index - 1}
+                      </div>
+                    )}
+                  </div>
+                ))}
             </ImageSection>
             <BottomInfo>
               <span>{post.createdAt && post.createdAt.slice(0, 10)}</span>
@@ -372,6 +396,7 @@ const CommunityPostDetailPage = () => {
               placeholder="당신의 의견을 댓글로 남겨 주세요!"
               rows={3}
               onChange={onChangeComment}
+              value={comment}
               Button={
                 <CommentButton type="button" onClick={registerComment}>
                   댓글 등록
@@ -389,7 +414,12 @@ const CommunityPostDetailPage = () => {
               <ul>
                 {post.replies &&
                   post.replies.map((el) => (
-                    <CommentItem data={el} key={el.replyId} />
+                    <CommentItem
+                      data={el}
+                      key={el.replyId}
+                      comment={comment}
+                      setComment={setComment}
+                    />
                   ))}
               </ul>
             )}
