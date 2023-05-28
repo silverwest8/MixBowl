@@ -3,96 +3,71 @@ import { FaCommentDots, FaThumbsUp } from "react-icons/fa";
 import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
 
-const FreeListItem = ({ data }) => {
+const MyPostingItem = ({ data, uname, level }) => {
   // TODO : 호버, 이미지처리
-  const [path, setPath] = useState("");
-  const GetImage = async (id) => {
-    try {
-      const { data } = await axios.get(
-        `/api/communities/one/image?imageId=${id}`
-      );
-      console.log("path is ", data.data);
-      setPath(data.data.error.path);
-      return { data };
-    } catch (error) {
-      console.log("empty or error", error.response.data.error.path);
-      setPath(error.response.data.error.path);
-    }
-  };
-  useEffect(() => {
-    if (data.imageId !== 0) {
-      GetImage(data.imageId);
-    }
-  }, []);
-  console.log("lets see the data ", data);
+  console.log("my posting item ", data);
   return (
-    <ItemContainer to={`/community/${data.PNO}`}>
+    <ItemContainer to={`/community/${data.postId}`}>
       <div className="wrapper">
         <div>
           <TopSection>
             <div>
               <span>
-                {data.CATEGORY === 3 && data.cocktailLike === 1 ? (
+                {data.category === 3 && data.cocktailLike === 1 ? (
                   <BiHeartCircle className="recommend icon" />
                 ) : (
                   ""
                 )}
               </span>
-              <h4>{data.TITLE}</h4>
+              <h4>{data.title}</h4>
             </div>
             <div className="category">
-              {data.CATEGORY === 2
+              {data.category === 2
                 ? "질문과 답변"
-                : data.CATEGORY === 4
+                : data.category === 4
                 ? "자유 게시글"
-                : data.CATEGORY === 3
+                : data.category === 3
                 ? "칵테일 리뷰"
-                : data.CATEGORY === 1
+                : data.category === 1
                 ? "칵테일 추천"
                 : ""}
             </div>
           </TopSection>
-          <MainText className={data.CATEGORY === 2 ? "question" : ""}>
-            {data.CONTENT}
+          <MainText className={data.category === 2 ? "question" : ""}>
+            {data.content}
           </MainText>
           <BottomSection>
             <ReactionContainer>
               <FaThumbsUp className={data.isUserLike ? "icon liked" : "icon"} />
-              {data.LIKE}
+              {data.like}
               <FaCommentDots className="icon comment" />
               <span className="shown">
-                {data.CATEGORY === 2 && data.REPLY === 0
+                {data.category === 2 && data.reply === 0
                   ? "지금 답변을 기다리고 있어요"
-                  : data.REPLY}
+                  : data.reply}
               </span>
               <span className="hidden">
-                {data.CATEGORY === 2 && data.REPLY === 0
+                {data.category === 2 && data.reply === 0
                   ? "답변 필요"
-                  : data.REPLY}
+                  : data.reply}
               </span>
             </ReactionContainer>
             <div className="userinfo">
-              {data.createdAt.slice(5, 10).replace("-", "/")}
-              <span className="username">{data.UNO_USER.NICKNAME}</span>
-              <MemberBadge level={data.UNO_USER.LEVEL} />
+              {/* {data.date.slice(0, 10)} */}
+              <span className="username">{uname}</span>
+              <MemberBadge level={level} />
             </div>
           </BottomSection>
         </div>
-        {data.CNO ? (
+        {data.images.length !== 0 && (
           <ImageSection>
-            <img src={`/api/recipes/image/${data.CNO}`}></img>
+            <img
+              src={
+                "https://cdn.discordapp.com/attachments/751695059354648616/1033937959008874504/Screenshot_20221016_130522.jpg"
+              }
+            />
           </ImageSection>
-        ) : (
-          data.imageId !== 0 &&
-          data.imageId !== undefined &&
-          data.imageId !== null && (
-            <ImageSection>
-              <img src={path} />
-            </ImageSection>
-          )
         )}
       </div>
     </ItemContainer>
@@ -124,7 +99,6 @@ const ItemContainer = styled(Link)`
     display: flex;
     justify-content: space-around;
     width: 100%;
-    align-items: center;
     > div:first-child {
       width: 100%;
     }
@@ -153,10 +127,7 @@ const TopSection = styled.div`
     font-weight: bold;
     font-size: 1.125rem;
     @media screen and (max-width: 500px) {
-      width: 40vw;
-    }
-    @media screen and (max-width: 350px) {
-      width: 30vw;
+      width: 50vw;
     }
   }
   .category {
@@ -196,7 +167,7 @@ const ReactionContainer = styled.div`
   .hidden {
     display: none;
   }
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 400px) {
     .shown {
       display: none;
     }
@@ -212,7 +183,6 @@ const ImageSection = styled.div`
   height: 6rem;
   border-radius: 10px;
   overflow: hidden;
-  margin: 1rem;
 `;
 
 const MainText = styled.div`
@@ -229,4 +199,4 @@ const MainText = styled.div`
   height: 4rem;
 `;
 
-export default FreeListItem;
+export default MyPostingItem;

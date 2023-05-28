@@ -391,7 +391,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'
+                $ref: '#/components/schemas/updateUser'
         '400':
           description: ''
           content:
@@ -416,27 +416,10 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: '회원 탈퇴 성공'
+                $ref: '#/components/schemas/Success'
         '400':
           description: ''
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: '회원 탈퇴 실패'
-                  error:
-                    type: object
-                    example: {}
+                $ref: '#/components/schemas/Fail'

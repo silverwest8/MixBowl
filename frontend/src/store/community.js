@@ -6,9 +6,8 @@ export const searchState = atom({
   key: "searchState",
   default: "",
 });
-
-export const menuState = atom({
-  key: "menuState",
+export const commentState = atom({
+  key: "commentState",
   default: "",
 });
 
@@ -18,7 +17,9 @@ export const AddPostingState = atom({
     addImg: "",
     addTitle: "",
     addContent: "",
-    addLike: 0,
+    addLike: 1,
+    addCategory: 4,
+    addCNO: null,
   },
 });
 
@@ -30,4 +31,9 @@ export const AddCommunityImgState = atom({
 export const CommunityReportState = atom({
   key: "CommunityReportState",
   default: 0,
+});
+
+export const menuState = atom({
+  key: "menuState",
+  default: "",
 });

@@ -1,6 +1,8 @@
 import Modal from "../common/Modal";
 import styled from "styled-components";
 import { AiFillCamera } from "react-icons/ai";
+import VerifyingModal from "./VerifyingModal";
+import { useModal } from "../../hooks/useModal";
 
 const Button = styled.button`
   background-color: ${({ theme }) => theme.color.primaryGold};
@@ -52,6 +54,8 @@ const Section = styled.div`
 `;
 
 const LevelInfoModal = ({ handleClose }) => {
+  const { openModal, closeModal } = useModal();
+
   return (
     <Modal title="등급 안내" handleClose={handleClose} onCancel={handleClose}>
       <Wrapper>
@@ -74,7 +78,14 @@ const LevelInfoModal = ({ handleClose }) => {
           <div>
             <p>조주기능사 자격증 소지자 혹은 칵테일 관련 사업자인 회원</p>
             <p>(인증 이후 등업이 가능합니다)</p>
-            <Button>
+            <Button
+              onClick={() => {
+                closeModal();
+                openModal(VerifyingModal, {
+                  handleClose: closeModal,
+                });
+              }}
+            >
               <AiFillCamera />
               <span>전문가 인증하기</span>
             </Button>

@@ -1,16 +1,65 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
+const KEYWORDS = [
+  {
+    id: 1,
+    icon: "👍",
+    value: "술이 맛있어요",
+  },
+  {
+    id: 2,
+    icon: "🍹",
+    value: "술이 다양해요",
+  },
+  {
+    id: 3,
+    icon: "🍸",
+    value: "혼술하기 좋아요",
+  },
+  {
+    id: 4,
+    icon: "🙌",
+    value: "메뉴가 다양해요",
+  },
+  {
+    id: 5,
+    icon: "🍽️",
+    value: "음식이 맛있어요",
+  },
+  {
+    id: 6,
+    icon: "🌃",
+    value: "분위기가 좋아요",
+  },
+  {
+    id: 7,
+    icon: "😀",
+    value: "직원이 친절해요",
+  },
+  {
+    id: 8,
+    icon: "🗣️",
+    value: "대화하기 좋아요",
+  },
+  { id: 9, icon: "💵", value: "가성비가 좋아요" },
+];
+
 const ReviewItem = ({ data }) => {
   return (
     <ItemContainer>
       <ItemWrapper to={`/cocktailbar/${data.placeId}`}>
-        <p>{data.content}</p>
+        <p>{data.text}</p>
         <div>
-          <div>
+          <div className="hidden">
             {data.keyword &&
               data.keyword.map(
-                (word) => word && <Button key={word}>{word}</Button>
+                (word) =>
+                  word && (
+                    <Button className="hidden" key={word}>
+                      {KEYWORDS[word].value}
+                    </Button>
+                  )
               )}
           </div>
           <DateContainer>{data.placeName}</DateContainer>
@@ -43,6 +92,11 @@ const ItemWrapper = styled(Link)`
     align-items: end;
     > div {
       display: flex;
+    }
+  }
+  @media screen and (max-width: 400px) {
+    .hidden {
+      display: none;
     }
   }
 `;

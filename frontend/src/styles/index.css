@@ -291,13 +291,7 @@ video {
   padding: 0 1rem;
 }
 .recipeSlider .swiper-slide {
-  width: 35rem;
- 
-}
-@media screen and (max-width: 428px) {
-  .recipeSlider .swiper-slide {
-    width: 24rem;
-  }
+  width: auto;
 }
 .recipeSlider .swiper-button-prev {
   padding-right: 2rem;

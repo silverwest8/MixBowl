@@ -5,6 +5,7 @@ import ReportModal from "../common/ReportModal";
 import { useModal } from "../../hooks/useModal";
 import { toastState } from "../../store/toast";
 import { useSetRecoilState } from "recoil";
+import ReplyDeleteModal from "./ReplyDeleteModal";
 
 const ReportButton = styled.div`
   flex: 1 0 auto;
@@ -23,6 +24,7 @@ const ReportButton = styled.div`
 `;
 
 const CommentItem = ({ data }) => {
+  console.log("comment item is ", data.CONTENT);
   const { openModal, closeModal } = useModal();
   const setToastState = useSetRecoilState(toastState);
   const submitReport = () => {
@@ -38,6 +40,15 @@ const CommentItem = ({ data }) => {
     }, 300);
     closeModal();
   };
+  const onClickEditMenu = async (replyId, comment) => {
+    console.log("content is ", comment);
+  };
+  const onClickDeleteMenu = (id) => {
+    openModal(ReplyDeleteModal, {
+      handleClose: closeModal,
+      id,
+    });
+  };
   return (
     <ItemContainer>
       <TopSection>
@@ -46,7 +57,12 @@ const CommentItem = ({ data }) => {
           <MemberBadge level={data.level} />
         </div>
         {data.isReplyWriter ? (
-          <DropdownMenu />
+          <DropdownMenu
+            handlers={[
+              () => onClickEditMenu(data.replyId, data.CONTENT),
+              () => onClickDeleteMenu(data.replyId),
+            ]}
+          />
         ) : (
           <ReportButton
             onClick={() =>

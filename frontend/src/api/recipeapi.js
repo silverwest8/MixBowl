@@ -43,7 +43,6 @@ export const postRecipe = async ({
     }
   }
 
-  console.log(image);
   /* form data 확인 */
   const values = formData.values();
   for (const pair of values) {
@@ -84,7 +83,6 @@ export const editRecipe = async ({
     }
   }
 
-  console.log(image);
   /* form data 확인 */
   const values = formData.values();
   for (const pair of values) {

@@ -1,155 +1,18 @@
 import SearchBar from "../components/common/SearchBar";
 // import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
-import FreeListItem from "../components/community/FreeListItem";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import HotListItem from "../components/community/HotListItem";
+import { Link, useNavigate } from "react-router-dom";
 import { FaFire, FaComments } from "react-icons/fa";
 import Title from "../components/common/Title";
 import { HiPencilAlt } from "react-icons/hi";
 import { MdArrowForwardIos } from "react-icons/md";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import CommunitySearch from "../components/community/CommunitySearch";
+import axios from "axios";
 import BoardShortListItem from "../components/community/BoardShortListItem";
-
-const dummyData = [
-  {
-    id: 1,
-    title: "두 번째 제목 예시",
-    category: "free",
-    uname: "username10",
-    level: 2,
-    likes: 0,
-    comments: 100,
-    date: "5일 전",
-    // TODO : 나중에는 date 타입으로 받아올것
-    maintext:
-      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-  },
-  {
-    id: 2,
-    title: "",
-    maintext:
-      "질문글 예시입니다. 이런식으로 질문이 bold체로 다 들어가야 되겠죠. 질문의 경우 title이 길어지는 것으로 할까요 아니면 본문을 굵게 표현하는 것으로 할까요?",
-    category: "qna",
-    uname: "한글닉네임열글자라면",
-    level: 1,
-    liked: true,
-    likes: 1,
-    comments: 0,
-    date: "2일 전",
-  },
-];
-
-const RecentRecommandation = [
-  {
-    id: 0,
-    title:
-      "칵테일 추천글 예시 만약 제목이 너무 길어진다면 이런 식으로 표시됩니다",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "칵테일 추천글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "칵테일 추천글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "칵테일 추천글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "칵테일 추천글 예시",
-    comments: 0,
-  },
-];
-const RecentQustion = [
-  {
-    id: 0,
-    title: "칵테일 질문글 예시",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "칵테일 질문글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "칵테일 질문글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "칵테일 질문글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "칵테일 질문글 예시",
-    comments: 0,
-  },
-];
-const RecentReview = [
-  {
-    id: 0,
-    title: "칵테일 리뷰글 예시",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "칵테일 리뷰글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "칵테일 추천글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "칵테일 리뷰글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "칵테일 리뷰글 예시",
-    comments: 0,
-  },
-];
-
-const RecentFree = [
-  {
-    id: 0,
-    title: "자유게시글 예시",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "자유게시글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "자유게시글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "자유게시글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "자유게시글 예시",
-    comments: 0,
-  },
-];
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { menuState, searchState } from "../store/community";
 
 const Background = styled.div`
   color: white;
@@ -205,6 +68,7 @@ const NewPosts = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: baseline;
     margin-bottom: 0.5rem;
     @media screen and (max-width: 800px) {
       flex-direction: column;
@@ -252,7 +116,7 @@ const Button = styled(Link)`
   }
 `;
 
-const Board = styled(Link)`
+const Board = styled.div`
   padding: 1rem;
   background-color: ${({ theme }) => theme.color.darkGray};
   border-radius: 10px;
@@ -298,17 +162,86 @@ const WritingButton = styled(Link)`
 
 const CommunityHomePage = () => {
   const navigate = useNavigate();
-  const params = useParams();
-  const [input, setInput] = useState("");
-  const onChange = (e) => setInput(e.target.value);
-  const onSearch = () => {
-    navigate(`/community/board?search=${input}`);
+  const search = useRecoilValue(searchState);
+  const [menu, setMenu] = useRecoilState(menuState);
+  const [postings, setPostings] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+  const [frees, setFrees] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [questions, setQuestions] = useState([]);
+
+  // const [input, setInput] = useState("");
+  // const onChange = (e) => setInput(e.target.value);
+  // const onSearch = () => {
+  //   navigate(`/community/board?search=${input}`);
+  // };
+  // const onClear = () => {
+  //   params.delete("query");
+  //   setInput("");
+  //   navigate(`/community/board${params.toString()}`, { replace: true });
+  // };
+  const token = localStorage.getItem("access_token");
+  const GetPosting = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      const { data } = await axios.get(`/api/communities/list/hotPost`);
+      setPostings(data.data);
+    } catch (error) {
+      console.log("empty or error");
+    }
   };
-  const onClear = () => {
-    params.delete("query");
-    setInput("");
-    navigate(`/community/board${params.toString()}`, { replace: true });
+  const GetRecommendations = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      const { data } = await axios.get(
+        `/api/communities/list/category/recommend?page=1`
+      );
+      setRecommendations(data.data.slice(0, 5));
+    } catch (error) {
+      console.log("empty or error");
+    }
   };
+  const GetReviews = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      const { data } = await axios.get(
+        `/api/communities/list/category/review?page=1`
+      );
+      setReviews(data.data.slice(0, 5));
+    } catch (error) {
+      console.log("empty or error");
+    }
+  };
+  const GetFrees = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      const { data } = await axios.get(
+        `/api/communities/list/category/free?page=1`
+      );
+      setFrees(data.data.slice(0, 5));
+    } catch (error) {
+      console.log("empty or error");
+    }
+  };
+  const GetQuestions = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      const { data } = await axios.get(
+        `/api/communities/list/category/question?page=1`
+      );
+      setQuestions(data.data.slice(0, 5));
+    } catch (error) {
+      console.log("empty or error");
+    }
+  };
+  useEffect(() => {
+    GetPosting();
+    GetRecommendations();
+    GetReviews();
+    GetFrees();
+    GetQuestions();
+  }, []);
+
   return (
     <main
       style={{
@@ -325,12 +258,12 @@ const CommunityHomePage = () => {
             이번주 인기글
           </h3>
           <section>
-            {dummyData.map((el) => (
-              <FreeListItem data={el} key={el.id} />
+            {postings.map((el) => (
+              <HotListItem data={el} key={el.pno} />
             ))}
           </section>
           <div>
-            <Button to="/community/board?category=all">더보기</Button>
+            <Button to="/community/board">더보기</Button>
           </div>
         </HotPosts>
         <NewPosts>
@@ -339,56 +272,76 @@ const CommunityHomePage = () => {
               <FaComments className="icon" />
               최신글
             </h1>
-            <SearchBar
-              placeholder="관심있는 내용을 검색해보세요!"
+            <CommunitySearch placeholder="관심있는 내용을 검색해보세요!" />
+            {/* <SearchBar
               showCloseButton={false}
               onChange={onChange}
               onSearch={onSearch}
               onClear={onClear}
-            />
+            /> */}
           </section>
           <div className="grid-container">
-            <Board to="/community/board?category=recommendation">
+            <Board
+              onClick={() => {
+                setMenu("recommend");
+                navigate("/community/board");
+              }}
+            >
               <span className="mini-title">
                 칵테일 추천
                 <MdArrowForwardIos className="icon" />
               </span>
               <ul>
-                {RecentRecommandation.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
+                {recommendations.map((el) => (
+                  <BoardShortListItem data={el} key={el.PNO} />
                 ))}
               </ul>
             </Board>
-            <Board to="/community/board?category=qna">
+            <Board
+              onClick={() => {
+                setMenu("question");
+                navigate("/community/board");
+              }}
+            >
               <span className="mini-title">
                 질문과 답변
                 <MdArrowForwardIos className="icon" />
               </span>
               <ul>
-                {RecentQustion.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
+                {questions.map((el) => (
+                  <BoardShortListItem data={el} key={el.PNO} />
                 ))}
               </ul>
             </Board>
-            <Board to="/community/board?category=review">
+            <Board
+              onClick={() => {
+                setMenu("review");
+                navigate("/community/board");
+              }}
+            >
               <span className="mini-title">
                 칵테일 리뷰
                 <MdArrowForwardIos className="icon" />
               </span>
               <ul>
-                {RecentReview.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
+                {reviews.map((el) => (
+                  <BoardShortListItem data={el} key={el.PNO} />
                 ))}
               </ul>
             </Board>
-            <Board to="/community/board?category=free">
+            <Board
+              onClick={() => {
+                setMenu("free");
+                navigate("/community/board");
+              }}
+            >
               <span className="mini-title">
                 자유게시판
                 <MdArrowForwardIos className="icon" />
               </span>
               <ul>
-                {RecentFree.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
+                {frees.map((el) => (
+                  <BoardShortListItem data={el} key={el.PNO} />
                 ))}
               </ul>
             </Board>

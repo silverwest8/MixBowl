@@ -22,8 +22,10 @@ const WarningSet = styled.div`
   }
 `;
 
-const NameChangeModal = ({ handleClose, username }) => {
+const NameChangeModal = ({ handleClose, checkname }) => {
   const setToastState = useSetRecoilState(toastState);
+  const [uname, setUname] = useState({ checkname });
+
   const [warningMsg, setWarningMsg] = useState("");
   const { mutate: mutateEdit } = useMutation({
     mutationFn: nameChange,
@@ -44,37 +46,40 @@ const NameChangeModal = ({ handleClose, username }) => {
       handleClose();
     },
   });
-  const [uname, setUname] = useState({ username });
 
   const onChange = (e) => {
     const { value } = e.target;
     setUname(() => ({
-      username: value,
+      checkname: value,
     }));
+    console.log("uname is ", uname);
   };
   const onSubmit = async () => {
     setWarningMsg("");
-    if (uname.username === "") {
+    if (uname.checkname === "") {
       setWarningMsg("닉네임을 입력해 주세요");
       return;
     }
-    if (uname.username.length > 10) {
+    if (uname.checkname.length > 10) {
       setWarningMsg("글자수 제한은 10자 입니다");
       return;
     }
     // 중복됐을 경우
     const token = getAccessToken();
     axios.defaults.headers.common.Authorization = token;
+    console.log("sending data is ", uname.checkname);
     const { data } = await axios.put("api/users/nicknamedupcheck", {
-      checkname: uname.username,
+      checkname: uname.checkname,
     });
+    console.log("data ", data);
 
     if (data.duplicate === false) {
-      mutateEdit({ username });
+      console.log("username is ", uname);
+      mutateEdit({ uname });
     } else {
       setToastState({
         show: true,
-        message: "닉네임 수정에 실패했습니다. 다시 시도해주세요.",
+        message: "중복된 닉네임입니다. 다시 시도해주세요.",
         type: "error",
       });
     }
@@ -85,10 +90,10 @@ const NameChangeModal = ({ handleClose, username }) => {
       title="닉네임 수정"
       handleClose={handleClose}
       onCancel={handleClose}
-      onConfirm={() => onSubmit(username)}
+      onConfirm={() => onSubmit(checkname)}
     >
       <Input
-        defaultValue={username}
+        defaultValue={checkname}
         placeholder="새 닉네임 입력"
         onChange={onChange}
       />

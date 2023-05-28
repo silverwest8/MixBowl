@@ -108,7 +108,8 @@ const RecipeIngredients = () => {
                   key={index}
                   placeholder={"재료 이름"}
                   onChange={(e) => handleName(index, e)}
-                  value={items.addName}
+                  value={items.addName || ""}
+                  maxLength={15}
                 ></RecipeInputBox>
               );
             })}
@@ -121,7 +122,8 @@ const RecipeIngredients = () => {
                   key={index}
                   placeholder={"재료 양"}
                   onChange={(e) => handleAmount(index, e)}
-                  value={items.addAmount}
+                  value={items.addAmount || ""}
+                  maxLength={5}
                 ></RecipeInputBox>
               );
             })}
@@ -134,7 +136,8 @@ const RecipeIngredients = () => {
                   key={index}
                   placeholder={"단위"}
                   onChange={(e) => handleUnit(index, e)}
-                  value={items.addUnit}
+                  value={items.addUnit || ""}
+                  maxLength={5}
                 ></RecipeInputBox>
               );
             })}
@@ -202,7 +205,7 @@ const InputBox = styled.div`
   align-items: center;
 `;
 const Name = styled.div`
-  width: 20vw;
+  width: 50%;
   margin-right: 0.5rem;
   font-size: 1rem;
   display: flex;
@@ -213,7 +216,7 @@ const Name = styled.div`
   }
 `;
 const Volume = styled.div`
-  width: 15vw;
+  width: 30%;
   margin-right: 0.5rem;
   font-size: 1rem;
   display: flex;
@@ -225,7 +228,7 @@ const Volume = styled.div`
 `;
 
 const Unit = styled.div`
-  width: 8vw;
+  width: 20%;
   font-size: 1rem;
   display: flex;
   gap: 0.5rem;

@@ -4,10 +4,10 @@ import { FaCommentDots } from "react-icons/fa";
 const BoardShortListItem = ({ data }) => {
   return (
     <ItemContainer>
-      <div>{data.title}</div>
+      <div>{data.CATEGORY === 2 ? data.CONTENT : data.TITLE}</div>
       <div>
         <FaCommentDots className="icon" />
-        {data.comments}
+        {data.REPLY}
       </div>
     </ItemContainer>
   );
