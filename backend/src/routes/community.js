@@ -413,6 +413,15 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
     }
     for (const val of posts) {
       const user = await USER.findByPk(val.dataValues.UNO);
+      const image = await IMAGE_COMMUNITY.findOne({
+        where: {
+          PNO: val.dataValues.PNO,
+        },
+      });
+      let imageId = 0;
+      if (image !== null) {
+        imageId = image.IMAGE_ID;
+      }
       const likePost = await POST_LIKE.findAll({
         attributes: [
           'PNO',
@@ -456,6 +465,7 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
           isWriter = true;
         }
       }
+      val.dataValues.imageId = imageId;
       val.dataValues.isWriter = isWriter;
       delete val.dataValues.UNO;
       val.dataValues.UNO_USER = {
@@ -551,6 +561,16 @@ router.get(
         if (category === 3) {
           val.dataValues.cocktailLike = val.dataValues.LIKE;
         }
+        const image = await IMAGE_COMMUNITY.findOne({
+          where: {
+            PNO: val.dataValues.PNO,
+          },
+        });
+        let imageId = 0;
+        if (image !== null) {
+          imageId = image.IMAGE_ID;
+        }
+        val.dataValues.imageId = imageId;
         const user = await USER.findByPk(val.dataValues.UNO);
         const likePost = await POST_LIKE.findAll({
           attributes: [
@@ -698,6 +718,15 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
           isWriter = true;
         }
       }
+      const image = await IMAGE_COMMUNITY.findOne({
+        where: {
+          PNO: val.dataValues.PNO_POST.PNO,
+        },
+      });
+      let imageId = 0;
+      if (image !== null) {
+        imageId = image.IMAGE_ID;
+      }
       let isUserLike = false;
       console.log(val);
       const isLike =
@@ -718,6 +747,7 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       const user = await USER.findByPk(postInfo.UNO);
       data['UNO_USER'] = { NICKNAME: user.NICKNAME, LEVEL: user.LEVEL };
       data['CATEGORY'] = postInfo.CATEGORY;
+      data['imageId'] = imageId;
       data['TITLE'] = postInfo.TITLE || null;
       data['createdAt'] = postInfo.createdAt;
       data['CONTENT'] = postInfo.CONTENT;
