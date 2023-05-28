@@ -7,6 +7,7 @@ import { mapState } from "../../store/map";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCocktailBar, getReview } from "../../api/cocktailbar";
+import { getKeyword } from "../../utils/keyword";
 
 const CocktailbarDetail = ({ id }) => {
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ const CocktailbarDetail = ({ id }) => {
           0 && (
           <ul className="keyword-list">
             {reviewData.data.keyword.map(
-              (word) => word && <li key={word}>{word}</li>
+              (id) => id && <li key={id}>{getKeyword(id).value}</li>
             )}
           </ul>
         )}
