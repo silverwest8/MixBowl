@@ -46,6 +46,7 @@ const KEYWORDS = [
 ];
 
 const ReviewItem = ({ data }) => {
+  console.log("reviewItem is ", data);
   return (
     <ItemContainer>
       <ItemWrapper to={`/cocktailbar/${data.placeId}`}>
@@ -57,7 +58,7 @@ const ReviewItem = ({ data }) => {
                 (word) =>
                   word && (
                     <Button className="hidden" key={word}>
-                      {KEYWORDS[word].value}
+                      {KEYWORDS[word - 1].value}
                     </Button>
                   )
               )}
@@ -94,9 +95,12 @@ const ItemWrapper = styled(Link)`
       display: flex;
     }
   }
-  @media screen and (max-width: 400px) {
+  @media screen and (max-width: 800px) {
     .hidden {
       display: none;
+    }
+    .hidden:last-child {
+      display: inline;
     }
   }
 `;
