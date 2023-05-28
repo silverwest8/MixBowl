@@ -327,11 +327,10 @@ const sql = {
     try {
       let categoryDb = 0; //review 참조
       let communityId;
-      if (db.REVIEW_ID === undefined) {
+      const reviewId = db.REVIEW_ID;
+      if (reviewId === undefined) {
         communityId = Number(db.PNO);
         categoryDb = 1; // community(Post) 참조
-      } else {
-        const reviewId = db.REVIEW_ID;
       }
       req.files.map(async (data) => {
         let path = data.path;
