@@ -456,6 +456,7 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
           isWriter = true;
         }
       }
+      val.dataValues.pno = val.dataValues.PNO;
       val.dataValues.isWriter = isWriter;
       delete val.dataValues.UNO;
       val.dataValues.UNO_USER = {
@@ -723,6 +724,11 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       data['CONTENT'] = postInfo.CONTENT;
       data['isWriter'] = isWriter;
       data['isUserLike'] = isUserLike;
+      data['cocktailLike'] = -1;
+      console.log(val);
+      if (postInfo.LIKE !== null) {
+        data['cocktailLike'] = postInfo.LIKE;
+      }
       const replyNum = await POST_REPLY.findAll({
         attributes: [
           'PNO',

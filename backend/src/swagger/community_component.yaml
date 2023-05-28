@@ -84,6 +84,9 @@ components:
               title:
                 type: string
                 example: 제목입니다(질문답변 카테고리 - 사용X)
+              pno:
+                type: integer
+                example: 1
               content:
                 type: string
                 example: 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?  내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?
