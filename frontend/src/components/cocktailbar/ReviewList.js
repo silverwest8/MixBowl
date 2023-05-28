@@ -91,7 +91,7 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
                       onClickEditMenu(review.REVIEW_ID, {
                         rating: review.RATING,
                         detail: review.TEXT,
-                        keyword: review.KEYWORDS.map((keyword) => keyword.id),
+                        keyword: review.KEYWORDS,
                         imageIds: review.imgIdArr,
                       }),
                     () => onClickDeleteMenu(review.REVIEW_ID),
