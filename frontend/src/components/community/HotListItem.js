@@ -8,53 +8,53 @@ const HotListItem = ({ data }) => {
   // TODO : 호버, 이미지처리
   // console.log(`${data.TITLE}의 카테고리는 ${data.CATEGORY}`);
   // 아직 없는 필드들 많음. 추가되면 그 데이터 형식에 맞춰서 바꾸기.
-  console.log("data is ", data);
+  console.log("hot is ", data);
   return (
     <ItemContainer to={`/community/${data.PNO}`}>
       <TopSection>
         <div>
           <span>
-            {data.category === 3 && data.cocktailLike !== null ? (
+            {data.CATEGORY === 3 && data.cocktailLike !== null ? (
               <BiHeartCircle className="recommend icon" />
             ) : (
               ""
             )}
           </span>
-          <h4>{data.title}</h4>
+          <h4>{data.TITLE}</h4>
         </div>
-        <div className="category">
-          {data.category === 2
+        <div className="CATEGORY">
+          {data.CATEGORY === 2
             ? "질문과 답변"
-            : data.category === 4
+            : data.CATEGORY === 4
             ? "자유 게시글"
-            : data.category === 3
+            : data.CATEGORY === 3
             ? "칵테일 리뷰"
-            : data.category === 1
+            : data.CATEGORY === 1
             ? "칵테일 추천"
             : ""}
         </div>
       </TopSection>
-      <MainText className={data.category === 2 ? "question" : ""}>
-        {data.content}
+      <MainText className={data.CATEGORY === 2 ? "question" : ""}>
+        {data.CONTENT}
       </MainText>
       <BottomSection>
         <ReactionContainer>
           <FaThumbsUp className={data.isUserLike ? "icon liked" : "icon"} />
-          {data.likeCount}
+          {data.LIKE}
           <FaCommentDots className="icon comment" />
           <span className="shown">
-            {data.category === 2 && data.reply === 0
+            {data.CATEGORY === 2 && data.REPLY === 0
               ? "지금 답변을 기다리고 있어요"
-              : data.reply}
+              : data.REPLY}
           </span>
           <span className="hidden">
-            {data.category === 2 && data.reply === 0 ? "답변 필요" : data.reply}
+            {data.CATEGORY === 2 && data.REPLY === 0 ? "답변 필요" : data.REPLY}
           </span>
         </ReactionContainer>
         <div className="userinfo">
-          {data.createdAt.slice(0, 10)}
-          <span className="username">{data.userName}</span>
-          <MemberBadge level={data.userLevel} />
+          {data.createdAt.slice(5, 10)}
+          <span className="username">{data.UNO_USER.NICKNAME}</span>
+          <MemberBadge level={data.UNO_USER.LEVEL} />
         </div>
       </BottomSection>
     </ItemContainer>
@@ -109,7 +109,7 @@ const TopSection = styled.div`
       width: 50vw;
     }
   }
-  .category {
+  .CATEGORY {
     color: ${({ theme }) => theme.color.primaryGold};
   }
 `;

@@ -75,7 +75,7 @@ const FreeListItem = ({ data }) => {
               </span>
             </ReactionContainer>
             <div className="userinfo">
-              {data.createdAt.slice(0, 10)}
+              {data.createdAt.slice(5, 10).replace("-", "/")}
               <span className="username">{data.UNO_USER.NICKNAME}</span>
               <MemberBadge level={data.UNO_USER.LEVEL} />
             </div>
