@@ -9,3 +9,7 @@ export const convertURLtoFile = async (url) => {
 export const getReviewImageUrl = (imageId) => {
   return `${process.env.REACT_APP_BACKEND_BASE_URL}/reviews/image/one?imageId=${imageId}`;
 };
+
+export const getCommunityImageUrl = (imageId) => {
+  return `${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${imageId}`;
+};

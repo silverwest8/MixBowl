@@ -16,6 +16,8 @@ import { toastState } from "../store/toast";
 import { useSetRecoilState } from "recoil";
 import { getAccessToken } from "../utils/token";
 import axios from "axios";
+import ImageSliderModal from "../components/common/ImageSliderModal";
+import { getCommunityImageUrl } from "../utils/image";
 
 const Background = styled.div`
   color: white;
@@ -77,6 +79,36 @@ const ImageSection = styled.div`
   border: 1px solid green;
   width: 100%;
   margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  & > div {
+    position: relative;
+    width: calc(16.25rem / 3);
+    height: calc(16.25rem / 3);
+    border-radius: 10px;
+    cursor: pointer;
+    & > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+    & > .box {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1rem;
+      color: ${({ theme }) => theme.color.primaryGold};
+    }
+  }
 `;
 
 const TopMost = styled.div`
@@ -240,6 +272,14 @@ const CommunityPostDetailPage = () => {
     }, 300);
     closeModal();
   };
+  const onClickImage = ({ images, initialImageIndex }) => {
+    openModal(ImageSliderModal, {
+      handleClose: closeModal,
+      images,
+      initialImageIndex,
+    });
+  };
+
   return (
     <main
       style={{
@@ -293,9 +333,30 @@ const CommunityPostDetailPage = () => {
           </TopSection>
           <MainSection>
             <div>{post.content}</div>
-            <ImageSection></ImageSection>
+            <ImageSection>
+              {post.images.slice(0, 3).map((imageId, index) => (
+                <div
+                  key={imageId}
+                  onClick={() =>
+                    onClickImage({
+                      images: post.images.map((imageId) =>
+                        getCommunityImageUrl(imageId)
+                      ),
+                      initialImageIndex: index,
+                    })
+                  }
+                >
+                  <img src={getCommunityImageUrl(imageId)} />
+                  {index === 2 && post.images.length - index - 1 > 0 && (
+                    <div className="box">
+                      + {post.images.length - index - 1}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </ImageSection>
             <BottomInfo>
-              <span>{post.createdAt.slice(0, 10)}</span>
+              <span>{post.createdAt && post.createdAt.slice(0, 10)}</span>
               <div>
                 <FaThumbsUp
                   className={liked ? "icon liked" : "icon"}

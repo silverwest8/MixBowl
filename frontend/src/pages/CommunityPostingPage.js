@@ -216,7 +216,7 @@ const CommunityPostingPage = () => {
   const [list, setList] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [warning, setWarning] = useState("");
-  const [selectLike, setSelectLike] = useState(1);
+  const [selectLike, setSelectLike] = useState(true);
   const [{ addTitle }, setAddTitle] = useRecoilState(AddPostingState);
   const [{ addContent }, setAddContent] = useRecoilState(AddPostingState);
   const [{ addLike }, setAddLike] = useRecoilState(AddPostingState);

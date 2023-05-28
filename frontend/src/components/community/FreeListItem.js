@@ -8,26 +8,28 @@ import axios from "axios";
 
 const FreeListItem = ({ data }) => {
   // TODO : 호버, 이미지처리
-  const [path, setPath] = useState("");
-  const GetImage = async (id) => {
-    try {
-      const { data } = await axios.get(
-        `/api/communities/one/image?imageId=${id}`
-      );
-      console.log("path is ", data.data);
-      setPath(data.data.error.path);
-      return { data };
-    } catch (error) {
-      console.log("empty or error", error.response.data.error.path);
-      setPath(error.response.data.error.path);
-    }
-  };
-  useEffect(() => {
-    if (data.imageId !== 0) {
-      GetImage(data.imageId);
-    }
-  }, []);
-  console.log("lets see the data ", data);
+  // const [path, setPath] = useState("");
+  // const GetImage = async (id) => {
+  //   try {
+  //     const { data } = await axios.get(
+  //       `/api/communities/one/image?imageId=${id}`
+  //     );
+  //     console.log("path is ", data.data);
+  //     setPath(data.data.error.path);
+  //     return { data };
+  //   } catch (error) {
+  //     console.log("empty or error", error.response.data.error.path);
+  //     setPath(error.response.data.error.path);
+  //   }
+  // };
+  // useEffect(() => {
+  //   if (data.imageId !== 0) {
+  //     GetImage(data.imageId);
+  //   }
+  // }, []);
+  if (data.imageId !== 0) {
+    console.log("lets see the data ", data);
+  }
   return (
     <ItemContainer to={`/community/${data.PNO}`}>
       <div className="wrapper">
@@ -90,7 +92,9 @@ const FreeListItem = ({ data }) => {
           data.imageId !== undefined &&
           data.imageId !== null && (
             <ImageSection>
-              <img src={path} />
+              <img
+                src={`${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${data.imageId}`}
+              />
             </ImageSection>
           )
         )}
