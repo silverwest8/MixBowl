@@ -456,7 +456,6 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
           isWriter = true;
         }
       }
-      val.dataValues.pno = val.dataValues.PNO;
       val.dataValues.isWriter = isWriter;
       delete val.dataValues.UNO;
       val.dataValues.UNO_USER = {
