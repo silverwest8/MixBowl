@@ -16,8 +16,6 @@ const RecipeSubmit = ({ actionType }) => {
   const params = useParams();
   const id = params.id;
 
-  console.log(recipeImg);
-
   const handleSubmit = () => {
     if (addName === "") {
       setToastState({
@@ -65,37 +63,49 @@ const RecipeSubmit = ({ actionType }) => {
         unit: item.addUnit,
       }));
 
-      postRecipe({
-        name: addName,
-        color: colorNum,
-        ingred,
-        alcoholic: alcoholNum,
-        instruction: addExplain,
-        image: [recipeImg],
-      })
-        .then((response) => {
-          console.log(response);
-          if (response.success) {
-            setToastState({
-              show: true,
-              message: "작성이 완료되었습니다.",
-              type: "success",
-              ms: 3000,
-            });
-            setRecipeImg("");
-            navigate(-1);
-          } else {
-            setToastState({
-              show: true,
-              message: "수정 실패.",
-              type: "error",
-              ms: 3000,
-            });
-          }
-        })
-        .catch((error) => {
-          console.error(error);
+      const isDuplicate = ingred.some((item, index) => {
+        return ingred.findIndex((i) => i.name === item.name) !== index;
+      });
+
+      if (isDuplicate) {
+        setToastState({
+          show: true,
+          message: "중복된 항목이 있습니다.",
+          type: "error",
+          ms: 3000,
         });
+      } else {
+        postRecipe({
+          name: addName,
+          color: colorNum,
+          ingred,
+          alcoholic: alcoholNum,
+          instruction: addExplain,
+          image: [recipeImg],
+        })
+          .then((response) => {
+            if (response.success) {
+              setToastState({
+                show: true,
+                message: "작성이 완료되었습니다.",
+                type: "success",
+                ms: 3000,
+              });
+              setRecipeImg("");
+              navigate(-1);
+            } else {
+              setToastState({
+                show: true,
+                message: "수정 실패.",
+                type: "error",
+                ms: 3000,
+              });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
     } else if (actionType === "edit") {
       colorFilter();
       alcoholFilter();
@@ -105,44 +115,56 @@ const RecipeSubmit = ({ actionType }) => {
         unit: item.addUnit,
       }));
 
-      editRecipe({
-        recipeId: id,
-        name: addName,
-        color: colorNum,
-        ingred,
-        alcoholic: alcoholNum,
-        instruction: addExplain,
-        image: [recipeImg],
-      })
-        .then((response) => {
-          console.log(response);
-          if (response.success) {
-            setToastState({
-              show: true,
-              message: "수정이 완료되었습니다.",
-              type: "success",
-              ms: 3000,
-            });
-            setRecipeImg("");
-            navigate(-2);
-          } else {
+      const isDuplicate = ingred.some((item, index) => {
+        return ingred.findIndex((i) => i.name === item.name) !== index;
+      });
+
+      if (isDuplicate) {
+        setToastState({
+          show: true,
+          message: "중복된 재료가 있습니다.",
+          type: "error",
+          ms: 3000,
+        });
+      } else {
+        editRecipe({
+          recipeId: id,
+          name: addName,
+          color: colorNum,
+          ingred,
+          alcoholic: alcoholNum,
+          instruction: addExplain,
+          image: [recipeImg],
+        })
+          .then((response) => {
+            if (response.success) {
+              setToastState({
+                show: true,
+                message: "수정이 완료되었습니다.",
+                type: "success",
+                ms: 3000,
+              });
+              setRecipeImg("");
+              navigate(-2);
+            } else {
+              setToastState({
+                show: true,
+                message: "수정 실패",
+                type: "error",
+                ms: 3000,
+              });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
             setToastState({
               show: true,
               message: "수정 실패",
               type: "error",
               ms: 3000,
             });
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          setToastState({
-            show: true,
-            message: "수정 실패",
-            type: "error",
-            ms: 3000,
           });
-        });
+      }
     }
   };
 
@@ -199,6 +221,7 @@ const ButtonWrapper = styled.div`
   font-size: 1rem;
   align-items: center;
   margin-top: 1.5rem;
+  margin-bottom: 2rem;
   & > button {
     border-radius: 0.5rem;
     padding: 0.3rem 1.75rem;

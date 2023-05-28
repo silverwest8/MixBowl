@@ -4,7 +4,7 @@ import RecipeColor from "./RecipeColor";
 import RecipeAlcohol from "./RecipeAlcohol";
 import { colorState, alcoholState } from "../../store/recipe";
 import { useRecoilState } from "recoil";
-import { useEffect } from "react";
+import { FaTimesCircle } from "react-icons/fa";
 
 const RecipeBtn = () => {
   const { openModal, closeModal } = useModal();
@@ -27,8 +27,14 @@ const RecipeBtn = () => {
     },
     setColor,
   ] = useRecoilState(colorState);
-
-  useEffect(() => {
+  const clearAlcohol = (e) => {
+    e.stopPropagation();
+    setAlcohol({
+      alcohol: "",
+    });
+  };
+  const clearColor = (e) => {
+    e.stopPropagation();
     setColor({
       red: false,
       pink: false,
@@ -44,34 +50,20 @@ const RecipeBtn = () => {
       transparent: false,
       no: true,
     });
-    setAlcohol({
-      alcohol: "",
-    });
-  }, []);
+  };
 
   return (
     <ButtonBox>
-      {alcohol === "" ? (
-        <Button
-          onClick={() =>
-            openModal(RecipeAlcohol, {
-              handleClose: closeModal,
-            })
-          }
-        >
-          도수
-        </Button>
-      ) : (
-        <Button
-          onClick={() =>
-            openModal(RecipeAlcohol, {
-              handleClose: closeModal,
-            })
-          }
-        >
-          {alcohol}
-        </Button>
-      )}
+      <Button
+        onClick={() =>
+          openModal(RecipeAlcohol, {
+            handleClose: closeModal,
+          })
+        }
+      >
+        {alcohol || "도수"}
+        {alcohol && <FaTimesCircle onClick={clearAlcohol} />}
+      </Button>
 
       {no === true ||
       (red === false &&
@@ -115,6 +107,7 @@ const RecipeBtn = () => {
           {white === true ? <Circle bgColor="#FFFFFF"></Circle> : null}
           {purple === true ? <Circle bgColor="#AD00FF"></Circle> : null}
           {transparent === true ? <Circle bgColor="#3E3E3E"></Circle> : null}
+          <FaTimesCircle onClick={clearColor} />
         </Button>
       )}
     </ButtonBox>
@@ -139,7 +132,7 @@ const Button = styled.button`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0 2rem;
+  padding: 0 1rem;
 `;
 
 const Circle = styled.div`

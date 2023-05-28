@@ -60,12 +60,18 @@ router.put('/nicknamedupcheck', async (req, res) => {
   try {
     const count = await sql.namedupcheck(req);
     if (count !== 0) {
-      return res.status(409).send({ success: false });
+      return res
+        .status(200)
+        .send({ success: true, duplicate: true, message: '닉네임 중복' });
     } else {
-      return res.send({ success: true });
+      return res
+        .status(200)
+        .send({ success: true, duplicate: false, message: '닉네임 사용 가능' });
     }
   } catch (error) {
-    res.send('error on nicknamedupcheck');
+    return res
+      .status(400)
+      .send({ success: false, message: 'error on nicknamedupcheck', error });
   }
 });
 
@@ -232,7 +238,9 @@ router.put('/checkbartender', checkAccess, async (req, res) => {
 router.get('/', checkAccess, async (req, res) => {
   try {
     console.log(req.user);
-    return res.status(200).json({ success: true, message: '회원 정보 조회 성공', data: req.user});
+    return res
+      .status(200)
+      .json({ success: true, message: '회원 정보 조회 성공', data: req.user });
   } catch (error) {
     return res
       .status(400)
