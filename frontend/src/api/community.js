@@ -12,27 +12,32 @@ export const reportCommunity = async (id, report) => {
 export const postCommunity = async ({
   title,
   content,
+  like,
+  cno,
   category,
   image,
-  likes,
 }) => {
+  const token = getAccessToken();
+  axios.defaults.headers.common.Authorization = token;
   const formData = new FormData();
   formData.append(
     "data",
     JSON.stringify({
       title,
       content,
-      likes,
+      like,
+      cno,
     })
   );
+  console.log("files is ", image);
   for (let i = 0; i < image.length; i++) {
     formData.append("files", image[i].file);
   }
-  console.log("form is ", formData);
-  const values = formData.values();
-  for (const pair of values) {
-    console.log(pair);
-  }
+  // console.log("form is ", formData);
+  // const values = formData.values();
+  // for (const pair of values) {
+  //   console.log("pair is ", pair);
+  // }
   const { data } = await axios.post(
     `/api/communities?category=${category}`,
     formData,

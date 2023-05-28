@@ -73,6 +73,12 @@ const ReportButton = styled.div`
   }
 `;
 
+const ImageSection = styled.div`
+  border: 1px solid green;
+  width: 100%;
+  margin-bottom: 1rem;
+`;
+
 const TopMost = styled.div`
   display: flex;
   justify-content: space-between;
@@ -287,8 +293,9 @@ const CommunityPostDetailPage = () => {
           </TopSection>
           <MainSection>
             <div>{post.content}</div>
+            <ImageSection></ImageSection>
             <BottomInfo>
-              <span>{post.date}</span>
+              <span>{post.createdAt.slice(0, 10)}</span>
               <div>
                 <FaThumbsUp
                   className={liked ? "icon liked" : "icon"}

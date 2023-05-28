@@ -15,6 +15,7 @@ import ReviewItem from "../components/mypage/ReviewItem";
 import LevelInfoModal from "../components/mypage/LevelInfoModal";
 import NameChangeModal from "../components/mypage/NameChangeModal";
 import VerifyingModal from "../components/mypage/VerifyingModal";
+import MyPostingItem from "../components/community/MyPostingItem";
 import axios from "axios";
 
 const Background = styled.div`
@@ -400,7 +401,14 @@ const MyPage = () => {
               ) : (
                 postings
                   .slice(0, 3)
-                  ?.map((el) => <FreeListItem key={el.postId} data={el} />)
+                  ?.map((el) => (
+                    <MyPostingItem
+                      data={el}
+                      key={el.postId}
+                      uname={userInfo.NICKNAME}
+                      level={userInfo.LEVEL}
+                    />
+                  ))
               )}
             </div>
           </Section>

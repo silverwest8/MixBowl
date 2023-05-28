@@ -112,24 +112,28 @@ const MyPostingPage = () => {
 
   const { isSuccess, data, fetchNextPage, hasNextPage } = useInfiniteQuery(
     ["page"],
-    ({ pageParam = 1 }) => GetPosting(pageParam),
+    ({ pageParams = 1 }) => GetPosting(pageParams),
     {
       getNextPageParam: (lastPage) => {
+        console.log("lastPage is ", lastPage);
+        if (lastPage.list.length === 0 || lastPage.count < 10) {
+          return undefined; // No more pages
+        }
         return lastPage.page + 1;
       },
     }
   );
 
-  useEffect(() => {
-    fetchNextPage(1);
-    console.log("data is ", data);
-  }, []);
+  // useEffect(() => {
+  //   fetchNextPage(1);
+  // }, []);
 
   useEffect(() => {
+    console.log("has Next Page is ", hasNextPage);
     if (inView && hasNextPage) {
       fetchNextPage();
     }
-  }, [inView]);
+  }, [inView, hasNextPage]);
 
   return (
     <main

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const MyPostingItem = ({ data, uname, level }) => {
   // TODO : 호버, 이미지처리
-  console.log("lets see the data ", data);
+  console.log("my posting item ", data);
   return (
     <ItemContainer to={`/community/${data.postId}`}>
       <div className="wrapper">
@@ -54,7 +54,7 @@ const MyPostingItem = ({ data, uname, level }) => {
               </span>
             </ReactionContainer>
             <div className="userinfo">
-              {data.date.slice(0, 10)}
+              {/* {data.date.slice(0, 10)} */}
               <span className="username">{uname}</span>
               <MemberBadge level={level} />
             </div>
