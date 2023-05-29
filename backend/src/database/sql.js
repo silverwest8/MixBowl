@@ -214,6 +214,7 @@ const sql = {
       if (data.category === 1) {
         //칵테일 추천
         const { title, content } = data;
+        console.log('hi');
         const post = await POST.update(
           {
             TITLE: title,
@@ -327,10 +328,13 @@ const sql = {
     try {
       let categoryDb = 0; //review 참조
       let communityId;
-      const reviewId = db.REVIEW_ID;
-      if (reviewId === undefined) {
+      let reviewId;
+      if (db.REVIEW_ID === undefined) {
         communityId = Number(db.PNO);
         categoryDb = 1; // community(Post) 참조
+      } else {
+        console.log(db);
+        reviewId = db.REVIEW_ID;
       }
       req.files.map(async (data) => {
         let path = data.path;
