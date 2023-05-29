@@ -55,10 +55,10 @@ export const deleteReply = async (id) => {
   return data;
 };
 
-export const deletePost = async () => {
+export const deletePost = async (id) => {
   const token = getAccessToken();
   axios.defaults.headers.common.Authorization = token;
-  const { data } = await axios.delete(`/api/users`);
+  const { data } = await axios.delete(`/api/communities/${id}`);
   return data;
 };
 
@@ -67,6 +67,7 @@ export const editCommunity = async ({
   content,
   title,
   category,
+  cno,
   id,
   files,
 }) => {
@@ -74,10 +75,11 @@ export const editCommunity = async ({
   formData.append(
     "data",
     JSON.stringify({
-      like: Number(like),
-      content,
       title,
-      category: Number(category),
+      content,
+      like,
+      category,
+      cno: cno.toString(),
     })
   );
   for (let i = 0; i < files.length; i++) {
@@ -85,7 +87,7 @@ export const editCommunity = async ({
   }
   const values = formData.values();
   for (const pair of values) {
-    console.log(pair);
+    console.log("pair is ", pair);
   }
   const { data } = await axios.post(`/api/communities/${id}`, formData, {
     headers: {

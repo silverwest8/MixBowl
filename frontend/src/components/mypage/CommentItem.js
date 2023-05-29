@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 const CommentItem = ({ data }) => {
+  console.log("comment items is ", data);
   return (
     <ItemContainer>
       <ItemWrapper to={`/community/${data.postId}`}>

@@ -54,16 +54,7 @@ const AnswerItem = ({ data }) => {
               ]}
             />
           ) : (
-            <ReportButton
-              onClick={() =>
-                openModal(ReportModal, {
-                  handleClose: closeModal,
-                  onSubmit: submitReport,
-                })
-              }
-            >
-              신고
-            </ReportButton>
+            ""
           )}
         </div>
       </div>

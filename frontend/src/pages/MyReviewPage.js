@@ -152,23 +152,24 @@ const MyReviewPage = () => {
         gap: "2rem",
       }}
     >
-      <Background>
-        <TopSection>
-          <div>
-            <Link to={"/mypage"}>
-              <MdArrowBackIosNew className="hover" />
-            </Link>
-          </div>
-          <div>
-            <span className="hidden">
-              <span className="gold">{username}</span>님이{" "}
-            </span>
-            작성한 리뷰
-          </div>
-        </TopSection>
-        {isLoading ? (
-          <LoadingPage />
-        ) : (
+      {isLoading ? (
+        <LoadingPage />
+      ) : (
+        <Background>
+          <TopSection>
+            <div>
+              <Link to={"/mypage"}>
+                <MdArrowBackIosNew className="hover" />
+              </Link>
+            </div>
+            <div>
+              <span className="hidden">
+                <span className="gold">{username}</span>님이{" "}
+              </span>
+              작성한 리뷰
+            </div>
+          </TopSection>
+
           <MainSection>
             <section>
               {isSuccess &&
@@ -180,8 +181,8 @@ const MyReviewPage = () => {
               <div ref={ref}></div>
             </section>
           </MainSection>
-        )}
-      </Background>
+        </Background>
+      )}
     </main>
   );
 };

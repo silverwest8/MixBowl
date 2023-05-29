@@ -233,6 +233,9 @@ const Section = styled.div`
       color: ${({ theme }) => theme.color.primaryGold};
     }
   }
+  .disabled {
+    color: ${({ theme }) => theme.color.gray};
+  }
 `;
 const ButtonContainer = styled.div`
   width: 100%;
@@ -277,6 +280,7 @@ const MyPage = () => {
 
         setDataFetched(true); // Set the flag to indicate that data has been fetched
         name = userInfo.NICKNAME;
+        // console.log("reviews are ", reviewsResponse.data);
       }
     } catch (error) {
       console.log("empty or error");
@@ -354,9 +358,13 @@ const MyPage = () => {
             <Section>
               <div>
                 내가 추천한 레시피
-                <Link to={"/mypage/recipe"}>
-                  <MdArrowForwardIos className="icon hover" />
-                </Link>
+                {recipe.length === 0 ? (
+                  <MdArrowForwardIos className="icon disabled" />
+                ) : (
+                  <Link to={"/mypage/recipe"}>
+                    <MdArrowForwardIos className="icon" />
+                  </Link>
+                )}
               </div>
               <div>
                 {recipe && recipe.length === 0 ? (
@@ -396,9 +404,13 @@ const MyPage = () => {
             <Section>
               <div>
                 내가 쓴 게시글
-                <Link to={"/mypage/posting"}>
-                  <MdArrowForwardIos className="icon" />
-                </Link>
+                {postings.length === 0 ? (
+                  <MdArrowForwardIos className="icon disabled" />
+                ) : (
+                  <Link to={"/mypage/posting"}>
+                    <MdArrowForwardIos className="icon" />
+                  </Link>
+                )}
               </div>
               <div>
                 {postings.length === 0 ? (
@@ -420,9 +432,13 @@ const MyPage = () => {
             <Section>
               <div>
                 내가 쓴 댓글
-                <Link to={"/mypage/comment"}>
-                  <MdArrowForwardIos className="icon" />
-                </Link>
+                {comments.length === 0 ? (
+                  <MdArrowForwardIos className="icon disabled" />
+                ) : (
+                  <Link to={"/mypage/comment"}>
+                    <MdArrowForwardIos className="icon" />
+                  </Link>
+                )}
               </div>
               <div>
                 {comments.length === 0 ? (
@@ -437,9 +453,13 @@ const MyPage = () => {
             <Section>
               <div>
                 내가 쓴 칵테일 바 리뷰
-                <Link to={"/mypage/review"}>
-                  <MdArrowForwardIos className="icon" />
-                </Link>
+                {reviews.length === 0 ? (
+                  <MdArrowForwardIos className="icon disabled" />
+                ) : (
+                  <Link to={"/mypage/review"}>
+                    <MdArrowForwardIos className="icon" />
+                  </Link>
+                )}
               </div>
               <div>
                 {reviews.length === 0 ? (

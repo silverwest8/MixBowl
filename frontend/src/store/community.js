@@ -6,6 +6,7 @@ export const searchState = atom({
   key: "searchState",
   default: "",
 });
+
 export const commentState = atom({
   key: "commentState",
   default: "",
@@ -14,7 +15,6 @@ export const commentState = atom({
 export const AddPostingState = atom({
   key: "AddPostingState",
   default: {
-    addImg: "",
     addTitle: "",
     addContent: "",
     addLike: 1,

@@ -107,7 +107,7 @@ const MyPostingPage = () => {
       const userInfoResponse = await axios.get(`/api/users`);
       setUsername(userInfoResponse.data.data.NICKNAME);
       setLevel(userInfoResponse.data.data.LEVEL);
-      // console.log("data list is ", data.list);
+      console.log("data list is ", data.list);
       return { page, list: data.list, count: data.list.length };
     } catch (error) {
       console.log("empty or error");
@@ -129,11 +129,6 @@ const MyPostingPage = () => {
     }
   );
 
-  useEffect(() => {
-    if (isSuccess) {
-      setIsLoading(false);
-    }
-  }, [isSuccess]);
   // useEffect(() => {
   //   fetchNextPage(1);
   // }, []);
@@ -145,6 +140,11 @@ const MyPostingPage = () => {
       fetchNextPage();
     }
   }, [inView, hasNextPage]);
+  useEffect(() => {
+    if (isSuccess) {
+      setIsLoading(false);
+    }
+  }, [isSuccess]);
 
   return (
     <main
@@ -154,23 +154,24 @@ const MyPostingPage = () => {
         gap: "2rem",
       }}
     >
-      <Background>
-        <TopSection>
-          <div>
-            <Link to={"/mypage"}>
-              <MdArrowBackIosNew className="hover" />
-            </Link>
-          </div>
-          <div>
-            <span className="hidden">
-              <span className="gold">{username}</span>님이{" "}
-            </span>
-            작성한 게시글
-          </div>
-        </TopSection>
-        {isLoading ? (
-          <LoadingPage />
-        ) : (
+      {isLoading ? (
+        <LoadingPage />
+      ) : (
+        <Background>
+          <TopSection>
+            <div>
+              <Link to={"/mypage"}>
+                <MdArrowBackIosNew className="hover" />
+              </Link>
+            </div>
+            <div>
+              <span className="hidden">
+                <span className="gold">{username}</span>님이{" "}
+              </span>
+              작성한 게시글
+            </div>
+          </TopSection>
+
           <MainSection>
             <section>
               {isSuccess &&
@@ -187,8 +188,8 @@ const MyPostingPage = () => {
               <div ref={ref}></div>
             </section>
           </MainSection>
-        )}
-      </Background>
+        </Background>
+      )}
     </main>
   );
 };

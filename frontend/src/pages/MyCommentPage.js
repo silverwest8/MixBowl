@@ -106,7 +106,7 @@ const MyCommentPage = () => {
       const userInfoResponse = await axios.get(`/api/users`);
       setUsername(userInfoResponse.data.data.NICKNAME);
       setLevel(userInfoResponse.data.data.LEVEL);
-      // console.log("data list is ", data.list);
+      console.log("comment data list is ", data.list);
       return { page, list: data.list, count: data.list.length };
     } catch (error) {
       console.log("empty or error");
@@ -131,11 +131,6 @@ const MyCommentPage = () => {
   // useEffect(() => {
   //   fetchNextPage(1);
   // }, []);
-  useEffect(() => {
-    if (isSuccess) {
-      setIsLoading(false);
-    }
-  }, [isSuccess]);
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -143,7 +138,11 @@ const MyCommentPage = () => {
       fetchNextPage();
     }
   }, [inView, hasNextPage]);
-
+  useEffect(() => {
+    if (isSuccess) {
+      setIsLoading(false);
+    }
+  }, [isSuccess]);
   return (
     <main
       style={{

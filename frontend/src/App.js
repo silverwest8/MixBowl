@@ -26,6 +26,7 @@ import MyRecipePage from "./pages/MyRecipePage";
 import MyPostingPage from "./pages/MyPostingPage";
 import MyCommentPage from "./pages/MyCommentPage";
 import MyReviewPage from "./pages/MyReviewPage";
+import CommunityEditingPage from "./pages/CommunityEditingPage";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -82,6 +83,10 @@ function App() {
                 <Route
                   path="community/posting"
                   element={<CommunityPostingPage />}
+                />
+                <Route
+                  path="community/edit/:id"
+                  element={<CommunityEditingPage />}
                 />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>

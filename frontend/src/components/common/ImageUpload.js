@@ -45,7 +45,7 @@ const ImageUpload = ({ defaultFiles }) => {
       setImageFileListState([]);
     };
   }, []);
-  console.log(files);
+  // console.log(files);
   return (
     <Section>
       <div className="header">

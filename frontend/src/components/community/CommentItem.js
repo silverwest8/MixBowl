@@ -64,16 +64,7 @@ const CommentItem = ({ data }) => {
             ]}
           />
         ) : (
-          <ReportButton
-            onClick={() =>
-              openModal(ReportModal, {
-                handleClose: closeModal,
-                onSubmit: submitReport,
-              })
-            }
-          >
-            신고
-          </ReportButton>
+          ""
         )}
       </TopSection>
       <p>{data.CONTENT}</p>

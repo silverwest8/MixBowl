@@ -215,23 +215,24 @@ const MyRecipePage = () => {
         gap: "2rem",
       }}
     >
-      <Background>
-        <TopSection>
-          <div>
-            <Link to={"/mypage"}>
-              <MdArrowBackIosNew className="hover" />
-            </Link>
-          </div>
-          <div>
-            <span className="hidden">
-              <span className="gold">{username}</span>님이{" "}
-            </span>
-            추천한 레시피
-          </div>
-        </TopSection>
-        {isLoading ? (
-          <LoadingPage />
-        ) : (
+      {isLoading ? (
+        <LoadingPage />
+      ) : (
+        <Background>
+          <TopSection>
+            <div>
+              <Link to={"/mypage"}>
+                <MdArrowBackIosNew className="hover" />
+              </Link>
+            </div>
+            <div>
+              <span className="hidden">
+                <span className="gold">{username}</span>님이{" "}
+              </span>
+              추천한 레시피
+            </div>
+          </TopSection>
+
           <MainSection>
             <section>
               <RecipeWrapper>
@@ -276,8 +277,8 @@ const MyRecipePage = () => {
               </RecipeWrapper>
             </section>
           </MainSection>
-        )}
-      </Background>
+        </Background>
+      )}
     </main>
   );
 };

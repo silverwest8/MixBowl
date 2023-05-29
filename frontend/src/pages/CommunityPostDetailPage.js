@@ -13,11 +13,14 @@ import AnswerItem from "../components/community/AnswerItem";
 import ReportModal from "../components/common/ReportModal";
 import { useModal } from "../hooks/useModal";
 import { toastState } from "../store/toast";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { getAccessToken } from "../utils/token";
+import { CommunityReportState } from "../store/community";
+import PostDeleteModal from "../components/community/PostDeleteModal";
 import axios from "axios";
 import ImageSliderModal from "../components/common/ImageSliderModal";
 import { getCommunityImageUrl } from "../utils/image";
+import { reportCommunity } from "../api/community";
 
 const Background = styled.div`
   color: white;
@@ -194,6 +197,8 @@ const CommunityPostDetailPage = () => {
   const [post, setPost] = useState([]);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const reportNum = useRecoilValue(CommunityReportState);
+
   const { openModal, closeModal } = useModal();
   const token = localStorage.getItem("access_token");
   const GetPost = async () => {
@@ -266,31 +271,33 @@ const CommunityPostDetailPage = () => {
   const submitReport = async () => {
     try {
       axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.post(
-        `/api/communities/report/${post.postId}`
-      );
-      console.log("report data is ", data);
-      if (data.success) {
-        setTimeout(() => {
-          setToastState({
-            show: true,
-            message: "신고가 완료되었습니다.",
-            type: "success",
-            ms: 1000,
-          });
-        }, 300);
-        closeModal();
-      } else {
-        setTimeout(() => {
-          setToastState({
-            show: true,
-            message: "이미 신고 완료된 게시물입니다.",
-            type: "error",
-            ms: 1000,
-          });
-        }, 300);
-        closeModal();
-      }
+      reportCommunity(post.postId, reportNum).then((response) => {
+        if (response.success) {
+          setTimeout(() => {
+            setToastState({
+              show: true,
+              message: "신고가 완료되었습니다.",
+              type: "success",
+              ms: 1000,
+            });
+          }, 300);
+          closeModal();
+        } else {
+          setTimeout(() => {
+            setToastState({
+              show: true,
+              message: "이미 신고 완료된 게시물입니다.",
+              type: "error",
+              ms: 1000,
+            });
+          }, 300);
+          closeModal();
+        }
+      });
+      // const { data } = await axios.post(
+      //   `/api/communities/report/${post.postId}`
+      // );
+      // console.log("report data is ", data);
     } catch (error) {
       console.log("report error is ", error);
     }
@@ -300,6 +307,15 @@ const CommunityPostDetailPage = () => {
       handleClose: closeModal,
       images,
       initialImageIndex,
+    });
+  };
+  const onClickEditMenu = async (postId) => {
+    navigate(`/community/edit/${postId}`);
+  };
+  const onClickDeleteMenu = (id) => {
+    openModal(PostDeleteModal, {
+      handleClose: closeModal,
+      id,
     });
   };
 
@@ -339,7 +355,12 @@ const CommunityPostDetailPage = () => {
               <span>{post.title}</span>
               {/* TODO: 로그인 시 달라지게, 지금은 임시로 넣어둠 */}
               {post.isWriter ? (
-                <DropdownMenu />
+                <DropdownMenu
+                  handlers={[
+                    () => onClickEditMenu(post.postId),
+                    () => onClickDeleteMenu(post.postId),
+                  ]}
+                />
               ) : (
                 <ReportButton
                   onClick={() =>

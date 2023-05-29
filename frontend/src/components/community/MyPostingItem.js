@@ -60,14 +60,18 @@ const MyPostingItem = ({ data, uname, level }) => {
             </div>
           </BottomSection>
         </div>
-        {data.images && data.images.length !== 0 && (
+        {data.cocktailId ? (
           <ImageSection>
-            <img
-              src={
-                "https://cdn.discordapp.com/attachments/751695059354648616/1033937959008874504/Screenshot_20221016_130522.jpg"
-              }
-            />
+            <img src={`/api/recipes/image/${data.cocktailId}`}></img>
           </ImageSection>
+        ) : (
+          data.images.length !== 0 && (
+            <ImageSection>
+              <img
+                src={`${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${data.images[0]}`}
+              />
+            </ImageSection>
+          )
         )}
       </div>
     </ItemContainer>
@@ -99,6 +103,7 @@ const ItemContainer = styled(Link)`
     display: flex;
     justify-content: space-around;
     width: 100%;
+    align-items: center;
     > div:first-child {
       width: 100%;
     }
@@ -183,6 +188,7 @@ const ImageSection = styled.div`
   height: 6rem;
   border-radius: 10px;
   overflow: hidden;
+  margin: 1rem;
 `;
 
 const MainText = styled.div`
