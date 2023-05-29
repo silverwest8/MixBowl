@@ -328,7 +328,6 @@ const sql = {
     try {
       let categoryDb = 0; //review 참조
       let communityId;
-<<<<<<< HEAD
       let reviewId;
       if (db.REVIEW_ID === undefined) {
         communityId = Number(db.PNO);
@@ -336,12 +335,6 @@ const sql = {
       } else {
         console.log(db);
         reviewId = db.REVIEW_ID;
-=======
-      const reviewId = db.REVIEW_ID;
-      if (reviewId === undefined) {
-        communityId = Number(db.PNO);
-        categoryDb = 1; // community(Post) 참조
->>>>>>> f4a7eae0aced8ef59d9f12726c0e78b1fdbf3545
       }
       req.files.map(async (data) => {
         let path = data.path;
