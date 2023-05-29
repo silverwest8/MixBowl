@@ -39,6 +39,10 @@ const CommentItem = ({ data }) => {
     setComment(comment);
     setCheckEdit(true);
     setReplyId(id);
+    window.scrollTo({
+      top: 10,
+      behavior: "smooth",
+    });
     console.log("content is ", comment);
   };
   const onClickDeleteMenu = (id) => {

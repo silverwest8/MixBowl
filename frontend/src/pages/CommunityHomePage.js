@@ -140,6 +140,7 @@ const Board = styled.div`
   @media screen and (max-width: 500px) {
     width: 80vw;
   }
+  cursor: pointer;
 `;
 
 const WritingButton = styled(Link)`

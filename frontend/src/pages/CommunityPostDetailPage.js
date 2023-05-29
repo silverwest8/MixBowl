@@ -191,6 +191,13 @@ const CommentSection = styled.div`
     }
   }
 `;
+const MiniButton = styled.div`
+  color: ${({ theme }) => theme.color.lightGray};
+  text-align: right;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+`;
 const CommentButton = styled.div`
   border-radius: 10px;
   padding: 0.6rem 1.2rem;
@@ -310,6 +317,11 @@ const CommunityPostDetailPage = () => {
       id,
     });
   };
+  const cancelEdit = () => {
+    setComment("");
+    setCheckEdit(false);
+    setReplyId(null);
+  };
   const editOrPost = (replyId) => {
     if (checkEdit) {
       editComment(replyId, comment)
@@ -384,7 +396,6 @@ const CommunityPostDetailPage = () => {
             </Username>
             <TitleContainer className={post.category === 2 ? "none" : ""}>
               <span>{post.title}</span>
-              {/* TODO: 로그인 시 달라지게, 지금은 임시로 넣어둠 */}
               {post.isWriter ? (
                 <DropdownMenu
                   handlers={[
@@ -460,6 +471,9 @@ const CommunityPostDetailPage = () => {
                 </CommentButton>
               }
             />
+            {checkEdit && (
+              <MiniButton onClick={() => cancelEdit()}>취소하기</MiniButton>
+            )}
             {post.category === 2 ? (
               <ul>
                 {post.replies &&
