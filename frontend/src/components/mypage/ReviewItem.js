@@ -14,7 +14,7 @@ const ReviewItem = ({ data }) => {
                 (id) =>
                   id && (
                     <Button className="hidden" key={id}>
-                      {getKeyword(id)}
+                      {getKeyword(id).value}
                     </Button>
                   )
               )}
