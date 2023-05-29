@@ -1,5 +1,8 @@
 import { getAccessToken } from "../utils/token";
 import axios from "axios";
+import { toastState } from "../store/toast";
+import { useSetRecoilState, useRecoilState } from "recoil";
+import { commentState, checkEditState } from "../store/community";
 
 export const reportCommunity = async (id, report) => {
   const { data } = await axios.post(`/api/communities/report/${id}`, {
@@ -79,7 +82,7 @@ export const editCommunity = async ({
       content,
       like,
       category,
-      cno: cno.toString(),
+      cno,
     })
   );
   for (let i = 0; i < files.length; i++) {
@@ -101,5 +104,24 @@ export const getAllRecipe = async () => {
   const token = getAccessToken();
   axios.defaults.headers.common.Authorization = token;
   const { data } = await axios.get("/api/communities/list/cocktails");
+  return data;
+};
+export const registerComment = async (id, comment) => {
+  const token = getAccessToken();
+  axios.defaults.headers.common.Authorization = token;
+  const { data } = await axios.post(`/api/communities/reply/${id}`, {
+    content: comment,
+  });
+  return data;
+};
+export const editComment = async (id, comment) => {
+  // console.log(e);
+  const token = getAccessToken();
+  console.log("editcomment id is ", id);
+  axios.defaults.headers.common.Authorization = token;
+  const { data } = await axios.put(`/api/communities/reply/${id}`, {
+    content: comment,
+  });
+  console.log("edited comment is ", data);
   return data;
 };

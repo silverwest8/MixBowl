@@ -4,8 +4,14 @@ import DropdownMenu from "../common/DropdownMenu";
 import ReportModal from "../common/ReportModal";
 import { useModal } from "../../hooks/useModal";
 import { toastState } from "../../store/toast";
-import { useSetRecoilState } from "recoil";
+import { useSetRecoilState, useRecoilState } from "recoil";
 import ReplyDeleteModal from "./ReplyDeleteModal";
+import {
+  commentState,
+  checkEditState,
+  replyState,
+} from "../../store/community";
+import { editComment } from "../../api/community";
 
 const ReportButton = styled.div`
   flex: 1 0 auto;
@@ -25,22 +31,14 @@ const ReportButton = styled.div`
 
 const CommentItem = ({ data }) => {
   console.log("comment item is ", data.CONTENT);
+  const [comment, setComment] = useRecoilState(commentState);
+  const [checkEdit, setCheckEdit] = useRecoilState(checkEditState);
+  const [replyId, setReplyId] = useRecoilState(replyState);
   const { openModal, closeModal } = useModal();
-  const setToastState = useSetRecoilState(toastState);
-  const submitReport = () => {
-    // TODO
-    // report 수 증가?
-    setTimeout(() => {
-      setToastState({
-        show: true,
-        message: "신고가 완료되었습니다.",
-        type: "success",
-        ms: 1000,
-      });
-    }, 300);
-    closeModal();
-  };
-  const onClickEditMenu = async (replyId, comment) => {
+  const onClickEditMenu = async (id, comment) => {
+    setComment(comment);
+    setCheckEdit(true);
+    setReplyId(id);
     console.log("content is ", comment);
   };
   const onClickDeleteMenu = (id) => {

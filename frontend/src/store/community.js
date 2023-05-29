@@ -11,6 +11,14 @@ export const commentState = atom({
   key: "commentState",
   default: "",
 });
+export const checkEditState = atom({
+  key: "checkEditState",
+  default: false,
+});
+export const replyState = atom({
+  key: "replyState",
+  default: null,
+});
 
 export const AddPostingState = atom({
   key: "AddPostingState",

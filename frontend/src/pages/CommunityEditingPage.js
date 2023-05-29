@@ -19,6 +19,7 @@ import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
 import { AddPostingState } from "../store/community";
 import { toastState } from "../store/toast";
 import { editCommunity } from "../api/community";
+import LoadingPage from "./Loading";
 import { convertURLtoFile } from "../utils/image";
 
 const Background = styled.div`
@@ -220,11 +221,13 @@ const CommunityEditingPage = () => {
   const [recipes, setRecipes] = useState([]);
   const [warning, setWarning] = useState("");
   const [selectLike, setSelectLike] = useState(true);
+  // const [posting, setPosting] = useState({});
   const [{ addTitle }, setAddTitle] = useRecoilState(AddPostingState);
   const [{ addContent }, setAddContent] = useRecoilState(AddPostingState);
   const [{ addLike }, setAddLike] = useRecoilState(AddPostingState);
   const [{ addCategory }, setAddCategory] = useRecoilState(AddPostingState);
   const [{ addCNO }, setAddCNO] = useRecoilState(AddPostingState);
+  const [isLoading, setIsLoading] = useState(true);
   const files = useRecoilValue(imageFileListState);
   const navigate = useNavigate();
   const defaultFiles = [];
@@ -292,53 +295,90 @@ const CommunityEditingPage = () => {
     try {
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/communities/list/cocktails`);
-      const postingResponse = await axios.get(`/api/communities/${id}`);
-      console.log("postingReponse is ", postingResponse.data);
-      setAddContent((prev) => ({
-        ...prev,
-        addContent: postingResponse.data.content,
-      }));
-      setAddTitle((prev) => ({
-        ...prev,
-        addTitle: postingResponse.data.title,
-      }));
-      setAddCategory((prev) => ({
-        ...prev,
-        addCategory: postingResponse.data.category,
-      }));
-      if (postingResponse.data.category === 1) {
-        setTab("추천 이유");
-      } else if (postingResponse.data.category === 2) {
-        setTab("질문 내용");
-      } else if (postingResponse.data.category === 3) {
-        setTab("후기 내용");
-      } else if (postingResponse.data.category === 4) {
-        setTab("글 내용");
-      }
-      if (postingResponse.data.cno) {
-        setAddCNO((prev) => ({
-          ...prev,
-          addCNO: postingResponse.data.cno,
-        }));
-        setAddLike((prev) => ({
-          ...prev,
-          addContent: postingResponse.data.cocktailLike,
-        }));
-      }
-      for (let i = 0; i < postingResponse.data.images.length; i++) {
-        const file = await convertURLtoFile(
-          `/api/communities/one/image?imageId=${postingResponse.data.images[i]}`
-        );
-        console.log("file is ", file, "files is ", files);
-        defaultFiles.push(file);
-      }
-      //   setUserInfo(userInfoResponse.data.data);
-      console.log("data here ", data);
       if (data.success) {
         setList(data.data);
         // console.log("list is ", list);
         SetRecipe(list);
         // console.log("final is ", recipes);
+      }
+      const postingResponse = await axios.get(`/api/communities/${id}`);
+      console.log("postingReponse is ", postingResponse.data);
+      if (postingResponse.data.success) {
+        setAddContent((prev) => ({
+          ...prev,
+          addContent: postingResponse.data.content,
+        }));
+        setAddTitle((prev) => ({
+          ...prev,
+          addTitle: postingResponse.data.title,
+        }));
+        setAddCategory((prev) => ({
+          ...prev,
+          addCategory: postingResponse.data.category,
+        }));
+        if (postingResponse.data.category === 1) {
+          setTab("추천 이유");
+          setAddCNO((prev) => ({
+            ...prev,
+            addCNO: null,
+          }));
+          setAddLike((prev) => ({
+            ...prev,
+            addLike: 0,
+          }));
+        } else if (postingResponse.data.category === 2) {
+          setTab("질문 내용");
+          setTab("추천 이유");
+          setAddCNO((prev) => ({
+            ...prev,
+            addCNO: null,
+          }));
+          setAddLike((prev) => ({
+            ...prev,
+            addLike: 0,
+          }));
+        } else if (postingResponse.data.category === 3) {
+          setTab("후기 내용");
+          setTab("추천 이유");
+          setAddCNO((prev) => ({
+            ...prev,
+            addCNO: null,
+          }));
+          setAddLike((prev) => ({
+            ...prev,
+            addLike: 0,
+          }));
+        } else if (postingResponse.data.category === 4) {
+          setTab("글 내용");
+          setTab("추천 이유");
+          setAddCNO((prev) => ({
+            ...prev,
+            addCNO: null,
+          }));
+          setAddLike((prev) => ({
+            ...prev,
+            addLike: 0,
+          }));
+        }
+        if (postingResponse.data.cno) {
+          setAddCNO((prev) => ({
+            ...prev,
+            addCNO: postingResponse.data.cno,
+          }));
+          setAddLike((prev) => ({
+            ...prev,
+            addLike: postingResponse.data.cocktailLike,
+          }));
+        }
+        for (let i = 0; i < postingResponse.data.images.length; i++) {
+          const file = await convertURLtoFile(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${postingResponse.data.images[i]}`
+          );
+          console.log("file is ", file, "files is ", defaultFiles);
+          defaultFiles.push(file);
+        }
+        //   setUserInfo(userInfoResponse.data.data);
+        console.log("data here ", data);
       }
     } catch (error) {
       console.log("err is ", error);
@@ -355,9 +395,11 @@ const CommunityEditingPage = () => {
 
   useEffect(() => {
     GetRecipe();
+    setIsLoading(false);
   }, []);
   useEffect(() => {
     SetRecipe(list);
+    setIsLoading(false);
   }, [list]);
   const setToastState = useSetRecoilState(toastState);
 
@@ -365,7 +407,7 @@ const CommunityEditingPage = () => {
     if (addTitle === "" || addContent === "") {
       setWarning("* 제목과 내용은 필수 입력 항목입니다.");
     } else {
-      console.log("file handed to postCommunity is ", files);
+      // console.log("file handed to postCommunity is ", files);
       editCommunity({
         like: addLike,
         content: addContent,
@@ -410,151 +452,157 @@ const CommunityEditingPage = () => {
       }}
     >
       <Title title="커뮤니티" />
-      <Background>
-        <MiniTitle>글 작성</MiniTitle>
-        <Section>
-          <TopSection>
-            <span>카테고리</span>
-            <SelectContainer>
-              <Menu
-                onClick={recommendationTab}
-                className={tab === "추천 이유" ? "selected" : ""}
-              >
-                칵테일 추천
-              </Menu>
-              <Menu
-                onClick={qnaTab}
-                className={tab === "질문 내용" ? "selected" : ""}
-              >
-                질문과 답변
-              </Menu>
-              <Menu
-                onClick={reviewTab}
-                className={tab === "후기 내용" ? "selected" : ""}
-              >
-                칵테일 리뷰
-              </Menu>
-              <Menu
-                onClick={freeTab}
-                className={tab === "글 내용" ? "selected" : ""}
-              >
-                자유
-              </Menu>
-            </SelectContainer>
-          </TopSection>
-          <MainSection>
-            {tab === "질문 내용" ? (
-              ""
-            ) : tab === "후기 내용" ? (
-              <Autocomplete
-                disablePortal
-                id="autocompleteCocktail"
-                options={recipes}
-                defaultValue={{ name: addTitle, num: addCNO }}
-                getOptionLabel={(option) => option.name || ""}
-                onChange={(event, value) => {
-                  onChangeAutoComplete(event, value);
-                  // console.log("event value is ", value);
-                }}
-                sx={{
-                  width: 300,
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                  "& + .MuiAutocomplete-popper .MuiAutocomplete-option:hover": {
-                    // 👇 Customize the hover bg color here
-                    backgroundColor: "#e9aa33",
-                    color: "black",
-                  },
-                  // 👇 Optional: keep this one to customize the selected item when hovered
-                  "& + .MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected='true']:hover":
-                    {
-                      backgroundColor: "#e9aa33",
-                      color: "black",
-                    },
-                }}
-                renderInput={(params) => (
-                  <StyledTextField
-                    {...params}
-                    label=""
-                    className="selection"
-                    fullWidth
-                  />
-                )}
-                PaperComponent={(props) => (
-                  <Paper
-                    sx={{
-                      background: "#3e3e3e",
-                      color: "white",
-                      fontSize: "0.9rem",
-                    }}
-                    {...props}
-                  />
-                )}
-              />
-            ) : (
-              <>
-                <Input
-                  placeholder={tab === "후기 내용" ? "칵테일 이름" : "제목"}
-                  className="input-title"
-                  onChange={(e) => {
-                    handleTitle(e);
+      {isLoading ? (
+        <LoadingPage />
+      ) : (
+        <Background>
+          <MiniTitle>글 작성</MiniTitle>
+          <Section>
+            <TopSection>
+              <span>카테고리</span>
+              <SelectContainer>
+                <Menu
+                  onClick={recommendationTab}
+                  className={tab === "추천 이유" ? "selected" : ""}
+                >
+                  칵테일 추천
+                </Menu>
+                <Menu
+                  onClick={qnaTab}
+                  className={tab === "질문 내용" ? "selected" : ""}
+                >
+                  질문과 답변
+                </Menu>
+                <Menu
+                  onClick={reviewTab}
+                  className={tab === "후기 내용" ? "selected" : ""}
+                >
+                  칵테일 리뷰
+                </Menu>
+                <Menu
+                  onClick={freeTab}
+                  className={tab === "글 내용" ? "selected" : ""}
+                >
+                  자유
+                </Menu>
+              </SelectContainer>
+            </TopSection>
+            <MainSection>
+              {tab === "질문 내용" ? (
+                ""
+              ) : tab === "후기 내용" ? (
+                <Autocomplete
+                  disablePortal
+                  id="autocompleteCocktail"
+                  options={recipes}
+                  defaultValue={{ name: addTitle, num: addCNO }}
+                  getOptionLabel={(option) => option.name || ""}
+                  onChange={(event, value) => {
+                    onChangeAutoComplete(event, value);
+                    // console.log("event value is ", value);
                   }}
-                  value={addTitle}
+                  sx={{
+                    width: 300,
+                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline":
+                      {
+                        border: "none",
+                      },
+                    "& + .MuiAutocomplete-popper .MuiAutocomplete-option:hover":
+                      {
+                        // 👇 Customize the hover bg color here
+                        backgroundColor: "#e9aa33",
+                        color: "black",
+                      },
+                    // 👇 Optional: keep this one to customize the selected item when hovered
+                    "& + .MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected='true']:hover":
+                      {
+                        backgroundColor: "#e9aa33",
+                        color: "black",
+                      },
+                  }}
+                  renderInput={(params) => (
+                    <StyledTextField
+                      {...params}
+                      label=""
+                      className="selection"
+                      fullWidth
+                    />
+                  )}
+                  PaperComponent={(props) => (
+                    <Paper
+                      sx={{
+                        background: "#3e3e3e",
+                        color: "white",
+                        fontSize: "0.9rem",
+                      }}
+                      {...props}
+                    />
+                  )}
                 />
-              </>
-            )}
-            <Textarea
-              rows={15}
-              onChange={(e) => {
-                handleContent(e);
-              }}
-              value={addContent}
-              placeholder={
-                tab === "질문 내용"
-                  ? "질문글은 수정, 삭제가 불가하니 신중히 작성해주세요."
-                  : tab
-              }
-            />
-          </MainSection>
-          <span className="warning">{warning}</span>
+              ) : (
+                <>
+                  <Input
+                    placeholder={tab === "후기 내용" ? "칵테일 이름" : "제목"}
+                    className="input-title"
+                    onChange={(e) => {
+                      handleTitle(e);
+                    }}
+                    value={addTitle}
+                  />
+                </>
+              )}
+              <Textarea
+                rows={15}
+                onChange={(e) => {
+                  handleContent(e);
+                }}
+                value={addContent}
+                placeholder={
+                  tab === "질문 내용"
+                    ? "질문글은 수정, 삭제가 불가하니 신중히 작성해주세요."
+                    : tab
+                }
+              />
+            </MainSection>
+            <span className="warning">{warning}</span>
 
-          <ImageSection>
-            <ImageUpload defaultFiles={defaultFiles} />
-          </ImageSection>
-          {tab === "후기 내용" ? (
-            <RecommendationSection>
-              <div>이 칵테일을 추천하시나요?</div>
-              <div>
-                <span
-                  onClick={() => handleLike(1)}
-                  className={selectLike === true ? "selected" : ""}
-                >
-                  추천합니다!
-                  <AiFillHeart className="icon" />
-                </span>
-                <span
-                  onClick={() => handleLike(0)}
-                  className={selectLike === false ? "selected" : ""}
-                >
-                  아니요
-                  <ImSad className="icon" />
-                </span>
-              </div>
-            </RecommendationSection>
-          ) : (
-            ""
-          )}
-          <BottomSection>
-            <Button className="cancel" to="/community">
-              취소
-            </Button>
-            <Button className="ok" onClick={() => handleSubmit()}>
-              확인
-            </Button>
-          </BottomSection>
-        </Section>
-      </Background>
+            <ImageSection>
+              <ImageUpload defaultFiles={defaultFiles} />
+            </ImageSection>
+            {tab === "후기 내용" ? (
+              <RecommendationSection>
+                <div>이 칵테일을 추천하시나요?</div>
+                <div>
+                  <span
+                    onClick={() => handleLike(1)}
+                    className={selectLike === true ? "selected" : ""}
+                  >
+                    추천합니다!
+                    <AiFillHeart className="icon" />
+                  </span>
+                  <span
+                    onClick={() => handleLike(0)}
+                    className={selectLike === false ? "selected" : ""}
+                  >
+                    아니요
+                    <ImSad className="icon" />
+                  </span>
+                </div>
+              </RecommendationSection>
+            ) : (
+              ""
+            )}
+            <BottomSection>
+              <Button className="cancel" to="/community">
+                취소
+              </Button>
+              <Button className="ok" onClick={() => handleSubmit()}>
+                확인
+              </Button>
+            </BottomSection>
+          </Section>
+        </Background>
+      )}
     </main>
   );
 };

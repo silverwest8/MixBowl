@@ -15,7 +15,7 @@ export const nameChange = async (checkname) => {
   console.log("checkname is ", checkname.uname.checkname);
   axios.defaults.headers.common.Authorization = token;
   const { data } = await axios.put(`/api/users`, {
-    checkname: checkname.uname.checkname,
+    nickname: checkname.uname.checkname,
   });
   console.log("answer is ", data);
   return data;

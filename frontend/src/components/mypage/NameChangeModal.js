@@ -44,6 +44,7 @@ const NameChangeModal = ({ handleClose, checkname }) => {
         type: "success",
       });
       handleClose();
+      window.location.reload();
     },
   });
 

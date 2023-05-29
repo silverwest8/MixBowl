@@ -15,12 +15,21 @@ import { useModal } from "../hooks/useModal";
 import { toastState } from "../store/toast";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { getAccessToken } from "../utils/token";
-import { CommunityReportState } from "../store/community";
+import {
+  commentState,
+  CommunityReportState,
+  checkEditState,
+  replyState,
+} from "../store/community";
 import PostDeleteModal from "../components/community/PostDeleteModal";
 import axios from "axios";
 import ImageSliderModal from "../components/common/ImageSliderModal";
 import { getCommunityImageUrl } from "../utils/image";
-import { reportCommunity } from "../api/community";
+import {
+  reportCommunity,
+  registerComment,
+  editComment,
+} from "../api/community";
 
 const Background = styled.div`
   color: white;
@@ -197,6 +206,10 @@ const CommunityPostDetailPage = () => {
   const [post, setPost] = useState([]);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [comment, setComment] = useRecoilState(commentState);
+  const [checkEdit, setCheckEdit] = useRecoilState(checkEditState);
+  const [replyId, setReplyId] = useRecoilState(replyState);
+
   const reportNum = useRecoilValue(CommunityReportState);
 
   const { openModal, closeModal } = useModal();
@@ -223,31 +236,10 @@ const CommunityPostDetailPage = () => {
     }
   }, []);
 
-  const [comment, setComment] = useState("");
   const onChangeComment = (e) => {
     setComment(e.target.value);
   };
-  const registerComment = async () => {
-    const { data } = await axios.post(`/api/communities/reply/${post.postId}`, {
-      content: comment,
-    });
-    console.log("registered comment is ", data);
-    if (data.success) {
-      setToastState({
-        show: true,
-        message: "댓글이 작성되었습니다.",
-        type: "success",
-      });
-      setComment("");
-      window.location.reload();
-    } else {
-      setToastState({
-        show: true,
-        message: "댓글 작성에 실패하였습니다.",
-        type: "error",
-      });
-    }
-  };
+
   const changeLike = async () => {
     try {
       axios.defaults.headers.common.Authorization = token;
@@ -317,6 +309,45 @@ const CommunityPostDetailPage = () => {
       handleClose: closeModal,
       id,
     });
+  };
+  const editOrPost = (replyId) => {
+    if (checkEdit) {
+      editComment(replyId, comment)
+        .then((response) => {
+          if (response.success) {
+            setToastState({
+              show: true,
+              message: "댓글이 수정되었습니다.",
+              type: "success",
+            });
+            window.location.reload();
+          } else {
+            setToastState({
+              show: true,
+              message: "댓글 수정에 실패하였습니다.",
+              type: "error",
+            });
+          }
+        })
+        .catch((err) => console.log("edit error is ", err));
+    } else {
+      registerComment(id, comment).then((response) => {
+        if (response.success) {
+          setToastState({
+            show: true,
+            message: "댓글이 작성되었습니다.",
+            type: "success",
+          });
+          window.location.reload();
+        } else {
+          setToastState({
+            show: true,
+            message: "댓글 작성에 실패하였습니다.",
+            type: "error",
+          });
+        }
+      });
+    }
   };
 
   return (
@@ -419,8 +450,13 @@ const CommunityPostDetailPage = () => {
               onChange={onChangeComment}
               value={comment}
               Button={
-                <CommentButton type="button" onClick={registerComment}>
-                  댓글 등록
+                <CommentButton
+                  type="button"
+                  onClick={() => {
+                    editOrPost(replyId);
+                  }}
+                >
+                  {checkEdit ? "수정 완료" : "댓글 등록"}
                 </CommentButton>
               }
             />

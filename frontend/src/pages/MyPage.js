@@ -279,6 +279,7 @@ const MyPage = () => {
         setIsLoading(false);
 
         setDataFetched(true); // Set the flag to indicate that data has been fetched
+        console.log("userdata is ", userInfoResponse.data.data);
         name = userInfo.NICKNAME;
         // console.log("reviews are ", reviewsResponse.data);
       }
