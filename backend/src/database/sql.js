@@ -207,7 +207,7 @@ const sql = {
   },
   changeCommunity: async (req, pno) => {
     const unum = req.decoded.unum;
-    const data = JSON.parse(req.body.data);
+    const data = JSON.parse(req.body.data.toString());
     console.log('data', data);
     const return_obj = { PNO: pno };
     try {
