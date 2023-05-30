@@ -231,8 +231,36 @@ router.put('/checkbartender', checkAccess, async (req, res) => {
 // 회원 정보 조회
 router.get('/', checkAccess, async (req, res) => {
   try {
-    console.log(req.user);
-    return res.status(200).json({ success: true, message: '회원 정보 조회 성공', data: req.user});
+    if (req.user.LEVEL < 3) {
+      const count = await db.POST.count({
+        where: {
+          UNO: req.user.UNO,
+        },
+      });
+      console.log(count);
+      if (count >= 30) {
+        await db.USER.update(
+          { LEVEL: 3 },
+          {
+            where: {
+              UNO: req.user.UNO,
+            },
+          }
+        );
+      } else if (count >= 10) {
+        await db.USER.update(
+          { LEVEL: 2 },
+          {
+            where: {
+              UNO: req.user.UNO,
+            },
+          }
+        );
+      }
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: '회원 정보 조회 성공', data: req.user });
   } catch (error) {
     return res
       .status(400)
@@ -244,8 +272,10 @@ router.get('/', checkAccess, async (req, res) => {
 router.put('/', checkAccess, async (req, res) => {
   try {
     const newNickname = req.body.nickname;
-    req.user.update({ NICKNAME: newNickname });
-    return res.status(200).json({ success: true, message: '닉네임 수정 성공' });
+    await req.user.update({ NICKNAME: newNickname });
+    return res
+      .status(200)
+      .json({ success: true, message: '닉네임 수정 성공', newNickname });
   } catch (error) {
     return res
       .status(400)
