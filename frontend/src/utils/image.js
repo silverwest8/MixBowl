@@ -11,5 +11,9 @@ export const getReviewImageUrl = (imageId) => {
 };
 
 export const getCommunityImageUrl = (imageId) => {
-  return `${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${imageId}`;
+  return `${process.env.REACT_APP_BACKEND_BASE_URL}/communities/one/image?imageId=${imageId}`;
+};
+
+export const getCocktailImageUrl = (cocktailId) => {
+  return `${process.env.REACT_APP_BACKEND_BASE_URL}/recipes/image/${cocktailId}`;
 };

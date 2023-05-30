@@ -5,6 +5,7 @@ import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
 
 const FreeListItem = ({ data }) => {
   // TODO : 호버, 이미지처리
@@ -85,16 +86,14 @@ const FreeListItem = ({ data }) => {
         </div>
         {data.CNO ? (
           <ImageSection>
-            <img src={`/api/recipes/image/${data.CNO}`}></img>
+            <img src={getCocktailImageUrl(data.CNO)} />
           </ImageSection>
         ) : (
           data.imageId !== 0 &&
           data.imageId !== undefined &&
           data.imageId !== null && (
             <ImageSection>
-              <img
-                src={`${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${data.imageId}`}
-              />
+              <img src={getCommunityImageUrl(data.imageId)} />
             </ImageSection>
           )
         )}

@@ -3,6 +3,7 @@ import { FaCommentDots, FaThumbsUp } from "react-icons/fa";
 import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
+import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
 
 const ImageSection = styled.div`
   border: 2px solid ${({ theme }) => theme.color.primaryGold};
@@ -74,16 +75,14 @@ const HotListItem = ({ data }) => {
         </div>
         {data.CNO ? (
           <ImageSection>
-            <img src={`/api/recipes/image/${data.CNO}`}></img>
+            <img src={getCocktailImageUrl(data.CNO)} />
           </ImageSection>
         ) : (
           data.imageId !== 0 &&
           data.imageId !== undefined &&
           data.imageId !== null && (
             <ImageSection>
-              <img
-                src={`${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${data.imageId}`}
-              />
+              <img src={getCommunityImageUrl(data.imageId)} />
             </ImageSection>
           )
         )}
