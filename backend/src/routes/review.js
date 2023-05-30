@@ -14,42 +14,6 @@ import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 dotenv.config();
 const router = express.Router();
 
-const KEYWORD_VALUE = [
-  {
-    id: 1,
-    value: '술이 맛있어요',
-  },
-  {
-    id: 2,
-    value: '술이 다양해요',
-  },
-  {
-    id: 3,
-    value: '혼술하기 좋아요',
-  },
-  {
-    id: 4,
-    value: '메뉴가 다양해요',
-  },
-  {
-    id: 5,
-    value: '음식이 맛있어요',
-  },
-  {
-    id: 6,
-    value: '분위기가 좋아요',
-  },
-  {
-    id: 7,
-    value: '직원이 친절해요',
-  },
-  {
-    id: 8,
-    value: '대화하기 좋아요',
-  },
-  { id: 9, value: '가성비가 좋아요' },
-];
-
 async function getKeyword(placeId) {
   // console.log('placeId', placeId);
   let keywordlist = [];
@@ -84,16 +48,13 @@ async function getKeyword(placeId) {
 }
 
 async function getKeywordByReviewId(reviewId) {
-  const keywordlist = [];
-  const keyword = await db.KEYWORD.findAll({
+  const keywords = await db.KEYWORD.findAll({
     where: {
       REVIEW_ID: reviewId,
     },
   });
-  keyword.forEach((keyword) =>
-    keywordlist.push(KEYWORD_VALUE[keyword.KEYWORD - 1])
-  );
-  return keywordlist;
+  const keywordList =  keywords.map((x) => x.KEYWORD);
+  return keywordList;
 }
 
 router.get('/barlist', checkTokenYesAndNo, async (req, res) => {

@@ -66,7 +66,7 @@ const NavBox = styled.nav`
   padding: 0 2.25rem;
   border-bottom: 3px solid ${({ theme }) => theme.color.primaryGold};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  @media screen and (max-width: 840px) {
+  @media screen and (max-width: 920px) {
     flex-direction: column;
     gap: 0;
     align-items: center;
@@ -105,7 +105,7 @@ const StyledLink = styled(Link)`
     font-weight: 700;
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   }
-  @media screen and (max-width: 840px) {
+  @media screen and (max-width: 920px) {
     padding: 0.75rem 0;
     img {
       display: none;

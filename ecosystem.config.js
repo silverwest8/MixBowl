@@ -18,7 +18,7 @@ module.exports = {
   },
   {
     name: "Mixbowl-local",
-    script: 'npm run start:dev',
+    script: 'cd ./backend && npm run start',
     watch: ['./backend/src/app.js'],
     env: {
       NODE_ENV: "development",

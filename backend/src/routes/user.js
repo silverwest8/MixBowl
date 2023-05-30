@@ -253,8 +253,8 @@ router.get('/', checkAccess, async (req, res) => {
 router.put('/', checkAccess, async (req, res) => {
   try {
     const newNickname = req.body.nickname;
-    req.user.update({ NICKNAME: newNickname });
-    return res.status(200).json({ success: true, message: '닉네임 수정 성공' });
+    await req.user.update({ NICKNAME: newNickname });
+    return res.status(200).json({ success: true, message: '닉네임 수정 성공', newNickname });
   } catch (error) {
     return res
       .status(400)
