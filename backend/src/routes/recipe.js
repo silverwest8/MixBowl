@@ -3,13 +3,13 @@
 import express from 'express';
 import { db, sequelize } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
-import dotenv from 'dotenv';
+import checkTokenYesAndNo from "../middleware/checkTokenYesAndNo"
 import axios from 'axios';
 import multer from 'multer';
 import fs from 'fs';
 import { Sequelize } from 'sequelize';
+import { logger } from '../../winston/winston';
 
-dotenv.config();
 const router = express.Router();
 
 //multer 미들웨어 설정
@@ -98,7 +98,7 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
 
     res.status(200).json({ success: true, message: 'Recipe post 성공' });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     // 중간 실패시 COCKTAIL, COLOR, RECIPE 모두 삭제해줘야 함
     return res
       .status(400)
@@ -113,12 +113,13 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
       color: [],
       ingred: [],
       instruction: '',
+      image: null,
     };
 
     // cocktail get
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId, {
-      attributes: ['CNO', 'NAME', 'ALCOHOLIC', 'INSTRUCTION'],
+      attributes: ['CNO', 'NAME', 'ALCOHOLIC', 'INSTRUCTION', 'IMAGE_PATH'],
       include: [
         {
           model: db.COLOR,
@@ -142,6 +143,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
     data.name = cocktail.NAME;
     data.alcoholic = cocktail.ALCOHOLIC;
     data.instruction = cocktail.INSTRUCTION;
+    data.image = cocktail.IMAGE_PATH ? cocktail.IMAGE_PATH : null;
 
     // color
     for (let i = 0; i < color.length; i++) {
@@ -158,11 +160,12 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
       };
       data.ingred.push(temp);
     }
+    console.log(data);
     return res
       .status(200)
       .json({ success: true, message: 'Recipe get 성공', data });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Recipe get 실패', error });
@@ -171,7 +174,7 @@ router.get('/:cocktailId', checkAccess, async (req, res) => {
 
 // update - Not supporting formdata at put method
 router.post(
-  'update/:cocktailId',
+  '/update/:cocktailId',
   checkAccess,
   upload.single('image'),
   async (req, res) => {
@@ -254,7 +257,7 @@ router.post(
 
       res.status(200).json({ success: true, message: 'Cocktail update 성공' });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return res
         .status(400)
         .json({ success: false, message: 'Cocktail update 실패', error });
@@ -268,62 +271,75 @@ router.delete('/:cocktailId', async (req, res) => {
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
 
     // file system에서 이미지파일 삭제
-    const oldFilePath = `./${cocktail.IMAGE_PATH}`;
-    console.log(oldFilePath);
-    fs.unlinkSync(oldFilePath);
-    console.log(cocktail);
+    if (cocktail.IMAGE_PATH) {
+      const oldFilePath = `./${cocktail.IMAGE_PATH}`;
+      fs.unlinkSync(oldFilePath);
+      console.log(oldFilePath);
+    }
     await cocktail.destroy();
     // color, recipe - CASCADE TRIGGER로 자동 삭제
-
+    logger.info('Cocktail delete 성공');
     res.status(200).json({ success: true, message: 'Cocktail delete 성공' });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail delete 실패', error });
   }
 });
 
-router.get('/list/filter/:page', checkAccess, async (req, res) => {
+router.get('/list/filter/:page', checkTokenYesAndNo, async (req, res) => {
   try {
-    const unit = 20;
+    const limit = 12;
     const page = Number(req.params.page);
-    const offset = unit * (page - 1);
-    const limit = unit;
+    const offset = limit * (page - 1);
     const color = req.query.color
       ? JSON.parse(`{"color": ${req.query.color}}`).color
-      : null;
+      : [];
     const alcoholic = req.query.alcoholic
       ? JSON.parse(`{"alcoholic": ${req.query.alcoholic}}`).alcoholic
-      : null;
-    const search = req.query.search;
+      : [];
+    const search = req.query.search ? req.query.search : null;
     const sort = req.query.sort == 'new' ? 'createdAt' : 'LIKECOUNT';
-    // console.log(alcoholic, color, search, sort);
+    console.log(alcoholic, color, search, sort);
     let list = [];
-    const cocktailfilter = await db.COCKTAIL.findAll({
-      attributes: ['CNO', 'NAME', 'INSTRUCTION', 'ALCOHOLIC'],
+
+    const colorFilter = await db.COCKTAIL.findAll({
+      attributes: ['CNO'],
       include: [
         {
           model: db.COLOR,
           as: 'COLORs',
-          where: {
-            COLOR: {
-              [Sequelize.Op.or]: color,
-            },
-          },
-          required: true,
-        },
-        {
-          model: db.RECIPE,
-          as: 'RECIPEs',
-          attributes: ['NAME'],
-          where: {
-            NAME: { [Sequelize.Op.like]: `%${search}%` },
-          },
-          required: true,
+          required: false,
+          attributes: ['COLOR'],
         },
       ],
+      having: {
+        COLOR: {
+          [Sequelize.Op.or]: color,
+        },
+      },
+    });
+    console.log('colorFilter: ', colorFilter.length);
+    // for (let i = 0; i < colorFilter.length; i++) {
+    //   console.log(colorFilter[i].CNO);
+    // }
+
+    const alcoholicFilter = await db.COCKTAIL.findAll({
+      attributes: ['CNO'],
       where: {
+        ALCOHOLIC: {
+          [Sequelize.Op.or]: alcoholic,
+        },
+      },
+    });
+    console.log('alcoholicFilter: ', alcoholicFilter.length);
+    // for (let i = 0; i < alcoholicFilter.length; i++) {
+    //   console.log(alcoholicFilter[i].CNO);
+    // }
+    let having = {};
+    if (search) {
+      having = {
         [Sequelize.Op.or]: [
           {
             NAME: {
@@ -336,58 +352,106 @@ router.get('/list/filter/:page', checkAccess, async (req, res) => {
             },
           },
           {
-            ALCOHOLIC: {
-              [Sequelize.Op.or]: alcoholic,
-            },
+            'RECIPEs.NAME': { [Sequelize.Op.like]: `%${search}%` },
           },
         ],
-      },
-    });
-    let filter = [];
-    for (let i = 0; i < cocktailfilter.length; i++) {
-      filter.push(`COCKTAIL.CNO = ${cocktailfilter[i].CNO}`);
+      };
     }
-    const finalfilter = filter.join(' OR ');
-    // console.log(finalfilter);
-    const sortquery = `SELECT COCKTAIL.CNO, COCKTAIL.UNO, COCKTAIL.NAME, COUNT(COCKTAIL_LIKE.UNO) AS LIKECOUNT, COCKTAIL.createdAt
-      FROM (
-        SELECT *
-        FROM COCKTAIL AS COCKTAIL
-        ${filter.length ? `WHERE (${finalfilter})` : ''}
-      )
-      AS COCKTAIL
-      LEFT JOIN COCKTAIL_LIKE AS COCKTAIL_LIKE
-      ON COCKTAIL.CNO = COCKTAIL_LIKE.CNO
-      GROUP BY CNO
-      ORDER BY ${sort} DESC
-      LIMIT ${offset}, ${limit};`;
-    // console.log(sortquery);
-    const result = await sequelize.query(sortquery, {
-      type: Sequelize.QueryTypes.SELECT,
+
+    const searchFilter = await db.COCKTAIL.findAll({
+      attributes: ['CNO', 'COCKTAIL.NAME', 'INSTRUCTION'],
+      include: [
+        {
+          model: db.RECIPE,
+          as: 'RECIPEs',
+          attributes: [['NAME', 'NAMES']],
+        },
+      ],
+      having,
     });
+    console.log('searchFilter: ', searchFilter.length);
+    // for (let i = 0; i < searchFilter.length; i++) {
+    //   console.log(searchFilter[i].CNO);
+    // }
+
+    const colorArray = colorFilter.map((x) => x.CNO);
+    const alcoholicArray = alcoholicFilter.map((x) => x.CNO);
+    const searchArray = searchFilter.map((x) => x.CNO);
+
+    let filter = [];
+    const all = await db.COCKTAIL.findAll({ attributes: ['CNO'] });
+    for (let i = 0; i < all.length; i++) {
+      if (
+        colorArray.includes(all[i].CNO) &&
+        alcoholicArray.includes(all[i].CNO) &&
+        searchArray.includes(all[i].CNO)
+      ) {
+        filter.push(all[i].CNO);
+      }
+    }
+    console.log('filter', filter.length);
+    console.log(filter);
+    let where = { CNO: 0 };
+    if (filter.length) {
+      where = {
+        CNO: {
+          [Sequelize.Op.or]: filter,
+        },
+      };
+    }
+    const result = await db.COCKTAIL.findAll({
+      attributes: [
+        'CNO',
+        'UNO',
+        'NAME',
+        [
+          Sequelize.fn('COUNT', Sequelize.col('COCKTAIL_LIKEs.UNO')),
+          'LIKECOUNT',
+        ],
+        'createdAt',
+      ],
+      where,
+      include: [
+        {
+          model: db.COCKTAIL_LIKE,
+          as: 'COCKTAIL_LIKEs',
+          attributes: [],
+        },
+      ],
+      group: ['COCKTAIL.CNO'],
+      offset,
+      limit,
+      order: [[sort, 'DESC']],
+      subQuery: false,
+    });
+    // console.log(result[0].dataValues.LIKECOUNT);
+    console.log('result', result.length);
     for (let i = 0; i < result.length; i++) {
       // console.log(result[i]);
       const user = await db.USER.findByPk(result[i].UNO);
       let temp = {
         id: result[i].CNO,
         name: result[i].NAME,
-        like: result[i].LIKECOUNT,
+        like: result[i].dataValues.LIKECOUNT,
         post: await db.POST.count({ where: result[i].CNO }),
         USER: {
           nickname: user.NICKNAME,
           level: user.LEVEL,
-          iswriter: req.user.UNO == user.UNO ? true : false,
+          iswriter: req.user ? (req.user.UNO == user.UNO ? true : false) : false
         },
       };
       list.push(temp);
     }
-    console.log(list.length);
+    console.log('list : ', list.length);
 
-    return res
-      .status(200)
-      .json({ success: true, message: 'Cocktail list get 성공', list });
+    return res.status(200).json({
+      success: true,
+      message: 'Cocktail list get 성공',
+      count: list.length,
+      list,
+    });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail list get 실패', error });
@@ -479,7 +543,7 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
       .status(200)
       .json({ success: true, message: 'Cocktail detail get 성공', data });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail detail get 실패', error });
@@ -496,15 +560,21 @@ router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
         CATEGORY: 3,
         CNO: cocktailId,
       },
-      attributes: ['CONTENT', 'createdAt'],
+      attributes: [
+        ['CONTENT', 'content'],
+        ['createdAt', 'date'],
+      ],
       include: [
         {
           model: db.USER,
           as: 'UNO_USER',
           required: true,
-          attributes: ['NICKNAME', 'LEVEL']
-        }
-      ]
+          attributes: [
+            ['NICKNAME', 'nickname'],
+            ['LEVEL', 'level'],
+          ],
+        },
+      ],
     });
     console.log(post.count);
     console.log(post.rows);
@@ -515,7 +585,7 @@ router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
       .status(200)
       .json({ success: true, message: 'Cocktail review get 성공', data: data });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail review get 실패', error });
@@ -528,7 +598,7 @@ router.get('/image/:cocktailId', async (req, res) => {
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
     // 이미지 없으면 로고 이미지 보내줌
     if (!cocktail.IMAGE_PATH) {
-      const data = fs.readFileSync("uploads/cocktailImage/logo.png");
+      const data = fs.readFileSync('uploads/cocktailImage/logo.png');
       res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
       res.write(data);
       return res.end();
@@ -547,7 +617,7 @@ router.get('/image/:cocktailId', async (req, res) => {
       return res.status(200).send(imageBuffer);
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Recipe Image get 실패', error });
@@ -575,7 +645,7 @@ router.post('/like/:cocktailId', checkAccess, async (req, res) => {
       like: count,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail Like/Unlike 실패', error });
@@ -606,7 +676,7 @@ router.post('/report/:cocktailId', checkAccess, async (req, res) => {
         .json({ success: false, message: 'Cocktail Report 중복' });
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Cocktail Report 실패', error });

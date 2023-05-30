@@ -2,77 +2,159 @@ import Title from "../components/common/Title";
 import RecipeTitleImgColor from "../components/recipe/RecipeTitleImgColor";
 import RecipeExplain from "../components/recipe/RecipeExplain";
 import RecipeSubmit from "../components/recipe/RecipeSubmit";
-import { AddRecipeState } from "../store/recipe";
-import { useSetRecoilState } from "recoil";
+import { AddRecipeState, AddRecipeImgState } from "../store/recipe";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 const RecipeEditPage = () => {
-  const [Recipe, setRecipe] = useState([]);
   const params = useParams();
   const id = params.id;
-  const GetRecipe = async () => {
+  const [item, setItem] = useRecoilState(AddRecipeState);
+  const setPostImg = useSetRecoilState(AddRecipeImgState);
+  const setAddImg = useSetRecoilState(AddRecipeState);
+  const setAddName = useSetRecoilState(AddRecipeState);
+  const [{ addColor }, setAddColor] = useRecoilState(AddRecipeState);
+  const setAddAlcohol = useSetRecoilState(AddRecipeState);
+  const setAddExplain = useSetRecoilState(AddRecipeState);
+  const colorString = [];
+  const token = localStorage.getItem("access_token");
+
+  const GetImg = async (imageExists) => {
     try {
-      const res = await axios.get(`http://localhost:4000/RecipeList?rno=${id}`);
-      setRecipe(res.data[0]);
+      axios.defaults.headers.common.Authorization = token;
+      const response = await axios.get(`/api/recipes/image/${id}`, {
+        responseType: "blob",
+      });
+
+      const blobData = await response.data;
+      const base64Image = URL.createObjectURL(blobData);
+
+      setAddImg((prev) => ({
+        ...prev,
+        addImg: base64Image,
+      }));
+
+      if (imageExists !== null) {
+        const file = new File([blobData], "RecipeEdit.jpg", {
+          type: response.headers["content-type"],
+        });
+
+        setPostImg(file);
+      }
     } catch (error) {
       return error.message;
     }
   };
 
-  const setItem = useSetRecoilState(AddRecipeState);
-  const setAddImg = useSetRecoilState(AddRecipeState);
-  const setAddName = useSetRecoilState(AddRecipeState);
-  const setAddColor = useSetRecoilState(AddRecipeState);
-  const setAddAlcohol = useSetRecoilState(AddRecipeState);
-  const setAddExplain = useSetRecoilState(AddRecipeState);
+  const GetRecipe = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+      const { data } = await axios.get(`/api/recipes/${id}`);
+
+      const imageExists = data.data.image;
+
+      setAddName((prev) => ({
+        ...prev,
+        addName: data.data.name,
+      }));
+
+      if (data.data.color.includes(1)) {
+        colorString.push("red");
+      }
+      if (data.data.color.includes(2)) {
+        colorString.push("orange");
+      }
+      if (data.data.color.includes(3)) {
+        colorString.push("yellow");
+      }
+      if (data.data.color.includes(4)) {
+        colorString.push("green");
+      }
+      if (data.data.color.includes(5)) {
+        colorString.push("blue");
+      }
+      if (data.data.color.includes(6)) {
+        colorString.push("purple");
+      }
+      if (data.data.color.includes(7)) {
+        colorString.push("pink");
+      }
+      if (data.data.color.includes(8)) {
+        colorString.push("black");
+      }
+      if (data.data.color.includes(9)) {
+        colorString.push("brown");
+      }
+      if (data.data.color.includes(10)) {
+        colorString.push("grey");
+      }
+      if (data.data.color.includes(11)) {
+        colorString.push("white");
+      }
+      if (data.data.color.includes(12)) {
+        colorString.push("transparent");
+      }
+
+      setAddColor((prev) => ({
+        ...prev,
+        addColor: colorString,
+      }));
+
+      setItem((prev) => {
+        if (data.data.ingred) {
+          return {
+            ...prev,
+            addItem: data.data.ingred.map((item) => ({
+              addName: item.name,
+              addAmount: item.amount,
+              addUnit: item.unit,
+            })),
+          };
+        }
+        return prev;
+      });
+
+      if (data.data.alcoholic === 0) {
+        setAddAlcohol((prev) => ({
+          ...prev,
+          addAlcohol: "낮음",
+        }));
+      }
+
+      if (data.data.alcoholic === 1) {
+        setAddAlcohol((prev) => ({
+          ...prev,
+          addAlcohol: "보통",
+        }));
+      }
+
+      if (data.data.alcoholic === 2) {
+        setAddAlcohol((prev) => ({
+          ...prev,
+          addAlcohol: "높음",
+        }));
+      }
+
+      setAddExplain((prev) => ({
+        ...prev,
+        addExplain: data.data.instruction,
+      }));
+      GetImg(imageExists);
+    } catch (error) {
+      return error.message;
+    }
+  };
 
   useEffect(() => {
+    window.scroll({
+      top: 0,
+    });
     GetRecipe();
   }, []);
 
-  setItem((prev) => {
-    if (Recipe.additem) {
-      return {
-        ...prev,
-        addItem: Recipe.additem.map((item) => ({
-          addLength: item.addlength,
-          addName: item.addname,
-          addAmount: item.addamount,
-          addUnit: item.addunit,
-        })),
-      };
-    }
-    return prev;
-  });
-
-  console.log(Recipe.item);
-
-  setAddImg((prev) => ({
-    ...prev,
-    addImg: Recipe.image_path,
-  }));
-
-  setAddName((prev) => ({
-    ...prev,
-    addName: Recipe.name,
-  }));
-
-  setAddColor((prev) => ({
-    ...prev,
-    addColor: Recipe.color,
-  }));
-
-  setAddAlcohol((prev) => ({
-    ...prev,
-    addAlcohol: Recipe.alcohol,
-  }));
-
-  setAddExplain((prev) => ({
-    ...prev,
-    addExplain: Recipe.explain,
-  }));
+  console.log(item);
 
   return (
     <main>
@@ -80,14 +162,14 @@ const RecipeEditPage = () => {
       <section>
         <RecipeTitleImgColor
           Title={"레시피 수정"}
-          Color={Recipe.color}
+          Color={addColor}
         ></RecipeTitleImgColor>
       </section>
       <section>
-        <RecipeExplain Alcohol={Recipe.alcohol}></RecipeExplain>
+        <RecipeExplain></RecipeExplain>
       </section>
       <section>
-        <RecipeSubmit></RecipeSubmit>
+        <RecipeSubmit actionType="edit"></RecipeSubmit>
       </section>
     </main>
   );

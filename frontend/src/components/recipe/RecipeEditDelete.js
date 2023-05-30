@@ -9,13 +9,13 @@ import Modal from "../common/Modal";
 import { useNavigate, useParams } from "react-router-dom";
 import { toastState } from "../../store/toast";
 import { useSetRecoilState } from "recoil";
+import { deleteReipe } from "../../api/recipeapi";
+
 const OPTIONS = ["수정", "삭제"];
 
 const RecipeEditDelete = ({ options }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const [Edit, setEdit] = useState(false);
-  const [Delete, setDelete] = useState(false);
   const setToastState = useSetRecoilState(toastState);
   const { openModal, closeModal } = useModal();
   const navigate = useNavigate();
@@ -40,24 +40,42 @@ const RecipeEditDelete = ({ options }) => {
 
   const handleOptionClick = (option) => {
     if (option === "수정") {
-      setEdit(true);
       navigate(`/recipe/${id}/edit`);
     }
     if (option === "삭제") {
-      setDelete(true);
+      openModal(DeleteModal, { handleClose: closeModal });
     }
     handleClose();
   };
 
   const handleConform = () => {
-    console.log("레시피삭제시");
-    ToastMessageDelete();
-    closeModal();
-    navigate(-1);
+    deleteReipe(id)
+      .then((response) => {
+        if (response.success) {
+          ToastMessageDelete();
+          closeModal();
+          navigate(-1);
+        } else {
+          setToastState({
+            show: true,
+            message: "삭제 실패.",
+            type: "error",
+            ms: 3000,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        setToastState({
+          show: true,
+          message: "삭제 실패.",
+          type: "error",
+          ms: 3000,
+        });
+      });
   };
 
   const DeleteModal = ({ handleClose }) => {
-    setDelete(false);
     return (
       <Modal
         handleClose={handleClose}
@@ -126,9 +144,6 @@ const RecipeEditDelete = ({ options }) => {
           </MenuItem>
         ))}
       </Menu>
-      {Delete === true
-        ? openModal(DeleteModal, { handleClose: closeModal })
-        : null}
     </div>
   );
 };

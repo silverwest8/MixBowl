@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 import { FaThumbsUp, FaCommentDots } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
@@ -13,65 +13,22 @@ import {
   colorState,
   AddRecipeState,
 } from "../../store/recipe";
+import { useInView } from "react-intersection-observer";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import Skeleton from "@mui/material/Skeleton";
+import { theme } from "../../styles/theme";
 
 const RecipeCard = () => {
-  const [recipe, setRecipe] = useState([]);
-  // const [image, setImage] = useState(null);
-  const colorNum = [];
-  const alcoholNum = [];
-  let sortInit = false;
   const search = useRecoilValue(searchState);
   const color = useRecoilValue(colorState);
-  const alcohol = useRecoilValue(alcoholState);
+  const { alcohol } = useRecoilValue(alcoholState);
   const sort = useRecoilValue(sortState);
   const addRecipeState = useResetRecoilState(AddRecipeState);
   const token = localStorage.getItem("access_token");
-
-  const GetRecipe = async (color, alcohol, sort) => {
-    colorFilter();
-    alcoholFilter();
-    sort = sortFilter();
-    try {
-      axios.defaults.headers.common.Authorization = token;
-      let url = `/api/recipes/list/filter/1?alcoholic=[${alcohol}]&color=[${color}]&search=${search}`;
-      if (sort) {
-        url += "&sort=new";
-      }
-      const { data } = await axios.get(url);
-      setRecipe(data.list);
-    } catch (error) {
-      console.log("empty or error");
-      setRecipe([]);
-    }
-  };
-
-  // const getImage = async (cocktailId) => {
-  //   try {
-  //     axios.defaults.headers.common.Authorization = token;
-  //     const response = await axios.get(`/api/recipes/image/${cocktailId}`, {
-  //       responseType: "blob",
-  //     });
-
-  //     const blobData = response.data;
-  //     const imageUrl = URL.createObjectURL(blobData);
-
-  //     console.log(imageUrl);
-  //     setImage(imageUrl);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  useEffect(() => {
-    GetRecipe(colorNum, alcoholNum, sortInit);
-    // getImage(11000);
-  }, [search, color, alcohol, sort]);
-
-  useEffect(() => {
-    addRecipeState();
-  }, []);
+  const { ref, inView } = useInView();
 
   const colorFilter = () => {
+    const colorNum = [];
     if (color.red) colorNum.push(1);
     if (color.orange) colorNum.push(2);
     if (color.yellow) colorNum.push(3);
@@ -84,75 +41,127 @@ const RecipeCard = () => {
     if (color.grey) colorNum.push(10);
     if (color.white) colorNum.push(11);
     if (color.transparent) colorNum.push(12);
+    return colorNum;
   };
 
   const alcoholFilter = () => {
-    if (alcohol.alcohol === "낮음") alcoholNum.push(0);
-    if (alcohol.alcohol === "중간") alcoholNum.push(1);
-    if (alcohol.alcohol === "높음") alcoholNum.push(2);
+    const alcoholNum = [];
+    if (alcohol === "낮음") alcoholNum.push(0);
+    if (alcohol === "중간") alcoholNum.push(1);
+    if (alcohol === "높음") alcoholNum.push(2);
+    return alcoholNum;
   };
 
-  const sortFilter = () => {
-    if (sort.latest) sortInit = true;
-    return sortInit;
+  const GetRecipe = async (page) => {
+    try {
+      const colorInit = colorFilter();
+      const alcohoInit = alcoholFilter();
+      axios.defaults.headers.common.Authorization = token;
+      let url = `/api/recipes/list/filter/${page}?alcoholic=[${alcohoInit}]&color=[${colorInit}]&search=${search}`;
+      if (sort.latest) {
+        url += "&sort=new";
+      }
+      const { data } = await axios.get(url);
+      return { page, ...data };
+    } catch (error) {
+      console.log("empty or error");
+      return { page, list: [], count: 0 };
+    }
   };
+
+  const { isSuccess, data, fetchNextPage, hasNextPage } = useInfiniteQuery(
+    ["recipe", sort, color, alcohol, search],
+    ({ pageParam = 1 }) => GetRecipe(pageParam),
+    {
+      getNextPageParam: (lastPage) => {
+        if (lastPage.count === 0) return undefined;
+        else return lastPage.page + 1;
+      },
+    }
+  );
+
+  useEffect(() => {
+    addRecipeState();
+  }, []);
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView]);
 
   return (
     <MiddleBox>
-      {/* {image && <img src={image} style={{ width: "500px", height: "500px" }} />} */}
       <CardBox>
         <div className="arr">
+          <p>{sort.latest === true ? "최신순" : "추천순"}</p>
           <RecipeDrop />
         </div>
-        {recipe.map((item) => (
-          <RecipeBox key={item.id}>
-            {token ? (
-              <Link to={`/recipe/${item.id}`}>
-                <img
-                  src={`http://localhost:3030/recipes/image/${item.id}`}
-                ></img>
-                <h1>{item.name}</h1>
-              </Link>
-            ) : (
-              <>
-                <img src={item.image_path}></img>
-                <h1>{item.name}</h1>
-              </>
-            )}
+        {isSuccess
+          ? data.pages.map((page) =>
+              page.list.map((item) => (
+                <RecipeBox key={item.id}>
+                  <Link to={`/recipe/${item.id}`}>
+                    <img src={`/api/recipes/image/${item.id}`}></img>
+                    <h1>{item.name}</h1>
+                  </Link>
 
-            <TextBox>
-              <p>
-                @{item.USER.nickname} <MemberBadge level={item.USER.level} />
-              </p>
-              <div>
-                <p className="ThumbsUp">
-                  <FaThumbsUp></FaThumbsUp>
-                  {item.like}
-                </p>
-                <p className="Comment">
-                  <FaCommentDots></FaCommentDots>
-                  {item.post}
-                </p>
-              </div>
-            </TextBox>
-          </RecipeBox>
-        ))}
+                  <TextBox>
+                    <NickName>
+                      @{item.USER.nickname}
+                      <MemberBadge level={item.USER.level} />
+                    </NickName>
+                    <div>
+                      <p className="ThumbsUp">
+                        <FaThumbsUp></FaThumbsUp>
+                        {item.like}
+                      </p>
+                      <p className="Comment">
+                        <FaCommentDots></FaCommentDots>
+                        {item.post}
+                      </p>
+                    </div>
+                  </TextBox>
+                </RecipeBox>
+              ))
+            )
+          : Array(20)
+              .fill(1)
+              .map((_, index) => (
+                <Skeleton
+                  variant="rounded"
+                  width="100%"
+                  height="13rem"
+                  key={index}
+                  sx={{
+                    backgroundColor: theme.color.darkGray,
+                  }}
+                />
+              ))}
       </CardBox>
+      {token && <div ref={ref}></div>}
     </MiddleBox>
   );
 };
 
+const NickName = styled.div`
+  display: flex;
+  font-size: 0.875rem;
+  margin-top: 0.3rem;
+`;
+
 const TextBox = styled.div`
   display: flex;
   justify-content: space-between;
-  & > div {
+  div {
     display: flex;
     align-items: center;
     gap: 0.4rem;
   }
   p {
-    display: flex;
-    align-items: center;
+    font-size: 0.875rem;
+    margin-top: 0.3rem;
+    gap: 0.2rem;
   }
 `;
 
@@ -169,6 +178,11 @@ const CardBox = styled.div`
     grid-row: 1;
     justify-self: end;
     margin-right: 1rem;
+    display: flex;
+    p {
+      margin-right: 0.5rem;
+      color: ${({ theme }) => theme.color.primaryGold};
+    }
   }
 
   @media screen and (max-width: 928px) {
@@ -197,11 +211,6 @@ const RecipeBox = styled.div`
   h1 {
     font-size: 1.25rem;
     margin-top: 0.5rem;
-  }
-  p {
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-    gap: 0.2rem;
   }
   .ThumbsUp {
     display: flex;

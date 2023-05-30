@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import { FaCheckCircle } from "react-icons/fa";
 import RecipeIngredients from "./RecipeIngredients";
 
-const RecipeExplain = ({ Alcohol, Explain }) => {
+const RecipeExplain = () => {
   const [{ addAlcohol }, setAddAlcohol] = useRecoilState(AddRecipeState);
   const [{ addExplain }, setAddExplain] = useRecoilState(AddRecipeState);
 
@@ -85,6 +85,7 @@ const RecipeExplain = ({ Alcohol, Explain }) => {
             }}
             rows={10}
             value={addExplain}
+            placeholder={"자유롭게 레시피를 작성해주세요"}
           ></Textarea>
         </RecipeBox>
       </Box>
@@ -135,11 +136,9 @@ const FlexBox = styled.div`
 `;
 
 const Box = styled.div`
-  width: 40vw;
-  margin: auto;
-  @media screen and (max-width: 840px) {
-    width: 80vw;
-  }
+  width: 80vw;
+  margin: 0 auto;
+  max-width: 416px;
 `;
 
 export default RecipeExplain;

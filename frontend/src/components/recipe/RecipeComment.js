@@ -2,64 +2,11 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FaPen } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
-import Textarea from "../common/Textarea";
-import Modal from "../common/Modal";
-import { useModal } from "../../hooks/useModal";
-import { useSetRecoilState } from "recoil";
-import { toastState } from "../../store/toast";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-
-const CommentModal = ({ handleClose }) => {
-  const [msg, setMsg] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
-  const setToastState = useSetRecoilState(toastState);
-  const handleMsg = (e) => {
-    setMsg(e.target.value);
-  };
-
-  const onSubmit = () => {
-    if (msg === "") {
-      setErrorMsg("* 댓글을 입력해주세요");
-    } else {
-      ToastMessageEnter();
-      console.log("댓글작성완료");
-      handleClose();
-    }
-  };
-
-  const ToastMessageEnter = () => {
-    setToastState({
-      show: true,
-      message: "작성이 완료되었습니다.",
-      type: "success",
-      ms: 2000,
-    });
-  };
-
-  return (
-    <Modal
-      handleClose={handleClose}
-      onCancel={handleClose}
-      title="댓글 작성"
-      onSubmit={onSubmit}
-    >
-      <Msg>{errorMsg && <p className="errmessage">{errorMsg}</p>}</Msg>
-      <Textarea
-        onChange={handleMsg}
-        rows={3}
-        cols={40}
-        name="detail"
-        messageType="error"
-        placeholder="레시피에 대한 댓글을 남겨주세요."
-      />
-    </Modal>
-  );
-};
+import { Link, useParams } from "react-router-dom";
 
 const RecipeComment = () => {
-  const [comment, setComment] = useState([]);
-  const { openModal, closeModal } = useModal();
+  const [comment, setComment] = useState(null);
   const params = useParams();
   const id = params.id;
 
@@ -67,7 +14,6 @@ const RecipeComment = () => {
     try {
       const { data } = await axios.get(`/api/recipes/detail/review/${id}`);
       setComment(data.data);
-      console.log(comment);
     } catch (error) {
       return error.message;
     }
@@ -81,37 +27,29 @@ const RecipeComment = () => {
     <Comment>
       <TopBox>
         <p>
-          리뷰<span>({comment.post})</span>
+          리뷰<span>{comment && `(${comment.count})`}</span>
         </p>
-        <PostButton
-          onClick={() => {
-            openModal(CommentModal, {
-              handleClose: closeModal,
-            });
-          }}
-        >
-          <FaPen className="pen"></FaPen>작성하기
-        </PostButton>
+        <Link to="/community">
+          <PostButton>
+            <FaPen className="pen"></FaPen>작성하기
+          </PostButton>
+        </Link>
       </TopBox>
-      {[1, 2, 3, 4].map((index) => (
-        <CommentBox key={index}>
-          <p className="user">
-            @닉네임
-            <MemberBadge level={2} />
-          </p>
-          <p className="text">
-            후기 텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트입니다. 후기 텍스트입니다. 후기
-            텍스트입니다. 후기 텍스트
-          </p>
-          <p className="day">12시간전</p>
-          <HorizonLine></HorizonLine>
-        </CommentBox>
-      ))}
+      {comment && comment.list.length !== 0 ? (
+        comment.list.map((item) => (
+          <CommentBox key={item}>
+            <div className="user">
+              @{item.UNO_USER.nickname}
+              <MemberBadge level={item.UNO_USER.level} />
+            </div>
+            <div className="text">{item.content}</div>
+            <div className="day">{item.date.slice(0, 10)}</div>
+            <HorizonLine></HorizonLine>
+          </CommentBox>
+        ))
+      ) : (
+        <p className="empty-message">리뷰가 없습니다.</p>
+      )}
     </Comment>
   );
 };
@@ -121,6 +59,8 @@ const TopBox = styled.div`
   justify-content: space-between;
   margin-top: 1rem;
   p {
+    display: flex;
+    align-items: center;
     font-size: 1.25rem;
     span {
       font-size: 1rem;
@@ -130,7 +70,7 @@ const TopBox = styled.div`
 `;
 
 const CommentBox = styled.div`
-  p {
+  > div {
     margin-top: 1rem;
     margin-bottom: 0.25rem;
     font-size: 0.75rem;
@@ -150,7 +90,7 @@ const CommentBox = styled.div`
   }
 `;
 
-const HorizonLine = styled.div`
+const HorizonLine = styled.p`
   border: 0.1rem solid #e9aa33;
   line-height: 0.1em;
   margin: auto;
@@ -159,18 +99,17 @@ const HorizonLine = styled.div`
 
 const Comment = styled.div`
   width: 50vw;
-  margin: auto;
+  margin: 0 auto 4rem;
   display: flex;
   flex-direction: column;
   @media screen and (max-width: 840px) {
     width: 70vw;
   }
-`;
-
-const Msg = styled.div`
-  font-size: 0.8rem;
-  color: ${({ theme }) => theme.color.red};
-  margin-bottom: 0.25rem;
+  .empty-message {
+    color: ${({ theme }) => theme.color.gray};
+    margin-top: 1rem;
+    text-align: center;
+  }
 `;
 
 const PostButton = styled.button`

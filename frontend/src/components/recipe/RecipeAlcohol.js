@@ -6,6 +6,7 @@ import { FaCheckCircle } from "react-icons/fa";
 
 const RecipeAlcohol = ({ handleClose }) => {
   const [{ alcohol }, setAlcohol] = useRecoilState(alcoholState);
+
   const handleClick = (option) => () => {
     if (option === "낮음" && alcohol !== "낮음") {
       setAlcohol((prev) => ({

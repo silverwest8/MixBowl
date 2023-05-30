@@ -4,26 +4,50 @@ components:
   schemas:
     getHotPost:
       properties:
-        list:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: text
+          example: Post List loaded successfully
+        data:
           type: array
           items:
             type: object
             properties:
-              title:
+              PNO:
+                type: integer
+                example: 1
+              CATEGORY:
+                type: integer
+                example: 1
+              TITLE:
                 type: string
-                example: 제목입니다
-              content:
+                example: 제목입니다(질문답변 카테고리 - 사용X)
+              CONTENT:
                 type: string
-                example: 내용입니다
-              like:
+                example: 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?  내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?
+              LIKE:
                 type: integer
                 example: 10
-              reply:
+              REPLY:
                 type: integer
                 example: 10
-              date:
+              createdAt:
                 type: string
-                example: 1일전
+                example: 2023-05-19
+              cocktailLike:
+                type: integer
+                example: 1
+                description: 칵테일추천글 아니면 -1, 추천글일 경우 추천 안하면 0, 추천하면 1
+              isUserLike:
+                type: boolean
+                example: true
+                description: 유저가 좋아요 눌렀으면 true 아니면 false
+              imageId:
+                type: integer
+                example: 1
+                description: 포스트에 해당하는 이미지 하나. 이미지 없으면 0 반환
               UNO_USER:
                 type: object
                 properties:
@@ -58,24 +82,39 @@ components:
           items:
             type: object
             properties:
-              cagetory_name:
-                type: string
-                example: 자유게시판
+              category:
+                type: integer
+                example: 1
               title:
                 type: string
                 example: 제목입니다(질문답변 카테고리 - 사용X)
+              pno:
+                type: integer
+                example: 1
               content:
                 type: string
-                example: 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?  내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 
+                example: 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?  내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자? 내용이 들어갑니다. 최대몇자?
+              imageId:
+                type: integer
+                example: 1
+                description: 포스트에 해당하는 이미지 하나. 이미지 없으면 0 반환
               like:
                 type: integer
                 example: 10
               reply:
                 type: integer
                 example: 10
-              date:
+              createdAt:
                 type: string
-                example: 1일전
+                example: 2023-05-19
+              cocktailLike:
+                type: integer
+                example: 1
+                description: 칵테일추천글 아니면 -1, 추천글일 경우 추천 안하면 0, 추천하면 1
+              isUserLike:
+                type: boolean
+                example: true
+                description: 유저가 좋아요 눌렀으면 true 아니면 false
               UNO_USER:
                 type: object
                 properties:

@@ -12,6 +12,7 @@ import nodemailer from 'nodemailer';
 import axios from 'axios';
 import iconv from 'iconv-lite';
 import * as cheerio from 'cheerio';
+import { logger } from '../../winston/winston';
 dotenv.config();
 
 const router = express.Router();
@@ -60,12 +61,18 @@ router.put('/nicknamedupcheck', async (req, res) => {
   try {
     const count = await sql.namedupcheck(req);
     if (count !== 0) {
-      return res.status(409).send({ success: false });
+      return res
+        .status(200)
+        .send({ success: true, duplicate: true, message: '닉네임 중복' });
     } else {
-      return res.send({ success: true });
+      return res
+        .status(200)
+        .send({ success: true, duplicate: false, message: '닉네임 사용 가능' });
     }
   } catch (error) {
-    res.send('error on nicknamedupcheck');
+    return res
+      .status(400)
+      .send({ success: false, message: 'error on nicknamedupcheck', error });
   }
 });
 
@@ -109,7 +116,7 @@ router.post('/sendauthmail', async (req, res) => {
       return res.json({ success: true, message: '인증메일이 발송되었습니다.' });
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: '인증번호메일 발송에 실패하였습니다.',
@@ -221,7 +228,7 @@ router.put('/checkbartender', checkAccess, async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: '바텐더 인증 실패', error });

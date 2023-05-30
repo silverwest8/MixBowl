@@ -7,6 +7,7 @@ import { mapState } from "../../store/map";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCocktailBar, getReview } from "../../api/cocktailbar";
+import { getKeyword } from "../../utils/keyword";
 
 const CocktailbarDetail = ({ id }) => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const CocktailbarDetail = ({ id }) => {
         queryFn: getCocktailBar,
         onError: (error) => {
           if (error.response.status === 401)
-            navigate("/login?return_url=/cocktailbar");
+            navigate(`/login?return_url=${window.location.pathname}`);
         },
       },
       {
@@ -26,7 +27,7 @@ const CocktailbarDetail = ({ id }) => {
         queryFn: getReview,
         onError: (error) => {
           if (error.response.status === 401)
-            navigate("/login?return_url=/cocktailbar");
+            navigate(`/login?return_url=${window.location.pathname}`);
         },
       },
     ],
@@ -52,7 +53,7 @@ const CocktailbarDetail = ({ id }) => {
     reviewData !== undefined && (
       <Section>
         <Header>
-          <button onClick={() => navigate(-1)}>
+          <button onClick={() => navigate("/cocktailbar")}>
             <FaChevronLeft />
           </button>
           <h1 className="place">{detailData.data.NAME}</h1>
@@ -68,7 +69,7 @@ const CocktailbarDetail = ({ id }) => {
           0 && (
           <ul className="keyword-list">
             {reviewData.data.keyword.map(
-              (word) => word && <li key={word}>{word}</li>
+              (id) => id && <li key={id}>{getKeyword(id).value}</li>
             )}
           </ul>
         )}

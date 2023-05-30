@@ -2,19 +2,47 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import { FaThumbsUp } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
+import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa";
 import RecipeEditDelete from "./RecipeEditDelete";
-import ReportModal from "../common/ReportModal";
+import RecipeReportModal from "./RecipeReportModal";
 import { useModal } from "../../hooks/useModal";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { RecipeRoportState } from "../../store/recipe";
+import { reportRecipe, likteRecipe } from "../../api/recipeapi";
+import { toastState } from "../../store/toast";
+import Skeleton from "@mui/material/Skeleton";
+import { theme } from "../../styles/theme";
 
-const ReportRecipeModal = ({ handleClose }) => {
+const ReportRecipeModal = ({ handleClose, id }) => {
+  const reportNum = useRecoilValue(RecipeRoportState);
+  const setToastState = useSetRecoilState(toastState);
   const onSubmit = () => {
-    console.log("제출");
+    reportRecipe(id, reportNum)
+      .then((response) => {
+        if (response.success === true) {
+          setToastState({
+            show: true,
+            message: "신고가 완료되었습니다.",
+            type: "success",
+            ms: 2000,
+          });
+        }
+        if (response.success === false) {
+          setToastState({
+            show: true,
+            message: "이미 신고한 게시물입니다.",
+            type: "error",
+            ms: 2000,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     handleClose();
   };
-
-  return <ReportModal handleClose={handleClose} onSubmit={onSubmit} />;
+  return <RecipeReportModal handleClose={handleClose} onSubmit={onSubmit} />;
 };
 
 const alcoholFilter = (recipe) => {
@@ -31,63 +59,100 @@ const alcoholFilter = (recipe) => {
 
 const RecipeDetailCard = () => {
   const [recipe, setRecipe] = useState([]);
-  const [Like, setLike] = useState(recipe.rec);
-  const [LikeCheck, setLikeCheck] = useState(false);
   const alcohol = alcoholFilter(recipe);
+  const navigate = useNavigate();
   const params = useParams();
   const id = params.id;
   const { openModal, closeModal } = useModal();
+  const token = localStorage.getItem("access_token");
 
   const GetRecipe = async () => {
     try {
+      axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/recipes/detail/${id}`);
       setRecipe(data.data);
-      console.log(data.data);
-    } catch (error) {
-      return error.message;
-    }
-  };
-
-  const GetLike = async () => {
-    try {
-      const { data } = await axios.get(`/api/recipes/detail/${id}`);
-      setRecipe(data.data);
-      console.log(data.data);
     } catch (error) {
       return error.message;
     }
   };
 
   useEffect(() => {
-    GetRecipe();
+    if (token) {
+      GetRecipe();
+    } else {
+      navigate(`/login?return_url=/recipe/${id}`);
+    }
   }, []);
 
-  useEffect(() => {
-    if (recipe.rec) {
-      setLike(recipe.rec);
-    }
-  }, [recipe]);
-
   if (!recipe || !recipe.USER) {
-    return null;
+    return (
+      <>
+        <TopBox>
+          <RecipeBox>
+            <img src={`/api/recipes/image/${id}`}></img>
+            <TextBox>
+              <Skeleton
+                variant="rounded"
+                width="100%"
+                height="12.5rem"
+                sx={{
+                  backgroundColor: theme.color.darkGray,
+                }}
+              />
+            </TextBox>
+          </RecipeBox>
+          <Material>
+            <div>
+              <span>재료 목록</span>
+              <Skeleton
+                variant="rounded"
+                width="100%"
+                height="5rem"
+                sx={{
+                  backgroundColor: theme.color.darkGray,
+                }}
+              />
+            </div>
+            <div>
+              <span className="recipes">레시피</span>
+              <Skeleton
+                variant="rounded"
+                width="100%"
+                height="5rem"
+                sx={{
+                  backgroundColor: theme.color.darkGray,
+                }}
+              />
+            </div>
+          </Material>
+        </TopBox>
+        <MidBox>
+          <RecBox>
+            <button></button>
+          </RecBox>
+          <HorizonLine></HorizonLine>
+        </MidBox>
+      </>
+    );
   }
 
   return (
     <>
       <TopBox>
         <RecipeBox>
-          <img src={`http://localhost:3030/recipes/image/${id}`}></img>
+          <img src={`/api/recipes/image/${id}`}></img>
           <TextBox>
             <div>
               <h1>
                 {recipe.name}
-                {recipe.iswriter ? (
+                {recipe.USER.iswriter ? (
                   <RecipeEditDelete />
                 ) : (
                   <CallButton
                     onClick={() => {
                       openModal(ReportRecipeModal, {
                         handleClose: closeModal,
+                        id,
                       });
                     }}
                   >
@@ -99,14 +164,14 @@ const RecipeDetailCard = () => {
                 @{recipe.USER.nickname}
                 <MemberBadge level={recipe.USER.level} />
               </User>
-              <p>{recipe.date.slice(0, 10)}</p>
+              <p className="date">{recipe.date.slice(0, 10)}</p>
             </div>
             <div className="color">
-              <p>
-                <span>도수</span> {alcohol}
-              </p>
+              <ColorBox>
+                <span>도수</span> <span className="alcohol">{alcohol}</span>
+              </ColorBox>
               {recipe.color && (
-                <p>
+                <ColorBox>
                   <span>색상</span>
                   {recipe.color.includes(1) ? (
                     <Circle bgColor="#FF0000"></Circle>
@@ -144,7 +209,7 @@ const RecipeDetailCard = () => {
                   {recipe.color.includes(12) ? (
                     <Circle bgColor="#3E3E3E"></Circle>
                   ) : null}
-                </p>
+                </ColorBox>
               )}
             </div>
           </TextBox>
@@ -164,7 +229,7 @@ const RecipeDetailCard = () => {
             </div>
           </div>
           <div>
-            <span>레시피</span>
+            <span className="recipes">레시피</span>
             <Explain>{recipe.instruction}</Explain>
           </div>
         </Material>
@@ -172,24 +237,61 @@ const RecipeDetailCard = () => {
       <MidBox>
         <RecBox>
           <button>
-            <FaThumbsUp
-              onClick={() => {
-                LikeCheck === false ? setLike(Like + 1) : setLike(Like - 1);
-                setLikeCheck(!LikeCheck);
-              }}
-              style={{
-                color: LikeCheck === true ? "#E9AA33" : "white",
-                fontSize: "2rem",
-              }}
-            ></FaThumbsUp>
+            {recipe.USER.liked === true ? (
+              <FaThumbsUp
+                onClick={() => {
+                  likteRecipe(id, true, recipe.like - 1)
+                    .then((response) => {
+                      setRecipe((prevRecipe) => ({
+                        ...prevRecipe,
+                        USER: {
+                          ...prevRecipe.USER,
+                          liked: false,
+                        },
+                        like: prevRecipe.like - 1,
+                      }));
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
+                }}
+                style={{
+                  color: "#E9AA33",
+                  fontSize: "2rem",
+                }}
+              ></FaThumbsUp>
+            ) : (
+              <FaRegThumbsUp
+                onClick={() => {
+                  likteRecipe(id, false, recipe.like + 1)
+                    .then((response) => {
+                      setRecipe((prevRecipe) => ({
+                        ...prevRecipe,
+                        USER: {
+                          ...prevRecipe.USER,
+                          liked: true,
+                        },
+                        like: prevRecipe.like + 1,
+                      }));
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
+                }}
+                style={{
+                  color: "#E9AA33",
+                  fontSize: "2rem",
+                }}
+              ></FaRegThumbsUp>
+            )}
           </button>
           <p
             style={{
-              color: LikeCheck === true ? "#E9AA33" : "white",
+              color: "#E9AA33",
               marginTop: "0.5rem",
             }}
           >
-            {Like}
+            {recipe.like}
           </p>
         </RecBox>
         <HorizonLine></HorizonLine>
@@ -198,16 +300,20 @@ const RecipeDetailCard = () => {
   );
 };
 
-const User = styled.p`
-  p {
-    display: flex;
-    span {
-      margin-right: 0.75rem;
-      color: ${({ theme }) => theme.color.primaryGold};
-    }
-  }
-  div {
-    margin-left: 0.5rem;
+const User = styled.div`
+  display: flex;
+  margin-top: 0.3rem;
+  gap: 0.4rem;
+  align-items: center;
+`;
+const ColorBox = styled.div`
+  display: flex;
+  margin-top: 0.5rem;
+  gap: 0.7rem;
+  align-items: center;
+  color: ${({ theme }) => theme.color.primaryGold};
+  .alcohol {
+    color: white;
   }
 `;
 
@@ -237,6 +343,9 @@ const TextBox = styled.div`
       margin-right: 0.5rem;
     }
   }
+  .date {
+    color: ${({ theme }) => theme.color.lightGray};
+  }
   @media screen and (min-width: 429px) {
     margin-left: 2rem;
   }
@@ -256,6 +365,7 @@ const RecipeBox = styled.div`
     width: 12.25rem;
     border: 1px solid ${({ theme }) => theme.color.primaryGold};
     border-radius: 0.75rem;
+    object-fit: cover;
   }
   h1 {
     font-size: 1.5rem;
@@ -277,19 +387,22 @@ const RecipeBox = styled.div`
 `;
 
 const Material = styled.div`
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   div {
     flex-direction: column;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     display: flex;
     flex-wrap: wrap;
     span {
       margin-right: 0.75rem;
       color: ${({ theme }) => theme.color.primaryGold};
+    }
+    .recipes {
+      margin-top: 1.25rem;
     }
   }
 `;
@@ -299,7 +412,6 @@ const TopBox = styled.div`
   margin: auto;
   display: flex;
   flex-direction: column;
-  }
   @media screen and (max-width: 840px) {
     width: 70vw;
   }
@@ -349,6 +461,7 @@ const Explain = styled.div`
 
 const CallButton = styled.button`
   width: 3rem;
+  height: 1.8rem;
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 0.5rem;
   color: ${({ theme }) => theme.color.primaryGold};

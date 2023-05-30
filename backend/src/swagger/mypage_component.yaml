@@ -2,7 +2,7 @@
 
 components:
   schemas:
-    getMyRecips:
+    getMyRecipes:
       properties:
         success:
           type: boolean
@@ -54,6 +54,11 @@ components:
               postId:
                 type: integer
                 example: 1
+              images:
+                type: array
+                items:
+                  type: integer
+                  example: [8, 9]
               category:
                 type: integer
                 example: 4
@@ -74,7 +79,7 @@ components:
                 example: 10
               date:
                 type: string
-                example: 2023.05.02(열두시간 전 일케 하는건 시간남으면...)
+                example: 2023.05.02(열두시간 전 일케 하는건 프론트에서 처리해도 괜찮을것같기도...)
 
     getMyReplies:
       properties:
@@ -91,6 +96,9 @@ components:
           items:
             type: object
             properties:
+              replyId:
+                type: integer
+                example: 1
               postId:
                 type: integer
                 example: 1
@@ -102,7 +110,7 @@ components:
                 example: 글제목입니다
               date:
                 type: string
-                example: 2023.05.02(열두시간 전 일케 하는건 시간남으면...)
+                example: 2023.05.02(열두시간 전 일케 하는건 프론트에서 처리해도 괜찮을것같기도...)
 
     getMyReviews:
       properties:

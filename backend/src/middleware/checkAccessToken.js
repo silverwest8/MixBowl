@@ -2,7 +2,7 @@
 
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-dotenv.config(); //JWT 키불러오기
+dotenv.config();
 import USER from '../models/USER';
 import { logger } from '../../winston/winston';
 

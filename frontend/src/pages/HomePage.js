@@ -1,8 +1,8 @@
 import Banner from "../components/home/Banner";
 import HomeAnswer from "../components/home/HomeAnswer";
-import HomeRecipe from "../components/home/HomeRecipe";
+import HomeCocktail from "../components/home/HomeCocktail";
 import HomeBar from "../components/home/HomeBar";
-import HomeBulletin from "../components/home/HomeBulletin";
+import HomeCommunity from "../components/home/HomeCommunity";
 
 const HomePage = () => {
   return (
@@ -11,16 +11,16 @@ const HomePage = () => {
         <Banner></Banner>
       </section>
       <section>
-        <HomeAnswer num={1}></HomeAnswer>
+        <HomeAnswer></HomeAnswer>
       </section>
       <section>
-        <HomeRecipe num={2}></HomeRecipe>
+        <HomeCocktail></HomeCocktail>
       </section>
       <section>
-        <HomeBar num={2}></HomeBar>
+        <HomeBar></HomeBar>
       </section>
       <section>
-        <HomeBulletin num={3}></HomeBulletin>
+        <HomeCommunity></HomeCommunity>
       </section>
     </main>
   );

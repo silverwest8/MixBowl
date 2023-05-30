@@ -1,6 +1,8 @@
 # Tags for Swagger
 
 tags:
+  - name: home
+    description: Operations about home
   - name: users
     description: Operations about users
   - name: recipes
