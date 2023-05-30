@@ -221,7 +221,7 @@ const CommunityEditingPage = () => {
   const [recipes, setRecipes] = useState([]);
   const [warning, setWarning] = useState("");
   const [selectLike, setSelectLike] = useState(true);
-  // const [posting, setPosting] = useState({});
+  const [posting, setPosting] = useState({});
   const [{ addTitle }, setAddTitle] = useRecoilState(AddPostingState);
   const [{ addContent }, setAddContent] = useRecoilState(AddPostingState);
   const [{ addLike }, setAddLike] = useRecoilState(AddPostingState);
@@ -260,32 +260,37 @@ const CommunityEditingPage = () => {
   const handleTitle = (e) => {
     setWarning("");
     setAddTitle((prev) => ({
-      ...prev,
+      // ...prev,
       addTitle: e.target.value,
     }));
   };
   const handleContent = (e) => {
     setWarning("");
     setAddContent((prev) => ({
-      ...prev,
+      // ...prev,
       addContent: e.target.value,
     }));
   };
   const handleLike = (e) => {
+    console.log("handelLike is ", e);
     setAddLike((prev) => ({
-      ...prev,
+      // ...prev,
       addLike: e,
     }));
-    setSelectLike(!selectLike);
+    if (e === 1) {
+      setSelectLike(true);
+    } else {
+      setSelectLike(false);
+    }
   };
   const onChangeAutoComplete = (event, value) => {
-    setWarning("");
+    // setWarning("");
     setAddCNO((prev) => ({
-      ...prev,
+      // ...prev,
       addCNO: value.num,
     }));
     setAddTitle((prev) => ({
-      ...prev,
+      // ...prev,
       addTitle: value.name,
     }));
   };
@@ -304,81 +309,7 @@ const CommunityEditingPage = () => {
       const postingResponse = await axios.get(`/api/communities/${id}`);
       console.log("postingReponse is ", postingResponse.data);
       if (postingResponse.data.success) {
-        setAddContent((prev) => ({
-          ...prev,
-          addContent: postingResponse.data.content,
-        }));
-        setAddTitle((prev) => ({
-          ...prev,
-          addTitle: postingResponse.data.title,
-        }));
-        setAddCategory((prev) => ({
-          ...prev,
-          addCategory: postingResponse.data.category,
-        }));
-        if (postingResponse.data.category === 1) {
-          setTab("추천 이유");
-          setAddCNO((prev) => ({
-            ...prev,
-            addCNO: null,
-          }));
-          setAddLike((prev) => ({
-            ...prev,
-            addLike: 0,
-          }));
-        } else if (postingResponse.data.category === 2) {
-          setTab("질문 내용");
-          setTab("추천 이유");
-          setAddCNO((prev) => ({
-            ...prev,
-            addCNO: null,
-          }));
-          setAddLike((prev) => ({
-            ...prev,
-            addLike: 0,
-          }));
-        } else if (postingResponse.data.category === 3) {
-          setTab("후기 내용");
-          setTab("추천 이유");
-          setAddCNO((prev) => ({
-            ...prev,
-            addCNO: null,
-          }));
-          setAddLike((prev) => ({
-            ...prev,
-            addLike: 0,
-          }));
-        } else if (postingResponse.data.category === 4) {
-          setTab("글 내용");
-          setTab("추천 이유");
-          setAddCNO((prev) => ({
-            ...prev,
-            addCNO: null,
-          }));
-          setAddLike((prev) => ({
-            ...prev,
-            addLike: 0,
-          }));
-        }
-        if (postingResponse.data.cno) {
-          setAddCNO((prev) => ({
-            ...prev,
-            addCNO: postingResponse.data.cno,
-          }));
-          setAddLike((prev) => ({
-            ...prev,
-            addLike: postingResponse.data.cocktailLike,
-          }));
-        }
-        for (let i = 0; i < postingResponse.data.images.length; i++) {
-          const file = await convertURLtoFile(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${postingResponse.data.images[i]}`
-          );
-          console.log("file is ", file, "files is ", defaultFiles);
-          defaultFiles.push(file);
-        }
-        //   setUserInfo(userInfoResponse.data.data);
-        console.log("data here ", data);
+        setPosting(postingResponse.data);
       }
     } catch (error) {
       console.log("err is ", error);
@@ -392,15 +323,92 @@ const CommunityEditingPage = () => {
     // console.log("what's wrong");
     return setRecipes(newList);
   };
+  const SetContent = async (data) => {
+    console.log("pls check here ", data);
+    console.log("original content is ", addContent);
+    setAddContent((prev) => ({
+      // ...prev,
+      addContent: data.content,
+    }));
+    console.log("did you set the data ", addContent);
+    setAddTitle((prev) => ({
+      // ...prev,
+      addTitle: data.title,
+    }));
+    setAddCategory((prev) => ({
+      // ...prev,
+      addCategory: data.category,
+    }));
+    if (data.category === 1) {
+      setTab("추천 이유");
+      setAddCNO((prev) => ({
+        // ...prev,
+        addCNO: null,
+      }));
+      setAddLike((prev) => ({
+        // ...prev,
+        addLike: 0,
+      }));
+    } else if (data.category === 2) {
+      setTab("질문 내용");
+      setAddCNO((prev) => ({
+        // ...prev,
+        addCNO: null,
+      }));
+      setAddLike((prev) => ({
+        // ...prev,
+        addLike: 0,
+      }));
+    } else if (data.category === 3) {
+      setTab("후기 내용");
+      setAddCNO((prev) => ({
+        // ...prev,
+        addCNO: data.cno,
+      }));
+      setAddLike((prev) => ({
+        // ...prev,
+        addLike: data.cocktailLike,
+      }));
+      setSelectLike(!selectLike);
+    } else if (data.category === 4) {
+      setTab("글 내용");
+      setAddCNO((prev) => ({
+        // ...prev,
+        addCNO: null,
+      }));
+      setAddLike((prev) => ({
+        // ...prev,
+        addLike: 0,
+      }));
+    }
+    for (let i = 0; i < data.images.length; i++) {
+      const file = await convertURLtoFile(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${data.images[i]}`
+      );
+      defaultFiles.push(file);
+      console.log("file is ", file, "files is ", defaultFiles);
+    }
+    //   setUserInfo(userInfoResponse.data.data);
+    console.log("data here ", data);
+  };
 
   useEffect(() => {
     GetRecipe();
     setIsLoading(false);
   }, []);
+
   useEffect(() => {
     SetRecipe(list);
     setIsLoading(false);
   }, [list]);
+
+  useEffect(() => {
+    // if (Object.keys(posting).length > 0) {
+    SetContent(posting);
+    // }
+    setIsLoading(false);
+  }, [posting]);
+
   const setToastState = useSetRecoilState(toastState);
 
   const handleSubmit = () => {
@@ -408,11 +416,22 @@ const CommunityEditingPage = () => {
       setWarning("* 제목과 내용은 필수 입력 항목입니다.");
     } else {
       // console.log("file handed to postCommunity is ", files);
+      console.log(
+        "what's handed to editCommunity is ",
+        addLike,
+        " content ",
+        addContent,
+        "title",
+        addTitle,
+        "category",
+        addCategory
+      );
       editCommunity({
         like: addLike,
         content: addContent,
         title: addTitle,
         cno: addCNO,
+        id,
         category: addCategory,
         files,
       })
@@ -427,6 +446,7 @@ const CommunityEditingPage = () => {
               ms: 3000,
             });
             // setCommunityImg("");
+            console.log("수정 답변은 ", response);
             navigate(-1);
           } else {
             setToastState({
