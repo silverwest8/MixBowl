@@ -3,7 +3,7 @@ module.exports = {
   apps : [
     {
     name: "Mixbowl",
-    script: 'cd ./frontend && npm run build && cd ../backend && npm run start',
+    script: 'cd ./backend && npm run start',
     env: {
       NODE_ENV: "production",
     },
