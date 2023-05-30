@@ -133,3 +133,15 @@ components:
             LEVEL:
               type: string
               example: 5
+
+    updateUser:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: 회원 정보 조회 성공
+        newNickname:
+          type: string
+          example: newnick

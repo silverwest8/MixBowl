@@ -3,6 +3,7 @@
 import express from 'express';
 import { db, sequelize } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
+import checkTokenYesAndNo from "../middleware/checkTokenYesAndNo"
 import axios from 'axios';
 import multer from 'multer';
 import fs from 'fs';
@@ -287,7 +288,7 @@ router.delete('/:cocktailId', async (req, res) => {
   }
 });
 
-router.get('/list/filter/:page', checkAccess, async (req, res) => {
+router.get('/list/filter/:page', checkTokenYesAndNo, async (req, res) => {
   try {
     const limit = 12;
     const page = Number(req.params.page);
@@ -436,7 +437,7 @@ router.get('/list/filter/:page', checkAccess, async (req, res) => {
         USER: {
           nickname: user.NICKNAME,
           level: user.LEVEL,
-          iswriter: req.user.UNO == user.UNO ? true : false,
+          iswriter: req.user ? (req.user.UNO == user.UNO ? true : false) : false
         },
       };
       list.push(temp);

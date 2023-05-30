@@ -79,13 +79,13 @@ const HomeCocktail = () => {
                     </ItemBox>
                   </SwiperSlide>
                 ))
-              : Array(2)
+              : Array(3)
                   .fill(1)
                   .map((_, index) => (
                     <SwiperSlide key={index}>
                       <Skeleton
                         variant="rounded"
-                        width="100%"
+                        width="24rem"
                         height="15rem"
                         sx={{
                           backgroundColor: theme.color.darkGray,
@@ -151,45 +151,47 @@ const HomeTitleBox = styled.div`
 
 const ItemBox = styled.div`
   width: 100%;
-  height: 17.813rem;
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 12px;
-  padding: 0.875rem 1rem;
-  @media screen and (max-width: 428px) {
-    height: 11.8rem;
-  }
-  img {
-    width: 12.5rem;
-    height: 12.5rem;
-    border-radius: 0.75rem;
-    margin-right: 1rem;
-    object-fit: cover;
-    @media screen and (max-width: 428px) {
-      width: 7.8rem;
-      height: 7.8rem;
-    }
-  }
+  padding: 1rem 1.5rem;
+
   .nickname {
     font-size: 0.875rem;
     color: ${({ theme }) => theme.color.lightGray};
     text-align: right;
+    padding-bottom: 0.5rem;
   }
   .content {
     display: flex;
     margin-bottom: 0.25rem;
+    gap: 1.5rem;
+    height: 12rem;
+    img {
+      width: 12rem;
+      height: 100%;
+      border-radius: 0.75rem;
+      object-fit: cover;
+      @media screen and (max-width: 428px) {
+        width: 7.5rem;
+      }
+    }
     p {
       width: 16rem;
-      height: 12rem;
+      height: 100%;
+      white-space: normal;
+      display: -webkit-box;
+      -webkit-line-clamp: 8;
+      -webkit-box-orient: vertical;
       line-height: 1.5rem;
-      padding-top: 0.25rem;
+      overflow-y: hidden;
+      text-overflow: ellipsis;
+      @media screen and (max-width: 428px) {
+        width: 12rem;
+        -webkit-line-clamp: 5;
+      }
     }
     @media screen and (max-width: 428px) {
-      p {
-        width: 13rem;
-        height: 7.8rem;
-        line-height: 1rem;
-        font-size: 0.875rem;
-      }
+      height: 7.5rem;
     }
   }
   .info {
