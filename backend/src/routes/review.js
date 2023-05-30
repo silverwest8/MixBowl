@@ -15,7 +15,7 @@ dotenv.config();
 const router = express.Router();
 
 async function getKeyword(placeId) {
-  console.log('placeId', placeId);
+  // console.log('placeId', placeId);
   let keywordlist = [];
   const reviews = await db.REVIEW.findAll({
     where: {
@@ -24,7 +24,7 @@ async function getKeyword(placeId) {
     attributes: ['REVIEW_ID'],
   });
   const reviewArray = reviews.map((x) => x.REVIEW_ID);
-  console.log('reviewArray', reviewArray);
+  // console.log('reviewArray', reviewArray);
   if (reviewArray.length) {
     const keywords = await db.KEYWORD.findAll({
       attributes: [
@@ -42,7 +42,7 @@ async function getKeyword(placeId) {
       limit: 3,
     });
     keywordlist = keywords.map((x) => x.KEYWORD);
-    console.log('keywordlist', keywordlist);
+    // console.log('keywordlist', keywordlist);
   }
   return keywordlist;
 }
