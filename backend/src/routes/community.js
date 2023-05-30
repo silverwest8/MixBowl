@@ -14,6 +14,7 @@ import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 import dotenv from 'dotenv';
 import POST_REPORT from '../models/POST_REPORT';
+import { logger } from '../../winston/winston';
 dotenv.config();
 const oneWeekAgo = new Date();
 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -816,7 +817,7 @@ router.post('/report/:postId', checkAccess, async (req, res) => {
         .json({ success: false, message: 'Post Report 중복' });
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Post Report 실패', error });
