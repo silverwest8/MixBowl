@@ -71,7 +71,6 @@ const VerifyingModal = ({ handleClose }) => {
         message: "인증에 실패했습니다. 다시 시도해주세요.",
         type: "error",
       });
-      console.log(e);
     },
     onSuccess: (e) => {
       if (e.bartender) {
@@ -80,6 +79,7 @@ const VerifyingModal = ({ handleClose }) => {
           message: "인증에 성공했습니다.",
           type: "success",
         });
+        window.location.reload();
       } else {
         setToastState({
           show: true,

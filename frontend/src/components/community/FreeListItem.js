@@ -8,29 +8,6 @@ import axios from "axios";
 import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
 
 const FreeListItem = ({ data }) => {
-  // TODO : 호버, 이미지처리
-  // const [path, setPath] = useState("");
-  // const GetImage = async (id) => {
-  //   try {
-  //     const { data } = await axios.get(
-  //       `/api/communities/one/image?imageId=${id}`
-  //     );
-  //     console.log("path is ", data.data);
-  //     setPath(data.data.error.path);
-  //     return { data };
-  //   } catch (error) {
-  //     console.log("empty or error", error.response.data.error.path);
-  //     setPath(error.response.data.error.path);
-  //   }
-  // };
-  // useEffect(() => {
-  //   if (data.imageId !== 0) {
-  //     GetImage(data.imageId);
-  //   }
-  // }, []);
-  if (data.imageId !== 0) {
-    console.log("lets see the data ", data);
-  }
   return (
     <ItemContainer to={`/community/${data.PNO}`}>
       <div className="wrapper">

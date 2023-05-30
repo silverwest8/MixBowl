@@ -7,7 +7,6 @@ import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
 
 const MyPostingItem = ({ data, uname, level }) => {
   // TODO : 호버, 이미지처리
-  console.log("my posting item ", data);
   return (
     <ItemContainer to={`/community/${data.postId}`}>
       <div className="wrapper">
@@ -132,6 +131,9 @@ const TopSection = styled.div`
     font-size: 1.125rem;
     @media screen and (max-width: 500px) {
       width: 50vw;
+    }
+    @media screen and (max-width: 350px) {
+      width: 30vw;
     }
   }
   .category {

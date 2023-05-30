@@ -15,11 +15,6 @@ const ImageSection = styled.div`
 `;
 
 const HotListItem = ({ data }) => {
-  // TODO : 호버, 이미지처리
-  // console.log(`${data.TITLE}의 카테고리는 ${data.CATEGORY}`);
-  // 아직 없는 필드들 많음. 추가되면 그 데이터 형식에 맞춰서 바꾸기.
-
-  console.log("hot is ", data);
   return (
     <ItemContainer to={`/community/${data.PNO}`}>
       <div className="wrapper">
@@ -146,6 +141,9 @@ const TopSection = styled.div`
     font-size: 1.125rem;
     @media screen and (max-width: 500px) {
       width: 50vw;
+    }
+    @media screen and (max-width: 350px) {
+      width: 30vw;
     }
   }
   .CATEGORY {

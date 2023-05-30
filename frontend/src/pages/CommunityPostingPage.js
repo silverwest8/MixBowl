@@ -288,12 +288,9 @@ const CommunityPostingPage = () => {
     try {
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/communities/list/cocktails`);
-      console.log("data here ", data);
       if (data.success) {
         setList(data.data);
-        // console.log("list is ", list);
         SetRecipe(list);
-        // console.log("final is ", recipes);
       }
     } catch (error) {
       console.log("err is ", error);
@@ -304,12 +301,17 @@ const CommunityPostingPage = () => {
       const [name, num] = item.split("/");
       return { name, num };
     });
-    // console.log("what's wrong");
     return setRecipes(newList);
   };
 
   useEffect(() => {
-    GetRecipe();
+    useEffect(() => {
+      if (token) {
+        GetRecipe();
+      } else {
+        navigate(`/login?return_url=/community/board`);
+      }
+    }, []);
   }, []);
   useEffect(() => {
     SetRecipe(list);
@@ -320,7 +322,6 @@ const CommunityPostingPage = () => {
     if (addTitle === "" || addContent === "") {
       setWarning("* 제목과 내용은 필수 입력 항목입니다.");
     } else {
-      console.log("file handed to postCommunity is ", files);
       postCommunity({
         title: addTitle,
         content: addContent,
@@ -406,7 +407,6 @@ const CommunityPostingPage = () => {
                 getOptionLabel={(option) => option.name || ""}
                 onChange={(event, value) => {
                   onChangeAutoComplete(event, value);
-                  // console.log("event value is ", value);
                 }}
                 sx={{
                   width: 300,
