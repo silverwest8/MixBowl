@@ -71,9 +71,22 @@ paths:
                   success:
                     type: boolean
                     example: true
+                  username:
+                    type: string
+                    example: 유저닉네임
+                  userlevel:
+                    type: integer
+                    example: 1
                   title:
                     type: string
                     example: 제목이 옵니다. cocktaillike는 칵테일 추천할때만 쓰고, like는 게시글 좋아요 수에요
+                  createdAt:
+                    type: string
+                    example: 2023-05-16 (날짜정보)
+                  isUserLike:
+                    type: boolean
+                    example: true
+                    description: 로그인 유저가 게시글을 좋아하는지 좋아함 true.  좋아요 안함 false.
                   cocktaillike:
                     type: integer
                     example: 1
@@ -89,6 +102,10 @@ paths:
                     type: integer
                     example: 1
                     description: 칵테일 고유 번호입니다.
+                  category:
+                    type: integer
+                    example: 1
+                    description: 카테고리 나타내기 위한 키
                   postId:
                     type: integer
                     example: 15
@@ -145,9 +162,6 @@ paths:
             schema:
               type: object
               properties:
-                category_id:
-                  type: integer
-                  example: 1
                 title:
                   type: string
                   example: 1-이 칵테일을 추천합니다 / 2-질문글은 제목이 없습니다 / 3-이 칵테일을 리뷰합니다(이 경우에만 like를 씁니다) / 4-자유글입니다
@@ -205,7 +219,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /communities/cocktails:
+  /communities/list/cocktails:
     get:
       tags:
         - communities
@@ -424,6 +438,12 @@ paths:
           example: 2
           schema:
             type: integer
+        - in: query
+          name: search
+          description: 검색할 단어
+          example: 맛있어요
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -460,13 +480,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fail'
 
-  /communities/list/category/{category_name}:
+  /communities/list/category/{category_name}?page={page}:
     get:
       tags:
         - communities
       summary: 전체 글, 카테고리별 글 조회
-      description: 'query로 검색 필터링 생각중입니다'
-      operationId: getCommunityPost
+      description:
+      operationId: getCommunityPostByCategory
       parameters:
         - in: path
           name: category_name
@@ -475,9 +495,15 @@ paths:
           schema:
             type: string
         - in: query
+          name: page
+          description: 페이지수
+          example: 3
+          schema:
+            type: integer
+        - in: query
           name: search
-          description: 검색키워드
-          example: 피치크러쉬
+          description: 검색할 단어
+          example: 맛있어요
           schema:
             type: string
       responses:
@@ -487,6 +513,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/communityGetTotal'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fail'
+  /communities/report/{postId}:
+    post:
+      tags:
+        - communities
+      summary: 칵테일 POST 신고
+      description: status 200에서 success-true이면 신고 성공, false이면 이미 신고한 상태
+      operationId: ReportPost
+      parameters:
+        - in: path
+          name: postId
+          type: integer
+          description: 게시글 고유 ID
+          example: 15
+      requestBody:
+        required: true
+        description: ''
+        content:
+          application/json:
+            schema:
+              properties:
+                report:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
         '400':
           description: ''
           content:

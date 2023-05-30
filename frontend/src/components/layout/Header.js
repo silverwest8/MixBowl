@@ -18,9 +18,13 @@ const Header = () => {
         <HeaderBox>
           <div>
             <div className="mobile-header-center">
-              <h1>
-                <Link to="/">LOGO</Link>
-              </h1>
+              <Link to="/" className="logo-link">
+                <img
+                  src="/images/logo.png"
+                  className="logo-image"
+                  alt="Cocktell logo"
+                />
+              </Link>
               <button
                 className="nav-button"
                 onClick={() => setShow((show) => !show)}
@@ -54,22 +58,42 @@ const HeaderBox = styled.header`
   z-index: 100;
   background-color: ${({ theme }) => theme.color.black};
   & > div {
-    display: grid;
-    grid-template-columns: 1fr 5fr;
-    align-items: baseline;
+    display: flex;
+    align-items: center;
     max-width: 1296px;
     width: 100%;
     height: 100%;
+  }
+  h1 {
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+  }
+  .logo-image {
+    width: 10rem;
   }
   .nav-button {
     display: none;
     font-size: 1.25rem;
     color: ${({ theme }) => theme.color.primaryGold};
   }
+  .mobile-header-center {
+    height: 100%;
+    width: 180px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+  }
+  .logo-link {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding-top: 0.5rem;
+  }
   @media screen and (max-width: 1296px) {
     padding: 0 1rem;
   }
-  @media screen and (max-width: 840px) {
+  @media screen and (max-width: 920px) {
     padding: 0;
     align-items: center;
     height: auto;
@@ -77,13 +101,15 @@ const HeaderBox = styled.header`
       display: flex;
       flex-direction: column;
     }
+    .logo-link {
+      padding-top: 0;
+    }
     .mobile-header-center {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      height: 3.375rem;
-      padding: 0 1rem;
+      padding: 1rem;
     }
     .nav-button {
       display: block;
@@ -102,7 +128,7 @@ const NavWrapper = styled.div`
     display: flex;
     justify-content: center;
   }
-  @media screen and (max-width: 840px) {
+  @media screen and (max-width: 920px) {
     display: ${({ show }) => (show ? "flex" : "none")};
     flex-direction: column;
     border-bottom: 2px solid ${({ theme }) => theme.color.primaryGold};
@@ -114,6 +140,9 @@ const NavWrapper = styled.div`
 
 const Spacer = styled.div`
   height: 3.375rem;
+  @media screen and (max-width: 920px) {
+    height: 4.375rem;
+  }
 `;
 
 export default Header;

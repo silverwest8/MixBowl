@@ -10,10 +10,9 @@ const router = express.Router();
 
 router.get('/recipes/:page', checkAccess, async (req, res) => {
   try {
-    const unit = 10;
+    const limit = 10;
     const page = Number(req.params.page);
-    const offset = unit * (page - 1);
-    const limit = unit;
+    const offset = limit * (page - 1);
     let list = [];
     const like = await db.COCKTAIL_LIKE.findAll({
       where: { UNO: req.user.UNO },

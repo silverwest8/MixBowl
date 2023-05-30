@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../common/Modal";
 import Textarea from "../common/Textarea";
 import Rating from "@mui/material/Rating";
@@ -168,6 +168,13 @@ const ReviewModal = ({
       });
     }
   };
+
+  useEffect(() => {
+    if (Number(rating) > 0) {
+      setRatingMsg("");
+    }
+  }, [rating]);
+
   return (
     <Modal
       handleClose={handleClose}
