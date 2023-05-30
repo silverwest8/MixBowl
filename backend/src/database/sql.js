@@ -228,14 +228,13 @@ const sql = {
   },
   changeCommunity: async (req, pno) => {
     const unum = req.decoded.unum;
-    const data = JSON.parse(req.body.data.toString());
+    const data = JSON.parse(req.body.data);
     console.log('data', data);
     const return_obj = { PNO: pno };
     try {
       if (data.category === 1) {
         //칵테일 추천
         const { title, content } = data;
-        console.log('hi');
         const post = await POST.update(
           {
             TITLE: title,
@@ -358,13 +357,11 @@ const sql = {
     try {
       let categoryDb = 0; //review 참조
       let communityId;
-      let reviewId;
       if (db.REVIEW_ID === undefined) {
         communityId = Number(db.PNO);
         categoryDb = 1; // community(Post) 참조
       } else {
-        console.log(db);
-        reviewId = db.REVIEW_ID;
+        const reviewId = db.REVIEW_ID;
       }
       req.files.map(async (data) => {
         let path = data.path;

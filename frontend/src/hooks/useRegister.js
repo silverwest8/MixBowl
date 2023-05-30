@@ -31,7 +31,7 @@ export const useNickname = () => {
       const { data } = await axios.put("/api/users/nicknamedupcheck", {
         checkname: nickname,
       });
-      if (data.success) {
+      if (!data.duplicate) {
         isDuplicated.current = false;
         setNickNameMsg({
           type: "success",
@@ -47,11 +47,6 @@ export const useNickname = () => {
       checkedNickname.current = nickname;
     } catch (e) {
       console.log(e);
-      isDuplicated.current = true;
-      setNickNameMsg({
-        type: "error",
-        value: "이미 사용중인 닉네임입니다.",
-      });
     }
   };
   const checkNicknameValidation = () => {

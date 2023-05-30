@@ -13,7 +13,11 @@ import axios from 'axios';
 import iconv from 'iconv-lite';
 import bcrypt from 'bcrypt';
 import * as cheerio from 'cheerio';
+<<<<<<< HEAD
 import USER from '../models/USER';
+=======
+import { logger } from '../../winston/winston';
+>>>>>>> 84ad368c0162ac6bfb4485304f5276461237fcc5
 dotenv.config();
 
 const router = express.Router();
@@ -137,7 +141,7 @@ router.post('/sendauthmail', async (req, res) => {
       return res.json({ success: true, message: '인증메일이 발송되었습니다.' });
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res.status(400).json({
       success: false,
       message: '인증번호메일 발송에 실패하였습니다.',
@@ -249,7 +253,7 @@ router.put('/checkbartender', checkAccess, async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: '바텐더 인증 실패', error });
@@ -259,7 +263,33 @@ router.put('/checkbartender', checkAccess, async (req, res) => {
 // 회원 정보 조회
 router.get('/', checkAccess, async (req, res) => {
   try {
-    console.log(req.user);
+    if (req.user.LEVEL < 3) {
+      const count = await db.POST.count({
+        where: {
+          UNO: req.user.UNO,
+        },
+      });
+      console.log(count);
+      if (count >= 30) {
+        await db.USER.update(
+          { LEVEL: 3 },
+          {
+            where: {
+              UNO: req.user.UNO,
+            },
+          }
+        );
+      } else if (count >= 10) {
+        await db.USER.update(
+          { LEVEL: 2 },
+          {
+            where: {
+              UNO: req.user.UNO,
+            },
+          }
+        );
+      }
+    }
     return res
       .status(200)
       .json({ success: true, message: '회원 정보 조회 성공', data: req.user });
@@ -274,8 +304,10 @@ router.get('/', checkAccess, async (req, res) => {
 router.put('/', checkAccess, async (req, res) => {
   try {
     const newNickname = req.body.nickname;
-    req.user.update({ NICKNAME: newNickname });
-    return res.status(200).json({ success: true, message: '닉네임 수정 성공' });
+    await req.user.update({ NICKNAME: newNickname });
+    return res
+      .status(200)
+      .json({ success: true, message: '닉네임 수정 성공', newNickname });
   } catch (error) {
     return res
       .status(400)

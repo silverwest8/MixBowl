@@ -101,17 +101,10 @@ const RecipeCard = () => {
           ? data.pages.map((page) =>
               page.list.map((item) => (
                 <RecipeBox key={item.id}>
-                  {token ? (
-                    <Link to={`/recipe/${item.id}`}>
-                      <img src={`/api/recipes/image/${item.id}`}></img>
-                      <h1>{item.name}</h1>
-                    </Link>
-                  ) : (
-                    <>
-                      <img src={item.image_path}></img>
-                      <h1>{item.name}</h1>
-                    </>
-                  )}
+                  <Link to={`/recipe/${item.id}`}>
+                    <img src={`/api/recipes/image/${item.id}`}></img>
+                    <h1>{item.name}</h1>
+                  </Link>
 
                   <TextBox>
                     <NickName>
@@ -146,7 +139,7 @@ const RecipeCard = () => {
                 />
               ))}
       </CardBox>
-      <div ref={ref}></div>
+      {token && <div ref={ref}></div>}
     </MiddleBox>
   );
 };
