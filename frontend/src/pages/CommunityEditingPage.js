@@ -60,9 +60,6 @@ const Menu = styled.button`
   padding: 0.7rem 0;
   width: 10vw;
   background-color: none;
-  &:hover {
-    background-color: ${({ theme }) => theme.color.secondGold};
-  }
   @media screen and (max-width: 800px) {
     width: 18vw;
   }
@@ -229,35 +226,6 @@ const CommunityEditingPage = () => {
   const navigate = useNavigate();
   const [defaultFiles, setDefaultFiles] = useState([]);
 
-  // add Image?
-  const recommendationTab = () => {
-    setTab("추천 이유");
-    setPostingState((prev) => ({
-      ...prev,
-      addCategory: 1,
-    }));
-  };
-  const qnaTab = () => {
-    setTab("질문 내용");
-    setPostingState((prev) => ({
-      ...prev,
-      addCategory: 2,
-    }));
-  };
-  const reviewTab = () => {
-    setTab("후기 내용");
-    setPostingState((prev) => ({
-      ...prev,
-      addCategory: 3,
-    }));
-  };
-  const freeTab = () => {
-    setTab("글 내용");
-    setPostingState((prev) => ({
-      ...prev,
-      addCategory: 4,
-    }));
-  };
   const handleTitle = (e) => {
     setWarning("");
     setPostingState((prev) => ({
@@ -273,7 +241,6 @@ const CommunityEditingPage = () => {
     }));
   };
   const handleLike = (e) => {
-    console.log("handelLike is ", e);
     setPostingState((prev) => ({
       ...prev,
       addLike: e,
@@ -307,17 +274,13 @@ const CommunityEditingPage = () => {
         SetRecipe(cocktailsResponse.data.data);
       }
       const { data } = await axios.get(`/api/communities/${id}`);
-      console.log("postingReponse is ", data);
       if (data.success) {
-        console.log("pls check here ", data);
-        console.log("original content is ", addContent);
         setPostingState((prev) => ({
           ...prev,
           addContent: data.content,
           addTitle: data.title,
           addCategory: data.category,
         }));
-        console.log("did you set the data ", addContent);
         if (data.category === 1) {
           setTab("추천 이유");
           setPostingState((prev) => ({
@@ -355,7 +318,6 @@ const CommunityEditingPage = () => {
           );
           files.push(file);
         }
-        console.log(files);
         setDefaultFiles(files);
         //   setUserInfo(userInfoResponse.data.data);
       }
@@ -368,7 +330,6 @@ const CommunityEditingPage = () => {
       const [name, num] = item.split("/");
       return { name, num };
     });
-    // console.log("what's wrong");
     setRecipes(newList);
   };
 
@@ -383,17 +344,6 @@ const CommunityEditingPage = () => {
     if (addTitle === "" || addContent === "") {
       setWarning("* 제목과 내용은 필수 입력 항목입니다.");
     } else {
-      // console.log("file handed to postCommunity is ", files);
-      console.log(
-        "what's handed to editCommunity is ",
-        addLike,
-        " content ",
-        addContent,
-        "title",
-        addTitle,
-        "category",
-        addCategory
-      );
       editCommunity({
         like: addLike,
         content: addContent,
@@ -404,8 +354,6 @@ const CommunityEditingPage = () => {
         files,
       })
         .then((response) => {
-          console.log("edit response is ", response);
-
           if (response.success) {
             setToastState({
               show: true,
@@ -413,8 +361,6 @@ const CommunityEditingPage = () => {
               type: "success",
               ms: 3000,
             });
-            // setCommunityImg("");
-            console.log("수정 답변은 ", response);
             navigate(-1);
           } else {
             setToastState({
@@ -449,28 +395,16 @@ const CommunityEditingPage = () => {
             <TopSection>
               <span>카테고리</span>
               <SelectContainer>
-                <Menu
-                  onClick={recommendationTab}
-                  className={tab === "추천 이유" ? "selected" : ""}
-                >
+                <Menu className={tab === "추천 이유" ? "selected" : ""}>
                   칵테일 추천
                 </Menu>
-                <Menu
-                  onClick={qnaTab}
-                  className={tab === "질문 내용" ? "selected" : ""}
-                >
+                <Menu className={tab === "질문 내용" ? "selected" : ""}>
                   질문과 답변
                 </Menu>
-                <Menu
-                  onClick={reviewTab}
-                  className={tab === "후기 내용" ? "selected" : ""}
-                >
+                <Menu className={tab === "후기 내용" ? "selected" : ""}>
                   칵테일 리뷰
                 </Menu>
-                <Menu
-                  onClick={freeTab}
-                  className={tab === "글 내용" ? "selected" : ""}
-                >
+                <Menu className={tab === "글 내용" ? "selected" : ""}>
                   자유
                 </Menu>
               </SelectContainer>
@@ -487,7 +421,6 @@ const CommunityEditingPage = () => {
                   getOptionLabel={(option) => option.name || ""}
                   onChange={(event, value) => {
                     onChangeAutoComplete(event, value);
-                    // console.log("event value is ", value);
                   }}
                   sx={{
                     width: 300,
