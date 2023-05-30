@@ -11,7 +11,9 @@ import { db } from '../models';
 import nodemailer from 'nodemailer';
 import axios from 'axios';
 import iconv from 'iconv-lite';
+import bcrypt from 'bcrypt';
 import * as cheerio from 'cheerio';
+import USER from '../models/USER';
 dotenv.config();
 
 const router = express.Router();
@@ -24,17 +26,36 @@ const smtpTransport = nodemailer.createTransport({
     pass: process.env.NODEMAILER_PASS, // 네이버 비밀번호
   },
 });
-
+// router.put('/change', async (req, res) => {
+//   const users = await sql.getAllNames();
+//   users.forEach((val) => {
+//     const hashed_password = bcrypt.hash(
+//       val.dataValues.PASSWORD,
+//       10,
+//       async (err, hash) => {
+//         try {
+//           await USER.update(
+//             { PASSWORD: hash },
+//             { where: { PASSWORD: val.dataValues.PASSWORD } }
+//           );
+//         } catch (error) {
+//           console.log(error.message);
+//         }
+//       }
+//     );
+//   });
+// });
 // 로그인
 router.post('/login', async (req, res) => {
   try {
     const tokens = await sql.loginUser(req, res);
+    console.log('token', tokens);
     if (tokens.code !== 200) {
-      throw new Error();
+      throw new Error('not return login info');
     }
     const { email } = req.body;
     if (validation.checkEmail(email) === false) {
-      throw new Error();
+      throw new Error('email not valid');
     }
     return res.status(200).send({
       success: true,
@@ -42,6 +63,7 @@ router.post('/login', async (req, res) => {
       tokens,
     });
   } catch (error) {
+    console.log(error.message);
     return res.status(400).send({ success: false });
   }
 });
