@@ -217,64 +217,65 @@ const CommunityEditingPage = () => {
   const params = useParams();
   const id = params.id;
   const [tab, setTab] = useState("글 내용");
-  const [list, setList] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [warning, setWarning] = useState("");
   const [selectLike, setSelectLike] = useState(true);
-  const [posting, setPosting] = useState({});
-  const [{ addTitle }, setAddTitle] = useRecoilState(AddPostingState);
-  const [{ addContent }, setAddContent] = useRecoilState(AddPostingState);
-  const [{ addLike }, setAddLike] = useRecoilState(AddPostingState);
-  const [{ addCategory }, setAddCategory] = useRecoilState(AddPostingState);
-  const [{ addCNO }, setAddCNO] = useRecoilState(AddPostingState);
+  const [
+    { addTitle, addContent, addLike, addCategory, addCNO },
+    setPostingState,
+  ] = useRecoilState(AddPostingState);
   const [isLoading, setIsLoading] = useState(true);
   const files = useRecoilValue(imageFileListState);
   const navigate = useNavigate();
-  const defaultFiles = [];
+  const [defaultFiles, setDefaultFiles] = useState([]);
 
   // add Image?
   const recommendationTab = () => {
     setTab("추천 이유");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 1,
     }));
   };
   const qnaTab = () => {
     setTab("질문 내용");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 2,
     }));
   };
   const reviewTab = () => {
     setTab("후기 내용");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 3,
     }));
   };
   const freeTab = () => {
     setTab("글 내용");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 4,
     }));
   };
   const handleTitle = (e) => {
     setWarning("");
-    setAddTitle((prev) => ({
-      // ...prev,
+    setPostingState((prev) => ({
+      ...prev,
       addTitle: e.target.value,
     }));
   };
   const handleContent = (e) => {
     setWarning("");
-    setAddContent((prev) => ({
-      // ...prev,
+    setPostingState((prev) => ({
+      ...prev,
       addContent: e.target.value,
     }));
   };
   const handleLike = (e) => {
     console.log("handelLike is ", e);
-    setAddLike((prev) => ({
-      // ...prev,
+    setPostingState((prev) => ({
+      ...prev,
       addLike: e,
     }));
     if (e === 1) {
@@ -285,12 +286,12 @@ const CommunityEditingPage = () => {
   };
   const onChangeAutoComplete = (event, value) => {
     // setWarning("");
-    setAddCNO((prev) => ({
-      // ...prev,
+    setPostingState((prev) => ({
+      ...prev,
       addCNO: value.num,
     }));
-    setAddTitle((prev) => ({
-      // ...prev,
+    setPostingState((prev) => ({
+      ...prev,
       addTitle: value.name,
     }));
   };
@@ -299,17 +300,64 @@ const CommunityEditingPage = () => {
   const GetRecipe = async () => {
     try {
       axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.get(`/api/communities/list/cocktails`);
-      if (data.success) {
-        setList(data.data);
-        // console.log("list is ", list);
-        SetRecipe(list);
-        // console.log("final is ", recipes);
+      const cocktailsResponse = await axios.get(
+        `/api/communities/list/cocktails`
+      );
+      if (cocktailsResponse.data.success) {
+        SetRecipe(cocktailsResponse.data.data);
       }
-      const postingResponse = await axios.get(`/api/communities/${id}`);
-      console.log("postingReponse is ", postingResponse.data);
-      if (postingResponse.data.success) {
-        setPosting(postingResponse.data);
+      const { data } = await axios.get(`/api/communities/${id}`);
+      console.log("postingReponse is ", data);
+      if (data.success) {
+        console.log("pls check here ", data);
+        console.log("original content is ", addContent);
+        setPostingState((prev) => ({
+          ...prev,
+          addContent: data.content,
+          addTitle: data.title,
+          addCategory: data.category,
+        }));
+        console.log("did you set the data ", addContent);
+        if (data.category === 1) {
+          setTab("추천 이유");
+          setPostingState((prev) => ({
+            ...prev,
+            addCNO: null,
+            addLike: 0,
+          }));
+        } else if (data.category === 2) {
+          setTab("질문 내용");
+          setPostingState((prev) => ({
+            ...prev,
+            addCNO: null,
+            addLike: 0,
+          }));
+        } else if (data.category === 3) {
+          setTab("후기 내용");
+          setPostingState((prev) => ({
+            ...prev,
+            addCNO: data.cno,
+            addLike: data.cocktailLike,
+          }));
+          setSelectLike(!selectLike);
+        } else if (data.category === 4) {
+          setTab("글 내용");
+          setPostingState((prev) => ({
+            ...prev,
+            addCNO: null,
+            addLike: 0,
+          }));
+        }
+        const files = [];
+        for (let i = 0; i < data.images.length; i++) {
+          const file = await convertURLtoFile(
+            `/api/communities/one/image?imageId=${data.images[i]}`
+          );
+          files.push(file);
+        }
+        console.log(files);
+        setDefaultFiles(files);
+        //   setUserInfo(userInfoResponse.data.data);
       }
     } catch (error) {
       console.log("err is ", error);
@@ -321,93 +369,13 @@ const CommunityEditingPage = () => {
       return { name, num };
     });
     // console.log("what's wrong");
-    return setRecipes(newList);
-  };
-  const SetContent = async (data) => {
-    console.log("pls check here ", data);
-    console.log("original content is ", addContent);
-    setAddContent((prev) => ({
-      // ...prev,
-      addContent: data.content,
-    }));
-    console.log("did you set the data ", addContent);
-    setAddTitle((prev) => ({
-      // ...prev,
-      addTitle: data.title,
-    }));
-    setAddCategory((prev) => ({
-      // ...prev,
-      addCategory: data.category,
-    }));
-    if (data.category === 1) {
-      setTab("추천 이유");
-      setAddCNO((prev) => ({
-        // ...prev,
-        addCNO: null,
-      }));
-      setAddLike((prev) => ({
-        // ...prev,
-        addLike: 0,
-      }));
-    } else if (data.category === 2) {
-      setTab("질문 내용");
-      setAddCNO((prev) => ({
-        // ...prev,
-        addCNO: null,
-      }));
-      setAddLike((prev) => ({
-        // ...prev,
-        addLike: 0,
-      }));
-    } else if (data.category === 3) {
-      setTab("후기 내용");
-      setAddCNO((prev) => ({
-        // ...prev,
-        addCNO: data.cno,
-      }));
-      setAddLike((prev) => ({
-        // ...prev,
-        addLike: data.cocktailLike,
-      }));
-      setSelectLike(!selectLike);
-    } else if (data.category === 4) {
-      setTab("글 내용");
-      setAddCNO((prev) => ({
-        // ...prev,
-        addCNO: null,
-      }));
-      setAddLike((prev) => ({
-        // ...prev,
-        addLike: 0,
-      }));
-    }
-    for (let i = 0; i < data.images.length; i++) {
-      const file = await convertURLtoFile(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${data.images[i]}`
-      );
-      defaultFiles.push(file);
-      console.log("file is ", file, "files is ", defaultFiles);
-    }
-    //   setUserInfo(userInfoResponse.data.data);
-    console.log("data here ", data);
+    setRecipes(newList);
   };
 
   useEffect(() => {
     GetRecipe();
     setIsLoading(false);
   }, []);
-
-  useEffect(() => {
-    SetRecipe(list);
-    setIsLoading(false);
-  }, [list]);
-
-  useEffect(() => {
-    // if (Object.keys(posting).length > 0) {
-    SetContent(posting);
-    // }
-    setIsLoading(false);
-  }, [posting]);
 
   const setToastState = useSetRecoilState(toastState);
 

@@ -3,6 +3,7 @@ import { FaCommentDots, FaThumbsUp } from "react-icons/fa";
 import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
+import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
 
 const MyPostingItem = ({ data, uname, level }) => {
   // TODO : 호버, 이미지처리
@@ -62,14 +63,12 @@ const MyPostingItem = ({ data, uname, level }) => {
         </div>
         {data.cocktailId ? (
           <ImageSection>
-            <img src={`/api/recipes/image/${data.cocktailId}`}></img>
+            <img src={getCocktailImageUrl(data.cocktailId)} />
           </ImageSection>
         ) : (
           data.images.length !== 0 && (
             <ImageSection>
-              <img
-                src={`${process.env.REACT_APP_BACKEND_BASE_URL}communities/one/image?imageId=${data.images[0]}`}
-              />
+              <img src={getCommunityImageUrl(data.images[0])} />
             </ImageSection>
           )
         )}
