@@ -9,3 +9,11 @@ export const convertURLtoFile = async (url) => {
 export const getReviewImageUrl = (imageId) => {
   return `/api/reviews/image/one?imageId=${imageId}`;
 };
+
+export const getCommunityImageUrl = (imageId) => {
+  return `/api/communities/one/image?imageId=${imageId}`;
+};
+
+export const getCocktailImageUrl = (cocktailId) => {
+  return `/api/recipes/image/${cocktailId}`;
+};

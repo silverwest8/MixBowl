@@ -13,8 +13,9 @@ const DropdownMenu = ({ options, handlers }) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = (e) => {
     setAnchorEl(null);
+    console.log(e);
   };
 
   return (
