@@ -6,6 +6,8 @@ import { useModal } from "../../hooks/useModal";
 import ReplyDeleteModal from "./ReplyDeleteModal";
 import { toastState } from "../../store/toast";
 import { useSetRecoilState, useRecoilState } from "recoil";
+import { getDayMinuteCounter } from "../../api/community";
+
 import {
   commentState,
   checkEditState,
@@ -27,7 +29,6 @@ const AnswerItem = ({ data }) => {
       top: 10,
       behavior: "smooth",
     });
-    console.log("content is ", comment);
   };
   const onClickDeleteMenu = (id) => {
     openModal(ReplyDeleteModal, {
@@ -43,7 +44,7 @@ const AnswerItem = ({ data }) => {
           <span>{data.NICKNAME}</span>
           <MemberBadge level={data.LEVEL} />
         </div>
-        <div>{data.createdAt.slice(0, 10)}</div>
+        <div>{getDayMinuteCounter(data.createdAt)}</div>
       </FirstSection>
       <div className="answer-container">
         <div className="answer-box">
