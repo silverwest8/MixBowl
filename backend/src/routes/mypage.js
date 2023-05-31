@@ -3,6 +3,7 @@
 import express from 'express';
 import { db } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
+import { logger } from '../../winston/winston';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -63,7 +64,7 @@ router.get('/recipes/:page', checkAccess, async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage recipes get 실패', error });
@@ -92,11 +93,20 @@ router.get('/posts/:page', checkAccess, async (req, res) => {
       // console.log(postImage);
       const images = postImage.map((x) => x.IMAGE_ID);
       // console.log(images);
+      const isUserLiked = await db.POST_LIKE.count({
+        where: {
+          UNO: req.user.UNO,
+          PNO: post.PNO,
+        },
+      });
+      console.log(isUserLiked);
       let temp = {
         postId: post.PNO,
         images,
         category: post.CATEGORY,
         title: post.TITLE,
+        cocktailLike: post.LIKE,
+        isUserLiked,
         content: post.CONTENT,
         cocktailId: post.CNO,
         like: await db.POST_LIKE.count({
@@ -122,7 +132,7 @@ router.get('/posts/:page', checkAccess, async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage posts get 실패', error });
@@ -169,7 +179,7 @@ router.get('/replies/:page', checkAccess, async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage replies get 실패', error });
@@ -212,7 +222,7 @@ router.get('/reviews/:page', checkAccess, async (req, res) => {
         },
       });
       // console.log(keywords);
-      keyword = keywords.map(x => x.KEYWORD)
+      keyword = keywords.map((x) => x.KEYWORD);
       // for (let j = 0; j < keywords.length; j++) {
       //   keyword.push(keywords[j].KEYWORD);
       // }
@@ -235,7 +245,7 @@ router.get('/reviews/:page', checkAccess, async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage reviews get 실패', error });

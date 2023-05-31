@@ -3,6 +3,7 @@
 import express from 'express';
 import { db } from '../models';
 import { Sequelize } from 'sequelize';
+import { logger } from '../../winston/winston';
 const router = express.Router();
 
 router.get('/question', async (req, res) => {
@@ -48,7 +49,7 @@ router.get('/question', async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Home question get 실패', error });
@@ -125,7 +126,7 @@ router.get('/cocktail', async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Home cocktail get 실패', error });
@@ -142,7 +143,7 @@ router.get('/bar', async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Home bar get 실패', error });
@@ -213,7 +214,7 @@ router.get('/community', async (req, res) => {
       list,
     });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Home community get 실패', error });
