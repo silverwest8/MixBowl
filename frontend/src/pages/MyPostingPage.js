@@ -39,9 +39,6 @@ const MainSection = styled.div`
   }
   > section {
     width: 60vw;
-    @media screen and (max-width: 800px) {
-      width: 80vw;
-    }
   }
   > div {
     display: flex;
@@ -110,9 +107,9 @@ const MyPostingPage = () => {
       const userInfoResponse = await axios.get(`/api/users`);
       setUsername(userInfoResponse.data.data.NICKNAME);
       setLevel(userInfoResponse.data.data.LEVEL);
-      setIsLoading(false);
       return { page, list: data.list, count: data.list.length };
     } catch (error) {
+      console.log("empty or error");
       return { page, list: [], count: 0 };
     }
   };
@@ -140,11 +137,11 @@ const MyPostingPage = () => {
       fetchNextPage();
     }
   }, [inView, hasNextPage]);
-  // useEffect(() => {
-  //   if (isSuccess) {
-  //     setIsLoading(false);
-  //   }
-  // }, [isSuccess]);
+  useEffect(() => {
+    if (isSuccess) {
+      setIsLoading(false);
+    }
+  }, [isSuccess]);
 
   return (
     <main
