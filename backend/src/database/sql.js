@@ -7,6 +7,7 @@ import POST from '../models/POST';
 import COCKTAIL from '../models/COCKTAIL';
 import POST_LIKE from '../models/POST_LIKE';
 import POST_REPLY from '../models/POST_REPLY';
+import bcrypt from 'bcrypt';
 import fs from 'fs';
 import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 
@@ -51,41 +52,61 @@ const sql = {
   },
 
   signupUser: async (req) => {
-    const { nickname, email, password } = req.body; // regitserInfo에는 Nickname, Email, Password 가 포함되어야 함.
+    const { nickname, email, password } = req.body;
     console.log(nickname, email, password);
+    let success;
+
     try {
+      const hashed_password = await new Promise((resolve, reject) => {
+        bcrypt.hash(password, 10, (err, hash) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(hash);
+          }
+        });
+      });
+
+      console.log(hashed_password);
+
       await USER.create({
         NICKNAME: nickname,
-        PASSWORD: password,
+        PASSWORD: hashed_password,
         EMAIL: email,
         LEVEL: 1,
       });
-      return true;
+
+      success = true;
     } catch (error) {
-      console.log(error.message);
+      console.log('error', error.message);
+      success = false;
     }
+
+    return success;
   },
 
   loginUser: async (req) => {
     const { email, password } = req.body;
+
     try {
       const user = await USER.findOne({
-        where: { email: email, password: password },
+        where: { email: email },
       });
+
       const unum = user.UNO;
       if (!(unum > 0)) {
         throw new Error('Invalid Info User');
       }
 
-      //UNO 도 같이 포함
+      const password_match = await bcrypt.compareSync(password, user.PASSWORD);
+      console.log(password_match);
+      if (!password_match) {
+        throw new Error("password doesn't match");
+      }
+
       const accessToken = jwt_module.sign(unum);
       const refreshToken = jwt_module.refresh();
 
-      //refresh token sql 업데이트
-      //일단 냅둘게요 (아마 안쓸듯)
-      // await promisePool.query(`
-      //   UPDATE USER SET TOKEN = '${refreshToken}' WHERE NICKNAME = '${username}';
-      // `);
       return {
         code: 200,
         message: '토큰이 발급되었습니다.',
@@ -322,7 +343,16 @@ const sql = {
     }
   },
 
-  getCommunityPost: async (req) => {},
+  getAllNames: async (req) => {
+    try {
+      const users = await USER.findAll({
+        attributes: ['PASSWORD'],
+      });
+      return users;
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
   postImage: async (req, db) => {
     try {
       let categoryDb = 0; //review 참조
