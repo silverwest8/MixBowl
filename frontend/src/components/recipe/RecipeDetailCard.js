@@ -126,11 +126,24 @@ const RecipeDetailCard = () => {
                   </CallButton>
                 )}
               </h1>
-              <User>
-                @{recipe.USER.nickname}
-                <MemberBadge level={recipe.USER.level} />
+              <User
+                className={
+                  recipe.USER.nickname === "ninja" ||
+                  recipe.USER.nickname === "cocktaildb"
+                    ? "not-user"
+                    : ""
+                }
+              >
+                {recipe.USER.nickname === "ninja" ||
+                recipe.USER.nickname === "cocktaildb" ? (
+                  "@Cocktell"
+                ) : (
+                  <>
+                    @{recipe.USER.nickname}
+                    <MemberBadge level={recipe.USER.level} />
+                  </>
+                )}
               </User>
-              <p className="date">{recipe.date.slice(0, 10)}</p>
             </div>
             <div className="color">
               <ColorBox>
@@ -271,6 +284,9 @@ const User = styled.div`
   margin-top: 0.3rem;
   gap: 0.4rem;
   align-items: center;
+  &.not-user {
+    color: ${({ theme }) => theme.color.gray};
+  }
 `;
 const ColorBox = styled.div`
   display: flex;
