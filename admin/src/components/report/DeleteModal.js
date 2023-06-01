@@ -12,7 +12,7 @@ export default function DeleteModal({ id, type }) {
   }
   async function deleteContent() {
     try {
-      const { data } = await axios.delete(`/api/admin/${type}/${id}`);
+      const { data } = await axios.delete(`/server/admin/${type}/${id}`);
       if (data.success) {
         window.location.reload();
       }
