@@ -183,6 +183,7 @@ router.post(
       const data = JSON.parse(req.body.data);
       console.log(data);
       console.log(req.file);
+      console.log("for check", data);
       const cocktail = await db.COCKTAIL.findByPk(cocktailId, {
         attributes: ['CNO', 'NAME', 'INSTRUCTION', 'IMAGE_PATH'],
         include: [
@@ -217,6 +218,7 @@ router.post(
       await cocktail.update({
         NAME: data.name,
         INSTRUCTION: data.instruction,
+        ALCOHOLIC: data.alcoholic,
         IMAGE_PATH: req.file ? req.file.path : null,
       });
 
