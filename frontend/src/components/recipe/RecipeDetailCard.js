@@ -7,43 +7,10 @@ import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa";
 import RecipeEditDelete from "./RecipeEditDelete";
 import RecipeReportModal from "./RecipeReportModal";
 import { useModal } from "../../hooks/useModal";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { RecipeRoportState } from "../../store/recipe";
-import { reportRecipe, likteRecipe } from "../../api/recipeapi";
-import { toastState } from "../../store/toast";
+import { likeRecipe } from "../../api/recipeapi";
 import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
-
-const ReportRecipeModal = ({ handleClose, id }) => {
-  const reportNum = useRecoilValue(RecipeRoportState);
-  const setToastState = useSetRecoilState(toastState);
-  const onSubmit = () => {
-    reportRecipe(id, reportNum)
-      .then((response) => {
-        if (response.success === true) {
-          setToastState({
-            show: true,
-            message: "신고가 완료되었습니다.",
-            type: "success",
-            ms: 2000,
-          });
-        }
-        if (response.success === false) {
-          setToastState({
-            show: true,
-            message: "이미 신고한 게시물입니다.",
-            type: "error",
-            ms: 2000,
-          });
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    handleClose();
-  };
-  return <RecipeReportModal handleClose={handleClose} onSubmit={onSubmit} />;
-};
+import { getTimeForToday } from "../../utils/date";
 
 const alcoholFilter = (recipe) => {
   if (recipe.alcoholic === 0) {
@@ -150,7 +117,7 @@ const RecipeDetailCard = () => {
                 ) : (
                   <CallButton
                     onClick={() => {
-                      openModal(ReportRecipeModal, {
+                      openModal(RecipeReportModal, {
                         handleClose: closeModal,
                         id,
                       });
@@ -160,11 +127,25 @@ const RecipeDetailCard = () => {
                   </CallButton>
                 )}
               </h1>
-              <User>
-                @{recipe.USER.nickname}
-                <MemberBadge level={recipe.USER.level} />
+              <User
+                className={
+                  recipe.USER.nickname === "ninja" ||
+                  recipe.USER.nickname === "cocktaildb"
+                    ? "not-user"
+                    : ""
+                }
+              >
+                {recipe.USER.nickname === "ninja" ||
+                recipe.USER.nickname === "cocktaildb" ? (
+                  "@Cocktell"
+                ) : (
+                  <>
+                    @{recipe.USER.nickname}
+                    <MemberBadge level={recipe.USER.level} />
+                  </>
+                )}
               </User>
-              <p className="date">{recipe.date.slice(0, 10)}</p>
+              <p className="date">{getTimeForToday(recipe.date)}</p>
             </div>
             <div className="color">
               <ColorBox>
@@ -240,7 +221,7 @@ const RecipeDetailCard = () => {
             {recipe.USER.liked === true ? (
               <FaThumbsUp
                 onClick={() => {
-                  likteRecipe(id, true, recipe.like - 1)
+                  likeRecipe(id, true, recipe.like - 1)
                     .then((response) => {
                       setRecipe((prevRecipe) => ({
                         ...prevRecipe,
@@ -263,7 +244,7 @@ const RecipeDetailCard = () => {
             ) : (
               <FaRegThumbsUp
                 onClick={() => {
-                  likteRecipe(id, false, recipe.like + 1)
+                  likeRecipe(id, false, recipe.like + 1)
                     .then((response) => {
                       setRecipe((prevRecipe) => ({
                         ...prevRecipe,
@@ -305,6 +286,9 @@ const User = styled.div`
   margin-top: 0.3rem;
   gap: 0.4rem;
   align-items: center;
+  &.not-user {
+    color: ${({ theme }) => theme.color.gray};
+  }
 `;
 const ColorBox = styled.div`
   display: flex;
@@ -325,12 +309,14 @@ const TextBox = styled.div`
   h1 {
     display: flex;
     justify-content: space-between;
+    gap: 1rem;
     div {
       margin-left: 1rem;
       display: flex;
     }
     button {
       font-size: 0.8rem;
+      flex-shrink: 0;
     }
   }
   p {

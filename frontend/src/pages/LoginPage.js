@@ -9,7 +9,7 @@ const LoginPage = () => {
   }, []);
   return (
     <Main>
-      <h1>로고</h1>
+      <img src="/images/logo.png" />
       <p>로그인 후 다양한 콘텐츠를 즐겨보세요</p>
       <LoginForm />
     </Main>
@@ -26,6 +26,9 @@ const Main = styled.main`
   max-width: 400px;
   width: 100%;
   height: calc(calc(var(--vh, 1vh) * 100) - 4rem);
+  & > img {
+    width: 12rem;
+  }
   & > h1 {
     font-weight: bold;
     font-size: 2rem;

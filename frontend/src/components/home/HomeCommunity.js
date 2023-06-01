@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
+import { getCategoryById } from "../../utils/category";
+import { getTimeForToday } from "../../utils/date";
 
 const HomeCommunity = () => {
   const [data, setData] = useState(null);
@@ -27,34 +29,30 @@ const HomeCommunity = () => {
       <GridBox>
         {data
           ? data.list.slice(0, 4).map((item) => (
-              <ItemBox key={item.postId}>
-                <div className="title">
-                  <Link to={`/community/${item.postId}`}>
+              <Link to={`/community/${item.postId}`} key={item.postId}>
+                <ItemBox>
+                  <div className="title">
                     <h4>{item.title}</h4>
-                  </Link>
-                  <p>자유게시판</p>
-                </div>
-                <div className="content">
-                  <Link to={`/community/${item.postId}`}>
-                    <p>{item.content}</p>
-                  </Link>
-                </div>
-                <div className="info">
-                  <div>
-                    <div className="thumbs">
-                      <FaThumbsUp /> {item.like}
+                    <p>{getCategoryById(item.category).value}</p>
+                  </div>
+                  <p className="content">{item.content}</p>
+                  <div className="info">
+                    <div>
+                      <div className="thumbs">
+                        <FaThumbsUp /> {item.like}
+                      </div>
+                      <div className="comment">
+                        <FaCommentDots /> {item.reply}
+                      </div>
                     </div>
-                    <div className="comment">
-                      <FaCommentDots /> {item.reply}
+                    <div>
+                      <p className="day"> {getTimeForToday(item.date)}</p>
+                      {item.USER.nickname}
+                      <MemberBadge level={item.USER.level}></MemberBadge>
                     </div>
                   </div>
-                  <div>
-                    <p className="day"> {item.date.slice(0, 10)}</p>
-                    {item.USER.nickname}
-                    <MemberBadge level={item.USER.level}></MemberBadge>
-                  </div>
-                </div>
-              </ItemBox>
+                </ItemBox>
+              </Link>
             ))
           : Array(3)
               .fill(1)
@@ -98,7 +96,7 @@ const GridBox = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2.5rem;
-  @media screen and (max-width: 720px) {
+  @media screen and (max-width: 920px) {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -106,6 +104,11 @@ const GridBox = styled.div`
 `;
 
 const ItemBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
   padding: 0.875rem 1.4rem;
   border: 2px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 0.75rem;
@@ -116,20 +119,30 @@ const ItemBox = styled.div`
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5rem;
+    gap: 0.5rem;
     h4 {
       font-size: 1.125rem;
       font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     p {
       font-size: 0.875rem;
       color: ${({ theme }) => theme.color.primaryGold};
+      flex-shrink: 0;
     }
   }
   .content {
     margin-bottom: 1.75rem;
-    p {
-      font-size: 0.875rem;
-    }
+    font-size: 0.875rem;
+    line-height: 150%;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
   }
   .info {
     justify-content: space-between;

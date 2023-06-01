@@ -252,7 +252,6 @@ const CommunityBoardPage = () => {
 
   const GetPosting = async (page, search, menu) => {
     try {
-      console.log("menu is ", menu);
       axios.defaults.headers.common.Authorization = token;
       let url = `/api/communities/list/category/${menu}?page=${page}`;
       if (menu === "") {
@@ -262,7 +261,6 @@ const CommunityBoardPage = () => {
         url += `&search=${search}`;
       }
       const { data } = await axios.get(url);
-      console.log(url);
       return { page, list: data.data, count: data.data.length };
     } catch (error) {
       console.log("empty or error");
@@ -365,10 +363,12 @@ const CommunityBoardPage = () => {
           </MainSection>
         )}
 
-        <WritingButton to="/community/posting">
-          <HiPencilAlt />
-          글쓰기
-        </WritingButton>
+        {token && (
+          <WritingButton to="/community/posting">
+            <HiPencilAlt />
+            글쓰기
+          </WritingButton>
+        )}
       </Background>
     </main>
   );

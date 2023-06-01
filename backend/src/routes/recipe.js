@@ -96,7 +96,7 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
       }
     }
 
-    res.status(200).json({ success: true, message: 'Recipe post 성공' });
+    res.status(200).json({ success: true, message: 'Recipe post 성공', cocktailId: cocktail.CNO });
   } catch (error) {
     logger.error(error);
     // 중간 실패시 COCKTAIL, COLOR, RECIPE 모두 삭제해줘야 함

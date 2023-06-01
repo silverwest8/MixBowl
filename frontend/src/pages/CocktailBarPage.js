@@ -26,6 +26,7 @@ const Main = styled.main`
   padding: 2rem 1rem;
   height: calc(calc(var(--vh, 1vh) * 100) - 3.5rem);
   .wrapper {
+    position: relative;
     display: flex;
     height: 100%;
   }
@@ -36,7 +37,6 @@ const Main = styled.main`
     .wrapper {
       display: block;
       flex-grow: 1;
-      position: relative;
       overflow: hidden;
     }
   }

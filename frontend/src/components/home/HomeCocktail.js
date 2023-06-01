@@ -38,17 +38,20 @@ const HomeCocktail = () => {
               ? data.list.slice(0, 10).map((item) => (
                   <SwiperSlide key={item.cocktailId}>
                     <ItemBox>
-                      <p className="nickname">
-                        {item.USER.nickname}님의 레시피
-                      </p>
                       <div className="content">
                         <Link to={`/recipe/${item.cocktailId}`}>
-                          <img
-                            src={"/api/recipes/image/" + item.cocktailId}
-                          ></img>
+                          <img src={"/api/recipes/image/" + item.cocktailId} />
                         </Link>
                         {item.reviewContent ? (
-                          <p>{item.reviewContent}</p>
+                          <div className="review">
+                            {item.USER.nickname !== "ninja" &&
+                              item.USER.nickname !== "cocktaildb" && (
+                                <span className="nickname">
+                                  {item.USER.nickname}님의 레시피
+                                </span>
+                              )}
+                            <p>{item.reviewContent}</p>
+                          </div>
                         ) : (
                           <NoReview>
                             아직 리뷰가 없어요.
@@ -62,9 +65,7 @@ const HomeCocktail = () => {
                         )}
                       </div>
                       <div className="info">
-                        <Link to={`/recipe/${item.cocktailId}`}>
-                          <p>{item.cocktailName}</p>
-                        </Link>
+                        <h2 className="name">{item.cocktailName}</h2>
                         <div>
                           <div className="thumbs">
                             <FaThumbsUp />
@@ -154,12 +155,24 @@ const ItemBox = styled.div`
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 12px;
   padding: 1rem 1.5rem;
-
   .nickname {
+    display: block;
+    width: 100%;
     font-size: 0.875rem;
     color: ${({ theme }) => theme.color.lightGray};
     text-align: right;
-    padding-bottom: 0.5rem;
+  }
+  .review {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+    line-height: 1.5rem;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+    @media screen and (max-width: 428px) {
+      -webkit-line-clamp: 5;
+    }
   }
   .content {
     display: flex;
@@ -178,16 +191,8 @@ const ItemBox = styled.div`
     p {
       width: 16rem;
       height: 100%;
-      white-space: normal;
-      display: -webkit-box;
-      -webkit-line-clamp: 8;
-      -webkit-box-orient: vertical;
-      line-height: 1.5rem;
-      overflow-y: hidden;
-      text-overflow: ellipsis;
       @media screen and (max-width: 428px) {
         width: 12rem;
-        -webkit-line-clamp: 5;
       }
     }
     @media screen and (max-width: 428px) {
@@ -198,7 +203,8 @@ const ItemBox = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    p {
+    gap: 1rem;
+    .name {
       font-size: 1.5rem;
     }
     div {
@@ -214,7 +220,7 @@ const ItemBox = styled.div`
       }
     }
     @media screen and (max-width: 428px) {
-      p {
+      .name {
         font-size: 1.125rem;
       }
     }

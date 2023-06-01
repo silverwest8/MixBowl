@@ -5,6 +5,7 @@ import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { getDayMinuteCounter } from "../../api/community";
 import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
 
 const FreeListItem = ({ data }) => {
@@ -55,7 +56,7 @@ const FreeListItem = ({ data }) => {
               </span>
             </ReactionContainer>
             <div className="userinfo">
-              {data.createdAt.slice(5, 10).replace("-", "/")}
+              {getDayMinuteCounter(data.createdAt)}
               <span className="username">{data.UNO_USER.NICKNAME}</span>
               <MemberBadge level={data.UNO_USER.LEVEL} />
             </div>
@@ -133,10 +134,10 @@ const TopSection = styled.div`
     font-weight: bold;
     font-size: 1.125rem;
     @media screen and (max-width: 500px) {
-      width: 40vw;
+      width: 33vw;
     }
     @media screen and (max-width: 350px) {
-      width: 30vw;
+      width: 22vw;
     }
   }
   .category {

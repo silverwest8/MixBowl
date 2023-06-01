@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { getKeyword } from "../../utils/keyword";
 
 const ReviewItem = ({ data }) => {
-  console.log("reviewItem is ", data);
+  console.log("reviewItems is ", data);
   return (
     <ItemContainer>
       <ItemWrapper to={`/cocktailbar/${data.placeId}`}>

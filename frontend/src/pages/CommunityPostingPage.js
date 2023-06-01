@@ -6,7 +6,7 @@ import Input from "../components/common/Input";
 import ImageUpload from "../components/common/ImageUpload";
 import { AiFillHeart } from "react-icons/ai";
 import { ImSad } from "react-icons/im";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 // import AutoCompleteCocktail from "../components/community/AutoCompleteCocktail";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -129,7 +129,7 @@ const MainSection = styled.div`
     }
   }
   .MuiAutocomplete-noOptions {
-    color: ${({ theme }) => theme.color.primaryGold}!important;
+    color: ${({ theme }) => theme.color.primaryGold} !important;
   }
 `;
 const StyledTextField = styled(TextField)({
@@ -213,59 +213,61 @@ const Button = styled(Link)`
 
 const CommunityPostingPage = () => {
   const [tab, setTab] = useState("글 내용");
-  const [list, setList] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [warning, setWarning] = useState("");
   const [selectLike, setSelectLike] = useState(true);
-  const [{ addTitle }, setAddTitle] = useRecoilState(AddPostingState);
-  const [{ addContent }, setAddContent] = useRecoilState(AddPostingState);
-  const [{ addLike }, setAddLike] = useRecoilState(AddPostingState);
-  const [{ addCategory }, setAddCategory] = useRecoilState(AddPostingState);
-  const [{ addCNO }, setAddCNO] = useRecoilState(AddPostingState);
+  const [
+    { addTitle, addContent, addLike, addCategory, addCNO },
+    setPostingState,
+  ] = useRecoilState(AddPostingState);
   const files = useRecoilValue(imageFileListState);
   const navigate = useNavigate();
+  const { state } = useLocation();
   const defaultFiles = [];
-  // add Image?
   const recommendationTab = () => {
     setTab("추천 이유");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 1,
     }));
   };
   const qnaTab = () => {
     setTab("질문 내용");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 2,
     }));
   };
   const reviewTab = () => {
     setTab("후기 내용");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 3,
     }));
   };
   const freeTab = () => {
     setTab("글 내용");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 4,
     }));
   };
   const handleTitle = (e) => {
     setWarning("");
-    setAddTitle((prev) => ({
+    setPostingState((prev) => ({
       ...prev,
       addTitle: e.target.value,
     }));
   };
   const handleContent = (e) => {
     setWarning("");
-    setAddContent((prev) => ({
+    setPostingState((prev) => ({
       ...prev,
       addContent: e.target.value,
     }));
   };
   const handleLike = (e) => {
-    setAddLike((prev) => ({
+    setPostingState((prev) => ({
       ...prev,
       addLike: e,
     }));
@@ -273,53 +275,60 @@ const CommunityPostingPage = () => {
   };
   const onChangeAutoComplete = (event, value) => {
     setWarning("");
-    setAddCNO((prev) => ({
-      ...prev,
-      addCNO: value.num,
-    }));
-    setAddTitle((prev) => ({
+    setPostingState((prev) => ({
       ...prev,
       addTitle: value.name,
+      addCNO: value.num,
     }));
   };
 
   const token = localStorage.getItem("access_token");
   const GetRecipe = async () => {
     try {
+      console.log("get Recipe");
       axios.defaults.headers.common.Authorization = token;
+      let selected;
       const { data } = await axios.get(`/api/communities/list/cocktails`);
       if (data.success) {
-        setList(data.data);
-        SetRecipe(list);
+        const newList = data.data.map((item) => {
+          const [name, num] = item.split("/");
+          if (state && state.cocktail && state.cocktail === num) {
+            console.log(state.cocktail, num);
+            selected = { name, num };
+          }
+          return { name, num };
+        });
+        setRecipes(newList);
+        if (selected) {
+          setPostingState((prev) => ({
+            ...prev,
+            addCNO: selected.num,
+            addTitle: selected.name,
+          }));
+        }
       }
     } catch (error) {
       console.log("err is ", error);
     }
   };
-  const SetRecipe = (data) => {
-    const newList = data.map((item) => {
-      const [name, num] = item.split("/");
-      return { name, num };
-    });
-    return setRecipes(newList);
-  };
+  // const SetRecipe = (data) => {
+  //   const newList = data.map((item) => {
+  //     const [name, num] = item.split("/");
+  //     return { name, num };
+  //   });
+  //   return setRecipes(newList);
+  // };
 
   useEffect(() => {
-    useEffect(() => {
-      if (token) {
-        GetRecipe();
-      } else {
-        navigate(`/login?return_url=/community/board`);
-      }
-    }, []);
+    GetRecipe();
+    console.log(location.state);
+    if (state && state.cocktail) reviewTab();
+    console.log("recipes is ", recipes);
   }, []);
-  useEffect(() => {
-    SetRecipe(list);
-  }, [list]);
   const setToastState = useSetRecoilState(toastState);
 
   const handleSubmit = () => {
-    if (addTitle === "" || addContent === "") {
+    if ((addTitle === "" && addCategory !== 2) || addContent === "") {
       setWarning("* 제목과 내용은 필수 입력 항목입니다.");
     } else {
       postCommunity({
@@ -371,25 +380,25 @@ const CommunityPostingPage = () => {
             <span>카테고리</span>
             <SelectContainer>
               <Menu
-                onClick={recommendationTab}
+                onClick={() => recommendationTab()}
                 className={tab === "추천 이유" ? "selected" : ""}
               >
                 칵테일 추천
               </Menu>
               <Menu
-                onClick={qnaTab}
+                onClick={() => qnaTab()}
                 className={tab === "질문 내용" ? "selected" : ""}
               >
                 질문과 답변
               </Menu>
               <Menu
-                onClick={reviewTab}
+                onClick={() => reviewTab()}
                 className={tab === "후기 내용" ? "selected" : ""}
               >
                 칵테일 리뷰
               </Menu>
               <Menu
-                onClick={freeTab}
+                onClick={() => freeTab()}
                 className={tab === "글 내용" ? "selected" : ""}
               >
                 자유
@@ -408,6 +417,7 @@ const CommunityPostingPage = () => {
                 onChange={(event, value) => {
                   onChangeAutoComplete(event, value);
                 }}
+                value={{ num: addCNO, name: addTitle }}
                 sx={{
                   width: 300,
                   "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
@@ -424,13 +434,23 @@ const CommunityPostingPage = () => {
                       backgroundColor: "#e9aa33",
                       color: "black",
                     },
+                  "& + .MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected='true']":
+                    {
+                      backgroundColor: "#e9aa33",
+                    },
                 }}
                 renderInput={(params) => (
                   <StyledTextField
                     {...params}
                     label=""
                     className="selection"
+                    placeholder="칵테일 이름을 선택해주세요."
                     fullWidth
+                    sx={{
+                      "&::placeholder": {
+                        color: "#cfcfcf",
+                      },
+                    }}
                   />
                 )}
                 PaperComponent={(props) => (
@@ -471,9 +491,6 @@ const CommunityPostingPage = () => {
           </MainSection>
           <span className="warning">{warning}</span>
 
-          <ImageSection>
-            <ImageUpload defaultFiles={defaultFiles} />
-          </ImageSection>
           {tab === "후기 내용" ? (
             <RecommendationSection>
               <div>이 칵테일을 추천하시나요?</div>
@@ -494,9 +511,10 @@ const CommunityPostingPage = () => {
                 </span>
               </div>
             </RecommendationSection>
-          ) : (
-            ""
-          )}
+          ) : null}
+          <ImageSection>
+            <ImageUpload defaultFiles={defaultFiles} />
+          </ImageSection>
           <BottomSection>
             <Button className="cancel" to="/community">
               취소

@@ -39,6 +39,7 @@ const CocktailbarList = () => {
     if (data) {
       setMapState((state) => ({
         ...state,
+        loading: false,
         data: data.data.place_list.map((item) => ({
           id: item.kakao_data.id,
           x: item.kakao_data.x,

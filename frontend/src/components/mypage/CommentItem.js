@@ -1,15 +1,15 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { getDayMinuteCounter } from "../../api/community";
 
 const CommentItem = ({ data }) => {
-  console.log("comment items is ", data);
   return (
     <ItemContainer>
       <ItemWrapper to={`/community/${data.postId}`}>
         <p>{data.content}</p>
         <div>
           <DateContainer>{data.title}</DateContainer>
-          <DateContainer>{data.date.slice(0, 10)}</DateContainer>
+          <DateContainer>{getDayMinuteCounter(data.date)}</DateContainer>
         </div>
       </ItemWrapper>
     </ItemContainer>

@@ -275,6 +275,7 @@ const CommunityEditingPage = () => {
       }
       const { data } = await axios.get(`/api/communities/${id}`);
       if (data.success) {
+        console.log("fetch data is ", data);
         setPostingState((prev) => ({
           ...prev,
           addContent: data.content,
@@ -316,6 +317,7 @@ const CommunityEditingPage = () => {
           const file = await convertURLtoFile(
             `/api/communities/one/image?imageId=${data.images[i]}`
           );
+          console.log("file is ", file);
           files.push(file);
         }
         setDefaultFiles(files);

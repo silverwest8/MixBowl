@@ -5,13 +5,13 @@ import ReportModal from "../common/ReportModal";
 import { useModal } from "../../hooks/useModal";
 import { toastState } from "../../store/toast";
 import { useSetRecoilState, useRecoilState } from "recoil";
+import { getDayMinuteCounter, editComment } from "../../api/community";
 import ReplyDeleteModal from "./ReplyDeleteModal";
 import {
   commentState,
   checkEditState,
   replyState,
 } from "../../store/community";
-import { editComment } from "../../api/community";
 
 const ReportButton = styled.div`
   flex: 1 0 auto;
@@ -43,7 +43,6 @@ const CommentItem = ({ data }) => {
       top: 10,
       behavior: "smooth",
     });
-    console.log("content is ", comment);
   };
   const onClickDeleteMenu = (id) => {
     openModal(ReplyDeleteModal, {
@@ -70,7 +69,7 @@ const CommentItem = ({ data }) => {
         )}
       </TopSection>
       <p>{data.CONTENT}</p>
-      <DateContainer>{data.createdAt.slice(0, 10)}</DateContainer>
+      <DateContainer>{getDayMinuteCounter(data.createdAt)}</DateContainer>
     </ItemContainer>
   );
 };

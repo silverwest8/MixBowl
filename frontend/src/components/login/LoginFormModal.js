@@ -5,7 +5,12 @@ import LoginForm from "./LoginForm";
 const LoginFormModal = ({ handleClose }) => {
   return (
     <Modal handleClose={handleClose}>
-      <h1>로고</h1>
+      <img
+        src="/images/logo.png"
+        style={{
+          width: "12rem",
+        }}
+      />
       <Paragraph>로그인 후 다양한 콘텐츠를 즐겨보세요</Paragraph>
       <LoginForm handleClose={handleClose} />
     </Modal>
