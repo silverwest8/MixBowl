@@ -13,7 +13,7 @@ import axios from 'axios';
 import iconv from 'iconv-lite';
 import bcrypt from 'bcrypt';
 import * as cheerio from 'cheerio';
-import USER from '../models/USER';
+import { logger } from '../../winston/winston';
 dotenv.config();
 
 const router = express.Router();
