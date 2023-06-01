@@ -269,7 +269,7 @@ const CommunityPostDetailPage = () => {
   const submitReport = async () => {
     try {
       axios.defaults.headers.common.Authorization = token;
-      reportCommunity(post.postId, reportNum).then((response) => {
+      reportCommunity(post.postId, Number(reportNum) + 1).then((response) => {
         if (response.success) {
           setTimeout(() => {
             setToastState({
