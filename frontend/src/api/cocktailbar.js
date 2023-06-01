@@ -54,7 +54,7 @@ export const postReview = async ({
   /* form data 확인 */
   const values = formData.values();
   for (const pair of values) {
-    console.log(pair);
+    console.log("review pair ", pair);
   }
   const { data } = await axios.post("/api/reviews", formData, {
     headers: {

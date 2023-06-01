@@ -33,19 +33,24 @@ const ImageUpload = ({ defaultFiles }) => {
     }
     ref.current?.click();
   };
+
   useEffect(() => {
-    if (defaultFiles)
+    if (defaultFiles) {
       setImageFileListState(
         defaultFiles.map((file, index) => ({
           id: defaultFiles.length - index,
           file,
         }))
       );
+    }
+  }, [defaultFiles]);
+
+  useEffect(() => {
     return () => {
       setImageFileListState([]);
     };
   }, []);
-  console.log(files);
+
   return (
     <Section>
       <div className="header">
