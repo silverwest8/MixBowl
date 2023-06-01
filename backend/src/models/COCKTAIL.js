@@ -23,6 +23,10 @@ export default class COCKTAIL extends Model {
       allowNull: false,
       unique: "NAME_UNIQUE"
     },
+    NAME_EN: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
     ALCOHOLIC: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -31,6 +35,10 @@ export default class COCKTAIL extends Model {
     INSTRUCTION: {
       type: DataTypes.TEXT,
       allowNull: false
+    },
+    INSTRUCTION_EN: {
+      type: DataTypes.TEXT,
+      allowNull: true
     },
     IMAGE_PATH: {
       type: DataTypes.TEXT,

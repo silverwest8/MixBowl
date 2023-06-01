@@ -10,6 +10,7 @@ import { useModal } from "../../hooks/useModal";
 import { likeRecipe } from "../../api/recipeapi";
 import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
+import { getTimeForToday } from "../../utils/date";
 
 const alcoholFilter = (recipe) => {
   if (recipe.alcoholic === 0) {
@@ -144,6 +145,7 @@ const RecipeDetailCard = () => {
                   </>
                 )}
               </User>
+              <p className="date">{getTimeForToday(recipe.date)}</p>
             </div>
             <div className="color">
               <ColorBox>
