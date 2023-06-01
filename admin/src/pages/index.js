@@ -3,11 +3,10 @@ import { withAuth } from "@/lib/getServerSidePropsWrapper";
 import Filter from "@/components/report/Filter";
 import ReportTable from "@/components/report/ReportTable";
 import DeleteModal from "@/components/report/DeleteModal";
-import Link from "next/link";
 import axios from "axios";
 import ReportChart from "@/components/report/ReportChart";
 
-export default function Home({ data }) {
+export default function Home({ data, type }) {
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <div className="flex justify-between items-center">
@@ -19,10 +18,9 @@ export default function Home({ data }) {
           <Card key={id}>
             <div className="flex items-center justify-between mb-4 gap-4">
               <Title>
-                <Link className="hover:underline" href="/" passHref>
-                  {/* TODO: href 변경 */}
+                <a className="hover:underline" href={`https://mixbowl-skku.com/${type === "recipe" ? "recipe" : "community"}/${id}`}>
                   {title}
-                </Link>
+                </a>
               </Title>
               <DeleteModal id={id} />
             </div>
@@ -48,6 +46,7 @@ export const getServerSideProps = withAuth(async (ctx, token) => {
   return {
     props: {
       data,
+      type
     },
   };
 });
