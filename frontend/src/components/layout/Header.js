@@ -93,7 +93,7 @@ const HeaderBox = styled.header`
   @media screen and (max-width: 1296px) {
     padding: 0 1rem;
   }
-  @media screen and (max-width: 920px) {
+  @media screen and (max-width: 940px) {
     padding: 0;
     align-items: center;
     height: auto;
@@ -128,7 +128,7 @@ const NavWrapper = styled.div`
     display: flex;
     justify-content: center;
   }
-  @media screen and (max-width: 920px) {
+  @media screen and (max-width: 940px) {
     display: ${({ show }) => (show ? "flex" : "none")};
     flex-direction: column;
     border-bottom: 2px solid ${({ theme }) => theme.color.primaryGold};
@@ -140,7 +140,7 @@ const NavWrapper = styled.div`
 
 const Spacer = styled.div`
   height: 3.375rem;
-  @media screen and (max-width: 920px) {
+  @media screen and (max-width: 940px) {
     height: 4.375rem;
   }
 `;
