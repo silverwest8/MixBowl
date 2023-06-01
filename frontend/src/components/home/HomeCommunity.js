@@ -96,7 +96,7 @@ const GridBox = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2.5rem;
-  @media screen and (max-width: 820px) {
+  @media screen and (max-width: 920px) {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
