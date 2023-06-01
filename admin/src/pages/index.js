@@ -22,7 +22,7 @@ export default function Home({ data, type }) {
                   {title}
                 </a>
               </Title>
-              <DeleteModal id={id} />
+              <DeleteModal id={id} type={type} />
             </div>
             <ReportTable reports={reports} />
             <ReportChart reports={reports} />
@@ -46,7 +46,8 @@ export const getServerSideProps = withAuth(async (ctx, token) => {
   return {
     props: {
       data,
-      type
+      type,
+      token
     },
   };
 });

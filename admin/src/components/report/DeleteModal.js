@@ -1,7 +1,8 @@
 import { useState } from "react";
 import OnClickOutside from "./OnClickOutside";
+import axios from "axios";
 
-export default function DeleteModal({ id }) {
+export default function DeleteModal({ id, type }) {
   const [show, setShow] = useState(false);
   function openModal() {
     setShow(true);
@@ -9,8 +10,17 @@ export default function DeleteModal({ id }) {
   function closeModal() {
     setShow(false);
   }
-  function deleteContent(id) {
-    // TODO: API 연결
+  async function deleteContent() {
+    try {
+      const { data } = await axios.delete(`/api/admin/${type}/${id}`);
+      if (data.success) {
+        window.location.reload();
+      }
+    }
+    catch(e) {
+      console.log(e);
+    }
+
   }
   return (
     <>
@@ -61,7 +71,7 @@ export default function DeleteModal({ id }) {
                     취소
                   </button>
                   <button
-                    onClick={closeModal}
+                    onClick={deleteContent}
                     type="button"
                     className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-8 py-2 text-center"
                   >
