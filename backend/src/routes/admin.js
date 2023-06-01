@@ -78,6 +78,7 @@ router.get('/report', checkAdmin, async (req, res) => {
       const data = [];
       for (let i = 0; i < reports.length; i++) {
         const report = REPORTS.find((item) => item.id === reports[i].REPORT);
+        if (!report) continue;
         const cocktail = await db.COCKTAIL.findByPk(reports[i].CNO, {
           attributes: ['CNO', 'NAME'],
         });
@@ -112,7 +113,8 @@ router.get('/report', checkAdmin, async (req, res) => {
       }
       data.sort((a, b) => b.reports.length - a.reports.length);
       return res.status(200).json({ success: true, data });
-    } else if (type === 'post') {
+    }
+    else {
       const reports = await db.POST_REPORT.findAll({
         include: [
           {
@@ -126,6 +128,7 @@ router.get('/report', checkAdmin, async (req, res) => {
       const data = [];
       for (let i = 0; i < reports.length; i++) {
         const report = REPORTS.find((item) => item.id === reports[i].REPORT);
+        if (!report) continue;
         const post = await db.POST.findByPk(reports[i].PNO, {
           attributes: ['PNO', 'TITLE'],
         });
