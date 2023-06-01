@@ -10,6 +10,7 @@ import { FaUndoAlt } from "react-icons/fa";
 import { MdEditLocationAlt } from "react-icons/md";
 import AutoCompleteInput from "./AutoCompleteInput";
 import { authState } from "../../store/auth";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function KakaoMap({ id }) {
   const { isLoggedin } = useRecoilValue(authState);
@@ -21,7 +22,7 @@ function KakaoMap({ id }) {
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [showInput, setShowInput] = useState(false);
-  const [{ data }, setMapState] = useRecoilState(mapState);
+  const [{ data, loading }, setMapState] = useRecoilState(mapState);
   const getCurrentPosition = () => {
     navigator.geolocation.getCurrentPosition(({ coords }) => {
       setCenter({
@@ -71,6 +72,7 @@ function KakaoMap({ id }) {
                 lng,
                 lat,
               },
+              loading: true,
               radius: getDistance(lat, lng, bounds.qa, lng),
               location: `${result[i].region_1depth_name} ${result[i].region_2depth_name}`,
             }));
@@ -115,59 +117,76 @@ function KakaoMap({ id }) {
     renderMarkers();
   }, [map, data]);
   return center ? (
-    <MapWrapper>
-      {showInput && !id && <AutoCompleteInput />}
-      <Map
-        center={center}
-        onCreate={setMap}
-        style={{ flexGrow: "1", height: "100%", position: "relative" }}
-      >
-        {markers.map((marker) => (
-          <CustomOverlayMap // 커스텀 오버레이를 표시할 Container
-            // 커스텀 오버레이가 표시될 위치입니다
-            position={marker.position}
-            clickable={true}
-            key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
-          >
-            {/* 커스텀 오버레이에 표시할 내용입니다 */}
-            <Label onClick={() => navigate(`/cocktailbar/${marker.id}`)}>
-              <span>{marker.content}</span>
-            </Label>
-          </CustomOverlayMap>
-        ))}
-      </Map>
-      {!id && (
-        <>
-          <div className="button-wrapper">
-            <button
-              onClick={() => getCurrentPosition()}
-              className="location-button"
+    <>
+      {loading && (
+        <Loading>
+          <CircularProgress sx={{ color: "white" }} />
+        </Loading>
+      )}
+      <MapWrapper>
+        {showInput && !id && <AutoCompleteInput />}
+        <Map
+          center={center}
+          onCreate={setMap}
+          style={{ flexGrow: "1", height: "100%", position: "relative" }}
+        >
+          {markers.map((marker) => (
+            <CustomOverlayMap // 커스텀 오버레이를 표시할 Container
+              // 커스텀 오버레이가 표시될 위치입니다
+              position={marker.position}
+              clickable={true}
+              key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
             >
-              <BiCurrentLocation />
-            </button>
+              {/* 커스텀 오버레이에 표시할 내용입니다 */}
+              <Label onClick={() => navigate(`/cocktailbar/${marker.id}`)}>
+                <span>{marker.content}</span>
+              </Label>
+            </CustomOverlayMap>
+          ))}
+        </Map>
+        {!id && (
+          <>
+            <div className="button-wrapper">
+              <button
+                onClick={() => getCurrentPosition()}
+                className="location-button"
+              >
+                <BiCurrentLocation />
+              </button>
+              {isLoggedin && (
+                <button
+                  className={showInput ? "active" : ""}
+                  onClick={() => setShowInput((state) => !state)}
+                >
+                  <MdEditLocationAlt />
+                </button>
+              )}
+            </div>
             {isLoggedin && (
               <button
-                className={showInput ? "active" : ""}
-                onClick={() => setShowInput((state) => !state)}
+                onClick={() => searchCocktailbar()}
+                className="search-button"
               >
-                <MdEditLocationAlt />
+                <FaUndoAlt />
+                현지도에서 재검색
               </button>
             )}
-          </div>
-          {isLoggedin && (
-            <button
-              onClick={() => searchCocktailbar()}
-              className="search-button"
-            >
-              <FaUndoAlt />
-              현지도에서 재검색
-            </button>
-          )}
-        </>
-      )}
-    </MapWrapper>
+          </>
+        )}
+      </MapWrapper>
+    </>
   ) : null;
 }
+
+const Loading = styled.div`
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 const MapWrapper = styled.div`
   position: relative;
