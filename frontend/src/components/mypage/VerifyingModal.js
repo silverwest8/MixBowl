@@ -35,7 +35,7 @@ const Wrapper = styled.div`
 const Section = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 2.8rem;
+  margin-bottom: 1.6rem;
   > div:first-child {
     font-size: 1rem;
     margin-bottom: 0.45rem;
