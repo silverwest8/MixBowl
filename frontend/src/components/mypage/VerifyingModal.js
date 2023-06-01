@@ -79,6 +79,7 @@ const VerifyingModal = ({ handleClose }) => {
           message: "인증에 성공했습니다.",
           type: "success",
         });
+        handleClose();
         window.location.reload();
       } else {
         setToastState({
@@ -87,7 +88,6 @@ const VerifyingModal = ({ handleClose }) => {
           type: "error",
         });
       }
-      handleClose();
     },
   });
   const onChange = (e) => {
@@ -154,7 +154,6 @@ const VerifyingModal = ({ handleClose }) => {
           <Input
             placeholder="자격증 번호 입력"
             onChange={onChange}
-            type="number"
             value={qualification}
             name="qualification"
           />

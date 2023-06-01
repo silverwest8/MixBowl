@@ -30,32 +30,15 @@ export const checkBartender = async ({
 }) => {
   const token = getAccessToken();
   axios.defaults.headers.common.Authorization = token;
-  const issueDateRe = issueDate.split("-");
-  const realIssue = (
-    issueDateRe[0] +
-    issueDateRe[1] +
-    issueDateRe[2]
-  ).toString();
-  const formData = new FormData();
-  formData.append(
-    "data",
-    JSON.stringify({
-      name,
-      birth,
-      qualification,
-      issueDate: realIssue,
-      lcsMngNo,
-    })
-  );
-  // const values = formData.values();
-  // for (const pair of values) {
-  //   console.log("pair is ", pair);
-  // }
+  const issueDateRe = issueDate.toString().replaceAll("-", "");
+  console.log("issureDate is ", issueDateRe);
 
-  const { data } = await axios.put("/api/users/checkbartender", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+  const { data } = await axios.put("/api/users/checkbartender", {
+    name,
+    birth,
+    qualification,
+    issueDate: issueDateRe,
+    lcsMngNo,
   });
   console.log("answeris ", data);
   return data;
