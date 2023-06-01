@@ -1,5 +1,4 @@
 import styled from "styled-components";
-// import SearchBar from "../common/SearchBar";
 import { useRecoilState } from "recoil";
 import { searchState } from "../../store/community";
 import { useNavigate } from "react-router-dom";

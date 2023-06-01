@@ -1,5 +1,3 @@
-import SearchBar from "../components/common/SearchBar";
-// import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
 import HotListItem from "../components/community/HotListItem";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,7 +9,7 @@ import { useEffect, useState } from "react";
 import CommunitySearch from "../components/community/CommunitySearch";
 import axios from "axios";
 import BoardShortListItem from "../components/community/BoardShortListItem";
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { menuState, searchState } from "../store/community";
 import LoadingPage from "./Loading";
 
@@ -26,9 +24,6 @@ const Background = styled.div`
   .icon {
     margin-right: 0.6rem;
   }
-  /* @media screen and (max-width: 400px) {
-    padding: 1rem 0.5rem;
-  } */
 `;
 
 const HotPosts = styled.div`
@@ -179,16 +174,6 @@ const CommunityHomePage = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // const [input, setInput] = useState("");
-  // const onChange = (e) => setInput(e.target.value);
-  // const onSearch = () => {
-  //   navigate(`/community/board?search=${input}`);
-  // };
-  // const onClear = () => {
-  //   params.delete("query");
-  //   setInput("");
-  //   navigate(`/community/board${params.toString()}`, { replace: true });
-  // };
   const token = localStorage.getItem("access_token");
   const fetchData = async () => {
     try {
@@ -271,12 +256,6 @@ const CommunityHomePage = () => {
                 최신글
               </h1>
               <CommunitySearch placeholder="관심있는 내용을 검색해보세요!" />
-              {/* <SearchBar
-              showCloseButton={false}
-              onChange={onChange}
-              onSearch={onSearch}
-              onClear={onClear}
-            /> */}
             </section>
             <div className="grid-container">
               <Board

@@ -1,8 +1,5 @@
 import styled from "styled-components";
-import MyPostingItem from "../components/community/MyPostingItem";
 import { Link, useNavigate } from "react-router-dom";
-import Title from "../components/common/Title";
-import { HiPencilAlt } from "react-icons/hi";
 import { MdArrowBackIosNew } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
@@ -81,15 +78,6 @@ const TopSection = styled.div`
       color: ${({ theme }) => theme.color.primaryGold};
     }
   }
-`;
-
-const NoContent = styled.div`
-  width: 100%;
-  height: 20vh;
-  color: ${({ theme }) => theme.color.primaryGold};
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
 const MyReviewPage = () => {

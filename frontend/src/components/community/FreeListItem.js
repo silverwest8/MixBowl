@@ -3,9 +3,7 @@ import { FaCommentDots, FaThumbsUp } from "react-icons/fa";
 import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { getDayMinuteCounter } from "../../api/community";
+import { getTimeForToday } from "../../utils/date";
 import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
 
 const FreeListItem = ({ data }) => {
@@ -56,7 +54,7 @@ const FreeListItem = ({ data }) => {
               </span>
             </ReactionContainer>
             <div className="userinfo">
-              {getDayMinuteCounter(data.createdAt)}
+              {getTimeForToday(data.createdAt)}
               <span className="username">{data.UNO_USER.NICKNAME}</span>
               <MemberBadge level={data.UNO_USER.LEVEL} />
             </div>
@@ -88,7 +86,6 @@ const ItemContainer = styled(Link)`
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 8px;
   padding: 0.8rem 0.2rem;
-  /* width: 50rem; */
   button {
     color: ${({ theme }) => theme.color.primaryGold};
     text-decoration: underline;
@@ -198,7 +195,6 @@ const ImageSection = styled.div`
 
 const MainText = styled.div`
   padding: 1rem;
-  /* padding-bottom: 2rem; */
   margin: 0.2rem 0 1rem 0;
   width: 100%;
   display: -webkit-box;

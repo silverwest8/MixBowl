@@ -72,8 +72,6 @@ const Button = styled.div`
 `;
 
 const DateContainer = styled.div`
-  /* text-align: right; */
-  /* width: 100%; */
   margin-bottom: 0.5rem;
   font-size: 0.75rem;
   display: flex;

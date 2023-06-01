@@ -4,7 +4,7 @@ import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
 import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
-import { getDayMinuteCounter } from "../../api/community";
+import { getTimeForToday } from "../../utils/date";
 
 const MyPostingItem = ({ data, uname, level }) => {
   console.log("posting item data is ", data);
@@ -55,7 +55,7 @@ const MyPostingItem = ({ data, uname, level }) => {
               </span>
             </ReactionContainer>
             <div className="userinfo">
-              {data.date && getDayMinuteCounter(data.date)}
+              {data.date && getTimeForToday(data.date)}
               <span className="username">{uname}</span>
               <MemberBadge level={level} />
             </div>
@@ -86,7 +86,6 @@ const ItemContainer = styled(Link)`
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 8px;
   padding: 0.8rem 0.2rem;
-  /* width: 50rem; */
   button {
     color: ${({ theme }) => theme.color.primaryGold};
     text-decoration: underline;
@@ -196,7 +195,6 @@ const ImageSection = styled.div`
 
 const MainText = styled.div`
   padding: 1rem;
-  /* padding-bottom: 2rem; */
   margin: 0.2rem 0 1rem 0;
   width: 100%;
   display: -webkit-box;
