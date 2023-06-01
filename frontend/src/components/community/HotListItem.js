@@ -4,6 +4,7 @@ import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
 import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
+import { getDayMinuteCounter } from "../../api/community";
 
 const ImageSection = styled.div`
   border: 2px solid ${({ theme }) => theme.color.primaryGold};
@@ -62,7 +63,7 @@ const HotListItem = ({ data }) => {
               </span>
             </ReactionContainer>
             <div className="userinfo">
-              {data.createdAt.slice(5, 10)}
+              {getDayMinuteCounter(data.createdAt)}
               <span className="username">{data.UNO_USER.NICKNAME}</span>
               <MemberBadge level={data.UNO_USER.LEVEL} />
             </div>
@@ -140,10 +141,10 @@ const TopSection = styled.div`
     font-weight: bold;
     font-size: 1.125rem;
     @media screen and (max-width: 500px) {
-      width: 50vw;
+      width: 33vw;
     }
     @media screen and (max-width: 350px) {
-      width: 30vw;
+      width: 22vw;
     }
   }
   .CATEGORY {

@@ -21,14 +21,14 @@ const Background = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 7rem 10rem;
   height: 100%;
+  padding: 2rem;
   .icon {
     margin-right: 0.6rem;
   }
-  @media screen and (max-width: 400px) {
+  /* @media screen and (max-width: 400px) {
     padding: 1rem 0.5rem;
-  }
+  } */
 `;
 
 const HotPosts = styled.div`
@@ -36,8 +36,7 @@ const HotPosts = styled.div`
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  width: 60vw;
-  margin-bottom: 5rem;
+  margin: 0 2rem 5rem 2rem;
   > h3 {
     display: flex;
     flex-direction: row;
@@ -58,13 +57,19 @@ const HotPosts = styled.div`
   @media screen and (max-width: 500px) {
     width: 80vw;
   }
+  > section {
+    width: 60vw;
+    @media screen and (max-width: 800px) {
+      width: 80vw;
+    }
+  }
 `;
 const NewPosts = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  width: 60vw;
+  margin: 0 2rem 5rem 2rem;
   > section:first-child {
     display: flex;
     flex-direction: row;
@@ -101,7 +106,8 @@ const NewPosts = styled.div`
       flex-direction: column;
     }
   }
-  @media screen and (max-width: 500px) {
+  width: 60vw;
+  @media screen and (max-width: 800px) {
     width: 80vw;
   }
 `;
@@ -137,7 +143,7 @@ const Board = styled.div`
   > ul {
     margin-top: 0.8rem;
   }
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 800px) {
     width: 80vw;
   }
   cursor: pointer;
@@ -339,10 +345,12 @@ const CommunityHomePage = () => {
               </Board>
             </div>
           </NewPosts>
-          <WritingButton to="/community/posting">
-            <HiPencilAlt />
-            글쓰기
-          </WritingButton>
+          {token && (
+            <WritingButton to="/community/posting">
+              <HiPencilAlt />
+              글쓰기
+            </WritingButton>
+          )}
         </Background>
       )}
     </main>

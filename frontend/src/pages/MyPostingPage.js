@@ -107,7 +107,6 @@ const MyPostingPage = () => {
       const userInfoResponse = await axios.get(`/api/users`);
       setUsername(userInfoResponse.data.data.NICKNAME);
       setLevel(userInfoResponse.data.data.LEVEL);
-      console.log("data list is ", data.list);
       return { page, list: data.list, count: data.list.length };
     } catch (error) {
       console.log("empty or error");
@@ -120,7 +119,6 @@ const MyPostingPage = () => {
     ({ pageParams = 1 }) => GetPosting(pageParams),
     {
       getNextPageParam: (lastPage) => {
-        console.log("lastPage is ", lastPage);
         if (lastPage.list.length === 0 || lastPage.count < 10) {
           return undefined; // No more pages
         }
@@ -134,7 +132,6 @@ const MyPostingPage = () => {
   // }, []);
 
   useEffect(() => {
-    console.log("has Next Page is ", hasNextPage);
     if (inView && hasNextPage) {
       setIsLoading(true);
       fetchNextPage();

@@ -14,7 +14,6 @@ const ReplyDeleteModal = ({ handleClose, id }) => {
         message: "삭제에 실패했습니다. 다시 시도해주세요.",
         type: "error",
       });
-      console.log(e);
     },
     onSuccess: () => {
       setToastState({

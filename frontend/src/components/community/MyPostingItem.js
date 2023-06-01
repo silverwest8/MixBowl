@@ -4,9 +4,10 @@ import { BiHeartCircle } from "react-icons/bi";
 import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
 import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
+import { getDayMinuteCounter } from "../../api/community";
 
 const MyPostingItem = ({ data, uname, level }) => {
-  // TODO : 호버, 이미지처리
+  console.log("posting item data is ", data);
   return (
     <ItemContainer to={`/community/${data.postId}`}>
       <div className="wrapper">
@@ -54,7 +55,7 @@ const MyPostingItem = ({ data, uname, level }) => {
               </span>
             </ReactionContainer>
             <div className="userinfo">
-              {data.date && data.date.slice(0, 10)}
+              {data.date && getDayMinuteCounter(data.date)}
               <span className="username">{uname}</span>
               <MemberBadge level={level} />
             </div>
@@ -65,6 +66,7 @@ const MyPostingItem = ({ data, uname, level }) => {
             <img src={getCocktailImageUrl(data.cocktailId)} />
           </ImageSection>
         ) : (
+          data.images &&
           data.images.length !== 0 && (
             <ImageSection>
               <img src={getCommunityImageUrl(data.images[0])} />
@@ -130,10 +132,10 @@ const TopSection = styled.div`
     font-weight: bold;
     font-size: 1.125rem;
     @media screen and (max-width: 500px) {
-      width: 50vw;
+      width: 33vw;
     }
     @media screen and (max-width: 350px) {
-      width: 30vw;
+      width: 22vw;
     }
   }
   .category {

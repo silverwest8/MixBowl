@@ -35,7 +35,6 @@ const NameChangeModal = ({ handleClose, checkname }) => {
         message: "닉네임 수정에 실패했습니다. 다시 시도해주세요.",
         type: "error",
       });
-      console.log(e);
     },
     onSuccess: () => {
       setToastState({
@@ -53,7 +52,6 @@ const NameChangeModal = ({ handleClose, checkname }) => {
     setUname(() => ({
       checkname: value,
     }));
-    console.log("uname is ", uname);
   };
   const onSubmit = async () => {
     setWarningMsg("");
@@ -68,14 +66,11 @@ const NameChangeModal = ({ handleClose, checkname }) => {
     // 중복됐을 경우
     const token = getAccessToken();
     axios.defaults.headers.common.Authorization = token;
-    console.log("sending data is ", uname.checkname);
     const { data } = await axios.put("api/users/nicknamedupcheck", {
       checkname: uname.checkname,
     });
-    console.log("data ", data);
 
     if (data.duplicate === false) {
-      console.log("username is ", uname);
       mutateEdit({ uname });
     } else {
       setToastState({

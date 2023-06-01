@@ -170,7 +170,6 @@ const MyRecipePage = () => {
       const { data } = await axios.get(`/api/mypages/recipes/${page}`);
       const userInfoResponse = await axios.get(`/api/users`);
       setUsername(userInfoResponse.data.data.NICKNAME);
-      // console.log("data list is ", data.list);
       return { page, list: data.list, count: data.list.length };
     } catch (error) {
       console.log("empty or error");
@@ -191,21 +190,17 @@ const MyRecipePage = () => {
     }
   );
 
-  // useEffect(() => {
-  //   fetchNextPage(1);
-  //   console.log("data is ", data);
-  // }, []);
-  useEffect(() => {
-    if (isSuccess) {
-      setIsLoading(false);
-    }
-  }, [isSuccess]);
   useEffect(() => {
     if (inView && hasNextPage) {
       setIsLoading(true);
       fetchNextPage();
     }
   }, [inView, hasNextPage]);
+  useEffect(() => {
+    if (isSuccess) {
+      setIsLoading(false);
+    }
+  }, [isSuccess]);
 
   return (
     <main

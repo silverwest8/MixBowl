@@ -273,15 +273,14 @@ const MyPage = () => {
 
         setUserInfo(userInfoResponse.data.data);
         setRecipe(recipeResponse.data.list);
+        console.log("recipes are ", recipe);
         setPostings(postingsResponse.data.list);
         setComments(commentsResponse.data.list);
         setReviews(reviewsResponse.data.list);
         setIsLoading(false);
 
         setDataFetched(true); // Set the flag to indicate that data has been fetched
-        console.log("userdata is ", userInfoResponse.data.data);
         name = userInfo.NICKNAME;
-        // console.log("reviews are ", reviewsResponse.data);
       }
     } catch (error) {
       console.log("empty or error");

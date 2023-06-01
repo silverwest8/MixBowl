@@ -16,6 +16,12 @@ import { toastState } from "../store/toast";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { getAccessToken } from "../utils/token";
 import {
+  getDayMinuteCounter,
+  reportCommunity,
+  registerComment,
+  editComment,
+} from "../api/community";
+import {
   commentState,
   CommunityReportState,
   checkEditState,
@@ -25,11 +31,6 @@ import PostDeleteModal from "../components/community/PostDeleteModal";
 import axios from "axios";
 import ImageSliderModal from "../components/common/ImageSliderModal";
 import { getCommunityImageUrl } from "../utils/image";
-import {
-  reportCommunity,
-  registerComment,
-  editComment,
-} from "../api/community";
 
 const Background = styled.div`
   color: white;
@@ -226,7 +227,6 @@ const CommunityPostDetailPage = () => {
       // setLiked(postData[id].liked);
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/communities/${id}`);
-      console.log("data here ", data);
       setPost(data);
       setLikeCount(data.like);
       setLiked(data.isUserLike);
@@ -251,7 +251,6 @@ const CommunityPostDetailPage = () => {
     try {
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.post(`/api/communities/like/${post.postId}`);
-      // console.log("liked is ", data);
       if (data.success) {
         if (liked) {
           setLikeCount(likeCount - 1);
@@ -296,7 +295,6 @@ const CommunityPostDetailPage = () => {
       // const { data } = await axios.post(
       //   `/api/communities/report/${post.postId}`
       // );
-      // console.log("report data is ", data);
     } catch (error) {
       console.log("report error is ", error);
     }
@@ -443,7 +441,9 @@ const CommunityPostDetailPage = () => {
                 ))}
             </ImageSection>
             <BottomInfo>
-              <span>{post.createdAt && post.createdAt.slice(0, 10)}</span>
+              <span>
+                {post.createdAt && getDayMinuteCounter(post.createdAt)}
+              </span>
               <div>
                 <FaThumbsUp
                   className={liked ? "icon liked" : "icon"}

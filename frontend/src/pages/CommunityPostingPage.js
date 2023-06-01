@@ -213,59 +213,60 @@ const Button = styled(Link)`
 
 const CommunityPostingPage = () => {
   const [tab, setTab] = useState("글 내용");
-  const [list, setList] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [warning, setWarning] = useState("");
   const [selectLike, setSelectLike] = useState(true);
-  const [{ addTitle }, setAddTitle] = useRecoilState(AddPostingState);
-  const [{ addContent }, setAddContent] = useRecoilState(AddPostingState);
-  const [{ addLike }, setAddLike] = useRecoilState(AddPostingState);
-  const [{ addCategory }, setAddCategory] = useRecoilState(AddPostingState);
-  const [{ addCNO }, setAddCNO] = useRecoilState(AddPostingState);
+  const [
+    { addTitle, addContent, addLike, addCategory, addCNO },
+    setPostingState,
+  ] = useRecoilState(AddPostingState);
   const files = useRecoilValue(imageFileListState);
   const navigate = useNavigate();
   const defaultFiles = [];
-  // add Image?
   const recommendationTab = () => {
     setTab("추천 이유");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 1,
     }));
   };
   const qnaTab = () => {
     setTab("질문 내용");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 2,
     }));
   };
   const reviewTab = () => {
     setTab("후기 내용");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 3,
     }));
   };
   const freeTab = () => {
     setTab("글 내용");
-    setAddCategory(() => ({
+    setPostingState((prev) => ({
+      ...prev,
       addCategory: 4,
     }));
   };
   const handleTitle = (e) => {
     setWarning("");
-    setAddTitle((prev) => ({
+    setPostingState((prev) => ({
       ...prev,
       addTitle: e.target.value,
     }));
   };
   const handleContent = (e) => {
     setWarning("");
-    setAddContent((prev) => ({
+    setPostingState((prev) => ({
       ...prev,
       addContent: e.target.value,
     }));
   };
   const handleLike = (e) => {
-    setAddLike((prev) => ({
+    setPostingState((prev) => ({
       ...prev,
       addLike: e,
     }));
@@ -273,11 +274,11 @@ const CommunityPostingPage = () => {
   };
   const onChangeAutoComplete = (event, value) => {
     setWarning("");
-    setAddCNO((prev) => ({
+    setPostingState((prev) => ({
       ...prev,
       addCNO: value.num,
     }));
-    setAddTitle((prev) => ({
+    setPostingState((prev) => ({
       ...prev,
       addTitle: value.name,
     }));
@@ -286,36 +287,32 @@ const CommunityPostingPage = () => {
   const token = localStorage.getItem("access_token");
   const GetRecipe = async () => {
     try {
+      console.log("get Recipe");
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/communities/list/cocktails`);
       if (data.success) {
-        setList(data.data);
-        SetRecipe(list);
+        const newList = data.data.map((item) => {
+          const [name, num] = item.split("/");
+          return { name, num };
+        });
+        setRecipes(newList);
       }
     } catch (error) {
       console.log("err is ", error);
     }
   };
-  const SetRecipe = (data) => {
-    const newList = data.map((item) => {
-      const [name, num] = item.split("/");
-      return { name, num };
-    });
-    return setRecipes(newList);
-  };
+  // const SetRecipe = (data) => {
+  //   const newList = data.map((item) => {
+  //     const [name, num] = item.split("/");
+  //     return { name, num };
+  //   });
+  //   return setRecipes(newList);
+  // };
 
   useEffect(() => {
-    useEffect(() => {
-      if (token) {
-        GetRecipe();
-      } else {
-        navigate(`/login?return_url=/community/board`);
-      }
-    }, []);
+    GetRecipe();
+    console.log("recipes is ", recipes);
   }, []);
-  useEffect(() => {
-    SetRecipe(list);
-  }, [list]);
   const setToastState = useSetRecoilState(toastState);
 
   const handleSubmit = () => {
@@ -371,25 +368,25 @@ const CommunityPostingPage = () => {
             <span>카테고리</span>
             <SelectContainer>
               <Menu
-                onClick={recommendationTab}
+                onClick={() => recommendationTab()}
                 className={tab === "추천 이유" ? "selected" : ""}
               >
                 칵테일 추천
               </Menu>
               <Menu
-                onClick={qnaTab}
+                onClick={() => qnaTab()}
                 className={tab === "질문 내용" ? "selected" : ""}
               >
                 질문과 답변
               </Menu>
               <Menu
-                onClick={reviewTab}
+                onClick={() => reviewTab()}
                 className={tab === "후기 내용" ? "selected" : ""}
               >
                 칵테일 리뷰
               </Menu>
               <Menu
-                onClick={freeTab}
+                onClick={() => freeTab()}
                 className={tab === "글 내용" ? "selected" : ""}
               >
                 자유
