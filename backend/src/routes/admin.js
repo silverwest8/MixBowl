@@ -2,8 +2,10 @@
 
 import express from 'express';
 import { db } from '../models';
+import sql from '../database/sql';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import fs from 'fs';
 import checkAdmin from '../middleware/checkAdmin';
 
 dotenv.config();
@@ -167,6 +169,49 @@ router.get('/report', checkAdmin, async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(400).json({ success: false, error });
+  }
+});
+
+router.delete("/recipe/:cocktailId", checkAdmin, async (req, res) => {
+  try {
+    const cocktailId = req.params.cocktailId;
+    const cocktail = await db.COCKTAIL.findByPk(cocktailId);
+
+    // file system에서 이미지파일 삭제
+    if (cocktail.IMAGE_PATH) {
+      const oldFilePath = `./${cocktail.IMAGE_PATH}`;
+      fs.unlinkSync(oldFilePath);
+      console.log(oldFilePath);
+    }
+    await cocktail.destroy();
+    // color, recipe - CASCADE TRIGGER로 자동 삭제
+    return res.status(200).json({ success: true, message: 'Cocktail delete 성공' });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: 'Cocktail delete 실패', error });
+  }
+})
+
+router.delete('/post/:postId', checkAdmin, sql.deleteImage, async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const post = await db.POST.findByPk(postId);
+    if (post !== null) {
+      await db.POST.destroy({ where: { PNO: postId } });
+    }
+    else {
+      throw new Error("there is no post");
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: 'Delete Review Success' });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
 
