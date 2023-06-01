@@ -7,8 +7,6 @@ import { postRecipe, editRecipe } from "../../api/recipeapi";
 
 const RecipeSubmit = ({ actionType }) => {
   const navigate = useNavigate();
-  const colorNum = [];
-  let alcoholNum = 0;
   const { addName, addColor, addItem, addAlcohol, addExplain } =
     useRecoilValue(AddRecipeState);
   const setToastState = useSetRecoilState(toastState);
@@ -55,8 +53,8 @@ const RecipeSubmit = ({ actionType }) => {
         ms: 2000,
       });
     } else if (actionType === "post") {
-      colorFilter();
-      alcoholFilter();
+      const colorNum = colorFilter();
+      const alcoholNum = alcoholFilter();
       const ingred = addItem.map((item) => ({
         name: item.addName,
         amount: item.addAmount,
@@ -92,11 +90,11 @@ const RecipeSubmit = ({ actionType }) => {
                 ms: 3000,
               });
               setRecipeImg("");
-              navigate(-1);
+              navigate(`/recipe/${response.cocktailId}`);
             } else {
               setToastState({
                 show: true,
-                message: "수정 실패.",
+                message: "작성 실패.",
                 type: "error",
                 ms: 3000,
               });
@@ -107,8 +105,8 @@ const RecipeSubmit = ({ actionType }) => {
           });
       }
     } else if (actionType === "edit") {
-      colorFilter();
-      alcoholFilter();
+      const colorNum = colorFilter();
+      const alcoholNum = alcoholFilter();
       const ingred = addItem.map((item) => ({
         name: item.addName,
         amount: item.addAmount,
@@ -145,7 +143,7 @@ const RecipeSubmit = ({ actionType }) => {
                 ms: 3000,
               });
               setRecipeImg("");
-              navigate(-2);
+              navigate(`/recipe/${id}`);
             } else {
               setToastState({
                 show: true,
@@ -169,6 +167,7 @@ const RecipeSubmit = ({ actionType }) => {
   };
 
   const colorFilter = () => {
+    const colorNum = [];
     if (addColor.includes("red")) colorNum.push(1);
     if (addColor.includes("orange")) colorNum.push(2);
     if (addColor.includes("yellow")) colorNum.push(3);
@@ -181,12 +180,13 @@ const RecipeSubmit = ({ actionType }) => {
     if (addColor.includes("grey")) colorNum.push(10);
     if (addColor.includes("white")) colorNum.push(11);
     if (addColor.includes("transparent")) colorNum.push(12);
+    return colorNum;
   };
 
   const alcoholFilter = () => {
-    if (addAlcohol.includes("낮음")) alcoholNum = 0;
-    if (addAlcohol.includes("보통")) alcoholNum = 1;
-    if (addAlcohol.includes("높음")) alcoholNum = 2;
+    if (addAlcohol.includes("낮음")) return 0;
+    if (addAlcohol.includes("보통")) return 1;
+    if (addAlcohol.includes("높음")) return 2;
   };
 
   return (

@@ -3,11 +3,12 @@ import styled from "styled-components";
 import { FaPen } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getTimeForToday } from "../../utils/date";
 
 const RecipeComment = () => {
   const [comment, setComment] = useState(null);
+  const navigate = useNavigate();
   const params = useParams();
   const id = params.id;
 
@@ -30,11 +31,13 @@ const RecipeComment = () => {
         <p>
           리뷰<span>{comment && `(${comment.count})`}</span>
         </p>
-        <Link to="/community">
-          <PostButton>
-            <FaPen className="pen" /> 작성하기
-          </PostButton>
-        </Link>
+        <PostButton
+          onClick={() =>
+            navigate("/community/posting", { state: { category: 3 } })
+          }
+        >
+          <FaPen className="pen" /> 작성하기
+        </PostButton>
       </TopBox>
       {comment &&
         (comment.list.length !== 0 ? (

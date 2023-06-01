@@ -106,9 +106,23 @@ const RecipeCard = () => {
                     <h1>{item.name}</h1>
                   </Link>
                   <TextBox>
-                    <NickName>
-                      @{item.USER.nickname}
-                      <MemberBadge level={item.USER.level} />
+                    <NickName
+                      className={
+                        item.USER.nickname === "ninja" ||
+                        item.USER.nickname === "cocktaildb"
+                          ? "not-user"
+                          : ""
+                      }
+                    >
+                      {item.USER.nickname === "ninja" ||
+                      item.USER.nickname === "cocktaildb" ? (
+                        "@Cocktell"
+                      ) : (
+                        <>
+                          @{item.USER.nickname}
+                          <MemberBadge level={item.USER.level} />
+                        </>
+                      )}
                     </NickName>
                     <div>
                       <p className="ThumbsUp">
@@ -148,6 +162,9 @@ const NickName = styled.div`
   align-items: center;
   gap: 0.3rem !important;
   font-size: 0.875rem;
+  &.not-user {
+    color: ${({ theme }) => theme.color.gray};
+  }
 `;
 
 const TextBox = styled.div`

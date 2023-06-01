@@ -2,7 +2,6 @@ import styled from "styled-components";
 import Textarea from "../common/Textarea";
 import { AddRecipeState } from "../../store/recipe";
 import { useRecoilState } from "recoil";
-import { FaCheckCircle } from "react-icons/fa";
 import RecipeIngredients from "./RecipeIngredients";
 
 const RecipeExplain = () => {
@@ -44,33 +43,33 @@ const RecipeExplain = () => {
           <FlexBox>
             <div>
               <AlcoholButton
+                className={addAlcohol === "낮음" ? "selected" : ""}
                 onClick={() => {
                   handleClick("낮음");
                 }}
               >
-                {addAlcohol === "낮음" ? <FaCheckCircle></FaCheckCircle> : null}
                 낮음
               </AlcoholButton>
               <p>0~5</p>
             </div>
             <div>
               <AlcoholButton
+                className={addAlcohol === "보통" ? "selected" : ""}
                 onClick={() => {
                   handleClick("보통");
                 }}
               >
-                {addAlcohol === "보통" ? <FaCheckCircle></FaCheckCircle> : null}
                 보통
               </AlcoholButton>
               <p>6~15</p>
             </div>
             <div>
               <AlcoholButton
+                className={addAlcohol === "높음" ? "selected" : ""}
                 onClick={() => {
                   handleClick("높음");
                 }}
               >
-                {addAlcohol === "높음" ? <FaCheckCircle></FaCheckCircle> : null}
                 높음
               </AlcoholButton>
               <p>16~99</p>
@@ -117,6 +116,10 @@ const AlcoholButton = styled.button`
     margin-right: 0.25rem;
   }
   &:hover {
+    background-color: ${({ theme }) => theme.color.primaryGold};
+    color: white;
+  }
+  &.selected {
     background-color: ${({ theme }) => theme.color.primaryGold};
     color: white;
   }
