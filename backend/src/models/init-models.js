@@ -19,6 +19,7 @@ import _POST_REPORT from  "./POST_REPORT.js";
 import _RECIPE from  "./RECIPE.js";
 import _REVIEW from  "./REVIEW.js";
 import _USER from  "./USER.js";
+import _ADMIN from "./ADMIN.js"
 import _cocktaildb_recipeset from  "./cocktaildb_recipeset.js";
 import _cocktaildbset from  "./cocktaildbset.js";
 import _ninja_recipe from  "./ninja_recipe.js";
@@ -44,6 +45,7 @@ export default function initModels(sequelize) {
   const RECIPE = _RECIPE.init(sequelize, DataTypes);
   const REVIEW = _REVIEW.init(sequelize, DataTypes);
   const USER = _USER.init(sequelize, DataTypes);
+  const ADMIN = _ADMIN.init(sequelize, DataTypes);
   const cocktaildb_recipeset = _cocktaildb_recipeset.init(sequelize, DataTypes);
   const cocktaildbset = _cocktaildbset.init(sequelize, DataTypes);
   const ninja_recipe = _ninja_recipe.init(sequelize, DataTypes);
@@ -122,6 +124,7 @@ export default function initModels(sequelize) {
     RECIPE,
     REVIEW,
     USER,
+    ADMIN,
     cocktaildb_recipeset,
     cocktaildbset,
     ninja_recipe,
