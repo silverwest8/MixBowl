@@ -84,6 +84,7 @@ router.get('/report', checkAdmin, async (req, res) => {
         const cocktail = await db.COCKTAIL.findByPk(reports[i].CNO, {
           attributes: ['CNO', 'NAME'],
         });
+        if (!cocktail) continue;
         const index = data.findIndex((item) => item.id === cocktail.CNO);
         if (index === -1) {
           data.push({
@@ -134,6 +135,7 @@ router.get('/report', checkAdmin, async (req, res) => {
         const post = await db.POST.findByPk(reports[i].PNO, {
           attributes: ['PNO', 'TITLE'],
         });
+        if (!post) continue;
         const index = data.findIndex((item) => item.id === post.PNO);
         if (index === -1) {
           data.push({
@@ -197,15 +199,23 @@ router.delete('/post/:postId', checkAdmin, sql.deleteImage, async (req, res) => 
   try {
     const postId = req.params.postId;
     const post = await db.POST.findByPk(postId);
+    const reports = await db.POST_REPORT.findAll({
+      where: {
+        PNO: postId
+      }
+    })
+    for (let i = 0; i < reports.length; i++) {
+      await reports[i].destroy();
+    }
     if (post !== null) {
-      await db.POST.destroy({ where: { PNO: postId } });
+      await post.destroy();
     }
     else {
       throw new Error("there is no post");
     }
     return res
       .status(200)
-      .json({ success: true, message: 'Delete Review Success' });
+      .json({ success: true, message: 'Delete Post Success' });
   } catch (error) {
     console.log(error.message);
     return res.status(400).json({
