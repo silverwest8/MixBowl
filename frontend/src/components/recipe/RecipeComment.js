@@ -3,10 +3,12 @@ import styled from "styled-components";
 import { FaPen } from "react-icons/fa";
 import MemberBadge from "../common/MemberBadge";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { getTimeForToday } from "../../utils/date";
 
 const RecipeComment = () => {
   const [comment, setComment] = useState(null);
+  const navigate = useNavigate();
   const params = useParams();
   const id = params.id;
 
@@ -15,7 +17,7 @@ const RecipeComment = () => {
       const { data } = await axios.get(`/api/recipes/detail/review/${id}`);
       setComment(data.data);
     } catch (error) {
-      return error.message;
+      console.log(error);
     }
   };
 
@@ -29,27 +31,30 @@ const RecipeComment = () => {
         <p>
           리뷰<span>{comment && `(${comment.count})`}</span>
         </p>
-        <Link to="/community">
-          <PostButton>
-            <FaPen className="pen"></FaPen>작성하기
-          </PostButton>
-        </Link>
+        <PostButton
+          onClick={() =>
+            navigate("/community/posting", { state: { cocktail: id } })
+          }
+        >
+          <FaPen className="pen" /> 작성하기
+        </PostButton>
       </TopBox>
-      {comment && comment.list.length !== 0 ? (
-        comment.list.map((item) => (
-          <CommentBox key={item}>
-            <div className="user">
-              @{item.UNO_USER.nickname}
-              <MemberBadge level={item.UNO_USER.level} />
-            </div>
-            <div className="text">{item.content}</div>
-            <div className="day">{item.date.slice(0, 10)}</div>
-            <HorizonLine></HorizonLine>
-          </CommentBox>
-        ))
-      ) : (
-        <p className="empty-message">리뷰가 없습니다.</p>
-      )}
+      {comment &&
+        (comment.list.length !== 0 ? (
+          comment.list.map((item) => (
+            <CommentBox key={item}>
+              <div className="user">
+                @{item.UNO_USER.nickname}
+                <MemberBadge level={item.UNO_USER.level} />
+              </div>
+              <div className="text">{item.content}</div>
+              <div className="day">{getTimeForToday(item.date)}</div>
+              <HorizonLine></HorizonLine>
+            </CommentBox>
+          ))
+        ) : (
+          <p className="empty-message">리뷰가 없습니다.</p>
+        ))}
     </Comment>
   );
 };
@@ -78,6 +83,7 @@ const CommentBox = styled.div`
   .day {
     display: flex;
     justify-content: flex-end;
+    color: ${({ theme }) => theme.color.gray};
   }
   .text {
     font-size: 1rem;
@@ -122,8 +128,6 @@ const PostButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  .pen {
-    margin-right: 0.1rem;
-  }
+  gap: 0.2rem;
 `;
 export default RecipeComment;

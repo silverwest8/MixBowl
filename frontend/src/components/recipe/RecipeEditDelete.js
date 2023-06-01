@@ -54,7 +54,7 @@ const RecipeEditDelete = ({ options }) => {
         if (response.success) {
           ToastMessageDelete();
           closeModal();
-          navigate(-1);
+          navigate("/recipe");
         } else {
           setToastState({
             show: true,

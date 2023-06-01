@@ -50,7 +50,7 @@ const ButtonBox = styled.div`
       background-color: ${({ theme }) => theme.color.primaryGold};
     }
   }
-  @media screen and (max-width: 920px) {
+  @media screen and (max-width: 940px) {
     width: 100%;
     justify-content: center;
     padding: 0.75rem 0;
