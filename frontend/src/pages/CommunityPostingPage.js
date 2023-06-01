@@ -6,7 +6,7 @@ import Input from "../components/common/Input";
 import ImageUpload from "../components/common/ImageUpload";
 import { AiFillHeart } from "react-icons/ai";
 import { ImSad } from "react-icons/im";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 // import AutoCompleteCocktail from "../components/community/AutoCompleteCocktail";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -129,7 +129,7 @@ const MainSection = styled.div`
     }
   }
   .MuiAutocomplete-noOptions {
-    color: ${({ theme }) => theme.color.primaryGold}!important;
+    color: ${({ theme }) => theme.color.primaryGold} !important;
   }
 `;
 const StyledTextField = styled(TextField)({
@@ -138,6 +138,11 @@ const StyledTextField = styled(TextField)({
   },
   "& label.Mui-focused": {
     outline: "none",
+  },
+  input: {
+    "&::placeholder": {
+      color: "#cfcfcf !important",
+    },
   },
   outline: "none",
 });
@@ -222,6 +227,7 @@ const CommunityPostingPage = () => {
   ] = useRecoilState(AddPostingState);
   const files = useRecoilValue(imageFileListState);
   const navigate = useNavigate();
+  const location = useLocation();
   const defaultFiles = [];
   const recommendationTab = () => {
     setTab("추천 이유");
@@ -311,6 +317,13 @@ const CommunityPostingPage = () => {
 
   useEffect(() => {
     GetRecipe();
+    if (location.state && location.state.category) {
+      const { category } = location.state;
+      if (category === 1) recommendationTab();
+      else if (category === 2) qnaTab();
+      else if (category === 3) reviewTab();
+      else if (category === 4) freeTab();
+    }
     console.log("recipes is ", recipes);
   }, []);
   const setToastState = useSetRecoilState(toastState);
@@ -421,12 +434,17 @@ const CommunityPostingPage = () => {
                       backgroundColor: "#e9aa33",
                       color: "black",
                     },
+                  "& + .MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected='true']":
+                    {
+                      backgroundColor: "#e9aa33",
+                    },
                 }}
                 renderInput={(params) => (
                   <StyledTextField
                     {...params}
                     label=""
                     className="selection"
+                    placeholder="칵테일 이름을 선택해주세요."
                     fullWidth
                   />
                 )}
@@ -468,9 +486,6 @@ const CommunityPostingPage = () => {
           </MainSection>
           <span className="warning">{warning}</span>
 
-          <ImageSection>
-            <ImageUpload defaultFiles={defaultFiles} />
-          </ImageSection>
           {tab === "후기 내용" ? (
             <RecommendationSection>
               <div>이 칵테일을 추천하시나요?</div>
@@ -491,9 +506,10 @@ const CommunityPostingPage = () => {
                 </span>
               </div>
             </RecommendationSection>
-          ) : (
-            ""
-          )}
+          ) : null}
+          <ImageSection>
+            <ImageUpload defaultFiles={defaultFiles} />
+          </ImageSection>
           <BottomSection>
             <Button className="cancel" to="/community">
               취소
