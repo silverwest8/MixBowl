@@ -74,13 +74,16 @@ const VerifyingModal = ({ handleClose }) => {
     },
     onSuccess: (e) => {
       if (e.bartender) {
+        handleClose();
         setToastState({
           show: true,
           message: "인증에 성공했습니다.",
           type: "success",
+          ms: 3000,
         });
-        handleClose();
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } else {
         setToastState({
           show: true,

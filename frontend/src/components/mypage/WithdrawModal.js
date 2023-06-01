@@ -22,10 +22,10 @@ const WithdrawModal = ({ handleClose }) => {
         show: true,
         message: "탈퇴가 완료되었습니다.",
         type: "success",
+        ms: 3000,
       });
       handleClose();
       removeTokens();
-      window.location.reload();
       window.location.replace("/login");
     },
   });

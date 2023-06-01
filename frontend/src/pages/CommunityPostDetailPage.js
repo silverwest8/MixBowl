@@ -329,8 +329,11 @@ const CommunityPostDetailPage = () => {
               show: true,
               message: "댓글이 수정되었습니다.",
               type: "success",
+              ms: 3000,
             });
-            window.location.reload();
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
           } else {
             setToastState({
               show: true,
@@ -347,8 +350,11 @@ const CommunityPostDetailPage = () => {
             show: true,
             message: "댓글이 작성되었습니다.",
             type: "success",
+            ms: 3000,
           });
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
         } else {
           setToastState({
             show: true,

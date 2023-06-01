@@ -1,11 +1,9 @@
 import styled from "styled-components";
-import FreeListItem from "../components/community/FreeListItem";
 import { Link } from "react-router-dom";
-import Title from "../components/common/Title";
 import { useModal } from "../hooks/useModal";
 import CommentItem from "../components/mypage/CommentItem";
 import { FaPen, FaThumbsUp, FaCommentDots } from "react-icons/fa";
-import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
+import { MdArrowForwardIos } from "react-icons/md";
 import { AiFillCamera } from "react-icons/ai";
 import { BsInfoCircleFill } from "react-icons/bs";
 import MemberBadge from "../components/common/MemberBadge";
