@@ -39,6 +39,9 @@ const MainSection = styled.div`
   }
   > section {
     width: 60vw;
+    @media screen and (max-width: 800px) {
+      width: 80vw;
+    }
   }
   > div {
     display: flex;
