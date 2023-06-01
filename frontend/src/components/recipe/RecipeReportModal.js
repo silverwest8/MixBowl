@@ -3,9 +3,11 @@ import FormControl from "@mui/material/FormControl";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
+import { toastState } from "../../store/toast";
 import styled from "styled-components";
-import { RecipeRoportState } from "../../store/recipe";
+import { reportRecipe } from "../../api/recipeapi";
+import { useState } from "react";
 
 const REASONS = [
   "부적절한 표현, 욕설 또는 혐오 표현",
@@ -14,10 +16,37 @@ const REASONS = [
   "증오 또는 위험한 콘텐츠",
 ];
 
-const RecipeReportModal = ({ handleClose, onSubmit }) => {
-  const [value, setValue] = useRecoilState(RecipeRoportState);
+const RecipeReportModal = ({ handleClose, id }) => {
+  const setToastState = useSetRecoilState(toastState);
+  const [value, setValue] = useState(0);
   const onChange = (e) => {
     setValue(e.target.value);
+  };
+
+  const onSubmit = () => {
+    reportRecipe(id, Number(value) + 1)
+      .then((response) => {
+        if (response.success === true) {
+          setToastState({
+            show: true,
+            message: "신고가 완료되었습니다.",
+            type: "success",
+            ms: 2000,
+          });
+        }
+        if (response.success === false) {
+          setToastState({
+            show: true,
+            message: "이미 신고한 게시물입니다.",
+            type: "error",
+            ms: 2000,
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    handleClose();
   };
   return (
     <Modal

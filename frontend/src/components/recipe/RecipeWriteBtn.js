@@ -4,14 +4,12 @@ import { Link } from "react-router-dom";
 
 const RecipeWriteBtn = () => {
   return (
-    <>
-      <Link to="/recipe/write">
-        <Button>
-          <FaEdit></FaEdit>
-          <p>새 레시피 등록</p>
-        </Button>
-      </Link>
-    </>
+    <Link to="/recipe/write">
+      <Button>
+        <FaEdit></FaEdit>
+        <p>새 레시피 등록</p>
+      </Button>
+    </Link>
   );
 };
 

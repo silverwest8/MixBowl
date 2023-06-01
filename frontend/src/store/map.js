@@ -2,6 +2,7 @@ import { atom } from "recoil";
 export const mapState = atom({
   key: "mapState",
   default: {
+    loading: false,
     data: null,
     center: {
       lat: 37.5878109,

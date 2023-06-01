@@ -41,7 +41,7 @@ const TitleBox = styled.div`
     object-fit: contain;
     transform: translateX(-50%);
   }
-  @media screen and (max-width: 920px) {
+  @media screen and (max-width: 940px) {
     display: flex;
   }
 `;

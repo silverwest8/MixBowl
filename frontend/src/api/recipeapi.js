@@ -8,7 +8,7 @@ export const reportRecipe = async (id, report) => {
   return data;
 };
 
-export const likteRecipe = async (id, liked, like) => {
+export const likeRecipe = async (id, liked, like) => {
   const { data } = await axios.post(`/api/recipes/like/${id}`, {
     liked,
     like,

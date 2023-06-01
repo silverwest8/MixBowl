@@ -6,7 +6,7 @@ import Input from "../components/common/Input";
 import ImageUpload from "../components/common/ImageUpload";
 import { AiFillHeart } from "react-icons/ai";
 import { ImSad } from "react-icons/im";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 // import AutoCompleteCocktail from "../components/community/AutoCompleteCocktail";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -129,7 +129,7 @@ const MainSection = styled.div`
     }
   }
   .MuiAutocomplete-noOptions {
-    color: ${({ theme }) => theme.color.primaryGold}!important;
+    color: ${({ theme }) => theme.color.primaryGold} !important;
   }
 `;
 const StyledTextField = styled(TextField)({
@@ -222,6 +222,7 @@ const CommunityPostingPage = () => {
   ] = useRecoilState(AddPostingState);
   const files = useRecoilValue(imageFileListState);
   const navigate = useNavigate();
+  const { state } = useLocation();
   const defaultFiles = [];
   const recommendationTab = () => {
     setTab("추천 이유");
@@ -276,11 +277,8 @@ const CommunityPostingPage = () => {
     setWarning("");
     setPostingState((prev) => ({
       ...prev,
-      addCNO: value.num,
-    }));
-    setPostingState((prev) => ({
-      ...prev,
       addTitle: value.name,
+      addCNO: value.num,
     }));
   };
 
@@ -289,13 +287,25 @@ const CommunityPostingPage = () => {
     try {
       console.log("get Recipe");
       axios.defaults.headers.common.Authorization = token;
+      let selected;
       const { data } = await axios.get(`/api/communities/list/cocktails`);
       if (data.success) {
         const newList = data.data.map((item) => {
           const [name, num] = item.split("/");
+          if (state && state.cocktail && state.cocktail === num) {
+            console.log(state.cocktail, num);
+            selected = { name, num };
+          }
           return { name, num };
         });
         setRecipes(newList);
+        if (selected) {
+          setPostingState((prev) => ({
+            ...prev,
+            addCNO: selected.num,
+            addTitle: selected.name,
+          }));
+        }
       }
     } catch (error) {
       console.log("err is ", error);
@@ -311,6 +321,8 @@ const CommunityPostingPage = () => {
 
   useEffect(() => {
     GetRecipe();
+    console.log(location.state);
+    if (state && state.cocktail) reviewTab();
     console.log("recipes is ", recipes);
   }, []);
   const setToastState = useSetRecoilState(toastState);
@@ -405,6 +417,7 @@ const CommunityPostingPage = () => {
                 onChange={(event, value) => {
                   onChangeAutoComplete(event, value);
                 }}
+                value={{ num: addCNO, name: addTitle }}
                 sx={{
                   width: 300,
                   "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
@@ -421,13 +434,23 @@ const CommunityPostingPage = () => {
                       backgroundColor: "#e9aa33",
                       color: "black",
                     },
+                  "& + .MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected='true']":
+                    {
+                      backgroundColor: "#e9aa33",
+                    },
                 }}
                 renderInput={(params) => (
                   <StyledTextField
                     {...params}
                     label=""
                     className="selection"
+                    placeholder="칵테일 이름을 선택해주세요."
                     fullWidth
+                    sx={{
+                      "&::placeholder": {
+                        color: "#cfcfcf",
+                      },
+                    }}
                   />
                 )}
                 PaperComponent={(props) => (
@@ -468,9 +491,6 @@ const CommunityPostingPage = () => {
           </MainSection>
           <span className="warning">{warning}</span>
 
-          <ImageSection>
-            <ImageUpload defaultFiles={defaultFiles} />
-          </ImageSection>
           {tab === "후기 내용" ? (
             <RecommendationSection>
               <div>이 칵테일을 추천하시나요?</div>
@@ -491,9 +511,10 @@ const CommunityPostingPage = () => {
                 </span>
               </div>
             </RecommendationSection>
-          ) : (
-            ""
-          )}
+          ) : null}
+          <ImageSection>
+            <ImageUpload defaultFiles={defaultFiles} />
+          </ImageSection>
           <BottomSection>
             <Button className="cancel" to="/community">
               취소
