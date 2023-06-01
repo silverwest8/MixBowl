@@ -143,15 +143,6 @@ const RecipeBox = styled.div`
   }
 `;
 
-const NoContent = styled.div`
-  width: 100%;
-  height: 20vh;
-  color: ${({ theme }) => theme.color.primaryGold};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 const NickName = styled.div`
   display: flex;
   font-size: 0.875rem;
@@ -168,6 +159,7 @@ const MyRecipePage = () => {
     try {
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/mypages/recipes/${page}`);
+      console.log("data is ", data);
       const userInfoResponse = await axios.get(`/api/users`);
       setUsername(userInfoResponse.data.data.NICKNAME);
       return { page, list: data.list, count: data.list.length };
@@ -250,10 +242,10 @@ const MyRecipePage = () => {
                         )}
 
                         <TextBox>
-                          {/* <NickName>
+                          <NickName>
                             @{item.USER.nickname}
                             <MemberBadge level={item.USER.level} />
-                          </NickName> */}
+                          </NickName>
                           <div>
                             <p className="ThumbsUp">
                               <FaThumbsUp></FaThumbsUp>
@@ -261,7 +253,7 @@ const MyRecipePage = () => {
                             </p>
                             <p className="Comment">
                               <FaCommentDots></FaCommentDots>
-                              {item.post}
+                              {item.post || 0}
                             </p>
                           </div>
                         </TextBox>

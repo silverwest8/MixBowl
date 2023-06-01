@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import MyPostingItem from "../components/community/MyPostingItem";
-import { Link, useNavigate } from "react-router-dom";
-import Title from "../components/common/Title";
-import { HiPencilAlt } from "react-icons/hi";
+import { Link } from "react-router-dom";
 import { MdArrowBackIosNew } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
@@ -87,15 +85,6 @@ const TopSection = styled.div`
   }
 `;
 
-const NoContent = styled.div`
-  width: 100%;
-  height: 20vh;
-  color: ${({ theme }) => theme.color.primaryGold};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 const MyPostingPage = () => {
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
@@ -129,10 +118,6 @@ const MyPostingPage = () => {
       },
     }
   );
-
-  // useEffect(() => {
-  //   fetchNextPage(1);
-  // }, []);
 
   useEffect(() => {
     if (inView && hasNextPage) {

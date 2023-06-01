@@ -1,30 +1,11 @@
 import Modal from "../common/Modal";
 import styled from "styled-components";
 import Input from "../common/Input";
-import { useState, useEffect } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useSetRecoilState } from "recoil";
+import { useMutation } from "@tanstack/react-query";
 import { toastState } from "../../store/toast";
 import { checkBartender } from "../../api/mypage";
-
-const Button = styled.button`
-  background-color: ${({ theme }) => theme.color.primaryGold};
-  color: black;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.9rem;
-  min-width: 10vw;
-  margin-top: 0.5rem;
-  &:hover {
-    background-color: ${({ theme }) => theme.color.secondGold};
-  }
-  > span {
-    margin-left: 0.2rem;
-    font-size: 0.9rem;
-  }
-`;
 
 const Wrapper = styled.div`
   display: flex;
@@ -128,7 +109,6 @@ const VerifyingModal = ({ handleClose }) => {
       onCancel={handleClose}
       onConfirm={onSubmit}
     >
-      {/* //이름, 생년월일, 자격증번호, 발급연월일, 자격증내지번호 */}
       <Wrapper>
         <Section>
           <div>이름</div>

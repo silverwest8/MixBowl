@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { getDayMinuteCounter } from "../../api/community";
+import { getTimeForToday } from "../../utils/date";
 
 const CommentItem = ({ data }) => {
   return (
@@ -9,7 +9,7 @@ const CommentItem = ({ data }) => {
         <p>{data.content}</p>
         <div>
           <DateContainer>{data.title}</DateContainer>
-          <DateContainer>{getDayMinuteCounter(data.date)}</DateContainer>
+          <DateContainer>{getTimeForToday(data.date)}</DateContainer>
         </div>
       </ItemWrapper>
     </ItemContainer>
@@ -40,8 +40,6 @@ const ItemWrapper = styled(Link)`
 `;
 
 const DateContainer = styled.div`
-  /* text-align: right; */
-  /* width: 100%; */
   margin-bottom: 0.5rem;
   margin-top: 0.5rem;
   font-size: 0.75rem;

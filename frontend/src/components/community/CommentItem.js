@@ -1,33 +1,15 @@
 import styled from "styled-components";
 import MemberBadge from "../common/MemberBadge";
 import DropdownMenu from "../common/DropdownMenu";
-import ReportModal from "../common/ReportModal";
 import { useModal } from "../../hooks/useModal";
-import { toastState } from "../../store/toast";
-import { useSetRecoilState, useRecoilState } from "recoil";
-import { getDayMinuteCounter, editComment } from "../../api/community";
+import { useRecoilState } from "recoil";
+import { getTimeForToday } from "../../utils/date";
 import ReplyDeleteModal from "./ReplyDeleteModal";
 import {
   commentState,
   checkEditState,
   replyState,
 } from "../../store/community";
-
-const ReportButton = styled.div`
-  flex: 1 0 auto;
-  margin-left: 1rem;
-  padding: 0.2rem 1rem;
-  border: 1px solid ${({ theme }) => theme.color.primaryGold};
-  border-radius: 5px;
-  font-size: 0.75rem;
-  max-height: 1.5rem;
-  max-width: 3.5rem;
-  color: ${({ theme }) => theme.color.primaryGold};
-  &:hover {
-    color: white;
-    background-color: ${({ theme }) => theme.color.primaryGold};
-  }
-`;
 
 const CommentItem = ({ data }) => {
   console.log("comment item is ", data.CONTENT);
@@ -69,7 +51,7 @@ const CommentItem = ({ data }) => {
         )}
       </TopSection>
       <p>{data.CONTENT}</p>
-      <DateContainer>{getDayMinuteCounter(data.createdAt)}</DateContainer>
+      <DateContainer>{getTimeForToday(data.createdAt)}</DateContainer>
     </ItemContainer>
   );
 };

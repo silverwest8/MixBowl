@@ -1,12 +1,11 @@
 import styled from "styled-components";
 import MemberBadge from "../common/MemberBadge";
 import DropdownMenu from "../common/DropdownMenu";
-import ReportModal from "../common/ReportModal";
 import { useModal } from "../../hooks/useModal";
 import ReplyDeleteModal from "./ReplyDeleteModal";
 import { toastState } from "../../store/toast";
 import { useSetRecoilState, useRecoilState } from "recoil";
-import { getDayMinuteCounter } from "../../api/community";
+import { getTimeForToday } from "../../utils/date";
 
 import {
   commentState,
@@ -16,7 +15,6 @@ import {
 
 const AnswerItem = ({ data }) => {
   const { openModal, closeModal } = useModal();
-  const setToastState = useSetRecoilState(toastState);
 
   const [comment, setComment] = useRecoilState(commentState);
   const [checkEdit, setCheckEdit] = useRecoilState(checkEditState);
@@ -44,7 +42,7 @@ const AnswerItem = ({ data }) => {
           <span>{data.NICKNAME}</span>
           <MemberBadge level={data.LEVEL} />
         </div>
-        <div>{getDayMinuteCounter(data.createdAt)}</div>
+        <div>{getTimeForToday(data.createdAt)}</div>
       </FirstSection>
       <div className="answer-container">
         <div className="answer-box">
@@ -64,21 +62,6 @@ const AnswerItem = ({ data }) => {
     </ItemContainer>
   );
 };
-const ReportButton = styled.div`
-  flex: 1 0 auto;
-  margin-left: 1rem;
-  padding: 0.2rem 1rem;
-  border: 1px solid ${({ theme }) => theme.color.primaryGold};
-  border-radius: 5px;
-  font-size: 0.75rem;
-  max-height: 1.5rem;
-  max-width: 3.5rem;
-  color: ${({ theme }) => theme.color.primaryGold};
-  &:hover {
-    color: white;
-    background-color: ${({ theme }) => theme.color.primaryGold};
-  }
-`;
 
 const ItemContainer = styled.li`
   display: flex;
@@ -164,9 +147,4 @@ const FirstSection = styled.div`
     width: 100%;
   }
 `;
-// const DateContainer = styled.div`
-//   text-align: right;
-//   width: 100%;
-//   margin-bottom: 0.5rem;
-// `;
 export default AnswerItem;
