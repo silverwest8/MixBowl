@@ -139,11 +139,6 @@ const StyledTextField = styled(TextField)({
   "& label.Mui-focused": {
     outline: "none",
   },
-  input: {
-    "&::placeholder": {
-      color: "#cfcfcf !important",
-    },
-  },
   outline: "none",
 });
 
@@ -227,7 +222,7 @@ const CommunityPostingPage = () => {
   ] = useRecoilState(AddPostingState);
   const files = useRecoilValue(imageFileListState);
   const navigate = useNavigate();
-  const location = useLocation();
+  const { state } = useLocation();
   const defaultFiles = [];
   const recommendationTab = () => {
     setTab("추천 이유");
@@ -282,11 +277,8 @@ const CommunityPostingPage = () => {
     setWarning("");
     setPostingState((prev) => ({
       ...prev,
-      addCNO: value.num,
-    }));
-    setPostingState((prev) => ({
-      ...prev,
       addTitle: value.name,
+      addCNO: value.num,
     }));
   };
 
@@ -295,13 +287,25 @@ const CommunityPostingPage = () => {
     try {
       console.log("get Recipe");
       axios.defaults.headers.common.Authorization = token;
+      let selected;
       const { data } = await axios.get(`/api/communities/list/cocktails`);
       if (data.success) {
         const newList = data.data.map((item) => {
           const [name, num] = item.split("/");
+          if (state && state.cocktail && state.cocktail === num) {
+            console.log(state.cocktail, num);
+            selected = { name, num };
+          }
           return { name, num };
         });
         setRecipes(newList);
+        if (selected) {
+          setPostingState((prev) => ({
+            ...prev,
+            addCNO: selected.num,
+            addTitle: selected.name,
+          }));
+        }
       }
     } catch (error) {
       console.log("err is ", error);
@@ -317,13 +321,8 @@ const CommunityPostingPage = () => {
 
   useEffect(() => {
     GetRecipe();
-    if (location.state && location.state.category) {
-      const { category } = location.state;
-      if (category === 1) recommendationTab();
-      else if (category === 2) qnaTab();
-      else if (category === 3) reviewTab();
-      else if (category === 4) freeTab();
-    }
+    console.log(location.state);
+    if (state && state.cocktail) reviewTab();
     console.log("recipes is ", recipes);
   }, []);
   const setToastState = useSetRecoilState(toastState);
@@ -418,6 +417,7 @@ const CommunityPostingPage = () => {
                 onChange={(event, value) => {
                   onChangeAutoComplete(event, value);
                 }}
+                value={{ num: addCNO, name: addTitle }}
                 sx={{
                   width: 300,
                   "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
@@ -446,6 +446,11 @@ const CommunityPostingPage = () => {
                     className="selection"
                     placeholder="칵테일 이름을 선택해주세요."
                     fullWidth
+                    sx={{
+                      "&::placeholder": {
+                        color: "#cfcfcf",
+                      },
+                    }}
                   />
                 )}
                 PaperComponent={(props) => (

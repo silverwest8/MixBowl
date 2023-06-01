@@ -33,7 +33,7 @@ const RecipeComment = () => {
         </p>
         <PostButton
           onClick={() =>
-            navigate("/community/posting", { state: { category: 3 } })
+            navigate("/community/posting", { state: { cocktail: id } })
           }
         >
           <FaPen className="pen" /> 작성하기
