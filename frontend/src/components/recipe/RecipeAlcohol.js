@@ -46,7 +46,7 @@ const RecipeAlcohol = ({ handleClose }) => {
     <Modal content="원하는 도수를 선택하세요" handleClose={handleClose}>
       <Button onClick={handleClick("낮음")}>
         {alcohol === "낮음" ? <FaCheckCircle></FaCheckCircle> : null} 낮음 (0
-        ~15)
+        ~5)
       </Button>
       <Button onClick={handleClick("중간")}>
         {alcohol === "중간" ? <FaCheckCircle></FaCheckCircle> : null} 중간 (6 ~

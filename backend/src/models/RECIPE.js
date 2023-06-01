@@ -18,6 +18,10 @@ export default class RECIPE extends Model {
       allowNull: false,
       primaryKey: true
     },
+    NAME_EN: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
     AMOUNT: {
       type: DataTypes.STRING(45),
       allowNull: false
