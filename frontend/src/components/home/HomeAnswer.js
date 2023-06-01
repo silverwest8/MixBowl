@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import Slider from "../common/Slider";
 import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
+import { getTimeForToday } from "../../utils/date";
 
 const HomeAnswer = () => {
   const [data, setData] = useState(null);
@@ -46,7 +47,7 @@ const HomeAnswer = () => {
                             @{item.USER.nickname}
                             <MemberBadge level={item.USER.level}></MemberBadge>
                           </div>
-                          <p className="time">{item.date.slice(0, 10)}</p>
+                          <p className="time">{getTimeForToday(item.date)}</p>
                         </div>
                       </ItemBox>
                     </SwiperSlide>
