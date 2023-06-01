@@ -1,0 +1,32 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.6/dist/web/static/pretendard.css");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto,
+    "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
+    "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    sans-serif;
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  height: 100vh;
+  background-color: #f9fafb;
+}
+
+body {
+  height: 100%;
+}
+
+#__next {
+  height: 100%;
+}
+
+.tremor-TextInput-errorMessage {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  margin-top: 2px;
+}

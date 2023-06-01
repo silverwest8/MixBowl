@@ -37,13 +37,16 @@ const NameChangeModal = ({ handleClose, checkname }) => {
       });
     },
     onSuccess: () => {
+      handleClose();
       setToastState({
         show: true,
         message: "닉네임 수정이 완료되었습니다.",
         type: "success",
+        ms: 3000,
       });
-      handleClose();
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     },
   });
 

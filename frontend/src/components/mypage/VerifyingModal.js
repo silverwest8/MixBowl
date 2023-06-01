@@ -74,12 +74,16 @@ const VerifyingModal = ({ handleClose }) => {
     },
     onSuccess: (e) => {
       if (e.bartender) {
+        handleClose();
         setToastState({
           show: true,
           message: "인증에 성공했습니다.",
           type: "success",
+          ms: 3000,
         });
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } else {
         setToastState({
           show: true,
@@ -87,7 +91,6 @@ const VerifyingModal = ({ handleClose }) => {
           type: "error",
         });
       }
-      handleClose();
     },
   });
   const onChange = (e) => {
@@ -154,7 +157,6 @@ const VerifyingModal = ({ handleClose }) => {
           <Input
             placeholder="자격증 번호 입력"
             onChange={onChange}
-            type="number"
             value={qualification}
             name="qualification"
           />

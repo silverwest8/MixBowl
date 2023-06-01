@@ -16,13 +16,15 @@ const ReplyDeleteModal = ({ handleClose, id }) => {
       });
     },
     onSuccess: () => {
+      handleClose();
       setToastState({
         show: true,
         message: "삭제가 완료되었습니다.",
         type: "success",
       });
-      handleClose();
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     },
   });
   return (
