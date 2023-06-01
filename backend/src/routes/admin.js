@@ -80,11 +80,13 @@ router.get('/report', checkAdmin, async (req, res) => {
       const data = [];
       for (let i = 0; i < reports.length; i++) {
         const report = REPORTS.find((item) => item.id === reports[i].REPORT);
-        if (!report) continue;
         const cocktail = await db.COCKTAIL.findByPk(reports[i].CNO, {
           attributes: ['CNO', 'NAME'],
         });
-        if (!cocktail) continue;
+        if (!report || !cocktail) {
+          await reports[i].destroy();
+          continue;
+        }
         const index = data.findIndex((item) => item.id === cocktail.CNO);
         if (index === -1) {
           data.push({
@@ -131,11 +133,13 @@ router.get('/report', checkAdmin, async (req, res) => {
       const data = [];
       for (let i = 0; i < reports.length; i++) {
         const report = REPORTS.find((item) => item.id === reports[i].REPORT);
-        if (!report) continue;
         const post = await db.POST.findByPk(reports[i].PNO, {
           attributes: ['PNO', 'TITLE'],
         });
-        if (!post) continue;
+        if (!report || !post) {
+          await reports[i].destroy();
+          continue;
+        }
         const index = data.findIndex((item) => item.id === post.PNO);
         if (index === -1) {
           data.push({
