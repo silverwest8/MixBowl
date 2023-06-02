@@ -501,7 +501,7 @@ const CommunityPostingPage = () => {
             <ImageUpload defaultFiles={defaultFiles} />
           </ImageSection>
           <BottomSection>
-            <Button className="cancel" to="/community">
+            <Button className="cancel" onClick={() => navigate(-1)}>
               취소
             </Button>
             <Button className="ok" onClick={() => handleSubmit()}>

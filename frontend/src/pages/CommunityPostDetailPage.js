@@ -373,9 +373,10 @@ const CommunityPostDetailPage = () => {
         <EntireSection>
           <TopSection>
             <TopMost>
-              <Link to={"/community/board"}>
-                <MdArrowBackIosNew className="icon" />
-              </Link>
+              <MdArrowBackIosNew
+                className="icon"
+                onClick={() => navigate(-1)}
+              />
               <span>
                 {post.category === 2
                   ? "질문과 답변"
