@@ -52,7 +52,7 @@ router.get('/recipes/:page', checkAccess, async (req, res) => {
           level: recipes.UNO_USER.LEVEL,
         },
       };
-      console.log(temp);
+      // console.log(temp);
       list.push(temp);
       // console.log(like[i].CNO_COCKTAIL);
     }
@@ -122,7 +122,7 @@ router.get('/posts/:page', checkAccess, async (req, res) => {
         date: post.createdAt,
       };
       // console.log(post);
-      console.log(temp);
+      // console.log(temp);
       list.push(temp);
     }
     return res.status(200).json({
@@ -169,7 +169,7 @@ router.get('/replies/:page', checkAccess, async (req, res) => {
         date: reply.createdAt,
       };
       // console.log(reply);
-      console.log(temp);
+      // console.log(temp);
       list.push(temp);
     }
     return res.status(200).json({
@@ -235,7 +235,7 @@ router.get('/reviews/:page', checkAccess, async (req, res) => {
         keyword: keyword,
       };
       // console.log(review);
-      console.log(temp);
+      // console.log(temp);
       list.push(temp);
     }
     return res.status(200).json({

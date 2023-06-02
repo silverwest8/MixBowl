@@ -65,7 +65,7 @@ const upload = multer({
 router.post('/like/:pno', checkAccess, async (req, res) => {
   const uno = req.decoded.unum;
   const pno = req.params.pno;
-  console.log(uno, pno);
+  // console.log(uno, pno);
   try {
     const isPostLike = await sql.makePostLike(uno, pno);
     if (isPostLike === 3) {
@@ -86,7 +86,7 @@ router.post('/like/:pno', checkAccess, async (req, res) => {
 router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   try {
     const post = await sql.postCommunity(req);
-    console.log('maybe', post);
+    // console.log('maybe', post);
     //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
     req.files.map(async (data) => {
       console.log('폼에 정의된 필드명 : ', data.fieldname);
@@ -109,6 +109,12 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
 });
 router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
+  if (pno == "undefined") {
+    return res.status(400).send({
+      success: false,
+      message: '유효하지 않은 postId입니다.',
+    });
+  }
   const postData = await POST.findByPk(Number(pno));
   if (postData === null) {
     return res.status(400).send({
@@ -117,7 +123,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
     });
   }
   const user = await USER.findByPk(postData.dataValues.UNO);
-  console.log(user);
+  // console.log(user);
   let isWriter = false;
   const likePost = await POST_LIKE.findAll({
     attributes: ['PNO', [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
@@ -144,11 +150,11 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
       : await POST_LIKE.findAll({
           where: { UNO: req.user.UNO, PNO: postData.PNO },
         });
-  console.log(isLike);
+  // console.log(isLike);
   if (isLike.length !== 0) {
     isUserLike = true;
   }
-  console.log(isUserLike);
+  // console.log(isUserLike);
   const reply_arr = [];
   for (const val of replies) {
     const user = await USER.findByPk(val.dataValues.UNO);
@@ -171,7 +177,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
     };
     reply_arr.push(val.dataValues.UNO_USER);
   }
-  console.log(reply_arr);
+  // console.log(reply_arr);
   const imageIdArr = [];
   const imagesPromise = await IMAGE_COMMUNITY.findAll({
     where: {
@@ -272,7 +278,7 @@ router.post(
       //get으로 다 포스트 전체 내용 받아오고 다시 전달
       if (postData.dataValues.UNO === uno) {
         const post = await sql.changeCommunity(req, pno);
-        console.log('post', post);
+        // console.log('post', post);
         await sql.postImage(req, post);
         res.send({
           success: true,
@@ -294,7 +300,6 @@ router.post(
   }
 );
 router.delete('/:postId', checkAccess, sql.deleteImage, async (req, res) => {
-  console.log('hi');
   try {
     await sql.deletePost(req);
     return res
@@ -440,7 +445,7 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
           : await POST_LIKE.findAll({
               where: { UNO: req.user.UNO, PNO: val.dataValues.PNO },
             });
-      console.log(isLike);
+      // console.log(isLike);
       if (isLike.length !== 0) {
         isUserLike = true;
       }
@@ -459,7 +464,7 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
-      console.log('val', val.dataValues.UNO);
+      // console.log('val', val.dataValues.UNO);
       let isWriter = false;
       if (req.user !== undefined) {
         if (req.user.UNO === val.dataValues.UNO) {
@@ -486,7 +491,7 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
       list.push(val.dataValues);
     }
 
-    console.log(list);
+    // console.log(list);
     res.send({
       success: true,
       message: 'Post List loaded successfully',
@@ -590,7 +595,7 @@ router.get(
             : await POST_LIKE.findAll({
                 where: { UNO: req.user.UNO, PNO: val.dataValues.PNO },
               });
-        console.log(isLike);
+        // console.log(isLike);
         if (isLike.length !== 0) {
           isUserLike = true;
         }
@@ -633,7 +638,7 @@ router.get(
         list.push(val.dataValues);
       }
 
-      console.log(list);
+      // console.log(list);
       res.send({
         success: true,
         message: 'Post List loaded successfully',
@@ -668,12 +673,12 @@ router.get('/list/cocktails', async (req, res) => {
   try {
     const cocktailNames = [];
     await sql.getCocktails().then((value) => {
-      console.log(value);
+      // console.log(value);
       for (let i = 0; i < value.length; i++) {
         cocktailNames.push(value[i].NAME + '/' + value[i].CNO);
       }
     });
-    console.log(cocktailNames);
+    // console.log(cocktailNames);
     res.json({
       success: true,
       message: 'get All Cocktails in cocktail DB',
@@ -729,14 +734,14 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
         imageId = image.IMAGE_ID;
       }
       let isUserLike = false;
-      console.log(val);
+      // console.log(val);
       const isLike =
         req.user === undefined
           ? []
           : await POST_LIKE.findAll({
               where: { UNO: req.user.UNO, PNO: val.dataValues.PNO_POST.PNO },
             });
-      console.log(isLike);
+      // console.log(isLike);
       if (isLike.length !== 0) {
         isUserLike = true;
       }
@@ -755,7 +760,7 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       data['isWriter'] = isWriter;
       data['isUserLike'] = isUserLike;
       data['cocktailLike'] = -1;
-      console.log(val);
+      // console.log(val);
       if (postInfo.LIKE !== null) {
         data['cocktailLike'] = postInfo.LIKE;
       }
@@ -774,12 +779,12 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
       } else {
         data['REPLY'] = 0;
       }
-      console.log(data);
+      // console.log(data);
 
       list.push(data);
     }
 
-    console.log(list);
+    // console.log(list);
     res.send({
       success: true,
       message: 'Post List loaded successfully',

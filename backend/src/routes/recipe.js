@@ -501,7 +501,7 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
       order: [[{ model: db.RECIPE, as: 'RECIPEs' }, 'AMOUNT', 'DESC']],
     });
     let liked = false;
-    console.log(cocktail.COCKTAIL_LIKEs);
+    // console.log(cocktail && cocktail.COCKTAIL_LIKEs);
     for (let i = 0; i < cocktail.COCKTAIL_LIKEs.length; i++) {
       if (cocktail.COCKTAIL_LIKEs[i].UNO == req.user.UNO) {
         liked = true;
@@ -599,7 +599,7 @@ router.get('/image/:cocktailId', async (req, res) => {
     const cocktailId = req.params.cocktailId;
     const cocktail = await db.COCKTAIL.findByPk(cocktailId);
     // 이미지 없으면 로고 이미지 보내줌
-    if (!cocktail.IMAGE_PATH) {
+    if (!cocktail || !cocktail.IMAGE_PATH) {
       const data = fs.readFileSync('uploads/cocktailImage/logo.png');
       res.writeHead(200, { 'Content-Type': 'image/jpg' }); //보낼 헤더를 만듬
       res.write(data);
