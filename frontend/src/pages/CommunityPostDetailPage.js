@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Title from "../components/common/Title";
 import { FaThumbsUp } from "react-icons/fa";
@@ -236,7 +236,7 @@ const CommunityPostDetailPage = () => {
     if (token) {
       GetPost();
     } else {
-      navigate(`/login?return_url=/community/board`);
+      navigate(`/login?return_url=/community/${id}`);
     }
   }, []);
 

@@ -231,12 +231,18 @@ const RecipeBox = styled.div`
     align-items: center;
     gap: 0.3rem;
     color: ${({ theme }) => theme.color.primaryGold};
+    @media screen and (max-width: 480px) {
+      gap: 0.35rem;
+    }
   }
   .Comment {
     display: flex;
     align-items: center;
     gap: 0.3rem;
     color: ${({ theme }) => theme.color.lightGray};
+    @media screen and (max-width: 480px) {
+      gap: 0.35rem;
+    }
   }
 `;
 
