@@ -99,7 +99,7 @@ router.get('/posts/:page', checkAccess, async (req, res) => {
           PNO: post.PNO,
         },
       });
-      console.log(isUserLiked);
+      // console.log(isUserLiked);
       let temp = {
         postId: post.PNO,
         images,
