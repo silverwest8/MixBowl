@@ -1,5 +1,3 @@
-// import SearchBar from "../components/common/SearchBar";
-// import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
 import FreeListItem from "../components/community/FreeListItem";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,87 +12,6 @@ import { menuState, searchState, AddPostingState } from "../store/community";
 import axios from "axios";
 import LoadingPage from "./Loading";
 import CommunitySearch from "../components/community/CommunitySearch";
-
-// const dummyData = [
-//   // TODO : 이미지 처리
-//   {
-//     id: 1,
-//     title: "두 번째 제목 예시",
-//     category: "free",
-//     uname: "username10",
-//     level: 2,
-//     likes: 0,
-//     comments: 100,
-//     date: "5일 전",
-//     // TODO : 나중에는 date 타입으로 받아올것
-//     maintext:
-//       "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-//   },
-//   {
-//     id: 2,
-//     // qna는 title 입력값을 아예 안 받을 것인지?
-//     maintext:
-//       "질문글 예시입니다. 이런식으로 질문이 bold체로 다 들어가야 되겠죠. 질문의 경우 title이 길어지는 것으로 할까요 아니면 본문을 굵게 표현하는 것으로 할까요?",
-//     category: "qna",
-//     uname: "한글닉네임열글자라면",
-//     level: 1,
-//     liked: true,
-//     likes: 1,
-//     comments: 0,
-//     date: "2일 전",
-//   },
-//   {
-//     id: 3,
-//     title: "칵테일 추천글 예시",
-//     category: "recommendation",
-//     uname: "recommend",
-//     level: 4,
-//     likes: 3,
-//     comments: 100,
-//     date: "5달 전",
-//     maintext:
-//       "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-//   },
-//   {
-//     id: 4,
-//     title: "칵테일 리뷰 예시",
-//     category: "review",
-//     uname: "recommend",
-//     level: 4,
-//     recommended: false,
-//     likes: 3,
-//     comments: 100,
-//     date: "1년 전",
-//     maintext:
-//       "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-//   },
-//   {
-//     id: 5,
-//     // qna는 title 입력값을 아예 안 받을 것인지?
-//     maintext:
-//       "질문글 예시입니다. 답변이 있을 때와 없을 떄에 따라서 상단에 표시되는지가 달라질 것입니다",
-//     category: "qna",
-//     uname: "한글",
-//     level: 1,
-//     liked: false,
-//     likes: 0,
-//     comments: 1,
-//     date: "2일 전",
-//   },
-//   {
-//     id: 6,
-//     title: "칵테일 리뷰 예시 ",
-//     category: "review",
-//     uname: "recommend",
-//     recommended: true,
-//     level: 4,
-//     likes: 3,
-//     comments: 2,
-//     date: "1년 전",
-//     maintext:
-//       "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-//   },
-// ];
 
 const Background = styled.div`
   color: white;
@@ -217,21 +134,16 @@ const WritingButton = styled(Link)`
 `;
 
 const CommunityBoardPage = () => {
-  // const navigate = useNavigate();
   const search = useRecoilValue(searchState);
   const [menu, setMenu] = useRecoilState(menuState);
   const addPostingState = useResetRecoilState(AddPostingState);
   const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem("access_token");
   const { ref, inView } = useInView();
-  // const [input, setInput] = useState("");
-  // const [postings, setPostings] = useState([]);
-  // const searchParams = new URLSearchParams(useLocation().search);
   const [menutext, setMenutext] = useState("전체");
   const setTabQna = () => {
     setMenutext("질문과 답변");
     setMenu("question");
-    // navigate(`/community/board?category=question`);
   };
   const setTabRecommendation = () => {
     setMenutext("칵테일 추천");
@@ -350,7 +262,6 @@ const CommunityBoardPage = () => {
           <LoadingPage />
         ) : (
           <MainSection>
-            {/* TODO: 질문에 답변없을때 상단에 올리기 */}
             <section>
               {isSuccess &&
                 data.pages.map((page) =>

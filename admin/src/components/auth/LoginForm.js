@@ -44,7 +44,7 @@ export default function LoginForm() {
     });
     setLoading(true);
     try {
-      const { data } = await axios.post("/api/admin/login", {
+      const { data } = await axios.post("/api/login", {
         email,
         password,
       });

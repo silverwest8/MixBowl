@@ -1,4 +1,3 @@
-// import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -14,13 +13,12 @@ import ReportModal from "../components/common/ReportModal";
 import { useModal } from "../hooks/useModal";
 import { toastState } from "../store/toast";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
-import { getAccessToken } from "../utils/token";
 import {
-  getDayMinuteCounter,
   reportCommunity,
   registerComment,
   editComment,
 } from "../api/community";
+import { getTimeForToday } from "../utils/date";
 import {
   commentState,
   CommunityReportState,
@@ -224,7 +222,6 @@ const CommunityPostDetailPage = () => {
   const token = localStorage.getItem("access_token");
   const GetPost = async () => {
     try {
-      // setLiked(postData[id].liked);
       axios.defaults.headers.common.Authorization = token;
       const { data } = await axios.get(`/api/communities/${id}`);
       setPost(data);
@@ -269,7 +266,7 @@ const CommunityPostDetailPage = () => {
   const submitReport = async () => {
     try {
       axios.defaults.headers.common.Authorization = token;
-      reportCommunity(post.postId, reportNum).then((response) => {
+      reportCommunity(post.postId, Number(reportNum) + 1).then((response) => {
         if (response.success) {
           setTimeout(() => {
             setToastState({
@@ -292,9 +289,6 @@ const CommunityPostDetailPage = () => {
           closeModal();
         }
       });
-      // const { data } = await axios.post(
-      //   `/api/communities/report/${post.postId}`
-      // );
     } catch (error) {
       console.log("report error is ", error);
     }
@@ -447,9 +441,7 @@ const CommunityPostDetailPage = () => {
                 ))}
             </ImageSection>
             <BottomInfo>
-              <span>
-                {post.createdAt && getDayMinuteCounter(post.createdAt)}
-              </span>
+              <span>{post.createdAt && getTimeForToday(post.createdAt)}</span>
               <div>
                 <FaThumbsUp
                   className={liked ? "icon liked" : "icon"}

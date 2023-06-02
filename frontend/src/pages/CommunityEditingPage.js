@@ -7,14 +7,11 @@ import ImageUpload from "../components/common/ImageUpload";
 import { AiFillHeart } from "react-icons/ai";
 import { ImSad } from "react-icons/im";
 import { Link, useNavigate, useParams } from "react-router-dom";
-// import AutoCompleteCocktail from "../components/community/AutoCompleteCocktail";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { imageFileListState } from "../store/imageFile";
-import { Box } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
-import { getAccessToken } from "../utils/token";
 import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
 import { AddPostingState } from "../store/community";
 import { toastState } from "../store/toast";
@@ -139,11 +136,6 @@ const StyledTextField = styled(TextField)({
     outline: "none",
   },
   outline: "none",
-});
-
-const StyledOptionBox = styled(Box)({
-  color: "white",
-  backgroundColor: `${({ theme }) => theme.color.darkGray}`,
 });
 
 const ImageSection = styled.div`
@@ -321,7 +313,6 @@ const CommunityEditingPage = () => {
           files.push(file);
         }
         setDefaultFiles(files);
-        //   setUserInfo(userInfoResponse.data.data);
       }
     } catch (error) {
       console.log("err is ", error);
