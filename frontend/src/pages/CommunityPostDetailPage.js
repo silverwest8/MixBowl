@@ -29,6 +29,7 @@ import PostDeleteModal from "../components/community/PostDeleteModal";
 import axios from "axios";
 import ImageSliderModal from "../components/common/ImageSliderModal";
 import { getCommunityImageUrl } from "../utils/image";
+import LoadingPage from "./Loading";
 
 const Background = styled.div`
   color: white;
@@ -209,6 +210,7 @@ const CommunityPostDetailPage = () => {
   const navigate = useNavigate();
 
   const id = params.id;
+  const [isLoading, setIsLoading] = useState(true);
   const [post, setPost] = useState([]);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
@@ -235,8 +237,9 @@ const CommunityPostDetailPage = () => {
   useEffect(() => {
     if (token) {
       GetPost();
+      setIsLoading(false);
     } else {
-      navigate(`/login?return_url=/community/${post.postId}`);
+      navigate(`/login?return_url=/community/board`);
     }
   }, []);
 
@@ -370,130 +373,135 @@ const CommunityPostDetailPage = () => {
     >
       <Title title="커뮤니티" />
       <Background>
-        <EntireSection>
-          <TopSection>
-            <TopMost>
-              <Link to={"/community/board"}>
-                <MdArrowBackIosNew className="icon" />
-              </Link>
-              <span>
-                {post.category === 2
-                  ? "질문과 답변"
-                  : post.category === 4
-                  ? "자유 게시글"
-                  : post.category === 3
-                  ? "칵테일 리뷰"
-                  : post.category === 1
-                  ? "칵테일 추천"
-                  : ""}
-              </span>
-            </TopMost>
-            <Username>
-              <span>{post.username}</span>
-              <MemberBadge level={post.userlevel} />
-            </Username>
-            <TitleContainer className={post.category === 2 ? "none" : ""}>
-              <span>{post.title}</span>
-              {post.isWriter ? (
-                <DropdownMenu
-                  handlers={[
-                    () => onClickEditMenu(post.postId),
-                    () => onClickDeleteMenu(post.postId),
-                  ]}
+        {isLoading ? (
+          <LoadingPage />
+        ) : (
+          <EntireSection>
+            <TopSection>
+              <TopMost>
+                <MdArrowBackIosNew
+                  className="icon"
+                  onClick={() => navigate(-1)}
                 />
-              ) : (
-                <ReportButton
-                  onClick={() =>
-                    openModal(ReportModal, {
-                      handleClose: closeModal,
-                      onSubmit: submitReport,
-                    })
-                  }
-                >
-                  신고
-                </ReportButton>
-              )}
-            </TitleContainer>
-          </TopSection>
-          <MainSection>
-            <div>{post.content}</div>
-            <ImageSection>
-              {post.images &&
-                post.images.slice(0, 3).map((imageId, index) => (
-                  <div
-                    key={imageId}
+                <span>
+                  {post.category === 2
+                    ? "질문과 답변"
+                    : post.category === 4
+                    ? "자유 게시글"
+                    : post.category === 3
+                    ? "칵테일 리뷰"
+                    : post.category === 1
+                    ? "칵테일 추천"
+                    : ""}
+                </span>
+              </TopMost>
+              <Username>
+                <span>{post.username}</span>
+                <MemberBadge level={post.userlevel} />
+              </Username>
+              <TitleContainer className={post.category === 2 ? "none" : ""}>
+                <span>{post.title}</span>
+                {post.isWriter ? (
+                  <DropdownMenu
+                    handlers={[
+                      () => onClickEditMenu(post.postId),
+                      () => onClickDeleteMenu(post.postId),
+                    ]}
+                  />
+                ) : (
+                  <ReportButton
                     onClick={() =>
-                      onClickImage({
-                        images: post.images.map((imageId) =>
-                          getCommunityImageUrl(imageId)
-                        ),
-                        initialImageIndex: index,
+                      openModal(ReportModal, {
+                        handleClose: closeModal,
+                        onSubmit: submitReport,
                       })
                     }
                   >
-                    <img src={getCommunityImageUrl(imageId)} />
-                    {index === 2 && post.images.length - index - 1 > 0 && (
-                      <div className="box">
-                        + {post.images.length - index - 1}
-                      </div>
-                    )}
-                  </div>
-                ))}
-            </ImageSection>
-            <BottomInfo>
-              <span>{post.createdAt && getTimeForToday(post.createdAt)}</span>
-              <div>
-                <FaThumbsUp
-                  className={liked ? "icon liked" : "icon"}
-                  onClick={changeLike}
-                />
-                {likeCount}
-              </div>
-            </BottomInfo>
-            <hr />
-          </MainSection>
-          <CommentSection>
-            <Textarea
-              placeholder="당신의 의견을 댓글로 남겨 주세요!"
-              rows={3}
-              onChange={onChangeComment}
-              value={comment}
-              Button={
-                <CommentButton
-                  type="button"
-                  onClick={() => {
-                    editOrPost(replyId);
-                  }}
-                >
-                  {checkEdit ? "수정 완료" : "댓글 등록"}
-                </CommentButton>
-              }
-            />
-            {checkEdit && (
-              <MiniButton onClick={() => cancelEdit()}>취소하기</MiniButton>
-            )}
-            {post.category === 2 ? (
-              <ul>
-                {post.replies &&
-                  post.replies.map((el) => (
-                    <AnswerItem data={el} key={el.replyId} />
+                    신고
+                  </ReportButton>
+                )}
+              </TitleContainer>
+            </TopSection>
+            <MainSection>
+              <div>{post.content}</div>
+              <ImageSection>
+                {post.images &&
+                  post.images.slice(0, 3).map((imageId, index) => (
+                    <div
+                      key={imageId}
+                      onClick={() =>
+                        onClickImage({
+                          images: post.images.map((imageId) =>
+                            getCommunityImageUrl(imageId)
+                          ),
+                          initialImageIndex: index,
+                        })
+                      }
+                    >
+                      <img src={getCommunityImageUrl(imageId)} />
+                      {index === 2 && post.images.length - index - 1 > 0 && (
+                        <div className="box">
+                          + {post.images.length - index - 1}
+                        </div>
+                      )}
+                    </div>
                   ))}
-              </ul>
-            ) : (
-              <ul>
-                {post.replies &&
-                  post.replies.map((el) => (
-                    <CommentItem
-                      data={el}
-                      key={el.replyId}
-                      comment={comment}
-                      setComment={setComment}
-                    />
-                  ))}
-              </ul>
-            )}
-          </CommentSection>
-        </EntireSection>
+              </ImageSection>
+              <BottomInfo>
+                <span>{post.createdAt && getTimeForToday(post.createdAt)}</span>
+                <div>
+                  <FaThumbsUp
+                    className={liked ? "icon liked" : "icon"}
+                    onClick={changeLike}
+                  />
+                  {likeCount}
+                </div>
+              </BottomInfo>
+              <hr />
+            </MainSection>
+            <CommentSection>
+              <Textarea
+                placeholder="당신의 의견을 댓글로 남겨 주세요!"
+                rows={3}
+                onChange={onChangeComment}
+                value={comment}
+                Button={
+                  <CommentButton
+                    type="button"
+                    onClick={() => {
+                      editOrPost(replyId);
+                    }}
+                  >
+                    {checkEdit ? "수정 완료" : "댓글 등록"}
+                  </CommentButton>
+                }
+              />
+              {checkEdit && (
+                <MiniButton onClick={() => cancelEdit()}>취소하기</MiniButton>
+              )}
+              {post.category === 2 ? (
+                <ul>
+                  {post.replies &&
+                    post.replies.map((el) => (
+                      <AnswerItem data={el} key={el.replyId} />
+                    ))}
+                </ul>
+              ) : (
+                <ul>
+                  {post.replies &&
+                    post.replies.map((el) => (
+                      <CommentItem
+                        data={el}
+                        key={el.replyId}
+                        comment={comment}
+                        setComment={setComment}
+                      />
+                    ))}
+                </ul>
+              )}
+            </CommentSection>
+          </EntireSection>
+        )}
       </Background>
     </main>
   );
