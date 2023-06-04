@@ -408,6 +408,9 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
               },
             },
           ],
+          HIDE: {
+            [Sequelize.Op.not]: 1,
+          },
         },
       });
     } else {
@@ -415,6 +418,11 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         order: [['createdAt', 'DESC']],
         limit: limit,
         offset: offset,
+        where: {
+          HIDE: {
+            [Sequelize.Op.not]: 1,
+          },
+        },
       });
     }
     for (const val of posts) {
@@ -549,6 +557,9 @@ router.get(
                 ],
               },
             ],
+            HIDE: {
+              [Sequelize.Op.not]: 1,
+            },
           },
           order: [['createdAt', 'DESC']],
           limit: limit,
@@ -556,7 +567,12 @@ router.get(
         });
       } else {
         posts = await POST.findAll({
-          where: { category: category },
+          where: {
+            category: category,
+            HIDE: {
+              [Sequelize.Op.not]: 1,
+            },
+          },
           order: [['createdAt', 'DESC']],
           limit: limit,
           offset: offset,
@@ -712,6 +728,9 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
             createdAt: {
               [Op.lt]: oneWeekAgo,
             },
+            HIDE: {
+              [Sequelize.Op.not]: 1,
+            },
           },
         },
       ],
@@ -811,11 +830,18 @@ router.post('/report/:postId', checkAccess, async (req, res) => {
         REPORT: report,
       },
     });
-    console.log('hi');
     if (created) {
-      const count = await POST_REPORT.findAll({
-        attributes: [[sequelize.fn('COUNT', sequelize.col('PNO'))]],
+      const count = await POST_REPORT.count({
+        where: { PNO: postId },
       });
+      if (count >= 5) {
+        await POST.update(
+          {
+            HIDE: 1,
+          },
+          { where: { PNO: postId } }
+        );
+      }
       return res.status(200).json({
         success: true,
         message: 'Post Report 성공',
