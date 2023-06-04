@@ -3,7 +3,7 @@
 import express from 'express';
 import { db, sequelize } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
-import checkTokenYesAndNo from "../middleware/checkTokenYesAndNo"
+import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 import axios from 'axios';
 import multer from 'multer';
 import fs from 'fs';
@@ -96,7 +96,11 @@ router.post('/', checkAccess, upload.single('image'), async (req, res) => {
       }
     }
 
-    res.status(200).json({ success: true, message: 'Recipe post 성공', cocktailId: cocktail.CNO });
+    res.status(200).json({
+      success: true,
+      message: 'Recipe post 성공',
+      cocktailId: cocktail.CNO,
+    });
   } catch (error) {
     logger.error(error);
     // 중간 실패시 COCKTAIL, COLOR, RECIPE 모두 삭제해줘야 함
@@ -183,7 +187,7 @@ router.post(
       const data = JSON.parse(req.body.data);
       console.log(data);
       console.log(req.file);
-      console.log("for check", data);
+      console.log('for check', data);
       const cocktail = await db.COCKTAIL.findByPk(cocktailId, {
         attributes: ['CNO', 'NAME', 'INSTRUCTION', 'IMAGE_PATH'],
         include: [
@@ -303,7 +307,20 @@ router.get('/list/filter/:page', checkTokenYesAndNo, async (req, res) => {
       : [];
     const search = req.query.search ? req.query.search : null;
     const sort = req.query.sort == 'new' ? 'createdAt' : 'LIKECOUNT';
-    console.log(alcoholic, color, search, sort);
+    console.log(
+      'page:',
+      page,
+      'offset:',
+      offset,
+      'alcoholic:',
+      alcoholic,
+      'color:',
+      color,
+      'search:',
+      search,
+      'sort:',
+      sort
+    );
     let list = [];
 
     const colorFilter = await db.COCKTAIL.findAll({
@@ -388,6 +405,11 @@ router.get('/list/filter/:page', checkTokenYesAndNo, async (req, res) => {
         alcoholicArray.includes(all[i].CNO) &&
         searchArray.includes(all[i].CNO)
       ) {
+        const hide = await db.COCKTAIL.findByPk(all[i].CNO);
+        if (hide.HIDE) {
+          // console.log('hide?', hide.HIDE);
+          continue;
+        }
         filter.push(all[i].CNO);
       }
     }
@@ -423,13 +445,16 @@ router.get('/list/filter/:page', checkTokenYesAndNo, async (req, res) => {
       group: ['COCKTAIL.CNO'],
       offset,
       limit,
-      order: [[sort, 'DESC']],
+      order: [
+        [sort, 'DESC'],
+        ['NAME', 'ASC'],
+      ],
       subQuery: false,
     });
     // console.log(result[0].dataValues.LIKECOUNT);
     console.log('result', result.length);
     for (let i = 0; i < result.length; i++) {
-      // console.log(result[i]);
+      // console.log(result[i].CNO);
       const user = await db.USER.findByPk(result[i].UNO);
       let temp = {
         id: result[i].CNO,
@@ -439,12 +464,16 @@ router.get('/list/filter/:page', checkTokenYesAndNo, async (req, res) => {
         USER: {
           nickname: user.NICKNAME,
           level: user.LEVEL,
-          iswriter: req.user ? (req.user.UNO == user.UNO ? true : false) : false
+          iswriter: req.user
+            ? req.user.UNO == user.UNO
+              ? true
+              : false
+            : false,
         },
       };
       list.push(temp);
     }
-    console.log('list : ', list.length);
+    // console.log('list : ', list.length);
 
     return res.status(200).json({
       success: true,
@@ -521,13 +550,13 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
       liked: liked,
     };
     // color
-    console.log(color);
+    // console.log(color);
     for (let i = 0; i < color.length; i++) {
       data.color.push(color[i].COLOR);
     }
 
     // recipe
-    console.log(recipe);
+    // console.log(recipe);
     for (let i = 0; i < recipe.length; i++) {
       const temp = {
         name: recipe[i].NAME,
@@ -537,7 +566,7 @@ router.get('/detail/:cocktailId', checkAccess, async (req, res) => {
       data.ingred.push(temp);
     }
 
-    console.log(data);
+    // console.log(data);
 
     // color get
     // recipe get
@@ -578,8 +607,8 @@ router.get('/detail/review/:cocktailId', checkAccess, async (req, res) => {
         },
       ],
     });
-    console.log(post.count);
-    console.log(post.rows);
+    // console.log(post.count);
+    // console.log(post.rows);
     data.count = post.count;
     data.list = post.rows;
 
@@ -668,6 +697,15 @@ router.post('/report/:cocktailId', checkAccess, async (req, res) => {
       },
     });
     if (created) {
+      const count = await db.COCKTAIL_REPORT.count({
+        where: {
+          CNO: cocktailId,
+        },
+      });
+      console.log('count:', count);
+      if (count >= 5) {
+        await db.COCKTAIL.update({ HIDE: 1 }, { where: { CNO: cocktailId } });
+      }
       return res.status(200).json({
         success: true,
         message: 'Cocktail Report 성공',

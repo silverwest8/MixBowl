@@ -47,6 +47,11 @@ export default class COCKTAIL extends Model {
     GLASS: {
       type: DataTypes.STRING(45),
       allowNull: true
+    },
+    HIDE: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     sequelize,
