@@ -171,6 +171,15 @@ const RecipeIngredients = () => {
                       });
                     }}
                     onClick={() => {
+                      if (timerHover) {
+                        clearTimeout(timerHover);
+                      }
+                      timerHover = setTimeout(() => {
+                        setMinusHover((prevState) => {
+                          const list = prevState.map(() => false);
+                          return list;
+                        });
+                      });
                       handleDelete(index);
                     }}
                   >
@@ -190,6 +199,7 @@ const RecipeIngredients = () => {
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
           onClick={() => {
+            setHover(false);
             handleAdd();
           }}
         >
