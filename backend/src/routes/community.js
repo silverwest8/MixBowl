@@ -109,7 +109,7 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
 });
 router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
-  if (pno == "undefined") {
+  if (pno == 'undefined') {
     return res.status(400).send({
       success: false,
       message: '유효하지 않은 postId입니다.',
@@ -811,7 +811,11 @@ router.post('/report/:postId', checkAccess, async (req, res) => {
         REPORT: report,
       },
     });
+    console.log('hi');
     if (created) {
+      const count = await POST_REPORT.findAll({
+        attributes: [[sequelize.fn('COUNT', sequelize.col('PNO'))]],
+      });
       return res.status(200).json({
         success: true,
         message: 'Post Report 성공',
