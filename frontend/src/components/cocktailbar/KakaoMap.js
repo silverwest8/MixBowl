@@ -11,6 +11,7 @@ import { MdEditLocationAlt } from "react-icons/md";
 import AutoCompleteInput from "./AutoCompleteInput";
 import { authState } from "../../store/auth";
 import CircularProgress from "@mui/material/CircularProgress";
+import { getLinkWithAuth } from "../../utils/link";
 
 function KakaoMap({ id }) {
   const { isLoggedin } = useRecoilValue(authState);
@@ -138,7 +139,11 @@ function KakaoMap({ id }) {
               key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
             >
               {/* 커스텀 오버레이에 표시할 내용입니다 */}
-              <Label onClick={() => navigate(`/cocktailbar/${marker.id}`)}>
+              <Label
+                onClick={() =>
+                  navigate(getLinkWithAuth(`/cocktailbar/${marker.id}`))
+                }
+              >
                 <span>{marker.content}</span>
               </Label>
             </CustomOverlayMap>
@@ -147,10 +152,7 @@ function KakaoMap({ id }) {
         {!id && (
           <>
             <div className="button-wrapper">
-              <button
-                onClick={() => getCurrentPosition()}
-                className="location-button"
-              >
+              <button onClick={getCurrentPosition} className="location-button">
                 <BiCurrentLocation />
               </button>
               {isLoggedin && (
@@ -163,10 +165,7 @@ function KakaoMap({ id }) {
               )}
             </div>
             {isLoggedin && (
-              <button
-                onClick={() => searchCocktailbar()}
-                className="search-button"
-              >
+              <button onClick={searchCocktailbar} className="search-button">
                 <FaUndoAlt />
                 현지도에서 재검색
               </button>

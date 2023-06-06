@@ -3,12 +3,17 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import ReviewList from "./ReviewList";
 import { getKeyword } from "../../utils/keyword";
+import { getLinkWithAuth } from "../../utils/link";
 
 const CocktailBarItem = ({ item }) => {
   const navigate = useNavigate();
   return (
     <Section>
-      <Header onClick={() => navigate(`/cocktailbar/${item.kakao_data.id}`)}>
+      <Header
+        onClick={() =>
+          navigate(getLinkWithAuth(`/cocktailbar/${item.kakao_data.id}`))
+        }
+      >
         <h1 className="place">{item.kakao_data.place_name}</h1>
         {item.total_rate && (
           <div>

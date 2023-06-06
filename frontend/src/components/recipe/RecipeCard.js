@@ -17,6 +17,7 @@ import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
+import { getLinkWithAuth } from "../../utils/link";
 
 const RecipeCard = () => {
   const search = useRecoilValue(searchState);
@@ -101,40 +102,41 @@ const RecipeCard = () => {
           ? data.pages.map((page) =>
               page.list.map((item) => (
                 <RecipeBox key={item.id}>
-                  <Link to={`/recipe/${item.id}`}>
+                  <Link to={getLinkWithAuth(`/recipe/${item.id}`)}>
                     <img src={`/api/recipes/image/${item.id}`}></img>
                     <h1>{item.name}</h1>
+
+                    <TextBox>
+                      <NickName
+                        className={
+                          item.USER.nickname === "ninja" ||
+                          item.USER.nickname === "cocktaildb"
+                            ? "not-user"
+                            : ""
+                        }
+                      >
+                        {item.USER.nickname === "ninja" ||
+                        item.USER.nickname === "cocktaildb" ? (
+                          "@Cocktell"
+                        ) : (
+                          <>
+                            @{item.USER.nickname}
+                            <MemberBadge level={item.USER.level} />
+                          </>
+                        )}
+                      </NickName>
+                      <div>
+                        <p className="ThumbsUp">
+                          <FaThumbsUp></FaThumbsUp>
+                          {item.like}
+                        </p>
+                        <p className="Comment">
+                          <FaCommentDots></FaCommentDots>
+                          {item.post}
+                        </p>
+                      </div>
+                    </TextBox>
                   </Link>
-                  <TextBox>
-                    <NickName
-                      className={
-                        item.USER.nickname === "ninja" ||
-                        item.USER.nickname === "cocktaildb"
-                          ? "not-user"
-                          : ""
-                      }
-                    >
-                      {item.USER.nickname === "ninja" ||
-                      item.USER.nickname === "cocktaildb" ? (
-                        "@Cocktell"
-                      ) : (
-                        <>
-                          @{item.USER.nickname}
-                          <MemberBadge level={item.USER.level} />
-                        </>
-                      )}
-                    </NickName>
-                    <div>
-                      <p className="ThumbsUp">
-                        <FaThumbsUp></FaThumbsUp>
-                        {item.like}
-                      </p>
-                      <p className="Comment">
-                        <FaCommentDots></FaCommentDots>
-                        {item.post}
-                      </p>
-                    </div>
-                  </TextBox>
                 </RecipeBox>
               ))
             )

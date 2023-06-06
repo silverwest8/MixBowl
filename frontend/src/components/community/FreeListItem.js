@@ -5,10 +5,11 @@ import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
 import { getTimeForToday } from "../../utils/date";
 import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
+import { getLinkWithAuth } from "../../utils/link";
 
 const FreeListItem = ({ data }) => {
   return (
-    <ItemContainer to={`/community/${data.PNO}`}>
+    <ItemContainer to={getLinkWithAuth(`/community/${data.PNO}`)}>
       <div className="wrapper">
         <div>
           <TopSection>

@@ -5,6 +5,7 @@ import MemberBadge from "../common/MemberBadge";
 import { Link } from "react-router-dom";
 import { getCocktailImageUrl, getCommunityImageUrl } from "../../utils/image";
 import { getTimeForToday } from "../../utils/date";
+import { getLinkWithAuth } from "../../utils/link";
 
 const ImageSection = styled.div`
   border: 2px solid ${({ theme }) => theme.color.primaryGold};
@@ -17,7 +18,7 @@ const ImageSection = styled.div`
 
 const HotListItem = ({ data }) => {
   return (
-    <ItemContainer to={`/community/${data.PNO}`}>
+    <ItemContainer to={getLinkWithAuth(`/community/${data.PNO}`)}>
       <div className="wrapper">
         <div>
           <TopSection>

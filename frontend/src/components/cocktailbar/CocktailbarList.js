@@ -9,8 +9,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCocktailBarList } from "../../api/cocktailbar";
 import { theme } from "../../styles/theme";
+import { getAccessToken } from "../../utils/token";
 
 const CocktailbarList = () => {
+  const token = getAccessToken();
   const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
   const query = params.get("query") || "";
@@ -51,15 +53,16 @@ const CocktailbarList = () => {
   }, [data]);
   return (
     <>
-      <SearchBar
-        placeholder="칵테일 바를 검색해보세요!"
-        value={input}
-        onChange={onChange}
-        onSearch={onSearch}
-        onClear={onClear}
-        showCloseButton={query}
-      />
-
+      {token && (
+        <SearchBar
+          placeholder="칵테일 바를 검색해보세요!"
+          value={input}
+          onChange={onChange}
+          onSearch={onSearch}
+          onClear={onClear}
+          showCloseButton={query}
+        />
+      )}
       {!query && location && <Location>{location}</Location>}
       <List>
         {data ? (

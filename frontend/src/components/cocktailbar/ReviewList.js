@@ -8,6 +8,7 @@ import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
 import ReviewDeleteModal from "./ReviewDeleteModal";
 import { convertURLtoFile, getReviewImageUrl } from "../../utils/image";
+import { getLinkWithAuth } from "../../utils/link";
 
 const ReviewList = ({ cnt, reviewList, name, placeId }) => {
   const params = useParams();
@@ -71,7 +72,10 @@ const ReviewList = ({ cnt, reviewList, name, placeId }) => {
             <FaPen /> 리뷰 작성하기
           </Button>
         ) : (
-          <Link to={`/cocktailbar/${placeId}`} className="more-link">
+          <Link
+            to={getLinkWithAuth(`/cocktailbar/${placeId}`)}
+            className="more-link"
+          >
             더보기
           </Link>
         )}
