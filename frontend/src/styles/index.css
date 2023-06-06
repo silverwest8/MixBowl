@@ -256,12 +256,19 @@ video {
   margin: 1rem !important;
 }
 
+.MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected='true'] {
+  background-color: #e9aa33 !important;
+  color: black !important;
+}
+
 @media screen and (max-width: 320px) {
   .MuiDialog-container > .MuiDialog-paper {
     margin: 1rem !important;
     width: 100%;
   }
 }
+
+
 /* Swiper */
 .swiper {
   height: 100%;

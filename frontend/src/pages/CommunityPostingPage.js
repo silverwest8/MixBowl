@@ -10,7 +10,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { imageFileListState } from "../store/imageFile";
-import { Box } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
 import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
@@ -268,6 +267,7 @@ const CommunityPostingPage = () => {
   };
   const onChangeAutoComplete = (event, value) => {
     setWarning("");
+    if (!value) return;
     setPostingState((prev) => ({
       ...prev,
       addTitle: value.name,
@@ -307,9 +307,16 @@ const CommunityPostingPage = () => {
 
   useEffect(() => {
     GetRecipe();
-    console.log(location.state);
     if (state && state.cocktail) reviewTab();
-    console.log("recipes is ", recipes);
+    return () => {
+      setPostingState({
+        addTitle: "",
+        addContent: "",
+        addLike: 1,
+        addCategory: 4,
+        addCNO: null,
+      });
+    };
   }, []);
   const setToastState = useSetRecoilState(toastState);
 
@@ -398,10 +405,15 @@ const CommunityPostingPage = () => {
                 disablePortal
                 id="autocompleteCocktail"
                 options={recipes}
-                getOptionLabel={(option) => option.name || ""}
+                getOptionLabel={(option) =>
+                  option.name || "칵테일 이름을 선택해주세요."
+                }
                 onChange={(event, value) => {
                   onChangeAutoComplete(event, value);
                 }}
+                isOptionEqualToValue={(option, value) =>
+                  option.num === value.num && option.name === value.name
+                }
                 value={{ num: addCNO, name: addTitle }}
                 sx={{
                   width: 300,
@@ -419,23 +431,13 @@ const CommunityPostingPage = () => {
                       backgroundColor: "#e9aa33",
                       color: "black",
                     },
-                  "& + .MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected='true']":
-                    {
-                      backgroundColor: "#e9aa33",
-                    },
                 }}
                 renderInput={(params) => (
                   <StyledTextField
                     {...params}
                     label=""
                     className="selection"
-                    placeholder="칵테일 이름을 선택해주세요."
                     fullWidth
-                    sx={{
-                      "&::placeholder": {
-                        color: "#cfcfcf",
-                      },
-                    }}
                   />
                 )}
                 PaperComponent={(props) => (
