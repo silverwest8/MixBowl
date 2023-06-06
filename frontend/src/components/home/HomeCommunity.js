@@ -8,6 +8,7 @@ import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
 import { getCategoryById } from "../../utils/category";
 import { getTimeForToday } from "../../utils/date";
+import { getLinkWithAuth } from "../../utils/link";
 
 const HomeCommunity = () => {
   const [data, setData] = useState(null);
@@ -29,7 +30,10 @@ const HomeCommunity = () => {
       <GridBox>
         {data
           ? data.list.slice(0, 4).map((item) => (
-              <Link to={`/community/${item.postId}`} key={item.postId}>
+              <Link
+                to={getLinkWithAuth(`/community/${item.postId}`)}
+                key={item.postId}
+              >
                 <ItemBox>
                   <div className="title">
                     <h4>{item.title}</h4>
@@ -54,7 +58,7 @@ const HomeCommunity = () => {
                 </ItemBox>
               </Link>
             ))
-          : Array(3)
+          : Array(4)
               .fill(1)
               .map((_, index) => (
                 <Skeleton

@@ -11,6 +11,7 @@ import Slider from "../common/Slider";
 import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
 import { getTimeForToday } from "../../utils/date";
+import { getLinkWithAuth } from "../../utils/link";
 
 const HomeAnswer = () => {
   const [data, setData] = useState(null);
@@ -39,16 +40,18 @@ const HomeAnswer = () => {
                   return (
                     <SwiperSlide key={item.postId}>
                       <ItemBox>
-                        <Link to={`/community/${item.postId}`}>
+                        <Link to={getLinkWithAuth(`/community/${item.postId}`)}>
                           <h4>{item.content}</h4>
-                        </Link>
-                        <div>
-                          <div className="nickname">
-                            @{item.USER.nickname}
-                            <MemberBadge level={item.USER.level}></MemberBadge>
+                          <div>
+                            <div className="nickname">
+                              @{item.USER.nickname}
+                              <MemberBadge
+                                level={item.USER.level}
+                              ></MemberBadge>
+                            </div>
+                            <p className="time">{getTimeForToday(item.date)}</p>
                           </div>
-                          <p className="time">{getTimeForToday(item.date)}</p>
-                        </div>
+                        </Link>
                       </ItemBox>
                     </SwiperSlide>
                   );
@@ -101,12 +104,21 @@ const ItemBox = styled.div`
   padding: 1rem;
   background-color: ${({ theme }) => theme.color.darkGray};
   border-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
+  a {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    height: 100%;
+  }
   h4 {
     font-size: 1.125rem;
     font-weight: bold;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
   }
   .nickname {
     display: flex;

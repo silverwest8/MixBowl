@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import Slider from "../common/Slider";
 import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
+import { getLinkWithAuth } from "../../utils/link";
 
 const HomeCocktail = () => {
   const [data, setData] = useState(null);
@@ -38,45 +39,45 @@ const HomeCocktail = () => {
               ? data.list.slice(0, 10).map((item) => (
                   <SwiperSlide key={item.cocktailId}>
                     <ItemBox>
-                      <div className="content">
-                        <Link to={`/recipe/${item.cocktailId}`}>
+                      <Link to={getLinkWithAuth(`/recipe/${item.cocktailId}`)}>
+                        <div className="content">
                           <img src={"/api/recipes/image/" + item.cocktailId} />
-                        </Link>
-                        {item.reviewContent ? (
-                          <div className="review">
-                            {item.USER.nickname !== "ninja" &&
-                              item.USER.nickname !== "cocktaildb" && (
-                                <span className="nickname">
-                                  {item.USER.nickname}님의 레시피
-                                </span>
-                              )}
-                            <p>{item.reviewContent}</p>
-                          </div>
-                        ) : (
-                          <NoReview>
-                            아직 리뷰가 없어요.
-                            <br />첫 리뷰를 작성해주세요~
-                            <Link to={`/community/posting`}>
-                              <WriteButton>
-                                <FaPen className="pen"></FaPen>작성하기
-                              </WriteButton>
-                            </Link>
-                          </NoReview>
-                        )}
-                      </div>
-                      <div className="info">
-                        <h2 className="name">{item.cocktailName}</h2>
-                        <div>
-                          <div className="thumbs">
-                            <FaThumbsUp />
-                            {item.like}
-                          </div>
-                          <div className="comment">
-                            <FaCommentDots />
-                            {item.reply}
+                          {item.reviewContent ? (
+                            <div className="review">
+                              {item.USER.nickname !== "ninja" &&
+                                item.USER.nickname !== "cocktaildb" && (
+                                  <span className="nickname">
+                                    {item.USER.nickname}님의 레시피
+                                  </span>
+                                )}
+                              <p>{item.reviewContent}</p>
+                            </div>
+                          ) : (
+                            <NoReview>
+                              아직 리뷰가 없어요.
+                              <br />첫 리뷰를 작성해주세요~
+                              <Link to={`/community/posting`}>
+                                <WriteButton>
+                                  <FaPen className="pen"></FaPen>작성하기
+                                </WriteButton>
+                              </Link>
+                            </NoReview>
+                          )}
+                        </div>
+                        <div className="info">
+                          <h2 className="name">{item.cocktailName}</h2>
+                          <div>
+                            <div className="thumbs">
+                              <FaThumbsUp />
+                              {item.like}
+                            </div>
+                            <div className="comment">
+                              <FaCommentDots />
+                              {item.reply}
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     </ItemBox>
                   </SwiperSlide>
                 ))
