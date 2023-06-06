@@ -443,6 +443,7 @@ const Circle = styled.div`
 
 const Explain = styled.div`
   white-space: pre-wrap;
+  line-height: 150%;
 `;
 
 const CallButton = styled.button`

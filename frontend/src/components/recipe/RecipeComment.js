@@ -42,7 +42,7 @@ const RecipeComment = () => {
       {comment &&
         (comment.list.length !== 0 ? (
           comment.list.map((item) => (
-            <CommentBox key={item}>
+            <CommentBox key={item.content}>
               <div className="user">
                 @{item.UNO_USER.nickname}
                 <MemberBadge level={item.UNO_USER.level} />

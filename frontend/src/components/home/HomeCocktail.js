@@ -5,14 +5,30 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { getCocktail } from "../../api/homeapi";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Slider from "../common/Slider";
 import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
 import { getLinkWithAuth } from "../../utils/link";
+import { getAccessToken } from "../../utils/token";
+import { useModal } from "../../hooks/useModal";
+import LoginFormModal from "../login/LoginFormModal";
 
 const HomeCocktail = () => {
+  const token = getAccessToken();
+  const navigate = useNavigate();
+  const { openModal, closeModal } = useModal();
   const [data, setData] = useState(null);
+  const onClick = (event, id) => {
+    event.stopPropagation();
+    if (token) {
+      navigate("/community/posting", { state: { cocktail: String(id) } });
+    } else {
+      openModal(LoginFormModal, {
+        handleClose: closeModal,
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,46 +54,49 @@ const HomeCocktail = () => {
             data
               ? data.list.slice(0, 10).map((item) => (
                   <SwiperSlide key={item.cocktailId}>
-                    <ItemBox>
-                      <Link to={getLinkWithAuth(`/recipe/${item.cocktailId}`)}>
-                        <div className="content">
-                          <img src={"/api/recipes/image/" + item.cocktailId} />
-                          {item.reviewContent ? (
-                            <div className="review">
-                              {item.USER.nickname !== "ninja" &&
-                                item.USER.nickname !== "cocktaildb" && (
-                                  <span className="nickname">
-                                    {item.USER.nickname}님의 레시피
-                                  </span>
-                                )}
-                              <p>{item.reviewContent}</p>
-                            </div>
-                          ) : (
-                            <NoReview>
-                              아직 리뷰가 없어요.
-                              <br />첫 리뷰를 작성해주세요~
-                              <Link to={`/community/posting`}>
-                                <WriteButton>
-                                  <FaPen className="pen"></FaPen>작성하기
-                                </WriteButton>
-                              </Link>
-                            </NoReview>
-                          )}
-                        </div>
-                        <div className="info">
-                          <h2 className="name">{item.cocktailName}</h2>
-                          <div>
-                            <div className="thumbs">
-                              <FaThumbsUp />
-                              {item.like}
-                            </div>
-                            <div className="comment">
-                              <FaCommentDots />
-                              {item.reply}
-                            </div>
+                    <ItemBox
+                      onClick={() =>
+                        navigate(getLinkWithAuth(`/recipe/${item.cocktailId}`))
+                      }
+                    >
+                      <div className="content">
+                        <img src={"/api/recipes/image/" + item.cocktailId} />
+                        {item.reviewContent ? (
+                          <div className="review">
+                            {item.USER.nickname !== "ninja" &&
+                              item.USER.nickname !== "cocktaildb" && (
+                                <span className="nickname">
+                                  {item.USER.nickname}님의 레시피
+                                </span>
+                              )}
+                            <p>{item.reviewContent}</p>
+                          </div>
+                        ) : (
+                          <NoReview>
+                            아직 리뷰가 없어요.
+                            <br />첫 리뷰를 작성해주세요~
+                            <WriteButton
+                              onClick={(e) => onClick(e, item.cocktailId)}
+                              type="button"
+                            >
+                              <FaPen className="pen"></FaPen>작성하기
+                            </WriteButton>
+                          </NoReview>
+                        )}
+                      </div>
+                      <div className="info">
+                        <h2 className="name">{item.cocktailName}</h2>
+                        <div>
+                          <div className="thumbs">
+                            <FaThumbsUp />
+                            {item.like}
+                          </div>
+                          <div className="comment">
+                            <FaCommentDots />
+                            {item.reply}
                           </div>
                         </div>
-                      </Link>
+                      </div>
                     </ItemBox>
                   </SwiperSlide>
                 ))
@@ -156,6 +175,7 @@ const ItemBox = styled.div`
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 12px;
   padding: 1rem 1.5rem;
+  cursor: pointer;
   .nickname {
     display: block;
     width: 100%;
