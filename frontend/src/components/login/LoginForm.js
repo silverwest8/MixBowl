@@ -66,7 +66,9 @@ const LoginForm = ({ handleClose }) => {
           handleClose();
           window.location.reload();
         } else {
-          navigate(params.get("return_url") ? params.get("return_url") : "/");
+          navigate(params.get("return_url") ? params.get("return_url") : "/", {
+            replace: true,
+          });
         }
       } else {
         setFailMessage("아이디 또는 비밀번호를 확인해주세요.");
