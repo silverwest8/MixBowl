@@ -67,16 +67,26 @@ function KakaoMap({ id }) {
       if (status === window.kakao.maps.services.Status.OK) {
         for (let i = 0; i < result.length; i++) {
           if (result[i].region_type === "H") {
-            setMapState((state) => ({
-              ...state,
-              center: {
-                lng,
-                lat,
-              },
-              loading: true,
-              radius: getDistance(lat, lng, bounds.qa, lng),
-              location: `${result[i].region_1depth_name} ${result[i].region_2depth_name}`,
-            }));
+            console.log("search...");
+            setMapState((state) => {
+              if (state.center.lat === lat && state.center.lng === lng) {
+                return {
+                  ...state,
+                  location: `${result[i].region_1depth_name} ${result[i].region_2depth_name}`,
+                };
+              } else {
+                return {
+                  ...state,
+                  center: {
+                    lng,
+                    lat,
+                  },
+                  loading: true,
+                  radius: getDistance(lat, lng, bounds.qa, lng),
+                  location: `${result[i].region_1depth_name} ${result[i].region_2depth_name}`,
+                };
+              }
+            });
             break;
           }
         }

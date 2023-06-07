@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { mapState } from "../../store/map";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCocktailBarList } from "../../api/cocktailbar";
 import { theme } from "../../styles/theme";
@@ -19,10 +19,27 @@ const CocktailbarList = () => {
   const [input, setInput] = useState(query);
   const [{ center, location, radius }, setMapState] = useRecoilState(mapState);
   const { data } = useQuery(
-    ["cocktail bar list", center, query, radius],
+    ["cocktail bar list", center, "", radius],
     getCocktailBarList,
     {
+      onSuccess: (data) => {
+        console.log("success");
+        setMapState((state) => ({
+          ...state,
+          loading: false,
+          data: data.data.place_list.map((item) => ({
+            id: item.kakao_data.id,
+            x: item.kakao_data.x,
+            y: item.kakao_data.y,
+            name: item.kakao_data.place_name,
+          })),
+        }));
+      },
       onError: (error) => {
+        setMapState((state) => ({
+          ...state,
+          loading: false,
+        }));
         if (error.response.status === 401)
           navigate(`/login?return_url=${window.location.href}`);
       },
@@ -37,20 +54,6 @@ const CocktailbarList = () => {
     setInput("");
     navigate(`/cocktailbar${params.toString()}`, { replace: true });
   };
-  useEffect(() => {
-    if (data) {
-      setMapState((state) => ({
-        ...state,
-        loading: false,
-        data: data.data.place_list.map((item) => ({
-          id: item.kakao_data.id,
-          x: item.kakao_data.x,
-          y: item.kakao_data.y,
-          name: item.kakao_data.place_name,
-        })),
-      }));
-    }
-  }, [data]);
   return (
     <>
       {token && (

@@ -30,7 +30,8 @@ const Main = styled.main`
     display: flex;
     height: 100%;
   }
-  @media screen and (max-width: 920px) {
+  @media screen and (max-width: 940px) {
+    padding-top: 0;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -39,9 +40,6 @@ const Main = styled.main`
       flex-grow: 1;
       overflow: hidden;
     }
-  }
-  @media screen and (max-width: 840px) {
-    padding-top: 0;
   }
 `;
 

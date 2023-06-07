@@ -27,7 +27,7 @@ const Wrapper = styled.div`
   & > button {
     display: none;
   }
-  @media screen and (max-width: 920px) {
+  @media screen and (max-width: 940px) {
     display: flex;
     position: absolute;
     top: 0;
