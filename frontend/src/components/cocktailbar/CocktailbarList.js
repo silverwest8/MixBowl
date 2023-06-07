@@ -19,7 +19,7 @@ const CocktailbarList = () => {
   const [input, setInput] = useState(query);
   const [{ center, location, radius }, setMapState] = useRecoilState(mapState);
   const { data } = useQuery(
-    ["cocktail bar list", center, "", radius],
+    ["cocktail bar list", center, query, radius],
     getCocktailBarList,
     {
       onSuccess: (data) => {
