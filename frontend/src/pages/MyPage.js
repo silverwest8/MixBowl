@@ -159,8 +159,9 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   padding: 0.2rem 0.5rem;
+  justify-content: space-around;
   font-size: 0.9rem;
-  min-width: 10vw;
+  min-width: 9vw;
   margin: 0rem 1rem 0.5rem 0;
   &:hover {
     background-color: ${({ theme }) => theme.color.secondGold};
