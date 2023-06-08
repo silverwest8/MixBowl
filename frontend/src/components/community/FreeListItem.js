@@ -61,19 +61,18 @@ const FreeListItem = ({ data }) => {
             </div>
           </BottomSection>
         </div>
-        {data.CNO ? (
+        {/* {data.CNO ? (
           <ImageSection>
             <img src={getCocktailImageUrl(data.CNO)} />
           </ImageSection>
-        ) : (
-          data.imageId !== 0 &&
+        ) :  */}
+        {data.imageId !== 0 &&
           data.imageId !== undefined &&
           data.imageId !== null && (
             <ImageSection>
               <img src={getCommunityImageUrl(data.imageId)} />
             </ImageSection>
-          )
-        )}
+          )}
       </div>
     </ItemContainer>
   );

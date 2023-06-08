@@ -320,6 +320,16 @@ const CommunityPostingPage = () => {
   }, []);
   const setToastState = useSetRecoilState(toastState);
 
+  const handleCancel = () => {
+    setPostingState((prev) => ({
+      addTitle: "",
+      addContent: "",
+      addLike: 1,
+      addCategory: 4,
+      addCNO: null,
+    }));
+    navigate(-1);
+  };
   const handleSubmit = () => {
     if ((addTitle === "" && addCategory !== 2) || addContent === "") {
       setWarning("* 제목과 내용은 필수 입력 항목입니다.");
@@ -503,7 +513,7 @@ const CommunityPostingPage = () => {
             <ImageUpload defaultFiles={defaultFiles} />
           </ImageSection>
           <BottomSection>
-            <Button className="cancel" onClick={() => navigate(-1)}>
+            <Button className="cancel" onClick={() => handleCancel()}>
               취소
             </Button>
             <Button className="ok" onClick={() => handleSubmit()}>
