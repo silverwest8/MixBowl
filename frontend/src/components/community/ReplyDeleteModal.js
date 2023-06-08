@@ -1,10 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Modal from "../common/Modal";
 import { useSetRecoilState } from "recoil";
 import { toastState } from "../../store/toast";
 import { deleteReply } from "../../api/community";
 
-const ReplyDeleteModal = ({ handleClose, id }) => {
+const ReplyDeleteModal = ({ handleClose, replyId, postId }) => {
+  const queryClient = useQueryClient();
   const setToastState = useSetRecoilState(toastState);
   const { mutate } = useMutation({
     mutationFn: deleteReply,
@@ -15,16 +16,14 @@ const ReplyDeleteModal = ({ handleClose, id }) => {
         type: "error",
       });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       handleClose();
+      await queryClient.invalidateQueries(["community detail", { id: postId }]);
       setToastState({
         show: true,
         message: "삭제가 완료되었습니다.",
         type: "success",
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
     },
   });
   return (
@@ -33,7 +32,7 @@ const ReplyDeleteModal = ({ handleClose, id }) => {
       content="정말 댓글을 삭제하시겠습니까?"
       handleClose={handleClose}
       onCancel={handleClose}
-      onConfirm={() => mutate(id)}
+      onConfirm={() => mutate(replyId)}
     ></Modal>
   );
 };
