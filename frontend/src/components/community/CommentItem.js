@@ -2,7 +2,7 @@ import styled from "styled-components";
 import MemberBadge from "../common/MemberBadge";
 import DropdownMenu from "../common/DropdownMenu";
 import { useModal } from "../../hooks/useModal";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { getTimeForToday } from "../../utils/date";
 import ReplyDeleteModal from "./ReplyDeleteModal";
 import {
@@ -11,11 +11,11 @@ import {
   replyState,
 } from "../../store/community";
 
-const CommentItem = ({ data }) => {
+const CommentItem = ({ data, postId }) => {
   console.log("comment item is ", data.CONTENT);
-  const [comment, setComment] = useRecoilState(commentState);
-  const [checkEdit, setCheckEdit] = useRecoilState(checkEditState);
-  const [replyId, setReplyId] = useRecoilState(replyState);
+  const setComment = useSetRecoilState(commentState);
+  const setCheckEdit = useSetRecoilState(checkEditState);
+  const setReplyId = useSetRecoilState(replyState);
   const { openModal, closeModal } = useModal();
   const onClickEditMenu = async (id, comment) => {
     setComment(comment);
@@ -26,10 +26,11 @@ const CommentItem = ({ data }) => {
       behavior: "smooth",
     });
   };
-  const onClickDeleteMenu = (id) => {
+  const onClickDeleteMenu = (replyId, postId) => {
     openModal(ReplyDeleteModal, {
       handleClose: closeModal,
-      id,
+      replyId,
+      postId,
     });
   };
   return (
@@ -43,7 +44,7 @@ const CommentItem = ({ data }) => {
           <DropdownMenu
             handlers={[
               () => onClickEditMenu(data.replyId, data.CONTENT),
-              () => onClickDeleteMenu(data.replyId),
+              () => onClickDeleteMenu(data.replyId, postId),
             ]}
           />
         ) : (

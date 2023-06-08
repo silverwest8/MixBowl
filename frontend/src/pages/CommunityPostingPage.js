@@ -350,7 +350,7 @@ const CommunityPostingPage = () => {
               type: "success",
               ms: 3000,
             });
-            navigate(-1);
+            navigate(`/community/${response.postId}`);
           } else {
             setToastState({
               show: true,

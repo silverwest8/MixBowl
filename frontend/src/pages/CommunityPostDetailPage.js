@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Title from "../components/common/Title";
 import { FaThumbsUp } from "react-icons/fa";
 import MemberBadge from "../components/common/MemberBadge";
@@ -17,6 +17,7 @@ import {
   reportCommunity,
   registerComment,
   editComment,
+  getCommunityDetailData,
 } from "../api/community";
 import { getTimeForToday } from "../utils/date";
 import {
@@ -29,6 +30,9 @@ import PostDeleteModal from "../components/community/PostDeleteModal";
 import axios from "axios";
 import ImageSliderModal from "../components/common/ImageSliderModal";
 import { getCommunityImageUrl } from "../utils/image";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Skeleton from "@mui/material/Skeleton";
+import { theme } from "../styles/theme";
 
 const Background = styled.div`
   color: white;
@@ -156,6 +160,7 @@ const MainSection = styled.div`
   > div:first-child {
     font-size: 1rem;
     margin-bottom: 3rem;
+    white-space: pre-line;
   }
   > hr {
     color: ${({ theme }) => theme.color.primaryGold};
@@ -209,7 +214,6 @@ const CommunityPostDetailPage = () => {
   const navigate = useNavigate();
 
   const id = params.id;
-  const [post, setPost] = useState([]);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [comment, setComment] = useRecoilState(commentState);
@@ -217,28 +221,68 @@ const CommunityPostDetailPage = () => {
   const [replyId, setReplyId] = useRecoilState(replyState);
 
   const reportNum = useRecoilValue(CommunityReportState);
-
+  const queryClient = useQueryClient();
   const { openModal, closeModal } = useModal();
   const token = localStorage.getItem("access_token");
-  const GetPost = async () => {
-    try {
-      axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.get(`/api/communities/${id}`);
-      setPost(data);
-      setLikeCount(data.like);
-      setLiked(data.isUserLike);
-    } catch (error) {
-      return error.message;
+  const { mutate: putComment } = useMutation(editComment, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(["community detail", { id }]);
+      setToastState({
+        show: true,
+        message: "댓글이 수정되었습니다.",
+        type: "success",
+        ms: 3000,
+      });
+      setComment("");
+      setCheckEdit(false);
+      setReplyId(null);
+    },
+    onError: () => {
+      setToastState({
+        show: true,
+        message: "댓글 수정에 실패하였습니다.",
+        type: "error",
+      });
+      setComment("");
+      setCheckEdit(false);
+      setReplyId(null);
+    },
+  });
+  const { mutate: postComment } = useMutation(registerComment, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(["community detail", { id }]);
+      setToastState({
+        show: true,
+        message: "댓글이 작성되었습니다.",
+        type: "success",
+        ms: 3000,
+      });
+      setComment("");
+    },
+    onError: () => {
+      setToastState({
+        show: true,
+        message: "댓글 작성에 실패하였습니다.",
+        type: "error",
+      });
+      setComment("");
+    },
+  });
+  const { data } = useQuery(
+    ["community detail", { id }],
+    () => getCommunityDetailData(id),
+    {
+      onSuccess: (data) => {
+        setLikeCount(data.like);
+        setLiked(data.isUserLike);
+      },
+      onError: (error) => {
+        if (error.response.status === 401) {
+          navigate(`/login?return_url=/community/${id}`);
+        }
+      },
     }
-  };
-
-  useEffect(() => {
-    if (token) {
-      GetPost();
-    } else {
-      navigate(`/login?return_url=/community/${id}`);
-    }
-  }, []);
+  );
 
   const onChangeComment = (e) => {
     setComment(e.target.value);
@@ -247,7 +291,7 @@ const CommunityPostDetailPage = () => {
   const changeLike = async () => {
     try {
       axios.defaults.headers.common.Authorization = token;
-      const { data } = await axios.post(`/api/communities/like/${post.postId}`);
+      const { data } = await axios.post(`/api/communities/like/${id}`);
       if (data.success) {
         if (liked) {
           setLikeCount(likeCount - 1);
@@ -266,7 +310,7 @@ const CommunityPostDetailPage = () => {
   const submitReport = async () => {
     try {
       axios.defaults.headers.common.Authorization = token;
-      reportCommunity(post.postId, Number(reportNum) + 1).then((response) => {
+      reportCommunity(data.postId, Number(reportNum) + 1).then((response) => {
         if (response.success) {
           setTimeout(() => {
             setToastState({
@@ -316,49 +360,69 @@ const CommunityPostDetailPage = () => {
   };
   const editOrPost = (replyId) => {
     if (checkEdit) {
-      editComment(replyId, comment)
-        .then((response) => {
-          if (response.success) {
-            setToastState({
-              show: true,
-              message: "댓글이 수정되었습니다.",
-              type: "success",
-              ms: 3000,
-            });
-            setTimeout(() => {
-              window.location.reload();
-            }, 1500);
-          } else {
-            setToastState({
-              show: true,
-              message: "댓글 수정에 실패하였습니다.",
-              type: "error",
-            });
-          }
-        })
-        .catch((err) => console.log("edit error is ", err));
+      putComment({
+        id: replyId,
+        comment,
+      });
     } else {
-      registerComment(id, comment).then((response) => {
-        if (response.success) {
-          setToastState({
-            show: true,
-            message: "댓글이 작성되었습니다.",
-            type: "success",
-            ms: 3000,
-          });
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
-        } else {
-          setToastState({
-            show: true,
-            message: "댓글 작성에 실패하였습니다.",
-            type: "error",
-          });
-        }
+      postComment({
+        id,
+        comment,
       });
     }
   };
+
+  if (!data) {
+    return (
+      <main
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "2rem",
+        }}
+      >
+        <Title title="커뮤니티" />
+        <Background>
+          <EntireSection>
+            <TopSection>
+              <TopMost>
+                <MdArrowBackIosNew
+                  className="icon"
+                  onClick={() => navigate("/community/board")}
+                />
+              </TopMost>
+            </TopSection>
+            <Skeleton
+              variant="rounded"
+              width="100%"
+              height="8rem"
+              sx={{
+                backgroundColor: theme.color.darkGray,
+              }}
+            />
+            <CommentSection>
+              <Textarea
+                placeholder="당신의 의견을 댓글로 남겨 주세요!"
+                rows={3}
+                onChange={onChangeComment}
+                value={comment}
+                Button={
+                  <CommentButton
+                    type="button"
+                    onClick={() => {
+                      editOrPost(replyId);
+                    }}
+                  >
+                    {checkEdit ? "수정 완료" : "댓글 등록"}
+                  </CommentButton>
+                }
+              />
+            </CommentSection>
+          </EntireSection>
+        </Background>
+      </main>
+    );
+  }
 
   return (
     <main
@@ -375,31 +439,31 @@ const CommunityPostDetailPage = () => {
             <TopMost>
               <MdArrowBackIosNew
                 className="icon"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/community/board")}
               />
               <span>
-                {post.category === 2
+                {data.category === 2
                   ? "질문과 답변"
-                  : post.category === 4
+                  : data.category === 4
                   ? "자유 게시글"
-                  : post.category === 3
+                  : data.category === 3
                   ? "칵테일 리뷰"
-                  : post.category === 1
+                  : data.category === 1
                   ? "칵테일 추천"
                   : ""}
               </span>
             </TopMost>
             <Username>
-              <span>{post.username}</span>
-              <MemberBadge level={post.userlevel} />
+              <span>{data.username}</span>
+              <MemberBadge level={data.userlevel} />
             </Username>
-            <TitleContainer className={post.category === 2 ? "none" : ""}>
-              <span>{post.title}</span>
-              {post.isWriter ? (
+            <TitleContainer className={data.category === 2 ? "none" : ""}>
+              <span>{data.title}</span>
+              {data.isWriter ? (
                 <DropdownMenu
                   handlers={[
-                    () => onClickEditMenu(post.postId),
-                    () => onClickDeleteMenu(post.postId),
+                    () => onClickEditMenu(data.postId),
+                    () => onClickDeleteMenu(data.postId),
                   ]}
                 />
               ) : (
@@ -417,15 +481,15 @@ const CommunityPostDetailPage = () => {
             </TitleContainer>
           </TopSection>
           <MainSection>
-            <div>{post.content}</div>
+            <div>{data.content}</div>
             <ImageSection>
-              {post.images &&
-                post.images.slice(0, 3).map((imageId, index) => (
+              {data.images &&
+                data.images.slice(0, 3).map((imageId, index) => (
                   <div
                     key={imageId}
                     onClick={() =>
                       onClickImage({
-                        images: post.images.map((imageId) =>
+                        images: data.images.map((imageId) =>
                           getCommunityImageUrl(imageId)
                         ),
                         initialImageIndex: index,
@@ -433,16 +497,16 @@ const CommunityPostDetailPage = () => {
                     }
                   >
                     <img src={getCommunityImageUrl(imageId)} />
-                    {index === 2 && post.images.length - index - 1 > 0 && (
+                    {index === 2 && data.images.length - index - 1 > 0 && (
                       <div className="box">
-                        + {post.images.length - index - 1}
+                        + {data.images.length - index - 1}
                       </div>
                     )}
                   </div>
                 ))}
             </ImageSection>
             <BottomInfo>
-              <span>{post.createdAt && getTimeForToday(post.createdAt)}</span>
+              <span>{data.createdAt && getTimeForToday(data.createdAt)}</span>
               <div>
                 <FaThumbsUp
                   className={liked ? "icon liked" : "icon"}
@@ -473,23 +537,18 @@ const CommunityPostDetailPage = () => {
             {checkEdit && (
               <MiniButton onClick={() => cancelEdit()}>취소하기</MiniButton>
             )}
-            {post.category === 2 ? (
+            {data.category === 2 ? (
               <ul>
-                {post.replies &&
-                  post.replies.map((el) => (
-                    <AnswerItem data={el} key={el.replyId} />
+                {data.replies &&
+                  data.replies.map((el) => (
+                    <AnswerItem data={el} key={el.replyId} postId={id} />
                   ))}
               </ul>
             ) : (
               <ul>
-                {post.replies &&
-                  post.replies.map((el) => (
-                    <CommentItem
-                      data={el}
-                      key={el.replyId}
-                      comment={comment}
-                      setComment={setComment}
-                    />
+                {data.replies &&
+                  data.replies.map((el) => (
+                    <CommentItem data={el} postId={id} key={el.replyId} />
                   ))}
               </ul>
             )}
