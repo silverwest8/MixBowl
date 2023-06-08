@@ -102,6 +102,7 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
     res.json({
       success: true,
       message: 'Community Multipart Upload Ok & DB update OK',
+      postId: post.PNO
     });
   } catch (error) {
     console.log(error.message);

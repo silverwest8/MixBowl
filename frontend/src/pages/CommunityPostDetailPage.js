@@ -156,6 +156,7 @@ const MainSection = styled.div`
   > div:first-child {
     font-size: 1rem;
     margin-bottom: 3rem;
+    white-space: pre-line;
   }
   > hr {
     color: ${({ theme }) => theme.color.primaryGold};
@@ -375,7 +376,7 @@ const CommunityPostDetailPage = () => {
             <TopMost>
               <MdArrowBackIosNew
                 className="icon"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/community/board")}
               />
               <span>
                 {post.category === 2

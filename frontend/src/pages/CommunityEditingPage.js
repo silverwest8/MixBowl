@@ -329,6 +329,15 @@ const CommunityEditingPage = () => {
   useEffect(() => {
     GetRecipe();
     setIsLoading(false);
+    return () => {
+      setPostingState({
+        addTitle: "",
+        addContent: "",
+        addLike: 1,
+        addCategory: 4,
+        addCNO: null,
+      });
+    };
   }, []);
 
   const setToastState = useSetRecoilState(toastState);
@@ -354,7 +363,7 @@ const CommunityEditingPage = () => {
               type: "success",
               ms: 3000,
             });
-            navigate(-1);
+            navigate(`/community/${id}`);
           } else {
             setToastState({
               show: true,
