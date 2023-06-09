@@ -118,7 +118,7 @@ function KakaoMap({ id }) {
 
   // 현위치 가져오기
   useEffect(() => {
-    if (data) return;
+    if (data && window.location.href.includes("cocktailbar")) return;
     getCurrentPosition();
   }, []);
 
