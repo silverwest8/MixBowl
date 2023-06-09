@@ -12,8 +12,9 @@ const Button = styled.button`
   align-items: center;
   padding: 0.2rem 0.5rem;
   font-size: 0.9rem;
-  min-width: 10vw;
+  min-width: 9vw;
   margin-top: 0.5rem;
+  justify-content: space-around;
   &:hover {
     background-color: ${({ theme }) => theme.color.secondGold};
   }
