@@ -5,12 +5,14 @@ import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { mapState } from "../../store/map";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCocktailBarList } from "../../api/cocktailbar";
 import { theme } from "../../styles/theme";
+import { getAccessToken } from "../../utils/token";
 
 const CocktailbarList = () => {
+  const token = getAccessToken();
   const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
   const query = params.get("query") || "";
@@ -20,7 +22,24 @@ const CocktailbarList = () => {
     ["cocktail bar list", center, query, radius],
     getCocktailBarList,
     {
+      onSuccess: (data) => {
+        console.log("success");
+        setMapState((state) => ({
+          ...state,
+          loading: false,
+          data: data.data.place_list.map((item) => ({
+            id: item.kakao_data.id,
+            x: item.kakao_data.x,
+            y: item.kakao_data.y,
+            name: item.kakao_data.place_name,
+          })),
+        }));
+      },
       onError: (error) => {
+        setMapState((state) => ({
+          ...state,
+          loading: false,
+        }));
         if (error.response.status === 401)
           navigate(`/login?return_url=${window.location.href}`);
       },
@@ -35,30 +54,18 @@ const CocktailbarList = () => {
     setInput("");
     navigate(`/cocktailbar${params.toString()}`, { replace: true });
   };
-  useEffect(() => {
-    if (data) {
-      setMapState((state) => ({
-        ...state,
-        data: data.data.place_list.map((item) => ({
-          id: item.kakao_data.id,
-          x: item.kakao_data.x,
-          y: item.kakao_data.y,
-          name: item.kakao_data.place_name,
-        })),
-      }));
-    }
-  }, [data]);
   return (
     <>
-      <SearchBar
-        placeholder="칵테일 바를 검색해보세요!"
-        value={input}
-        onChange={onChange}
-        onSearch={onSearch}
-        onClear={onClear}
-        showCloseButton={query}
-      />
-
+      {token && (
+        <SearchBar
+          placeholder="칵테일 바를 검색해보세요!"
+          value={input}
+          onChange={onChange}
+          onSearch={onSearch}
+          onClear={onClear}
+          showCloseButton={query}
+        />
+      )}
       {!query && location && <Location>{location}</Location>}
       <List>
         {data ? (

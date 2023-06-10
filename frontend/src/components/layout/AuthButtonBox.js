@@ -1,25 +1,24 @@
-import { Link, useHref } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { Link, useHref, useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { authState } from "../../store/auth";
 import { removeTokens } from "../../utils/token";
 
 const AuthButtonBox = () => {
-  const { isLoggedin } = useRecoilValue(authState);
+  const [{ isLoggedin }, setAuthState] = useRecoilState(authState);
   const href = useHref();
+  const navigate = useNavigate();
+  const onClick = () => {
+    removeTokens();
+    setAuthState({ isLoggedin: false });
+    navigate("/", { replace: true });
+  };
   return isLoggedin ? (
     <ButtonBox>
       <button className={href.includes("mypage") ? "active" : ""}>
         <Link to="mypage">마이페이지</Link>
       </button>
-      <button
-        onClick={() => {
-          removeTokens();
-          window.location.reload();
-        }}
-      >
-        로그아웃
-      </button>
+      <button onClick={onClick}>로그아웃</button>
     </ButtonBox>
   ) : (
     <ButtonBox>
@@ -50,7 +49,7 @@ const ButtonBox = styled.div`
       background-color: ${({ theme }) => theme.color.primaryGold};
     }
   }
-  @media screen and (max-width: 920px) {
+  @media screen and (max-width: 940px) {
     width: 100%;
     justify-content: center;
     padding: 0.75rem 0;

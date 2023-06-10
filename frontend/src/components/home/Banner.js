@@ -4,7 +4,9 @@ import styled from "styled-components";
 import "swiper/css";
 import { Autoplay, EffectFade } from "swiper";
 import "swiper/css/effect-fade";
+import { Link } from "react-router-dom";
 
+const LINKS = ["/recipe", "/community", "/cocktailbar"];
 export const Banner = () => {
   return (
     <BannerBox>
@@ -15,15 +17,13 @@ export const Banner = () => {
         autoplay={{ delay: 5000 }}
         effect={"fade"}
       >
-        {[1, 2, 3].map((index) => {
+        {LINKS.map((link, index) => {
           return (
-            <SwiperSlide key={index}>
+            <SwiperSlide key={link}>
               <ImageWrapper>
-                <img
-                  src={
-                    process.env.PUBLIC_URL + "/images/banner" + index + ".svg"
-                  }
-                />
+                <Link to={link}>
+                  <img src={`/images/banner${index + 1}.svg`} />
+                </Link>
               </ImageWrapper>
             </SwiperSlide>
           );

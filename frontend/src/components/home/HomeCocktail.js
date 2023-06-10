@@ -5,13 +5,30 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { getCocktail } from "../../api/homeapi";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Slider from "../common/Slider";
 import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
+import { getLinkWithAuth } from "../../utils/link";
+import { getAccessToken } from "../../utils/token";
+import { useModal } from "../../hooks/useModal";
+import LoginFormModal from "../login/LoginFormModal";
 
 const HomeCocktail = () => {
+  const token = getAccessToken();
+  const navigate = useNavigate();
+  const { openModal, closeModal } = useModal();
   const [data, setData] = useState(null);
+  const onClick = (event, id) => {
+    event.stopPropagation();
+    if (token) {
+      navigate("/community/posting", { state: { cocktail: String(id) } });
+    } else {
+      openModal(LoginFormModal, {
+        handleClose: closeModal,
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,34 +54,38 @@ const HomeCocktail = () => {
             data
               ? data.list.slice(0, 10).map((item) => (
                   <SwiperSlide key={item.cocktailId}>
-                    <ItemBox>
-                      <p className="nickname">
-                        {item.USER.nickname}님의 레시피
-                      </p>
+                    <ItemBox
+                      onClick={() =>
+                        navigate(getLinkWithAuth(`/recipe/${item.cocktailId}`))
+                      }
+                    >
                       <div className="content">
-                        <Link to={`/recipe/${item.cocktailId}`}>
-                          <img
-                            src={"/api/recipes/image/" + item.cocktailId}
-                          ></img>
-                        </Link>
+                        <img src={"/api/recipes/image/" + item.cocktailId} />
                         {item.reviewContent ? (
-                          <p>{item.reviewContent}</p>
+                          <div className="review">
+                            {item.USER.nickname !== "ninja" &&
+                              item.USER.nickname !== "cocktaildb" && (
+                                <span className="nickname">
+                                  {item.USER.nickname}님의 레시피
+                                </span>
+                              )}
+                            <p>{item.reviewContent}</p>
+                          </div>
                         ) : (
                           <NoReview>
                             아직 리뷰가 없어요.
                             <br />첫 리뷰를 작성해주세요~
-                            <Link to={`/community/posting`}>
-                              <WriteButton>
-                                <FaPen className="pen"></FaPen>작성하기
-                              </WriteButton>
-                            </Link>
+                            <WriteButton
+                              onClick={(e) => onClick(e, item.cocktailId)}
+                              type="button"
+                            >
+                              <FaPen className="pen"></FaPen>작성하기
+                            </WriteButton>
                           </NoReview>
                         )}
                       </div>
                       <div className="info">
-                        <Link to={`/recipe/${item.cocktailId}`}>
-                          <p>{item.cocktailName}</p>
-                        </Link>
+                        <h2 className="name">{item.cocktailName}</h2>
                         <div>
                           <div className="thumbs">
                             <FaThumbsUp />
@@ -79,13 +100,13 @@ const HomeCocktail = () => {
                     </ItemBox>
                   </SwiperSlide>
                 ))
-              : Array(2)
+              : Array(3)
                   .fill(1)
                   .map((_, index) => (
                     <SwiperSlide key={index}>
                       <Skeleton
                         variant="rounded"
-                        width="100%"
+                        width="24rem"
                         height="15rem"
                         sx={{
                           backgroundColor: theme.color.darkGray,
@@ -151,52 +172,60 @@ const HomeTitleBox = styled.div`
 
 const ItemBox = styled.div`
   width: 100%;
-  height: 17.813rem;
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   border-radius: 12px;
-  padding: 0.875rem 1rem;
-  @media screen and (max-width: 428px) {
-    height: 11.8rem;
-  }
-  img {
-    width: 12.5rem;
-    height: 12.5rem;
-    border-radius: 0.75rem;
-    margin-right: 1rem;
-    object-fit: cover;
-    @media screen and (max-width: 428px) {
-      width: 7.8rem;
-      height: 7.8rem;
-    }
-  }
+  padding: 1rem 1.5rem;
+  cursor: pointer;
   .nickname {
+    display: block;
+    width: 100%;
     font-size: 0.875rem;
     color: ${({ theme }) => theme.color.lightGray};
     text-align: right;
   }
+  .review {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+    line-height: 1.5rem;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+    @media screen and (max-width: 428px) {
+      -webkit-line-clamp: 5;
+    }
+  }
   .content {
     display: flex;
     margin-bottom: 0.25rem;
+    gap: 1.5rem;
+    height: 12rem;
+    img {
+      width: 12rem;
+      height: 100%;
+      border-radius: 0.75rem;
+      object-fit: cover;
+      @media screen and (max-width: 428px) {
+        width: 7.5rem;
+      }
+    }
     p {
       width: 16rem;
-      height: 12rem;
-      line-height: 1.5rem;
-      padding-top: 0.25rem;
+      height: 100%;
+      @media screen and (max-width: 428px) {
+        width: 12rem;
+      }
     }
     @media screen and (max-width: 428px) {
-      p {
-        width: 13rem;
-        height: 7.8rem;
-        line-height: 1rem;
-        font-size: 0.875rem;
-      }
+      height: 7.5rem;
     }
   }
   .info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    p {
+    gap: 1rem;
+    .name {
       font-size: 1.5rem;
     }
     div {
@@ -212,7 +241,7 @@ const ItemBox = styled.div`
       }
     }
     @media screen and (max-width: 428px) {
-      p {
+      .name {
         font-size: 1.125rem;
       }
     }

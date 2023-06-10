@@ -14,6 +14,7 @@ import IMAGE_COMMUNITY from '../models/IMAGE_COMMUNITY';
 import checkTokenYesAndNo from '../middleware/checkTokenYesAndNo';
 import dotenv from 'dotenv';
 import POST_REPORT from '../models/POST_REPORT';
+import { logger } from '../../winston/winston';
 dotenv.config();
 const oneWeekAgo = new Date();
 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -64,7 +65,7 @@ const upload = multer({
 router.post('/like/:pno', checkAccess, async (req, res) => {
   const uno = req.decoded.unum;
   const pno = req.params.pno;
-  console.log(uno, pno);
+  // console.log(uno, pno);
   try {
     const isPostLike = await sql.makePostLike(uno, pno);
     if (isPostLike === 3) {
@@ -85,7 +86,7 @@ router.post('/like/:pno', checkAccess, async (req, res) => {
 router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
   try {
     const post = await sql.postCommunity(req);
-    console.log('maybe', post);
+    // console.log('maybe', post);
     //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
     req.files.map(async (data) => {
       console.log('폼에 정의된 필드명 : ', data.fieldname);
@@ -101,6 +102,7 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
     res.json({
       success: true,
       message: 'Community Multipart Upload Ok & DB update OK',
+      postId: post.PNO
     });
   } catch (error) {
     console.log(error.message);
@@ -108,6 +110,12 @@ router.post('/', checkAccess, upload.array('files', 5), async (req, res) => {
 });
 router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
   const pno = req.params.postId;
+  if (pno == 'undefined') {
+    return res.status(400).send({
+      success: false,
+      message: '유효하지 않은 postId입니다.',
+    });
+  }
   const postData = await POST.findByPk(Number(pno));
   if (postData === null) {
     return res.status(400).send({
@@ -116,7 +124,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
     });
   }
   const user = await USER.findByPk(postData.dataValues.UNO);
-  console.log(user);
+  // console.log(user);
   let isWriter = false;
   const likePost = await POST_LIKE.findAll({
     attributes: ['PNO', [Sequelize.fn('COUNT', Sequelize.col('PNO')), 'LIKES']],
@@ -143,11 +151,11 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
       : await POST_LIKE.findAll({
           where: { UNO: req.user.UNO, PNO: postData.PNO },
         });
-  console.log(isLike);
+  // console.log(isLike);
   if (isLike.length !== 0) {
     isUserLike = true;
   }
-  console.log(isUserLike);
+  // console.log(isUserLike);
   const reply_arr = [];
   for (const val of replies) {
     const user = await USER.findByPk(val.dataValues.UNO);
@@ -170,7 +178,7 @@ router.get('/:postId', checkTokenYesAndNo, async (req, res) => {
     };
     reply_arr.push(val.dataValues.UNO_USER);
   }
-  console.log(reply_arr);
+  // console.log(reply_arr);
   const imageIdArr = [];
   const imagesPromise = await IMAGE_COMMUNITY.findAll({
     where: {
@@ -271,7 +279,7 @@ router.post(
       //get으로 다 포스트 전체 내용 받아오고 다시 전달
       if (postData.dataValues.UNO === uno) {
         const post = await sql.changeCommunity(req, pno);
-        console.log('post', post);
+        // console.log('post', post);
         await sql.postImage(req, post);
         res.send({
           success: true,
@@ -293,7 +301,6 @@ router.post(
   }
 );
 router.delete('/:postId', checkAccess, sql.deleteImage, async (req, res) => {
-  console.log('hi');
   try {
     await sql.deletePost(req);
     return res
@@ -402,6 +409,9 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
               },
             },
           ],
+          HIDE: {
+            [Sequelize.Op.not]: 1,
+          },
         },
       });
     } else {
@@ -409,10 +419,24 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         order: [['createdAt', 'DESC']],
         limit: limit,
         offset: offset,
+        where: {
+          HIDE: {
+            [Sequelize.Op.not]: 1,
+          },
+        },
       });
     }
     for (const val of posts) {
       const user = await USER.findByPk(val.dataValues.UNO);
+      const image = await IMAGE_COMMUNITY.findOne({
+        where: {
+          PNO: val.dataValues.PNO,
+        },
+      });
+      let imageId = 0;
+      if (image !== null) {
+        imageId = image.IMAGE_ID;
+      }
       const likePost = await POST_LIKE.findAll({
         attributes: [
           'PNO',
@@ -430,7 +454,7 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
           : await POST_LIKE.findAll({
               where: { UNO: req.user.UNO, PNO: val.dataValues.PNO },
             });
-      console.log(isLike);
+      // console.log(isLike);
       if (isLike.length !== 0) {
         isUserLike = true;
       }
@@ -449,13 +473,14 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
         },
         group: ['PNO'],
       });
-      console.log('val', val.dataValues.UNO);
+      // console.log('val', val.dataValues.UNO);
       let isWriter = false;
       if (req.user !== undefined) {
         if (req.user.UNO === val.dataValues.UNO) {
           isWriter = true;
         }
       }
+      val.dataValues.imageId = imageId;
       val.dataValues.isWriter = isWriter;
       delete val.dataValues.UNO;
       val.dataValues.UNO_USER = {
@@ -475,7 +500,7 @@ router.get('/list/all', checkTokenYesAndNo, async (req, res) => {
       list.push(val.dataValues);
     }
 
-    console.log(list);
+    // console.log(list);
     res.send({
       success: true,
       message: 'Post List loaded successfully',
@@ -533,6 +558,9 @@ router.get(
                 ],
               },
             ],
+            HIDE: {
+              [Sequelize.Op.not]: 1,
+            },
           },
           order: [['createdAt', 'DESC']],
           limit: limit,
@@ -540,14 +568,32 @@ router.get(
         });
       } else {
         posts = await POST.findAll({
-          where: { category: category },
+          where: {
+            category: category,
+            HIDE: {
+              [Sequelize.Op.not]: 1,
+            },
+          },
           order: [['createdAt', 'DESC']],
           limit: limit,
           offset: offset,
         });
       }
-
       for (const val of posts) {
+        val.dataValues.cocktailLike = -1;
+        if (category === 3) {
+          val.dataValues.cocktailLike = val.dataValues.LIKE;
+        }
+        const image = await IMAGE_COMMUNITY.findOne({
+          where: {
+            PNO: val.dataValues.PNO,
+          },
+        });
+        let imageId = 0;
+        if (image !== null) {
+          imageId = image.IMAGE_ID;
+        }
+        val.dataValues.imageId = imageId;
         const user = await USER.findByPk(val.dataValues.UNO);
         const likePost = await POST_LIKE.findAll({
           attributes: [
@@ -566,7 +612,7 @@ router.get(
             : await POST_LIKE.findAll({
                 where: { UNO: req.user.UNO, PNO: val.dataValues.PNO },
               });
-        console.log(isLike);
+        // console.log(isLike);
         if (isLike.length !== 0) {
           isUserLike = true;
         }
@@ -578,6 +624,7 @@ router.get(
           }
         }
         val.dataValues.isWriter = isWriter;
+
         const replyNum = await POST_REPLY.findAll({
           attributes: [
             'PNO',
@@ -605,11 +652,10 @@ router.get(
         } else {
           val.dataValues.REPLY = 0;
         }
-
         list.push(val.dataValues);
       }
 
-      console.log(list);
+      // console.log(list);
       res.send({
         success: true,
         message: 'Post List loaded successfully',
@@ -644,12 +690,12 @@ router.get('/list/cocktails', async (req, res) => {
   try {
     const cocktailNames = [];
     await sql.getCocktails().then((value) => {
-      console.log(value);
+      // console.log(value);
       for (let i = 0; i < value.length; i++) {
         cocktailNames.push(value[i].NAME + '/' + value[i].CNO);
       }
     });
-    console.log(cocktailNames);
+    // console.log(cocktailNames);
     res.json({
       success: true,
       message: 'get All Cocktails in cocktail DB',
@@ -683,6 +729,9 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
             createdAt: {
               [Op.lt]: oneWeekAgo,
             },
+            HIDE: {
+              [Sequelize.Op.not]: 1,
+            },
           },
         },
       ],
@@ -695,31 +744,46 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
           isWriter = true;
         }
       }
+      const image = await IMAGE_COMMUNITY.findOne({
+        where: {
+          PNO: val.dataValues.PNO_POST.PNO,
+        },
+      });
+      let imageId = 0;
+      if (image !== null) {
+        imageId = image.IMAGE_ID;
+      }
       let isUserLike = false;
-      console.log(val);
+      // console.log(val);
       const isLike =
         req.user === undefined
           ? []
           : await POST_LIKE.findAll({
               where: { UNO: req.user.UNO, PNO: val.dataValues.PNO_POST.PNO },
             });
-      console.log(isLike);
+      // console.log(isLike);
       if (isLike.length !== 0) {
         isUserLike = true;
       }
       val.dataValues.isWriter = isWriter;
       const postInfo = val.dataValues.PNO_POST;
       const data = {};
-      data['likeCount'] = val.dataValues.likeCount;
+      data['PNO'] = val.dataValues.PNO_POST.PNO;
+      data['LIKE'] = val.dataValues.likeCount;
       const user = await USER.findByPk(postInfo.UNO);
-      data['userName'] = user.NICKNAME;
-      data['userLevel'] = user.LEVEL;
-      data['category'] = postInfo.CATEGORY;
-      data['title'] = postInfo.TITLE || null;
+      data['UNO_USER'] = { NICKNAME: user.NICKNAME, LEVEL: user.LEVEL };
+      data['CATEGORY'] = postInfo.CATEGORY;
+      data['imageId'] = imageId;
+      data['TITLE'] = postInfo.TITLE || null;
       data['createdAt'] = postInfo.createdAt;
-      data['content'] = postInfo.CONTENT;
+      data['CONTENT'] = postInfo.CONTENT;
       data['isWriter'] = isWriter;
       data['isUserLike'] = isUserLike;
+      data['cocktailLike'] = -1;
+      // console.log(val);
+      if (postInfo.LIKE !== null) {
+        data['cocktailLike'] = postInfo.LIKE;
+      }
       const replyNum = await POST_REPLY.findAll({
         attributes: [
           'PNO',
@@ -731,16 +795,16 @@ router.get('/list/hotPost', checkTokenYesAndNo, async (req, res) => {
         group: ['PNO'],
       });
       if (replyNum.length !== 0) {
-        data['reply'] = replyNum[0].dataValues.Replies;
+        data['REPLY'] = replyNum[0].dataValues.Replies;
       } else {
-        data['reply'] = 0;
+        data['REPLY'] = 0;
       }
-      console.log(data);
+      // console.log(data);
 
       list.push(data);
     }
 
-    console.log(list);
+    // console.log(list);
     res.send({
       success: true,
       message: 'Post List loaded successfully',
@@ -768,6 +832,17 @@ router.post('/report/:postId', checkAccess, async (req, res) => {
       },
     });
     if (created) {
+      const count = await POST_REPORT.count({
+        where: { PNO: postId },
+      });
+      if (count >= 5) {
+        await POST.update(
+          {
+            HIDE: 1,
+          },
+          { where: { PNO: postId } }
+        );
+      }
       return res.status(200).json({
         success: true,
         message: 'Post Report 성공',
@@ -778,7 +853,7 @@ router.post('/report/:postId', checkAccess, async (req, res) => {
         .json({ success: false, message: 'Post Report 중복' });
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Post Report 실패', error });

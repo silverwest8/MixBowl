@@ -1,33 +1,23 @@
-import { Link, useHref, useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { Link, useHref } from "react-router-dom";
 import styled from "styled-components";
-import LoginFormModal from "../login/LoginFormModal";
-import { authState } from "../../store/auth";
-import { useModal } from "../../hooks/useModal";
 
 const NAV = [
   {
     to: "/recipe",
     name: "칵테일 레시피",
-    login: false,
   },
   {
     to: "/community",
     name: "커뮤니티",
-    login: false,
   },
   {
     to: "/cocktailbar",
     name: "칵테일 바 지도",
-    login: true,
   },
 ];
 
 const Nav = () => {
   const href = useHref();
-  const navigate = useNavigate();
-  const { openModal, closeModal } = useModal();
-  const { isLoggedin } = useRecoilValue(authState);
   return (
     <NavBox>
       {NAV.map(({ to, name, login }) => (
@@ -35,16 +25,6 @@ const Nav = () => {
           to={to}
           key={to}
           className={href.includes(to) ? "active" : ""}
-          onClick={(e) => {
-            e.preventDefault();
-            if (login) {
-              if (isLoggedin) navigate(to);
-              else
-                openModal(LoginFormModal, {
-                  handleClose: closeModal,
-                });
-            } else navigate(to);
-          }}
         >
           {href.includes(to) && (
             <>
@@ -66,7 +46,7 @@ const NavBox = styled.nav`
   padding: 0 2.25rem;
   border-bottom: 3px solid ${({ theme }) => theme.color.primaryGold};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  @media screen and (max-width: 840px) {
+  @media screen and (max-width: 920px) {
     flex-direction: column;
     gap: 0;
     align-items: center;
@@ -105,7 +85,7 @@ const StyledLink = styled(Link)`
     font-weight: 700;
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   }
-  @media screen and (max-width: 840px) {
+  @media screen and (max-width: 920px) {
     padding: 0.75rem 0;
     img {
       display: none;

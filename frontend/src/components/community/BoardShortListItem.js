@@ -4,10 +4,10 @@ import { FaCommentDots } from "react-icons/fa";
 const BoardShortListItem = ({ data }) => {
   return (
     <ItemContainer>
-      <div>{data.title}</div>
+      <div>{data.CATEGORY === 2 ? data.CONTENT : data.TITLE}</div>
       <div>
         <FaCommentDots className="icon" />
-        {data.comments}
+        {data.REPLY}
       </div>
     </ItemContainer>
   );
@@ -28,7 +28,10 @@ const ItemContainer = styled.li`
     text-overflow: ellipsis;
     height: 1rem;
     @media screen and (max-width: 800px) {
-      width: 30vw;
+      width: 40vw;
+    }
+    @media screen and (max-width: 500px) {
+      width: 50vw;
     }
   }
   > div:last-child {

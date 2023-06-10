@@ -62,8 +62,14 @@ const LoginForm = ({ handleClose }) => {
           accessToken: data.tokens.token.accessToken,
           refreshToken: data.tokens.token.refreshToken,
         });
-        if (handleClose) handleClose();
-        navigate(params.get("return_url") ? params.get("return_url") : "/");
+        if (handleClose) {
+          handleClose();
+          window.location.reload();
+        } else {
+          navigate(params.get("return_url") ? params.get("return_url") : "/", {
+            replace: true,
+          });
+        }
       } else {
         setFailMessage("아이디 또는 비밀번호를 확인해주세요.");
       }

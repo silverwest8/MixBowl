@@ -23,6 +23,10 @@ export default class COCKTAIL extends Model {
       allowNull: false,
       unique: "NAME_UNIQUE"
     },
+    NAME_EN: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
     ALCOHOLIC: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -32,6 +36,10 @@ export default class COCKTAIL extends Model {
       type: DataTypes.TEXT,
       allowNull: false
     },
+    INSTRUCTION_EN: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     IMAGE_PATH: {
       type: DataTypes.TEXT,
       allowNull: true
@@ -39,6 +47,11 @@ export default class COCKTAIL extends Model {
     GLASS: {
       type: DataTypes.STRING(45),
       allowNull: true
+    },
+    HIDE: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     sequelize,

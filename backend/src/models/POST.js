@@ -41,6 +41,11 @@ export default class POST extends Model {
       type: DataTypes.TINYINT,
       allowNull: true
     },
+    HIDE: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 0
+    },
     CONTENT: {
       type: DataTypes.TEXT,
       allowNull: false,

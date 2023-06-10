@@ -3,6 +3,7 @@
 import express from 'express';
 import { db } from '../models';
 import checkAccess from '../middleware/checkAccessToken';
+import { logger } from '../../winston/winston';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -51,16 +52,19 @@ router.get('/recipes/:page', checkAccess, async (req, res) => {
           level: recipes.UNO_USER.LEVEL,
         },
       };
-      console.log(temp);
+      // console.log(temp);
       list.push(temp);
       // console.log(like[i].CNO_COCKTAIL);
     }
 
-    return res
-      .status(200)
-      .json({ success: true, message: 'Mypage recipes get 성공', count: list.length, list });
+    return res.status(200).json({
+      success: true,
+      message: 'Mypage recipes get 성공',
+      count: list.length,
+      list,
+    });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage recipes get 실패', error });
@@ -81,10 +85,28 @@ router.get('/posts/:page', checkAccess, async (req, res) => {
     });
     for (let i = 0; i < posts.length; i++) {
       const post = posts[i];
+      const postImage = await db.IMAGE_COMMUNITY.findAll({
+        where: {
+          PNO: post.PNO,
+        },
+      });
+      // console.log(postImage);
+      const images = postImage.map((x) => x.IMAGE_ID);
+      // console.log(images);
+      const isUserLiked = await db.POST_LIKE.count({
+        where: {
+          UNO: req.user.UNO,
+          PNO: post.PNO,
+        },
+      });
+      // console.log(isUserLiked);
       let temp = {
         postId: post.PNO,
+        images,
         category: post.CATEGORY,
         title: post.TITLE,
+        cocktailLike: post.LIKE,
+        isUserLiked,
         content: post.CONTENT,
         cocktailId: post.CNO,
         like: await db.POST_LIKE.count({
@@ -100,14 +122,17 @@ router.get('/posts/:page', checkAccess, async (req, res) => {
         date: post.createdAt,
       };
       // console.log(post);
-      console.log(temp);
+      // console.log(temp);
       list.push(temp);
     }
-    return res
-      .status(200)
-      .json({ success: true, message: 'Mypage posts get 성공', count: list.length, list });
+    return res.status(200).json({
+      success: true,
+      message: 'Mypage posts get 성공',
+      count: list.length,
+      list,
+    });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage posts get 실패', error });
@@ -137,20 +162,24 @@ router.get('/replies/:page', checkAccess, async (req, res) => {
     for (let i = 0; i < replies.length; i++) {
       const reply = replies[i];
       let temp = {
+        replyId: reply.PRNO,
         postId: reply.PNO,
         content: reply.CONTENT,
         title: reply.PNO_POST.TITLE,
         date: reply.createdAt,
       };
       // console.log(reply);
-      console.log(temp);
+      // console.log(temp);
       list.push(temp);
     }
-    return res
-      .status(200)
-      .json({ success: true, message: 'Mypage replies get 성공', count: list.length, list });
+    return res.status(200).json({
+      success: true,
+      message: 'Mypage replies get 성공',
+      count: list.length,
+      list,
+    });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage replies get 실패', error });
@@ -173,38 +202,50 @@ router.get('/reviews/:page', checkAccess, async (req, res) => {
           attributes: ['NAME'],
           required: false,
         },
-        {
-          model: db.KEYWORD,
-          as: 'KEYWORDs',
-          attributes: ['KEYWORD'],
-          required: false,
-        },
+        // {
+        //   model: db.KEYWORD,
+        //   as: 'KEYWORDs',
+        //   attributes: ['KEYWORD'],
+        //   required: false,
+        // },
       ],
       offset,
       limit,
     });
-
+    // console.log(reviews);
     let keyword = [];
     for (let i = 0; i < reviews.length; i++) {
       const review = reviews[i];
-      for (let j = 0; j < review.KEYWORDs.length; j++) {
-        keyword.push(review.KEYWORDs[j].KEYWORD);
-      }
+      const keywords = await db.KEYWORD.findAll({
+        where: {
+          REVIEW_ID: review.REVIEW_ID,
+        },
+      });
+      // console.log(keywords);
+      keyword = keywords.map((x) => x.KEYWORD);
+      // for (let j = 0; j < keywords.length; j++) {
+      //   keyword.push(keywords[j].KEYWORD);
+      // }
+      console.log(keyword);
       let temp = {
         placeId: review.PLACE_ID,
+        reviewId: review.REVIEW_ID,
         placeName: review.PLACE.NAME,
         text: review.TEXT,
         keyword: keyword,
       };
       // console.log(review);
-      console.log(temp);
+      // console.log(temp);
       list.push(temp);
     }
-    return res
-      .status(200)
-      .json({ success: true, message: 'Mypage reviews get 성공', count: list.length, list });
+    return res.status(200).json({
+      success: true,
+      message: 'Mypage reviews get 성공',
+      count: list.length,
+      list,
+    });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return res
       .status(400)
       .json({ success: false, message: 'Mypage reviews get 실패', error });

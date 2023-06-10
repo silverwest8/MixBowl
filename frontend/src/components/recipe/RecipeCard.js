@@ -17,6 +17,7 @@ import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Skeleton from "@mui/material/Skeleton";
 import { theme } from "../../styles/theme";
+import { getLinkWithAuth } from "../../utils/link";
 
 const RecipeCard = () => {
   const search = useRecoilValue(searchState);
@@ -101,34 +102,41 @@ const RecipeCard = () => {
           ? data.pages.map((page) =>
               page.list.map((item) => (
                 <RecipeBox key={item.id}>
-                  {token ? (
-                    <Link to={`/recipe/${item.id}`}>
-                      <img src={`/api/recipes/image/${item.id}`}></img>
-                      <h1>{item.name}</h1>
-                    </Link>
-                  ) : (
-                    <>
-                      <img src={item.image_path}></img>
-                      <h1>{item.name}</h1>
-                    </>
-                  )}
+                  <Link to={getLinkWithAuth(`/recipe/${item.id}`)}>
+                    <img src={`/api/recipes/image/${item.id}`}></img>
+                    <h1>{item.name}</h1>
 
-                  <TextBox>
-                    <NickName>
-                      @{item.USER.nickname}
-                      <MemberBadge level={item.USER.level} />
-                    </NickName>
-                    <div>
-                      <p className="ThumbsUp">
-                        <FaThumbsUp></FaThumbsUp>
-                        {item.like}
-                      </p>
-                      <p className="Comment">
-                        <FaCommentDots></FaCommentDots>
-                        {item.post}
-                      </p>
-                    </div>
-                  </TextBox>
+                    <TextBox>
+                      <NickName
+                        className={
+                          item.USER.nickname === "ninja" ||
+                          item.USER.nickname === "cocktaildb"
+                            ? "not-user"
+                            : ""
+                        }
+                      >
+                        {item.USER.nickname === "ninja" ||
+                        item.USER.nickname === "cocktaildb" ? (
+                          "@Cocktell"
+                        ) : (
+                          <>
+                            @{item.USER.nickname}
+                            <MemberBadge level={item.USER.level} />
+                          </>
+                        )}
+                      </NickName>
+                      <div>
+                        <p className="ThumbsUp">
+                          <FaThumbsUp></FaThumbsUp>
+                          {item.like}
+                        </p>
+                        <p className="Comment">
+                          <FaCommentDots></FaCommentDots>
+                          {item.post}
+                        </p>
+                      </div>
+                    </TextBox>
+                  </Link>
                 </RecipeBox>
               ))
             )
@@ -146,28 +154,32 @@ const RecipeCard = () => {
                 />
               ))}
       </CardBox>
-      <div ref={ref}></div>
+      {token && <div ref={ref}></div>}
     </MiddleBox>
   );
 };
 
 const NickName = styled.div`
   display: flex;
+  align-items: center;
+  gap: 0.3rem !important;
   font-size: 0.875rem;
-  margin-top: 0.3rem;
+  &.not-user {
+    color: ${({ theme }) => theme.color.gray};
+  }
 `;
 
 const TextBox = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-top: 0.3rem;
   div {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
   p {
     font-size: 0.875rem;
-    margin-top: 0.3rem;
     gap: 0.2rem;
   }
 `;
@@ -176,20 +188,17 @@ const CardBox = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 2rem;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  margin-top: 1rem 0 2rem;
   justify-items: center;
-
   .arr {
     grid-column: 1 / -1;
     grid-row: 1;
     justify-self: end;
     margin-right: 1rem;
     display: flex;
-    p {
-      margin-right: 0.5rem;
-      color: ${({ theme }) => theme.color.primaryGold};
-    }
+    align-items: center;
+    gap: 0.5rem;
+    color: ${({ theme }) => theme.color.primaryGold};
   }
 
   @media screen and (max-width: 928px) {
@@ -221,11 +230,21 @@ const RecipeBox = styled.div`
   }
   .ThumbsUp {
     display: flex;
+    align-items: center;
+    gap: 0.3rem;
     color: ${({ theme }) => theme.color.primaryGold};
+    @media screen and (max-width: 480px) {
+      gap: 0.35rem;
+    }
   }
   .Comment {
     display: flex;
+    align-items: center;
+    gap: 0.3rem;
     color: ${({ theme }) => theme.color.lightGray};
+    @media screen and (max-width: 480px) {
+      gap: 0.35rem;
+    }
   }
 `;
 

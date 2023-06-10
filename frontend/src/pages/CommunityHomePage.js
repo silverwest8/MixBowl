@@ -1,165 +1,17 @@
-import SearchBar from "../components/common/SearchBar";
-// import Textarea from "../components/common/Textarea";
 import styled from "styled-components";
-import FreeListItem from "../components/common/FreeListItem";
-import { Link } from "react-router-dom";
+import HotListItem from "../components/community/HotListItem";
+import { Link, useNavigate } from "react-router-dom";
 import { FaFire, FaComments } from "react-icons/fa";
 import Title from "../components/common/Title";
 import { HiPencilAlt } from "react-icons/hi";
 import { MdArrowForwardIos } from "react-icons/md";
-import BoardShortListItem from "../components/common/BoardShortListItem";
-
-const dummyData = [
-  {
-    id: 0,
-    title:
-      "제목 예시입니다. 만약 제목 길이가 아주 길다면 어떻게 될지 한 번 보도록 하겠습니다. 이런 식으로 길어진다면 글자수 제한을 해야 되겠죠.",
-    category: "자유게시판",
-    username: "user01",
-    userlevel: 3,
-    liked: true,
-    likes: 16,
-    comments: 3,
-    date: "1일 전",
-    maintext: "본문 예시입니다. 짧을 경우.",
-  },
-  {
-    id: 1,
-    title: "두 번째 제목 예시",
-    category: "자유게시판",
-    username: "username10",
-    userlevel: 2,
-    likes: 0,
-    comments: 100,
-    date: "5일 전",
-    // TODO : 나중에는 date 타입으로 받아올것
-    maintext:
-      "본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.본문 예시입니다.",
-  },
-  {
-    id: 2,
-    maintext:
-      "질문글 예시입니다. 이런식으로 질문이 bold체로 다 들어가야 되겠죠. 질문의 경우 title이 길어지는 것으로 할까요 아니면 본문을 굵게 표현하는 것으로 할까요?",
-    category: "질문과 답변",
-    username: "한글닉네임열글자라면",
-    userlevel: 1,
-    liked: true,
-    likes: 1,
-    comments: 0,
-    date: "2일 전",
-  },
-];
-
-const RecentRecommandation = [
-  {
-    id: 0,
-    title:
-      "칵테일 추천글 예시 만약 제목이 너무 길어진다면 이런 식으로 표시됩니다",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "칵테일 추천글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "칵테일 추천글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "칵테일 추천글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "칵테일 추천글 예시",
-    comments: 0,
-  },
-];
-const RecentQustion = [
-  {
-    id: 0,
-    title: "칵테일 질문글 예시",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "칵테일 질문글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "칵테일 질문글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "칵테일 질문글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "칵테일 질문글 예시",
-    comments: 0,
-  },
-];
-const RecentReview = [
-  {
-    id: 0,
-    title: "칵테일 리뷰글 예시",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "칵테일 리뷰글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "칵테일 추천글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "칵테일 리뷰글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "칵테일 리뷰글 예시",
-    comments: 0,
-  },
-];
-
-const RecentFree = [
-  {
-    id: 0,
-    title: "자유게시글 예시",
-    comments: 120,
-  },
-  {
-    id: 1,
-    title: "자유게시글 예시",
-    comments: 19,
-  },
-  {
-    id: 2,
-    title: "자유게시글 예시",
-    comments: 5,
-  },
-  {
-    id: 3,
-    title: "자유게시글 예시",
-    comments: 1,
-  },
-  {
-    id: 4,
-    title: "자유게시글 예시",
-    comments: 0,
-  },
-];
+import { useEffect, useState } from "react";
+import CommunitySearch from "../components/community/CommunitySearch";
+import axios from "axios";
+import BoardShortListItem from "../components/community/BoardShortListItem";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { menuState, searchState } from "../store/community";
+import LoadingPage from "./Loading";
 
 const Background = styled.div`
   color: white;
@@ -167,13 +19,10 @@ const Background = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 7rem 10rem;
   height: 100%;
+  padding: 2rem;
   .icon {
     margin-right: 0.6rem;
-  }
-  @media screen and (max-width: 400px) {
-    padding: 1rem 0.5rem;
   }
 `;
 
@@ -182,8 +31,7 @@ const HotPosts = styled.div`
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  width: 60vw;
-  margin-bottom: 5rem;
+  margin: 0 2rem 5rem 2rem;
   > h3 {
     display: flex;
     flex-direction: row;
@@ -201,17 +49,27 @@ const HotPosts = styled.div`
     align-items: center;
     padding-top: 1rem;
   }
+  @media screen and (max-width: 500px) {
+    width: 80vw;
+  }
+  > section {
+    width: 60vw;
+    @media screen and (max-width: 800px) {
+      width: 80vw;
+    }
+  }
 `;
 const NewPosts = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  width: 60vw;
+  margin: 0 2rem 5rem 2rem;
   > section:first-child {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: baseline;
     margin-bottom: 0.5rem;
     @media screen and (max-width: 800px) {
       flex-direction: column;
@@ -243,9 +101,13 @@ const NewPosts = styled.div`
       flex-direction: column;
     }
   }
+  width: 60vw;
+  @media screen and (max-width: 800px) {
+    width: 80vw;
+  }
 `;
 
-const Button = styled.button`
+const Button = styled(Link)`
   border: 1px solid ${({ theme }) => theme.color.primaryGold};
   color: white;
   border-radius: 10px;
@@ -276,12 +138,16 @@ const Board = styled.div`
   > ul {
     margin-top: 0.8rem;
   }
+  @media screen and (max-width: 800px) {
+    width: 80vw;
+  }
+  cursor: pointer;
 `;
 
 const WritingButton = styled(Link)`
   position: fixed;
-  right: 10vw;
-  bottom: 5rem;
+  right: 1rem;
+  bottom: 1rem;
   z-index: 9;
   color: white;
   padding: 0.7rem 0.7rem;
@@ -298,6 +164,64 @@ const WritingButton = styled(Link)`
 `;
 
 const CommunityHomePage = () => {
+  const navigate = useNavigate();
+  const search = useRecoilValue(searchState);
+  const [menu, setMenu] = useRecoilState(menuState);
+  const [postings, setPostings] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+  const [frees, setFrees] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const token = localStorage.getItem("access_token");
+  const fetchData = async () => {
+    try {
+      axios.defaults.headers.common.Authorization = token;
+
+      const postingPromise = axios.get(`/api/communities/list/hotPost`);
+      const recommendationsPromise = axios.get(
+        `/api/communities/list/category/recommend?page=1`
+      );
+      const reviewsPromise = axios.get(
+        `/api/communities/list/category/review?page=1`
+      );
+      const freesPromise = axios.get(
+        `/api/communities/list/category/free?page=1`
+      );
+      const questionsPromise = axios.get(
+        `/api/communities/list/category/question?page=1`
+      );
+
+      const [
+        postingResponse,
+        recommendationsResponse,
+        reviewsResponse,
+        freesResponse,
+        questionsResponse,
+      ] = await Promise.all([
+        postingPromise,
+        recommendationsPromise,
+        reviewsPromise,
+        freesPromise,
+        questionsPromise,
+      ]);
+
+      setPostings(postingResponse.data.data);
+      setRecommendations(recommendationsResponse.data.data.slice(0, 5));
+      setReviews(reviewsResponse.data.data.slice(0, 5));
+      setFrees(freesResponse.data.data.slice(0, 5));
+      setQuestions(questionsResponse.data.data.slice(0, 5));
+      setLoading(false);
+    } catch (error) {
+      console.log("empty or error");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <main
       style={{
@@ -307,84 +231,107 @@ const CommunityHomePage = () => {
       }}
     >
       <Title title="커뮤니티" />
-      <Background>
-        <HotPosts>
-          <h3>
-            <FaFire className="icon fire" />
-            이번주 인기글
-          </h3>
-          <section>
-            {dummyData.map((el) => (
-              <FreeListItem data={el} key={el.id} />
-            ))}
-          </section>
-          <div>
-            <Button>더보기</Button>
-          </div>
-        </HotPosts>
-        <NewPosts>
-          <section>
-            <h1>
-              <FaComments className="icon" />
-              최신글
-            </h1>
-            <SearchBar
-              placeholder="관심있는 내용을 검색해보세요!"
-              showCloseButton={false}
-            />
-          </section>
-          <div className="grid-container">
-            <Board>
-              <span className="mini-title">
-                칵테일 추천
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {RecentRecommandation.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
-                ))}
-              </ul>
-            </Board>
-            <Board>
-              <span className="mini-title">
-                질문과 답변
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {RecentQustion.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
-                ))}
-              </ul>
-            </Board>
-            <Board>
-              <span className="mini-title">
-                칵테일 리뷰
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {RecentReview.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
-                ))}
-              </ul>
-            </Board>
-            <Board>
-              <span className="mini-title">
-                자유게시판
-                <MdArrowForwardIos className="icon" />
-              </span>
-              <ul>
-                {RecentFree.map((el) => (
-                  <BoardShortListItem data={el} key={el.id} />
-                ))}
-              </ul>
-            </Board>
-          </div>
-        </NewPosts>
-        <WritingButton to="/community/posting">
-          <HiPencilAlt />
-          글쓰기
-        </WritingButton>
-      </Background>
+      {loading ? (
+        <LoadingPage />
+      ) : (
+        <Background>
+          <HotPosts>
+            <h3>
+              <FaFire className="icon fire" />
+              이번주 인기글
+            </h3>
+            <section>
+              {postings.map((el) => (
+                <HotListItem data={el} key={el.pno} />
+              ))}
+            </section>
+            <div>
+              <Button to="/community/board">더보기</Button>
+            </div>
+          </HotPosts>
+          <NewPosts>
+            <section>
+              <h1>
+                <FaComments className="icon" />
+                최신글
+              </h1>
+              <CommunitySearch placeholder="관심있는 내용을 검색해보세요!" />
+            </section>
+            <div className="grid-container">
+              <Board
+                onClick={() => {
+                  setMenu("recommend");
+                  navigate("/community/board");
+                }}
+              >
+                <span className="mini-title">
+                  칵테일 추천
+                  <MdArrowForwardIos className="icon" />
+                </span>
+                <ul>
+                  {recommendations.map((el) => (
+                    <BoardShortListItem data={el} key={el.PNO} />
+                  ))}
+                </ul>
+              </Board>
+              <Board
+                onClick={() => {
+                  setMenu("question");
+                  navigate("/community/board");
+                }}
+              >
+                <span className="mini-title">
+                  질문과 답변
+                  <MdArrowForwardIos className="icon" />
+                </span>
+                <ul>
+                  {questions.map((el) => (
+                    <BoardShortListItem data={el} key={el.PNO} />
+                  ))}
+                </ul>
+              </Board>
+              <Board
+                onClick={() => {
+                  setMenu("review");
+                  navigate("/community/board");
+                }}
+              >
+                <span className="mini-title">
+                  칵테일 리뷰
+                  <MdArrowForwardIos className="icon" />
+                </span>
+                <ul>
+                  {reviews.map((el) => (
+                    <BoardShortListItem data={el} key={el.PNO} />
+                  ))}
+                </ul>
+              </Board>
+              <Board
+                onClick={() => {
+                  setMenu("free");
+                  navigate("/community/board");
+                }}
+              >
+                <span className="mini-title">
+                  자유게시판
+                  <MdArrowForwardIos className="icon" />
+                </span>
+                <ul>
+                  {frees.map((el) => (
+                    <BoardShortListItem data={el} key={el.PNO} />
+                  ))}
+                </ul>
+              </Board>
+            </div>
+          </NewPosts>
+          {token && (
+            <WritingButton to="/community/posting">
+              <HiPencilAlt />
+              글쓰기
+            </WritingButton>
+          )}
+        </Background>
+      )}
     </main>
   );
 };

@@ -26,22 +26,20 @@ const Main = styled.main`
   padding: 2rem 1rem;
   height: calc(calc(var(--vh, 1vh) * 100) - 3.5rem);
   .wrapper {
+    position: relative;
     display: flex;
     height: 100%;
   }
-  @media screen and (max-width: 920px) {
+  @media screen and (max-width: 940px) {
+    padding-top: 0;
     display: flex;
     flex-direction: column;
     gap: 1rem;
     .wrapper {
       display: block;
       flex-grow: 1;
-      position: relative;
       overflow: hidden;
     }
-  }
-  @media screen and (max-width: 840px) {
-    padding-top: 0;
   }
 `;
 

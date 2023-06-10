@@ -9,8 +9,10 @@ import user from './user';
 import recipe from './recipe';
 import community from './community';
 import review from './review';
-import data from './data';
 import mypage from './mypage';
+import data from './data';
+import translate from './translate';
+import admin from "./admin";
 
 router.use('/', main);
 router.use('/home', home);
@@ -19,6 +21,8 @@ router.use('/communities', community);
 router.use('/recipes', recipe);
 router.use('/reviews', review);
 router.use('/mypages', mypage);
-router.use('/data', data);
+// router.use('/data', data);
+// router.use('/translate', translate);
+router.use('/admin', admin);
 
 export default router;
